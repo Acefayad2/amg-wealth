@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,400;1,6..96,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230B2E24'/%3E%3Ctext x='16' y='22' font-family='serif' font-size='15' fill='%23D4AF37' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/webp" href="assets/logo-mark.webp">
 <style>
 :root{
   --ink:#060A08;
@@ -112,13 +112,10 @@ nav{
 }
 .brand{display:flex;align-items:center;gap:.7rem;text-decoration:none}
 .monogram{
-  width:34px;height:34px;border-radius:10px;flex:none;
-  background:linear-gradient(140deg,#0F3D30,#0B2E24);
-  border:1px solid rgba(212,175,55,.4);
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Bodoni Moda',serif;font-size:1rem;color:var(--gold-bright);
-  box-shadow:inset 0 1px 1px rgba(255,255,255,.1);
+  width:38px;height:38px;border-radius:50%;flex:none;overflow:hidden;
+  background:#000;display:flex;align-items:center;justify-content:center;
 }
+.monogram img{width:100%;height:100%;object-fit:cover;transform:scale(1.12)}
 .brand-name{font-size:.82rem;font-weight:600;letter-spacing:.18em;color:var(--cream)}
 .brand-name small{display:block;font-size:8px;font-weight:400;letter-spacing:.3em;color:var(--gold);text-transform:uppercase}
 .nav-links{display:flex;gap:1.8rem;list-style:none}
@@ -418,7 +415,7 @@ body>footer{background:#050807;border-top:1px solid rgba(212,175,55,.15);padding
 <nav>
   <div class="nav-pill">
     <a class="brand" href="#top">
-      <span class="monogram">A</span>
+      <span class="monogram"><img src="assets/logo-mark.webp" alt="AMG monogram logo"></span>
       <span class="brand-name">AMG<small>Anointed Money Group</small></span>
     </a>
     <ul class="nav-links">
@@ -650,7 +647,7 @@ body>footer{background:#050807;border-top:1px solid rgba(212,175,55,.15);padding
   <div class="foot-grid">
     <div class="foot-brand">
       <a class="brand" href="#top">
-        <span class="monogram">A</span>
+        <span class="monogram"><img src="assets/logo-mark.webp" alt="AMG monogram logo"></span>
         <span class="brand-name">AMG<small>Anointed Money Group</small></span>
       </a>
       <p>Building generational wealth through protection, education, and intentional legacy design.</p>

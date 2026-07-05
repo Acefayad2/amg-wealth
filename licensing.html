@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AMG Licensing Appointments | Anointed Money Group</title>
+<meta name="description" content="Book a licensing appointment with the AMG licensing coordinator and get clear next steps for becoming properly licensed.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,400;1,6..96,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/webp" href="assets/logo-mark.webp">
+<style>
+:root{
+  --ink:#060A08;
+  --emerald-deep:#0B2E24;
+  --emerald:#12483A;
+  --gold:#C9A227;
+  --gold-bright:#E8C766;
+  --gold-pale:#F4E7C3;
+  --cream:#F1F0EC;
+  --white:#FFFFFF;
+  --ease-glide:cubic-bezier(0.32,0.72,0,1);
+  --ease-out-soft:cubic-bezier(0.22,1,0.36,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Jost',sans-serif;
+  background:
+    radial-gradient(900px 560px at 82% 0%,rgba(30,107,82,.3),transparent 62%),
+    radial-gradient(760px 460px at 6% 100%,rgba(201,162,39,.12),transparent 58%),
+    linear-gradient(180deg,#06110D 0%,#060A08 54%,#081711 100%);
+  color:var(--cream);
+  min-height:100vh;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+.grain{
+  position:fixed;inset:0;z-index:60;pointer-events:none;opacity:.035;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.serif{font-family:'Bodoni Moda',serif;font-weight:600;line-height:1.06}
+.gold-text{
+  background:linear-gradient(105deg,#9C7A1C 0%,#D9B44A 45%,#EED9A0 55%,#B8901F 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:center;padding-top:1.4rem;pointer-events:none}
+.nav-pill{
+  pointer-events:auto;display:flex;align-items:center;gap:2.2rem;
+  background:rgba(8,14,11,.62);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border:1px solid rgba(255,255,255,.08);border-radius:16px;
+  padding:.55rem .6rem .55rem 1.5rem;
+  box-shadow:0 20px 50px -20px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.07);
+}
+.brand{display:flex;align-items:center;gap:.7rem;text-decoration:none}
+.monogram{width:38px;height:38px;border-radius:50%;flex:none;overflow:hidden;background:#000;display:flex;align-items:center;justify-content:center}
+.monogram img{width:100%;height:100%;object-fit:cover;transform:scale(1.12)}
+.brand-name{font-size:.82rem;font-weight:600;letter-spacing:.18em;color:var(--cream)}
+.brand-name small{display:block;font-size:8px;font-weight:400;letter-spacing:.3em;color:var(--gold);text-transform:uppercase}
+.nav-links{display:flex;gap:1.8rem;list-style:none}
+.nav-links a{font-size:.82rem;font-weight:500;color:rgba(248,245,238,.72);text-decoration:none;transition:color .4s var(--ease-glide)}
+.nav-links a:hover,.nav-links a.active{color:var(--gold-bright)}
+.btn{
+  display:inline-flex;align-items:center;gap:.85rem;border-radius:12px;padding:.55rem .6rem .55rem 1.7rem;
+  font-family:'Jost',sans-serif;font-size:.92rem;font-weight:500;text-decoration:none;border:none;cursor:pointer;
+  transition:transform .5s var(--ease-glide),box-shadow .5s var(--ease-glide),background .5s var(--ease-glide);
+}
+.btn .orb{width:38px;height:38px;border-radius:8px;flex:none;display:flex;align-items:center;justify-content:center;transition:transform .5s var(--ease-glide)}
+.btn:hover .orb{transform:translate(3px,-1px) scale(1.06)}
+.btn svg{width:15px;height:15px}
+.btn-gold{background:linear-gradient(120deg,#B8901F,#E0BC55 55%,#C9A227);color:#1A1405;box-shadow:0 12px 28px -14px rgba(4,8,6,.55),inset 0 1px 1px rgba(255,255,255,.4)}
+.btn-gold .orb{background:rgba(10,8,2,.14)}
+.btn-ghost{background:rgba(255,255,255,.05);color:var(--cream);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
+.btn-ghost .orb{background:rgba(255,255,255,.08)}
+.page{position:relative;z-index:2;max-width:1240px;margin:0 auto;padding:10rem 6vw 5.5rem}
+.hero-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:4rem;align-items:center}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:.6rem;border:1px solid rgba(212,175,55,.42);border-radius:8px;
+  padding:.42rem 1.1rem;font-size:10px;font-weight:500;letter-spacing:.24em;text-transform:uppercase;color:var(--gold-bright);
+  background:rgba(212,175,55,.07);
+}
+.eyebrow::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--gold)}
+h1{font-size:clamp(3rem,6vw,5.5rem);margin:1.5rem 0 1.4rem;color:var(--white)}
+.lede{font-size:1.05rem;font-weight:300;color:rgba(248,245,238,.68);max-width:35rem;margin-bottom:2.2rem}
+.mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-top:2.2rem;max-width:37rem}
+.mini{
+  border:1px solid rgba(212,175,55,.16);border-radius:10px;padding:1rem;
+  background:rgba(255,255,255,.045);box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+}
+.mini strong{display:block;font-family:'Bodoni Moda',serif;font-size:1.15rem;color:var(--gold-bright);margin-bottom:.25rem}
+.mini span{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(248,245,238,.52)}
+.booking-shell{
+  border-radius:1.15rem;padding:.48rem;background:rgba(255,255,255,.045);
+  border:1px solid rgba(255,255,255,.09);box-shadow:0 40px 80px -40px rgba(0,0,0,.68),inset 0 1px 0 rgba(255,255,255,.08);
+}
+.booking-core{
+  min-height:600px;border-radius:.75rem;overflow:hidden;position:relative;
+  background:
+    radial-gradient(640px 320px at 50% 0%,rgba(201,162,39,.12),transparent 64%),
+    linear-gradient(155deg,rgba(12,42,32,.92),rgba(4,8,6,.98));
+}
+.booking-ready iframe{display:block;width:100%;height:600px;border:0;background:#fff}
+.booking-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:2rem}
+.placeholder-card{
+  width:min(100%,31rem);border-radius:16px;padding:2rem;text-align:center;
+  background:rgba(8,14,11,.72);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border:1px solid rgba(232,199,102,.28);box-shadow:0 28px 60px -30px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.1);
+}
+.placeholder-card .seal{
+  width:58px;height:58px;margin:0 auto 1.2rem;border-radius:14px;display:flex;align-items:center;justify-content:center;
+  background:rgba(201,162,39,.13);border:1px solid rgba(232,199,102,.34);color:var(--gold-bright);
+}
+.placeholder-card .seal svg{width:27px;height:27px;stroke:currentColor;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+.placeholder-card h2{font-family:'Bodoni Moda',serif;font-size:1.8rem;line-height:1.16;color:#fff;margin-bottom:.8rem}
+.placeholder-card p{font-weight:300;color:rgba(248,245,238,.66);margin-bottom:1.5rem}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:3rem}
+.step{border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:1.25rem;background:rgba(255,255,255,.04)}
+.step span{font-family:'Bodoni Moda',serif;font-size:2rem;color:transparent;-webkit-text-stroke:1px var(--gold)}
+.step h3{font-family:'Bodoni Moda',serif;font-size:1.2rem;font-weight:500;margin:.7rem 0 .4rem;color:#fff}
+.step p{font-size:.88rem;font-weight:300;color:rgba(248,245,238,.6)}
+footer{border-top:1px solid rgba(212,175,55,.14);padding:2rem 6vw;color:rgba(248,245,238,.48);font-size:.78rem;display:flex;justify-content:space-between;gap:1rem;position:relative;z-index:2}
+footer a{color:var(--gold-bright);text-decoration:none}
+@media(max-width:980px){
+  .hero-grid{grid-template-columns:1fr;gap:3rem}
+  .nav-links{display:none}
+  .page{padding-top:8.2rem}
+}
+@media(max-width:640px){
+  nav{justify-content:flex-start;padding:1rem 1.1rem 0}
+  .nav-pill{width:100%;justify-content:space-between;gap:1rem;padding:.5rem .55rem .5rem .9rem}
+  .nav-pill>.btn{display:none}
+  .page{padding:7.8rem 1.1rem 4rem}
+  .mini-grid,.steps{grid-template-columns:1fr}
+  .booking-core{min-height:560px}
+  footer{flex-direction:column}
+}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<nav>
+  <div class="nav-pill">
+    <a class="brand" href="index.html#top">
+      <span class="monogram"><img src="assets/logo-mark.webp" alt="AMG monogram logo"></span>
+      <span class="brand-name">AMG<small>Anointed Money Group</small></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#services">Services</a></li>
+      <li><a class="active" href="licensing.html">Licensing</a></li>
+      <li><a href="index.html#philosophy">Leadership</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+    <a href="#booking" class="btn btn-gold">Book Licensing
+      <span class="orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+    </a>
+  </div>
+</nav>
+
+<main class="page">
+  <div class="hero-grid">
+    <section>
+      <span class="eyebrow">Licensing Coordinator</span>
+      <h1 class="serif">Get licensed with <i class="gold-text">clarity</i>.</h1>
+      <p class="lede">Book a focused appointment with AMG's licensing coordinator to confirm your next step, review requirements, and move toward production with confidence.</p>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap">
+        <a href="#booking" class="btn btn-gold">Preview Appointment Times
+          <span class="orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+        </a>
+        <a href="mailto:simiaji@amgfinancialagency.com?subject=Licensing%20Appointment" class="btn btn-ghost">Email Coordinator
+          <span class="orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg></span>
+        </a>
+      </div>
+      <div class="mini-grid">
+        <div class="mini"><strong>01</strong><span>Requirements</span></div>
+        <div class="mini"><strong>02</strong><span>State Steps</span></div>
+        <div class="mini"><strong>03</strong><span>Launch Plan</span></div>
+      </div>
+    </section>
+
+    <section class="booking-shell" id="booking" aria-label="Licensing appointment booking preview">
+      <div class="booking-core" id="bookingCore">
+        <div class="booking-placeholder" id="bookingPlaceholder">
+          <div class="placeholder-card">
+            <div class="seal">
+              <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16M9 14h2M13 14h2"/></svg>
+            </div>
+            <h2>Google appointment preview ready</h2>
+            <p>The licensing page is set up for a Google Calendar appointment scheduler. Send the coordinator's Google booking link and it will appear here as the live booking preview.</p>
+            <a class="btn btn-gold" href="mailto:simiaji@amgfinancialagency.com?subject=Licensing%20Appointment">Request an Appointment
+              <span class="orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="steps">
+    <div class="step"><span>01</span><h3>Confirm Your State</h3><p>Review where you plan to write business and what licensing path applies before you spend time or money.</p></div>
+    <div class="step"><span>02</span><h3>Map the Timeline</h3><p>Leave with a practical sequence for pre-licensing, exam prep, fingerprints, appointments, and contracting.</p></div>
+    <div class="step"><span>03</span><h3>Move With Support</h3><p>Coordinate with AMG so the licensing process connects cleanly to onboarding and field readiness.</p></div>
+  </section>
+</main>
+
+<footer>
+  <span>© 2026 Anointed Money Group. Licensing support by appointment.</span>
+  <a href="index.html">Return to AMG Home</a>
+</footer>
+
+<script>
+const GOOGLE_BOOKING_URL = "";
+const bookingCore = document.getElementById("bookingCore");
+const bookingPlaceholder = document.getElementById("bookingPlaceholder");
+if (GOOGLE_BOOKING_URL) {
+  bookingCore.classList.add("booking-ready");
+  bookingPlaceholder.remove();
+  const iframe = document.createElement("iframe");
+  iframe.src = GOOGLE_BOOKING_URL;
+  iframe.title = "AMG licensing appointment scheduler";
+  iframe.loading = "lazy";
+  bookingCore.appendChild(iframe);
+}
+</script>
+</body>
+</html>

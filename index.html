@@ -192,14 +192,14 @@ nav{
 .hero-media{position:relative}
 .hero-media img{display:block;width:100%;height:560px;object-fit:cover}
 .hero-card{
-  position:absolute;left:-3.4rem;bottom:2.6rem;z-index:3;
-  background:rgba(10,18,14,.72);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
-  border:1px solid rgba(212,175,55,.28);border-radius:.9rem;padding:1.2rem 1.5rem;
+  position:absolute;left:-3.4rem;bottom:2.6rem;z-index:3;max-width:19rem;
+  background:rgba(10,18,14,.78);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border:1px solid rgba(212,175,55,.28);border-radius:.9rem;padding:1.3rem 1.6rem;
   box-shadow:0 30px 60px -25px rgba(0,0,0,.7),inset 0 1px 1px rgba(255,255,255,.1);
 }
-.hero-card .num{font-family:'Bodoni Moda',serif;font-size:1.9rem;color:var(--gold-bright)}
-.hero-card .lbl{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(248,245,238,.6)}
-.hero-card svg{width:120px;height:34px;margin-top:.5rem}
+.hero-card .hc-eyebrow{font-size:.6rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem}
+.hero-card .hc-title{font-family:'Bodoni Moda',serif;font-weight:600;font-size:1.35rem;line-height:1.1;color:var(--gold-bright);margin-bottom:.6rem}
+.hero-card .lbl{font-size:.72rem;line-height:1.5;color:rgba(248,245,238,.62)}
 .scroll-hint{
   position:absolute;bottom:2.2rem;left:50%;transform:translateX(-50%);z-index:2;
   font-size:.62rem;letter-spacing:.32em;text-transform:uppercase;color:rgba(248,245,238,.4);
@@ -348,7 +348,8 @@ section{padding:8.5rem 6vw}
 .contact-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:5rem;align-items:start}
 .contact-info h2{font-size:clamp(2.2rem,4vw,3.4rem);margin:1.4rem 0 1.2rem}
 .contact-info p{font-weight:300;color:rgba(11,46,36,.62);max-width:26rem;margin-bottom:2.4rem}
-.c-line{display:flex;align-items:center;gap:1rem;padding:1rem 0;border-bottom:1px solid rgba(11,46,36,.1);font-size:.94rem;color:var(--emerald-deep)}
+.c-line{display:flex;align-items:center;gap:1rem;padding:1rem 0;border-bottom:1px solid rgba(11,46,36,.1);font-size:.94rem;color:var(--emerald-deep);text-decoration:none;transition:color .4s var(--ease-glide)}
+a.c-line:hover{color:var(--gold)}
 .c-line svg{width:18px;height:18px;stroke:var(--gold);stroke-width:1.2;fill:none;stroke-linecap:round;stroke-linejoin:round;flex:none}
 form.core{background:linear-gradient(165deg,#fff,#F0EFEA);padding:2.8rem;box-shadow:inset 0 1px 1px rgba(255,255,255,.9)}
 .f-row{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
@@ -459,9 +460,9 @@ body>footer{background:#050807;border-top:1px solid rgba(212,175,55,.15);padding
         <img src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?q=80&w=1200&auto=format&fit=crop" alt="Luxury city skyline at golden hour" loading="eager">
       </div></div>
       <div class="hero-card">
-        <div class="num" data-count="847" data-prefix="$" data-suffix="M+">$0</div>
-        <div class="lbl">Assets Positioned for Legacy</div>
-        <svg viewBox="0 0 120 34" fill="none"><path d="M2 30 C 18 26 26 18 40 20 S 66 10 80 12 106 4 118 3" stroke="url(#gg)" stroke-width="1.6" stroke-linecap="round"/><defs><linearGradient id="gg" x1="0" y1="0" x2="120" y2="0" gradientUnits="userSpaceOnUse"><stop stop-color="#8A6D14"/><stop offset="1" stop-color="#F4D680"/></linearGradient></defs></svg>
+        <div class="hc-eyebrow">Proud Partner</div>
+        <div class="hc-title">Integrity Marketing Group</div>
+        <div class="lbl">Backed by the nation's largest independent distributor of life &amp; supplemental health insurance</div>
       </div>
     </div>
   </div>
@@ -612,7 +613,8 @@ body>footer{background:#050807;border-top:1px solid rgba(212,175,55,.15);padding
       <p class="reveal" data-d="2">Tell us where you are. We'll show you what's possible, with discretion, clarity, and zero pressure.</p>
       <div class="reveal" data-d="3">
         <div class="c-line"><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>concierge@anointedmoneygroup.com</div>
-        <div class="c-line"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg>(800) 555-0147</div>
+        <a class="c-line" href="tel:+13018755812"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg>(301) 875-5812</a>
+        <a class="c-line" href="https://www.instagram.com/anointedmg" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>@anointedmg</a>
         <div class="c-line"><svg viewBox="0 0 24 24"><path d="M12 21s-6-5.2-6-10a6 6 0 1112 0c0 4.8-6 10-6 10z"/><circle cx="12" cy="11" r="2.2"/></svg>Serving families nationwide · By appointment</div>
       </div>
     </div>
@@ -654,7 +656,7 @@ body>footer{background:#050807;border-top:1px solid rgba(212,175,55,.15);padding
     </div>
     <div><h5>Services</h5><a href="#services">Wealth Creation</a><a href="#services">Asset Protection</a><a href="#services">Retirement Planning</a><a href="#services">Financial Education</a><a href="#services">Generational Legacy</a></div>
     <div><h5>Firm</h5><a href="#philosophy">Philosophy</a><a href="#approach">Our Process</a><a href="#contact">Consultations</a></div>
-    <div><h5>Connect</h5><a href="#contact">Email Us</a><a href="#contact">Book a Call</a><a href="#top">Instagram</a><a href="#top">LinkedIn</a></div>
+    <div><h5>Connect</h5><a href="tel:+13018755812">(301) 875-5812</a><a href="#contact">Book a Call</a><a href="https://www.instagram.com/anointedmg" target="_blank" rel="noopener">Instagram</a></div>
   </div>
   <div class="foot-bottom">
     <span>© 2026 Anointed Money Group. All rights reserved.</span>

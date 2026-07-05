@@ -224,14 +224,33 @@ nav{
 @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .brand-logo{
   display:flex;align-items:center;justify-content:center;flex:none;height:52px;
-  color:rgba(248,245,238,.55);
+  color:rgba(248,245,238,.68);
   font-family:'Bodoni Moda',serif;font-size:1.5rem;font-weight:600;letter-spacing:.02em;
-  white-space:nowrap;opacity:.7;transition:opacity .4s var(--ease-glide),color .4s var(--ease-glide);
+  white-space:nowrap;opacity:.82;transition:opacity .4s var(--ease-glide),color .4s var(--ease-glide);
 }
 .brand-logo:hover{opacity:1;color:var(--gold-bright)}
 .brand-logo img{height:52px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:.6;transition:opacity .4s var(--ease-glide)}
 .brand-logo img:hover{opacity:1}
 @media(prefers-reduced-motion:reduce){.marquee-track{animation:none}}
+
+.brokerage-logos{
+  background:linear-gradient(180deg,#0A2119 0%,#07120D 100%);
+  padding:3rem 0 3.4rem;
+  border-bottom:1px solid rgba(212,175,55,.14);
+}
+.brokerage-logos .marquee-label{color:rgba(244,231,195,.48)}
+.brokerage-logos .marquee-track{gap:1.2rem;animation-duration:46s}
+.network-logo{
+  flex:none;width:186px;height:106px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:12px;padding:.55rem;
+  background:rgba(255,255,255,.055);
+  border:1px solid rgba(212,175,55,.18);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 18px 40px -28px rgba(0,0,0,.75);
+  transition:transform .45s var(--ease-glide),border-color .45s var(--ease-glide),background .45s var(--ease-glide);
+}
+.network-logo:hover{transform:translateY(-3px);border-color:rgba(232,199,102,.42);background:rgba(255,255,255,.085)}
+.network-logo img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;display:block}
 
 /* ── stats strip ────────────────────────────────── */
 .stats{background:linear-gradient(120deg,#0B2E24,#0D3A2C);border-top:1px solid rgba(212,175,55,.2);border-bottom:1px solid rgba(212,175,55,.2);padding:4.5rem 6vw}
@@ -494,31 +513,37 @@ body>footer{background:#050807;border-top:1px solid rgba(212,175,55,.15);padding
   <div class="scroll-hint">Scroll</div>
 </header>
 
-<!-- ══ BROKERAGE MARQUEE ══
-     To use real logos: replace each <span class="brand-logo">Name</span>
-     with <div class="brand-logo"><img src="assets/brokerages/FILE.png" alt="Name"></div>
-     Keep BOTH copies of the track identical (2nd is aria-hidden) so the loop stays seamless. -->
+<!-- ══ CARRIER MARQUEE ══ -->
 <div class="marquee">
-  <div class="marquee-label">Brokerages Partnered With AMG</div>
+  <div class="marquee-label">Carrier Partners</div>
   <div class="marquee-viewport">
     <div class="marquee-track" id="brokerTrack">
-      <span class="brand-logo">Americo</span>
+      <span class="brand-logo">AuguStar Financial</span>
+      <span class="brand-logo">Athene</span>
+      <span class="brand-logo">North American</span>
+      <span class="brand-logo">Fidelity &amp; Guaranty Life</span>
+      <span class="brand-logo">Pacific Life</span>
+      <span class="brand-logo">The Standard</span>
+      <span class="brand-logo">Nationwide</span>
       <span class="brand-logo">Mutual of Omaha</span>
-      <span class="brand-logo">Foresters</span>
-      <span class="brand-logo">Transamerica</span>
-      <span class="brand-logo">American Amicable</span>
-      <span class="brand-logo">Prosperity Life</span>
-      <span class="brand-logo">SBLI</span>
-      <span class="brand-logo">Corebridge</span>
-      <!-- duplicate for seamless loop -->
-      <span class="brand-logo" aria-hidden="true">Americo</span>
+      <span class="brand-logo">Foresters Financial</span>
+      <span class="brand-logo">National Life Group</span>
+      <span class="brand-logo">American National (ANICO)</span>
+      <span class="brand-logo">SILAC</span>
+      <span class="brand-logo">AIG</span>
+      <span class="brand-logo" aria-hidden="true">AuguStar Financial</span>
+      <span class="brand-logo" aria-hidden="true">Athene</span>
+      <span class="brand-logo" aria-hidden="true">North American</span>
+      <span class="brand-logo" aria-hidden="true">Fidelity &amp; Guaranty Life</span>
+      <span class="brand-logo" aria-hidden="true">Pacific Life</span>
+      <span class="brand-logo" aria-hidden="true">The Standard</span>
+      <span class="brand-logo" aria-hidden="true">Nationwide</span>
       <span class="brand-logo" aria-hidden="true">Mutual of Omaha</span>
-      <span class="brand-logo" aria-hidden="true">Foresters</span>
-      <span class="brand-logo" aria-hidden="true">Transamerica</span>
-      <span class="brand-logo" aria-hidden="true">American Amicable</span>
-      <span class="brand-logo" aria-hidden="true">Prosperity Life</span>
-      <span class="brand-logo" aria-hidden="true">SBLI</span>
-      <span class="brand-logo" aria-hidden="true">Corebridge</span>
+      <span class="brand-logo" aria-hidden="true">Foresters Financial</span>
+      <span class="brand-logo" aria-hidden="true">National Life Group</span>
+      <span class="brand-logo" aria-hidden="true">American National (ANICO)</span>
+      <span class="brand-logo" aria-hidden="true">SILAC</span>
+      <span class="brand-logo" aria-hidden="true">AIG</span>
     </div>
   </div>
 </div>
@@ -530,6 +555,37 @@ body>footer{background:#050807;border-top:1px solid rgba(212,175,55,.15);padding
     <div class="stat reveal" data-d="1"><div class="num" data-count="2200" data-suffix="+">0</div><div class="lbl">Submitted Applications</div></div>
     <div class="stat reveal" data-d="2"><div class="num" data-count="38">0</div><div class="lbl">States Licensed</div></div>
     <div class="stat reveal" data-d="3"><div class="num" data-count="98" data-suffix="%">0</div><div class="lbl">Client Retention</div></div>
+  </div>
+</div>
+
+<!-- ══ BROKER LOGO MARQUEE ══ -->
+<div class="marquee brokerage-logos">
+  <div class="marquee-label">Brokerage Network</div>
+  <div class="marquee-viewport">
+    <div class="marquee-track">
+      <div class="network-logo"><img src="assets/brokers/amg-mark.webp" alt="AMG"></div>
+      <div class="network-logo"><img src="assets/brokers/cfc.webp" alt="CFC"></div>
+      <div class="network-logo"><img src="assets/brokers/lww-financial-services.webp" alt="LWW Financial Services"></div>
+      <div class="network-logo"><img src="assets/brokers/built-for-redemption.webp" alt="Built for Redemption"></div>
+      <div class="network-logo"><img src="assets/brokers/standard-financial-group.webp" alt="Standard Financial Group"></div>
+      <div class="network-logo"><img src="assets/brokers/crowned-wealth-group.webp" alt="Crowned Wealth Group"></div>
+      <div class="network-logo"><img src="assets/brokers/wealth-by-serving.webp" alt="Wealth by Serving"></div>
+      <div class="network-logo"><img src="assets/brokers/summit-financial-solutions.webp" alt="Summit Financial Solutions"></div>
+      <div class="network-logo"><img src="assets/brokers/agape-financial-group.webp" alt="Agape Financial Group"></div>
+      <div class="network-logo"><img src="assets/brokers/valor.webp" alt="Valor"></div>
+      <div class="network-logo"><img src="assets/brokers/made-to-shine.webp" alt="Made To Shine"></div>
+      <div class="network-logo" aria-hidden="true"><img src="assets/brokers/amg-mark.webp" alt=""></div>
+      <div class="network-logo" aria-hidden="true"><img src="assets/brokers/cfc.webp" alt=""></div>
+      <div class="network-logo" aria-hidden="true"><img src="assets/brokers/lww-financial-services.webp" alt=""></div>
+      <div class="network-logo" aria-hidden="true"><img src="assets/brokers/built-for-redemption.webp" alt=""></div>
+      <div class="network-logo" aria-hidden="true"><img src="assets/brokers/standard-financial-group.webp" alt=""></div>
+      <div class="network-logo" aria-hidden="true"><img src="assets/brokers/crowned-wealth-group.webp" alt=""></div>
+      <div class="network-logo" aria-hidden="true"><img src="assets/brokers/wealth-by-serving.webp" alt=""></div>
+      <div class="network-logo" aria-hidden="true"><img src="assets/brokers/summit-financial-solutions.webp" alt=""></div>
+      <div class="network-logo" aria-hidden="true"><img src="assets/brokers/agape-financial-group.webp" alt=""></div>
+      <div class="network-logo" aria-hidden="true"><img src="assets/brokers/valor.webp" alt=""></div>
+      <div class="network-logo" aria-hidden="true"><img src="assets/brokers/made-to-shine.webp" alt=""></div>
+    </div>
   </div>
 </div>
 

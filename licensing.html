@@ -104,7 +104,7 @@ h1{font-size:clamp(3rem,6vw,5.5rem);margin:1.5rem 0 1.4rem;color:var(--white)}
     radial-gradient(640px 320px at 50% 0%,rgba(201,162,39,.12),transparent 64%),
     linear-gradient(155deg,rgba(12,42,32,.92),rgba(4,8,6,.98));
 }
-.booking-ready iframe{display:block;width:100%;height:600px;border:0;background:#fff}
+.booking-ready iframe{display:block;width:100%;height:680px;border:0;background:#fff}
 .booking-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:2rem}
 .placeholder-card{
   width:min(100%,31rem);border-radius:16px;padding:2rem;text-align:center;
@@ -214,16 +214,15 @@ footer a{color:var(--gold-bright);text-decoration:none}
       <h1 class="serif">Get licensed with <i class="gold-text">clarity</i>.</h1>
       <p class="lede">Book a focused appointment with AMG's licensing coordinator to confirm your next step, review requirements, and move toward production with confidence.</p>
       <div style="display:flex;gap:1rem;flex-wrap:wrap">
-        <a href="https://calendar.app.google/XhPjbsHGCxyfSTri9" target="_blank" rel="noopener" class="btn btn-gold">Book Appointment
+        <a href="#booking" class="btn btn-gold">Book Appointment
           <span class="orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
         </a>
-        <a href="mailto:Zamilah1@gmail.com?subject=Licensing%20Appointment" class="btn btn-ghost">Email Coordinator
-          <span class="orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg></span>
+        <a href="tel:+12238830494" class="btn btn-ghost">Call Coordinator
+          <span class="orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg></span>
         </a>
       </div>
       <div class="contact-strip">
-        <a href="mailto:Zamilah1@gmail.com"><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>Zamilah · Zamilah1@gmail.com</a>
-        <a href="tel:+14437833180"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg>Zamilah · (443) 783-3180</a>
+        <a href="tel:+12238830494"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg>Natasha Talley · (223) 883-0494</a>
       </div>
       <div class="mini-grid">
         <div class="mini"><strong>01</strong><span>Requirements</span></div>
@@ -243,17 +242,17 @@ footer a{color:var(--gold-bright);text-decoration:none}
             <div class="preview-body">
               <div class="preview-main">
                 <h2>Licensing Coordinator Appointment</h2>
-                <p>Meet with Zamilah to review licensing requirements, appointment timing, and your next steps with AMG.</p>
+                <p>Meet with Natasha Talley to review licensing requirements, appointment timing, and your next steps with AMG.</p>
                 <div class="preview-meta">
-                  <span><strong>Host:</strong> Zamilah</span>
+                  <span><strong>Host:</strong> Natasha Talley</span>
                   <span><strong>Format:</strong> Google appointment scheduler</span>
-                  <span><strong>Contact:</strong> (443) 783-3180</span>
+                  <span><strong>Contact:</strong> (223) 883-0494</span>
                 </div>
                 <div class="preview-actions">
                   <a class="btn btn-gold" href="https://calendar.app.google/XhPjbsHGCxyfSTri9" target="_blank" rel="noopener">View Times on Google
                     <span class="orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
                   </a>
-                  <a class="btn btn-ghost" href="mailto:Zamilah1@gmail.com?subject=Licensing%20Appointment">Email First</a>
+                  <a class="btn btn-ghost" href="tel:+12238830494">Call Natasha</a>
                 </div>
                 <p class="preview-note">The live scheduler opens in a secure Google Calendar tab.</p>
               </div>
@@ -285,7 +284,7 @@ footer a{color:var(--gold-bright);text-decoration:none}
 </footer>
 
 <script>
-const GOOGLE_BOOKING_URL = "";
+const GOOGLE_BOOKING_URL = "https://calendar.google.com/calendar/appointments/schedules/AcZssZ1v_FkW7TiP50nAr0hlQqUR3ee4pfWKVS9Cpv84oEmnDajWbX69iFkPGm9CjoS8bi3V9IIDbQAV?gv=true";
 const bookingCore = document.getElementById("bookingCore");
 const bookingPlaceholder = document.getElementById("bookingPlaceholder");
 if (GOOGLE_BOOKING_URL) {

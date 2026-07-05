@@ -210,22 +210,22 @@ nav{
 
 /* ── brokerage marquee ──────────────────────────── */
 .marquee{
-  position:relative;overflow:hidden;padding:2.4rem 0;
+  position:relative;overflow:hidden;padding:1.65rem 0;
   background:linear-gradient(180deg,#060A08,#081711);
   border-top:1px solid rgba(212,175,55,.14);border-bottom:1px solid rgba(212,175,55,.14);
 }
 .marquee-label{
-  text-align:center;font-size:.62rem;letter-spacing:.3em;text-transform:uppercase;
-  color:rgba(248,245,238,.42);margin-bottom:1.8rem;
+  text-align:center;font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;
+  color:rgba(248,245,238,.42);margin-bottom:1.05rem;
 }
 .marquee-viewport{position:relative;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
-.marquee-track{display:flex;width:max-content;gap:4.5rem;animation:marquee 38s linear infinite}
+.marquee-track{display:flex;width:max-content;gap:3.25rem;animation:marquee 38s linear infinite}
 .marquee:hover .marquee-track{animation-play-state:paused}
 @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .brand-logo{
-  display:flex;align-items:center;justify-content:center;flex:none;height:52px;
+  display:flex;align-items:center;justify-content:center;flex:none;height:38px;
   color:rgba(248,245,238,.68);
-  font-family:'Bodoni Moda',serif;font-size:1.5rem;font-weight:600;letter-spacing:.02em;
+  font-family:'Bodoni Moda',serif;font-size:1.22rem;font-weight:600;letter-spacing:.02em;
   white-space:nowrap;opacity:.82;transition:opacity .4s var(--ease-glide),color .4s var(--ease-glide);
 }
 .brand-logo:hover{opacity:1;color:var(--gold-bright)}
@@ -235,15 +235,15 @@ nav{
 
 .brokerage-logos{
   background:linear-gradient(180deg,#0A2119 0%,#07120D 100%);
-  padding:3rem 0 3.4rem;
+  padding:2.15rem 0 2.45rem;
   border-bottom:1px solid rgba(212,175,55,.14);
 }
 .brokerage-logos .marquee-label{color:rgba(244,231,195,.48)}
-.brokerage-logos .marquee-track{gap:1.2rem;animation-duration:46s}
+.brokerage-logos .marquee-track{gap:.85rem;animation-duration:46s}
 .network-logo{
-  flex:none;width:186px;height:106px;
+  flex:none;width:152px;height:82px;
   display:flex;align-items:center;justify-content:center;
-  border-radius:12px;padding:.55rem;
+  border-radius:10px;padding:.38rem;
   background:rgba(255,255,255,.055);
   border:1px solid rgba(212,175,55,.18);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 18px 40px -28px rgba(0,0,0,.75);

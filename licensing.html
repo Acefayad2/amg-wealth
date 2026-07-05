@@ -123,6 +123,45 @@ h1{font-size:clamp(3rem,6vw,5.5rem);margin:1.5rem 0 1.4rem;color:var(--white)}
   font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;
   color:rgba(244,231,195,.5);
 }
+.booking-preview{
+  width:min(100%,34rem);
+  border-radius:18px;
+  overflow:hidden;
+  background:#f8fafc;
+  color:#172033;
+  text-align:left;
+  box-shadow:0 34px 74px -36px rgba(0,0,0,.82);
+}
+.preview-top{
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  padding:1rem 1.1rem;
+  border-bottom:1px solid #e7ecf4;
+  background:#fff;
+}
+.google-lock{display:flex;align-items:center;gap:.6rem;font-size:.78rem;font-weight:600;color:#647083}
+.google-dot{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:#eef4ff;color:#1a73e8;font-weight:700}
+.preview-badge{font-size:.64rem;letter-spacing:.18em;text-transform:uppercase;color:#8A6D14;background:#fff6d8;border:1px solid #ead38a;border-radius:999px;padding:.32rem .55rem}
+.preview-body{display:grid;grid-template-columns:1fr .95fr;gap:1.2rem;padding:1.25rem}
+.preview-main h2{font-family:'Bodoni Moda',serif;font-size:1.8rem;line-height:1.12;color:#14251f;margin-bottom:.7rem}
+.preview-main p{font-size:.9rem;color:#667085;margin-bottom:1rem}
+.preview-meta{display:flex;flex-direction:column;gap:.55rem;margin:1rem 0 1.15rem}
+.preview-meta span{font-size:.82rem;color:#4c596b}
+.preview-meta strong{color:#16281f}
+.time-card{
+  border:1px solid #e7ecf4;border-radius:14px;background:#fff;padding:1rem;
+  box-shadow:0 18px 36px -30px rgba(20,37,31,.3);
+}
+.time-card h3{font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;color:#687587;margin-bottom:.75rem}
+.time-list{display:grid;grid-template-columns:1fr;gap:.55rem}
+.time-list span{
+  display:flex;align-items:center;justify-content:center;min-height:38px;
+  border:1px solid #d9e2ef;border-radius:9px;background:#f8fbff;
+  color:#1a73e8;font-size:.86rem;font-weight:600;
+}
+.preview-actions{display:flex;gap:.7rem;align-items:center;flex-wrap:wrap;margin-top:1rem}
+.preview-actions .btn{font-size:.86rem}
+.preview-actions .btn-ghost{color:#172033;box-shadow:inset 0 0 0 1px #d7deea;background:#fff}
+.preview-note{margin-top:.75rem;font-size:.76rem;color:#7a8494}
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:3rem}
 .step{border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:1.25rem;background:rgba(255,255,255,.04)}
 .step span{font-family:'Bodoni Moda',serif;font-size:2rem;color:transparent;-webkit-text-stroke:1px var(--gold)}
@@ -142,6 +181,8 @@ footer a{color:var(--gold-bright);text-decoration:none}
   .page{padding:7.8rem 1.1rem 4rem}
   .mini-grid,.steps{grid-template-columns:1fr}
   .booking-core{min-height:560px}
+  .booking-placeholder{padding:1rem}
+  .preview-body{grid-template-columns:1fr;padding:1rem}
   footer{flex-direction:column}
 }
 </style>
@@ -194,16 +235,37 @@ footer a{color:var(--gold-bright);text-decoration:none}
     <section class="booking-shell" id="booking" aria-label="Licensing appointment booking preview">
       <div class="booking-core" id="bookingCore">
         <div class="booking-placeholder" id="bookingPlaceholder">
-          <div class="placeholder-card">
-            <div class="seal">
-              <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16M9 14h2M13 14h2"/></svg>
+          <div class="booking-preview">
+            <div class="preview-top">
+              <div class="google-lock"><span class="google-dot">G</span>Google Calendar booking</div>
+              <span class="preview-badge">Preview</span>
             </div>
-            <h2>Book with the licensing coordinator</h2>
-            <p>Preview available appointment times through AMG's Google Calendar scheduler, then reserve the slot that fits your licensing next step.</p>
-            <a class="btn btn-gold" href="https://calendar.app.google/XhPjbsHGCxyfSTri9" target="_blank" rel="noopener">Open Google Scheduler
-              <span class="orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
-            </a>
-            <p class="subnote">Opens secure Google booking</p>
+            <div class="preview-body">
+              <div class="preview-main">
+                <h2>Licensing Coordinator Appointment</h2>
+                <p>Meet with Zamilah to review licensing requirements, appointment timing, and your next steps with AMG.</p>
+                <div class="preview-meta">
+                  <span><strong>Host:</strong> Zamilah</span>
+                  <span><strong>Format:</strong> Google appointment scheduler</span>
+                  <span><strong>Contact:</strong> (443) 783-3180</span>
+                </div>
+                <div class="preview-actions">
+                  <a class="btn btn-gold" href="https://calendar.app.google/XhPjbsHGCxyfSTri9" target="_blank" rel="noopener">View Times on Google
+                    <span class="orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+                  </a>
+                  <a class="btn btn-ghost" href="mailto:Zamilah1@gmail.com?subject=Licensing%20Appointment">Email First</a>
+                </div>
+                <p class="preview-note">The live scheduler opens in a secure Google Calendar tab.</p>
+              </div>
+              <div class="time-card">
+                <h3>Available Times</h3>
+                <div class="time-list" aria-hidden="true">
+                  <span>Morning slots</span>
+                  <span>Afternoon slots</span>
+                  <span>Evening slots</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

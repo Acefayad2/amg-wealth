@@ -1,2 +1,5 @@
 .impeccable/
 .DS_Store
+
+# Local Netlify folder
+.netlify

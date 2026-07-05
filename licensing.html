@@ -118,6 +118,11 @@ h1{font-size:clamp(3rem,6vw,5.5rem);margin:1.5rem 0 1.4rem;color:var(--white)}
 .placeholder-card .seal svg{width:27px;height:27px;stroke:currentColor;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
 .placeholder-card h2{font-family:'Bodoni Moda',serif;font-size:1.8rem;line-height:1.16;color:#fff;margin-bottom:.8rem}
 .placeholder-card p{font-weight:300;color:rgba(248,245,238,.66);margin-bottom:1.5rem}
+.placeholder-card .subnote{
+  margin-top:1rem;margin-bottom:0;
+  font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;
+  color:rgba(244,231,195,.5);
+}
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:3rem}
 .step{border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:1.25rem;background:rgba(255,255,255,.04)}
 .step span{font-family:'Bodoni Moda',serif;font-size:2rem;color:transparent;-webkit-text-stroke:1px var(--gold)}
@@ -168,7 +173,7 @@ footer a{color:var(--gold-bright);text-decoration:none}
       <h1 class="serif">Get licensed with <i class="gold-text">clarity</i>.</h1>
       <p class="lede">Book a focused appointment with AMG's licensing coordinator to confirm your next step, review requirements, and move toward production with confidence.</p>
       <div style="display:flex;gap:1rem;flex-wrap:wrap">
-        <a href="#booking" class="btn btn-gold">Preview Appointment Times
+        <a href="https://calendar.app.google/XhPjbsHGCxyfSTri9" target="_blank" rel="noopener" class="btn btn-gold">Book Appointment
           <span class="orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
         </a>
         <a href="mailto:Zamilah1@gmail.com?subject=Licensing%20Appointment" class="btn btn-ghost">Email Coordinator
@@ -193,11 +198,12 @@ footer a{color:var(--gold-bright);text-decoration:none}
             <div class="seal">
               <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16M9 14h2M13 14h2"/></svg>
             </div>
-            <h2>Google appointment preview ready</h2>
-            <p>The licensing page is set up for a Google Calendar appointment scheduler. Send the coordinator's Google booking link and it will appear here as the live booking preview.</p>
-            <a class="btn btn-gold" href="mailto:Zamilah1@gmail.com?subject=Licensing%20Appointment">Request an Appointment
+            <h2>Book with the licensing coordinator</h2>
+            <p>Preview available appointment times through AMG's Google Calendar scheduler, then reserve the slot that fits your licensing next step.</p>
+            <a class="btn btn-gold" href="https://calendar.app.google/XhPjbsHGCxyfSTri9" target="_blank" rel="noopener">Open Google Scheduler
               <span class="orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
             </a>
+            <p class="subnote">Opens secure Google booking</p>
           </div>
         </div>
       </div>

@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AMG — Anointed Money Group | Private Wealth &amp; Legacy Planning</title>
+<meta name="description" content="Anointed Money Group builds generational wealth through asset protection, retirement planning, and financial education. Your legacy, by design.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,400;1,6..96,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230B2E24'/%3E%3Ctext x='16' y='22' font-family='serif' font-size='15' fill='%23D4AF37' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --ink:#060A08;
+  --emerald-deep:#0B2E24;
+  --emerald:#12483A;
+  --emerald-soft:#1E6B52;
+  --gold:#C9A227;
+  --gold-bright:#E8C766;
+  --gold-pale:#F4E7C3;
+  --cream:#F1F0EC;
+  --cream-deep:#E6E5E0;
+  --white:#FFFFFF;
+  --ease-glide:cubic-bezier(0.32,0.72,0,1);
+  --ease-out-soft:cubic-bezier(0.22,1,0.36,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Jost',sans-serif;
+  font-weight:400;
+  background:var(--ink);
+  color:var(--cream);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+::selection{background:var(--gold);color:var(--ink)}
+
+/* ── film grain overlay ─────────────────────────── */
+.grain{
+  position:fixed;inset:0;z-index:60;pointer-events:none;opacity:.035;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ── typography ─────────────────────────────────── */
+.serif{font-family:'Bodoni Moda',serif;font-weight:600;line-height:1.06;letter-spacing:-0.01em}
+.serif i{font-style:normal;font-weight:600}
+.gold-text{
+  background:linear-gradient(105deg,#9C7A1C 0%,#D9B44A 45%,#EED9A0 55%,#B8901F 100%);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:.6rem;
+  border:1px solid rgba(212,175,55,.35);border-radius:8px;
+  padding:.42rem 1.1rem;font-size:10px;font-weight:500;
+  letter-spacing:.24em;text-transform:uppercase;color:var(--gold-bright);
+  background:rgba(212,175,55,.06);
+}
+.eyebrow::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--gold)}
+.light .eyebrow{color:#8A6D14;border-color:rgba(154,122,28,.3);background:rgba(201,162,39,.07)}
+
+/* ── scroll reveal ──────────────────────────────── */
+.reveal{opacity:0;transform:translateY(56px);filter:blur(10px);transition:opacity 1s var(--ease-out-soft),transform 1s var(--ease-out-soft),filter 1s var(--ease-out-soft)}
+.reveal.in{opacity:1;transform:translateY(0);filter:blur(0)}
+.reveal[data-d="1"]{transition-delay:.1s}.reveal[data-d="2"]{transition-delay:.2s}
+.reveal[data-d="3"]{transition-delay:.3s}.reveal[data-d="4"]{transition-delay:.4s}
+
+/* ── buttons ────────────────────────────────────── */
+.btn{
+  display:inline-flex;align-items:center;gap:.85rem;
+  border-radius:12px;padding:.55rem .6rem .55rem 1.7rem;
+  font-family:'Jost',sans-serif;font-size:.92rem;font-weight:500;
+  text-decoration:none;cursor:pointer;border:none;
+  transition:transform .5s var(--ease-glide),box-shadow .5s var(--ease-glide),background .5s var(--ease-glide);
+}
+.btn:active{transform:scale(.98)}
+.btn .orb{
+  width:38px;height:38px;border-radius:8px;flex:none;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .5s var(--ease-glide);
+}
+.btn:hover .orb{transform:translate(3px,-1px) scale(1.06)}
+.btn svg{width:15px;height:15px}
+.btn-gold{
+  background:linear-gradient(120deg,#B8901F,#E0BC55 55%,#C9A227);
+  color:#1A1405;box-shadow:0 12px 28px -14px rgba(4,8,6,.55),inset 0 1px 1px rgba(255,255,255,.4);
+}
+.btn-gold:hover{box-shadow:0 18px 36px -14px rgba(4,8,6,.6),inset 0 1px 1px rgba(255,255,255,.4)}
+.btn-gold .orb{background:rgba(10,8,2,.14)}
+.btn-ghost{background:rgba(255,255,255,.05);color:var(--cream);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
+.btn-ghost:hover{background:rgba(255,255,255,.09)}
+.btn-ghost .orb{background:rgba(255,255,255,.08)}
+.btn-dark{background:var(--emerald-deep);color:var(--gold-pale);box-shadow:inset 0 1px 1px rgba(255,255,255,.12),0 12px 30px -12px rgba(11,46,36,.55)}
+.btn-dark .orb{background:rgba(212,175,55,.16)}
+
+/* ── nav ────────────────────────────────────────── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;justify-content:center;padding-top:1.4rem;
+  pointer-events:none;
+}
+.nav-pill{
+  pointer-events:auto;
+  display:flex;align-items:center;gap:2.2rem;
+  background:rgba(8,14,11,.55);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border:1px solid rgba(255,255,255,.08);border-radius:16px;
+  padding:.55rem .6rem .55rem 1.5rem;
+  box-shadow:0 20px 50px -20px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.07);
+  transition:transform .6s var(--ease-glide),background .6s var(--ease-glide);
+}
+.brand{display:flex;align-items:center;gap:.7rem;text-decoration:none}
+.monogram{
+  width:34px;height:34px;border-radius:10px;flex:none;
+  background:linear-gradient(140deg,#0F3D30,#0B2E24);
+  border:1px solid rgba(212,175,55,.4);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Bodoni Moda',serif;font-size:1rem;color:var(--gold-bright);
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.1);
+}
+.brand-name{font-size:.82rem;font-weight:600;letter-spacing:.18em;color:var(--cream)}
+.brand-name small{display:block;font-size:8px;font-weight:400;letter-spacing:.3em;color:var(--gold);text-transform:uppercase}
+.nav-links{display:flex;gap:1.8rem;list-style:none}
+.nav-links a{
+  font-size:.82rem;font-weight:500;color:rgba(248,245,238,.72);text-decoration:none;
+  transition:color .4s var(--ease-glide);
+}
+.nav-links a:hover{color:var(--gold-bright)}
+.nav-cta{font-size:.8rem;padding:.45rem .5rem .45rem 1.2rem}
+.nav-cta .orb{width:30px;height:30px}
+.burger{
+  display:none;pointer-events:auto;width:44px;height:44px;border-radius:12px;border:none;cursor:pointer;
+  background:rgba(8,14,11,.6);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);
+  position:relative;
+}
+.burger span{
+  position:absolute;left:13px;right:13px;height:1.5px;background:var(--gold-pale);border-radius:2px;
+  transition:transform .55s var(--ease-glide),top .55s var(--ease-glide);
+}
+.burger span:nth-child(1){top:18px}
+.burger span:nth-child(2){top:25px}
+.burger.open span:nth-child(1){top:21px;transform:rotate(45deg)}
+.burger.open span:nth-child(2){top:21px;transform:rotate(-45deg)}
+.menu-overlay{
+  position:fixed;inset:0;z-index:90;background:rgba(5,9,7,.88);
+  backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);
+  display:flex;flex-direction:column;justify-content:center;padding:0 8vw;
+  opacity:0;visibility:hidden;transition:opacity .6s var(--ease-glide),visibility .6s;
+}
+.menu-overlay.open{opacity:1;visibility:visible}
+.menu-overlay a{
+  font-family:'Bodoni Moda',serif;font-size:clamp(2.2rem,7vw,3.6rem);color:var(--cream);
+  text-decoration:none;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.07);
+  opacity:0;transform:translateY(48px);
+  transition:opacity .7s var(--ease-out-soft),transform .7s var(--ease-out-soft),color .4s;
+}
+.menu-overlay a:hover{color:var(--gold-bright)}
+.menu-overlay.open a{opacity:1;transform:translateY(0)}
+.menu-overlay.open a:nth-child(1){transition-delay:.1s}
+.menu-overlay.open a:nth-child(2){transition-delay:.16s}
+.menu-overlay.open a:nth-child(3){transition-delay:.22s}
+.menu-overlay.open a:nth-child(4){transition-delay:.28s}
+.menu-overlay.open a:nth-child(5){transition-delay:.34s}
+
+/* ── shells (double-bezel) ──────────────────────── */
+.shell{
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);
+  border-radius:1.1rem;padding:.45rem;
+  box-shadow:0 40px 80px -40px rgba(0,0,0,.6);
+}
+.shell>.core{
+  border-radius:calc(1.1rem - .45rem);overflow:hidden;position:relative;
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.12);
+}
+.light .shell{background:rgba(11,46,36,.05);border-color:rgba(11,46,36,.1);box-shadow:0 40px 80px -50px rgba(11,46,36,.35)}
+
+/* ── hero ───────────────────────────────────────── */
+.hero{
+  position:relative;min-height:100dvh;display:flex;align-items:center;
+  padding:9rem 6vw 6rem;overflow:hidden;
+  background:
+    radial-gradient(1100px 700px at 82% 8%,rgba(30,107,82,.34),transparent 60%),
+    radial-gradient(900px 600px at 8% 95%,rgba(201,162,39,.13),transparent 55%),
+    linear-gradient(175deg,#07120D 0%,#060A08 55%,#0A1F18 100%);
+}
+.hero::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='800' viewBox='0 0 1200 800'%3E%3Cg fill='none' stroke='%23D4AF37' stroke-opacity='.05'%3E%3Cpath d='M0 620 C 250 480 420 700 640 540 S 1000 640 1200 460'/%3E%3Cpath d='M0 690 C 280 560 460 760 700 610 S 1040 700 1200 540'/%3E%3C/g%3E%3C/svg%3E") center/cover no-repeat;
+}
+.hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:1.15fr .85fr;gap:5rem;align-items:center;max-width:1340px;margin:0 auto;width:100%}
+.hero h1{font-size:clamp(3rem,6.4vw,5.6rem);margin:1.6rem 0 1.8rem;color:var(--white)}
+.hero p.lede{font-size:1.08rem;font-weight:300;color:rgba(248,245,238,.72);max-width:33rem;margin-bottom:2.6rem}
+.hero-ctas{display:flex;gap:1rem;flex-wrap:wrap;align-items:center}
+.hero-media{position:relative}
+.hero-media img{display:block;width:100%;height:560px;object-fit:cover}
+.hero-card{
+  position:absolute;left:-3.4rem;bottom:2.6rem;z-index:3;
+  background:rgba(10,18,14,.72);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border:1px solid rgba(212,175,55,.28);border-radius:.9rem;padding:1.2rem 1.5rem;
+  box-shadow:0 30px 60px -25px rgba(0,0,0,.7),inset 0 1px 1px rgba(255,255,255,.1);
+}
+.hero-card .num{font-family:'Bodoni Moda',serif;font-size:1.9rem;color:var(--gold-bright)}
+.hero-card .lbl{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(248,245,238,.6)}
+.hero-card svg{width:120px;height:34px;margin-top:.5rem}
+.scroll-hint{
+  position:absolute;bottom:2.2rem;left:50%;transform:translateX(-50%);z-index:2;
+  font-size:.62rem;letter-spacing:.32em;text-transform:uppercase;color:rgba(248,245,238,.4);
+  display:flex;flex-direction:column;align-items:center;gap:.7rem;
+}
+.scroll-hint::after{content:'';width:1px;height:44px;background:linear-gradient(to bottom,var(--gold),transparent);animation:drip 2.4s var(--ease-glide) infinite}
+@keyframes drip{0%{transform:scaleY(0);transform-origin:top}55%{transform:scaleY(1);transform-origin:top}56%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* ── stats strip ────────────────────────────────── */
+.stats{background:linear-gradient(120deg,#0B2E24,#0D3A2C);border-top:1px solid rgba(212,175,55,.2);border-bottom:1px solid rgba(212,175,55,.2);padding:4.5rem 6vw}
+.stats-grid{max-width:1340px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:3rem}
+.stat{text-align:center;position:relative}
+.stat+.stat::before{content:'';position:absolute;left:-1.5rem;top:12%;bottom:12%;width:1px;background:rgba(212,175,55,.18)}
+.stat .num{font-family:'Bodoni Moda',serif;font-size:clamp(2.4rem,4vw,3.4rem);color:var(--gold-bright)}
+.stat .lbl{font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(248,245,238,.55);margin-top:.4rem}
+
+/* ── sections ───────────────────────────────────── */
+section{padding:8.5rem 6vw}
+.wrap{max-width:1340px;margin:0 auto}
+.sec-head{max-width:52rem;margin-bottom:4.5rem}
+.sec-head h2{font-size:clamp(2.4rem,4.6vw,4rem);margin:1.4rem 0 1.2rem}
+.sec-head p{font-weight:300;color:rgba(248,245,238,.66);font-size:1.05rem;max-width:38rem}
+
+/* light (cream/marble) sections */
+.light{
+  background:
+    radial-gradient(900px 500px at 90% 0%,rgba(201,162,39,.06),transparent 55%),
+    linear-gradient(160deg,#F4F3EF,#E9E8E3);
+  color:var(--emerald-deep);
+  position:relative;
+}
+.light::before{ /* marble veins */
+  content:'';position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1400' height='900' viewBox='0 0 1400 900'%3E%3Cg fill='none' stroke-linecap='round'%3E%3Cpath d='M-50 180 C 300 120 480 320 820 240 S 1250 140 1500 260' stroke='%230B2E24' stroke-opacity='.035' stroke-width='1.4'/%3E%3Cpath d='M-50 520 C 260 440 560 640 900 540 S 1300 460 1500 580' stroke='%23C9A227' stroke-opacity='.06' stroke-width='1'/%3E%3Cpath d='M-50 780 C 340 700 540 880 880 790 S 1280 720 1500 830' stroke='%230B2E24' stroke-opacity='.028' stroke-width='1.2'/%3E%3C/g%3E%3C/svg%3E") center/cover no-repeat;
+}
+.light .sec-head p{color:rgba(11,46,36,.62)}
+.light h2,.light h3{color:var(--emerald-deep)}
+
+/* ── bento (services) ───────────────────────────── */
+.bento{display:grid;grid-template-columns:repeat(12,1fr);gap:1.4rem}
+.bcard{
+  position:relative;border-radius:1rem;padding:.4rem;
+  background:rgba(255,255,255,.55);border:1px solid rgba(11,46,36,.09);
+  box-shadow:0 30px 60px -45px rgba(11,46,36,.4);
+  transition:transform .7s var(--ease-glide),box-shadow .7s var(--ease-glide);
+}
+.bcard:hover{transform:translateY(-6px);box-shadow:0 42px 70px -42px rgba(11,46,36,.5)}
+.bcard .core{
+  height:100%;border-radius:calc(1rem - .4rem);padding:2.2rem;
+  background:linear-gradient(165deg,#FFFFFF,#F0EFEA);
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.9);
+  display:flex;flex-direction:column;position:relative;overflow:hidden;
+}
+.bcard.dark .core{background:linear-gradient(155deg,#0F3D30,#0A281F);box-shadow:inset 0 1px 1px rgba(255,255,255,.1)}
+.bcard.dark{background:rgba(11,46,36,.35);border-color:rgba(212,175,55,.25)}
+.bcard.dark h3,.bcard.dark p{color:var(--cream)}
+.bcard.dark p{color:rgba(248,245,238,.66)}
+.b-icon{
+  width:52px;height:52px;border-radius:10px;margin-bottom:1.6rem;flex:none;
+  background:linear-gradient(140deg,rgba(201,162,39,.16),rgba(201,162,39,.05));
+  border:1px solid rgba(201,162,39,.35);
+  display:flex;align-items:center;justify-content:center;
+}
+.b-icon svg{width:22px;height:22px;stroke:var(--gold);stroke-width:1.1;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.bcard h3{font-family:'Bodoni Moda',serif;font-size:1.5rem;font-weight:500;margin-bottom:.7rem}
+.bcard p{font-size:.92rem;font-weight:300;color:rgba(11,46,36,.62);flex:1}
+.b-link{
+  margin-top:1.8rem;display:inline-flex;align-items:center;gap:.5rem;
+  font-size:.78rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--gold);text-decoration:none;
+}
+.b-link svg{width:13px;height:13px;transition:transform .5s var(--ease-glide)}
+.bcard:hover .b-link svg{transform:translate(4px,-2px)}
+.b-6{grid-column:span 6}.b-4{grid-column:span 4}.b-8{grid-column:span 8}
+.b-tall .core{min-height:420px}
+.bcard img.bimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.92}
+.bcard .img-scrim{position:absolute;inset:0;background:linear-gradient(to top,rgba(6,12,9,.88) 18%,rgba(6,12,9,.15) 60%)}
+.bcard .over{position:relative;z-index:2;margin-top:auto}
+.spark{width:100%;height:64px;margin-top:1.2rem}
+
+/* ── philosophy split ───────────────────────────── */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:5.5rem;align-items:center}
+.split .shell img{display:block;width:100%;height:620px;object-fit:cover}
+.founders-core{background:radial-gradient(600px 400px at 50% 0%,rgba(30,107,82,.25),transparent 65%),#020403}
+.founders-core img{object-position:top}
+.founders-plate{
+  position:absolute;left:1.1rem;right:1.1rem;bottom:1.1rem;z-index:2;
+  background:rgba(8,14,11,.62);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid rgba(212,175,55,.3);border-radius:.7rem;padding:1rem 1.4rem;
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.1),0 20px 40px -20px rgba(0,0,0,.7);
+}
+.founders-plate strong{display:block;font-family:'Bodoni Moda',serif;font-weight:500;font-size:1.15rem;color:var(--gold-bright)}
+.founders-plate span{font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(248,245,238,.65)}
+.split blockquote{
+  font-family:'Bodoni Moda',serif;font-style:italic;font-size:1.35rem;line-height:1.5;
+  color:var(--gold-bright);border-left:2px solid var(--gold);padding-left:1.6rem;margin:2.4rem 0;
+}
+.pillars{display:flex;flex-direction:column;gap:1.1rem;margin-top:2.6rem}
+.pillar{display:flex;gap:1.1rem;align-items:flex-start}
+.pillar .tick{
+  width:26px;height:26px;border-radius:50%;flex:none;margin-top:.15rem;
+  background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.4);
+  display:flex;align-items:center;justify-content:center;
+}
+.pillar .tick svg{width:11px;height:11px;stroke:var(--gold-bright);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.pillar strong{display:block;font-size:.95rem;font-weight:600;color:var(--white)}
+.pillar span{font-size:.88rem;font-weight:300;color:rgba(248,245,238,.6)}
+
+/* ── process ────────────────────────────────────── */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1.4rem;counter-reset:step}
+.step{
+  border-radius:1rem;padding:.4rem;background:rgba(255,255,255,.5);
+  border:1px solid rgba(11,46,36,.09);
+  transition:transform .7s var(--ease-glide);
+}
+.step:hover{transform:translateY(-6px)}
+.step .core{border-radius:calc(1rem - .4rem);background:linear-gradient(170deg,#fff,#EFEEE9);padding:2rem 1.7rem;height:100%;box-shadow:inset 0 1px 1px rgba(255,255,255,.9)}
+.step .n{font-family:'Bodoni Moda',serif;font-size:2.6rem;color:transparent;-webkit-text-stroke:1px var(--gold);display:block;margin-bottom:1.2rem}
+.step h4{font-family:'Bodoni Moda',serif;font-size:1.2rem;font-weight:500;color:var(--emerald-deep);margin-bottom:.6rem}
+.step p{font-size:.86rem;font-weight:300;color:rgba(11,46,36,.6)}
+
+/* ── quote ──────────────────────────────────────── */
+.quote-sec{
+  text-align:center;position:relative;overflow:hidden;
+  background:
+    radial-gradient(800px 500px at 50% 120%,rgba(30,107,82,.3),transparent 60%),
+    linear-gradient(180deg,#060A08,#0A1F18);
+}
+.quote-sec .mark{font-family:'Bodoni Moda',serif;font-size:7rem;line-height:.4;color:var(--gold);opacity:.5;display:block;margin-bottom:2rem}
+.quote-sec blockquote{font-family:'Bodoni Moda',serif;font-size:clamp(1.7rem,3.6vw,3rem);font-weight:400;font-style:italic;line-height:1.35;max-width:56rem;margin:0 auto;color:var(--cream)}
+.quote-sec cite{display:block;margin-top:2.6rem;font-style:normal;font-size:.78rem;letter-spacing:.26em;text-transform:uppercase;color:var(--gold-bright)}
+
+/* ── legacy CTA ─────────────────────────────────── */
+.legacy{padding:0 6vw 8.5rem}
+.legacy .shell{max-width:1340px;margin:0 auto}
+.legacy .core{
+  padding:6.5rem 5rem;text-align:center;
+  background:
+    radial-gradient(700px 420px at 50% -10%,rgba(212,175,55,.16),transparent 60%),
+    linear-gradient(160deg,#0F3D30,#082018);
+}
+.legacy h2{font-size:clamp(2.6rem,5vw,4.4rem);color:var(--white);margin:1.5rem 0 1.2rem}
+.legacy p{font-weight:300;color:rgba(248,245,238,.68);max-width:34rem;margin:0 auto 2.8rem}
+
+/* ── contact ────────────────────────────────────── */
+.contact-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:5rem;align-items:start}
+.contact-info h2{font-size:clamp(2.2rem,4vw,3.4rem);margin:1.4rem 0 1.2rem}
+.contact-info p{font-weight:300;color:rgba(11,46,36,.62);max-width:26rem;margin-bottom:2.4rem}
+.c-line{display:flex;align-items:center;gap:1rem;padding:1rem 0;border-bottom:1px solid rgba(11,46,36,.1);font-size:.94rem;color:var(--emerald-deep)}
+.c-line svg{width:18px;height:18px;stroke:var(--gold);stroke-width:1.2;fill:none;stroke-linecap:round;stroke-linejoin:round;flex:none}
+form.core{background:linear-gradient(165deg,#fff,#F0EFEA);padding:2.8rem;box-shadow:inset 0 1px 1px rgba(255,255,255,.9)}
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
+.field{margin-bottom:1.1rem}
+.field label{display:block;font-size:.68rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:rgba(11,46,36,.55);margin-bottom:.5rem}
+.field input,.field select,.field textarea{
+  width:100%;border:1px solid rgba(11,46,36,.14);border-radius:.5rem;
+  background:rgba(255,255,255,.7);padding:.85rem 1.1rem;
+  font-family:'Jost',sans-serif;font-size:.92rem;color:var(--emerald-deep);
+  outline:none;transition:border-color .4s var(--ease-glide),box-shadow .4s var(--ease-glide);
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,162,39,.15)}
+.field textarea{resize:vertical;min-height:110px}
+.form-note{font-size:.75rem;color:rgba(11,46,36,.45);margin-top:1.2rem}
+
+/* ── footer ─────────────────────────────────────── */
+body>footer{background:#050807;border-top:1px solid rgba(212,175,55,.15);padding:5rem 6vw 2.5rem}
+.foot-grid{max-width:1340px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;padding-bottom:3.5rem;border-bottom:1px solid rgba(255,255,255,.06)}
+.foot-grid h5{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem;font-weight:600}
+.foot-grid a{display:block;font-size:.88rem;font-weight:300;color:rgba(248,245,238,.6);text-decoration:none;padding:.3rem 0;transition:color .4s}
+.foot-grid a:hover{color:var(--gold-bright)}
+.foot-brand p{font-size:.88rem;font-weight:300;color:rgba(248,245,238,.5);max-width:20rem;margin-top:1.2rem}
+.foot-bottom{max-width:1340px;margin:0 auto;padding-top:2.2rem;display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;font-size:.72rem;color:rgba(248,245,238,.35)}
+
+/* ── responsive ─────────────────────────────────── */
+@media(max-width:1024px){
+  .hero-grid{grid-template-columns:1fr;gap:3.5rem}
+  .hero-media img{height:420px}
+  .b-6,.b-4,.b-8{grid-column:span 12}
+  .split{grid-template-columns:1fr;gap:3rem}
+  .split .shell img{height:420px}
+  .steps{grid-template-columns:repeat(2,1fr)}
+  .contact-grid{grid-template-columns:1fr;gap:3rem}
+  .stats-grid{grid-template-columns:repeat(2,1fr);gap:2.5rem}
+  .stat+.stat::before{display:none}
+  .foot-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+  section{padding:6rem 1.2rem}
+  .hero{padding:7.5rem 1.2rem 5rem}
+  .nav-links,.nav-cta{display:none}
+  .nav-pill{gap:1rem;width:calc(100vw - 5.6rem);justify-content:flex-start}
+  nav{justify-content:space-between;padding:1.2rem 1.2rem 0;gap:.8rem}
+  .burger{display:block;flex:none}
+  .hero-card{left:.8rem;bottom:1.2rem;transform:rotate(0)}
+  .hero-media .shell{transform:none}
+  .steps{grid-template-columns:1fr}
+  .f-row{grid-template-columns:1fr}
+  .legacy{padding:0 1.2rem 6rem}
+  .legacy .core{padding:3.5rem 1.6rem}
+  .stats{padding:3.5rem 1.2rem}
+  .foot-grid{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  .reveal{opacity:1;transform:none;filter:none}
+}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<!-- ══ NAV ══ -->
+<nav>
+  <div class="nav-pill">
+    <a class="brand" href="#top">
+      <span class="monogram">A</span>
+      <span class="brand-name">AMG<small>Anointed Money Group</small></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#philosophy">Philosophy</a></li>
+      <li><a href="#approach">Approach</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a href="#contact" class="btn btn-gold nav-cta">Book a Consultation
+      <span class="orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+    </a>
+  </div>
+  <button class="burger" id="burger" aria-label="Menu"><span></span><span></span></button>
+</nav>
+<div class="menu-overlay" id="menu">
+  <a href="#services">Services</a>
+  <a href="#philosophy">Philosophy</a>
+  <a href="#approach">Approach</a>
+  <a href="#contact">Contact</a>
+  <a href="#contact" style="color:var(--gold-bright)">Book a Consultation ↗</a>
+</div>
+
+<!-- ══ HERO ══ -->
+<header class="hero" id="top">
+  <div class="hero-grid">
+    <div>
+      <span class="eyebrow reveal">Private Wealth &amp; Legacy Planning</span>
+      <h1 class="serif reveal" data-d="1">Wealth, by design.<br><i class="gold-text">Legacy</i>, by intention.</h1>
+      <p class="lede reveal" data-d="2">Anointed Money Group partners with families and professionals to create wealth, protect assets, and architect retirement, so that prosperity outlives the moment and becomes generational.</p>
+      <div class="hero-ctas reveal" data-d="3">
+        <a href="#contact" class="btn btn-gold">Begin Your Legacy
+          <span class="orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+        </a>
+        <a href="#services" class="btn btn-ghost">Explore Services
+          <span class="orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14m-6-6l6 6 6-6"/></svg></span>
+        </a>
+      </div>
+    </div>
+    <div class="hero-media reveal" data-d="2">
+      <div class="shell"><div class="core">
+        <img src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?q=80&w=1200&auto=format&fit=crop" alt="Luxury city skyline at golden hour" loading="eager">
+      </div></div>
+      <div class="hero-card">
+        <div class="num" data-count="847" data-prefix="$" data-suffix="M+">$0</div>
+        <div class="lbl">Assets Positioned for Legacy</div>
+        <svg viewBox="0 0 120 34" fill="none"><path d="M2 30 C 18 26 26 18 40 20 S 66 10 80 12 106 4 118 3" stroke="url(#gg)" stroke-width="1.6" stroke-linecap="round"/><defs><linearGradient id="gg" x1="0" y1="0" x2="120" y2="0" gradientUnits="userSpaceOnUse"><stop stop-color="#8A6D14"/><stop offset="1" stop-color="#F4D680"/></linearGradient></defs></svg>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint">Scroll</div>
+</header>
+
+<!-- ══ STATS ══ -->
+<div class="stats">
+  <div class="stats-grid">
+    <div class="stat reveal"><div class="num" data-count="2400" data-suffix="+">0</div><div class="lbl">Families Served</div></div>
+    <div class="stat reveal" data-d="1"><div class="num" data-count="75" data-suffix="+">0</div><div class="lbl">Years Combined Experience</div></div>
+    <div class="stat reveal" data-d="2"><div class="num" data-count="38">0</div><div class="lbl">States Licensed</div></div>
+    <div class="stat reveal" data-d="3"><div class="num" data-count="98" data-suffix="%">0</div><div class="lbl">Client Retention</div></div>
+  </div>
+</div>
+
+<!-- ══ SERVICES ══ -->
+<section class="light" id="services">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">The AMG Portfolio of Services</span>
+      <h2 class="serif">Five disciplines.<br>One <i>enduring</i> outcome.</h2>
+      <p>Every engagement is built around a single question: what will your money mean a generation from now?</p>
+    </div>
+    <div class="bento">
+      <div class="bcard b-8 b-tall dark reveal">
+        <div class="core">
+          <img class="bimg" src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1400&auto=format&fit=crop" alt="Successful professional in a modern office" loading="lazy">
+          <div class="img-scrim"></div>
+          <div class="over">
+            <div class="b-icon"><svg viewBox="0 0 24 24"><path d="M3 17l5-5 4 4 8-8M15 8h5v5"/></svg></div>
+            <h3>Wealth Creation</h3>
+            <p>Strategic accumulation frameworks: indexed strategies, tax-advantaged vehicles, and disciplined cash-flow design that compound quietly while you live loudly.</p>
+            <a class="b-link" href="#contact">Build Wealth <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+          </div>
+        </div>
+      </div>
+      <div class="bcard b-4 b-tall reveal" data-d="1">
+        <div class="core">
+          <div class="b-icon"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg></div>
+          <h3>Asset Protection</h3>
+          <p>Life insurance architecture, living benefits, and risk transfer strategies that place a vault around everything you've built, before the storm rather than after it.</p>
+          <svg class="spark" viewBox="0 0 260 64" fill="none" preserveAspectRatio="none"><path d="M0 54 C 30 50 44 34 70 38 S 118 20 146 24 208 8 260 6" stroke="#C9A227" stroke-opacity=".55" stroke-width="1.6"/><path d="M0 54 C 30 50 44 34 70 38 S 118 20 146 24 208 8 260 6 L 260 64 L 0 64 Z" fill="url(#fade)"/><defs><linearGradient id="fade" x1="0" y1="0" x2="0" y2="64" gradientUnits="userSpaceOnUse"><stop stop-color="#C9A227" stop-opacity=".18"/><stop offset="1" stop-color="#C9A227" stop-opacity="0"/></linearGradient></defs></svg>
+          <a class="b-link" href="#contact">Protect Assets <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+        </div>
+      </div>
+      <div class="bcard b-4 reveal">
+        <div class="core">
+          <div class="b-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></div>
+          <h3>Retirement Planning</h3>
+          <p>Tax-efficient income you cannot outlive. We design retirements measured in freedom, not fear: 401(k) rollovers, IRAs, and annuity strategies aligned to your horizon.</p>
+          <a class="b-link" href="#contact">Plan Retirement <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+        </div>
+      </div>
+      <div class="bcard b-4 reveal" data-d="1">
+        <div class="core">
+          <div class="b-icon"><svg viewBox="0 0 24 24"><path d="M4 19V6a2 2 0 012-2h13v13H6a2 2 0 00-2 2zm0 0a2 2 0 002 2h13"/><path d="M9 8h6M9 12h4"/></svg></div>
+          <h3>Financial Education</h3>
+          <p>Wealth literacy is the first inheritance. Workshops, one-on-one coaching, and family financial councils that make every generation fluent in money.</p>
+          <a class="b-link" href="#contact">Get Educated <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+        </div>
+      </div>
+      <div class="bcard b-4 dark reveal" data-d="2">
+        <div class="core">
+          <img class="bimg" src="https://images.unsplash.com/photo-1511895426328-dc8714191300?q=80&w=1200&auto=format&fit=crop" alt="Multi-generational family together" loading="lazy">
+          <div class="img-scrim"></div>
+          <div class="over">
+            <div class="b-icon"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.5-9A5.5 5.5 0 0112 6a5.5 5.5 0 019.5 6c-2.5 4.4-9.5 9-9.5 9z"/></svg></div>
+            <h3>Generational Legacy</h3>
+            <p>Estate strategies, beneficiary design, and wealth-transfer planning that turn one lifetime of work into a family's centuries of options.</p>
+            <a class="b-link" href="#contact">Design Legacy <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PHILOSOPHY ══ -->
+<section id="philosophy" style="background:linear-gradient(180deg,#060A08,#081711)">
+  <div class="wrap split">
+    <div class="reveal">
+      <div class="shell"><div class="core founders-core">
+        <img src="assets/founders.webp" alt="Simi and Zimilah Ajimatanrareje, Senior Vice Presidents of Anointed Money Group" loading="lazy">
+        <div class="founders-plate">
+          <strong>Simi &amp; Zimilah Ajimatanrareje</strong>
+          <span>Senior Vice Presidents · Anointed Money Group</span>
+        </div>
+      </div></div>
+    </div>
+    <div>
+      <span class="eyebrow reveal">Senior Leadership</span>
+      <h2 class="serif reveal" data-d="1" style="font-size:clamp(2.3rem,4.2vw,3.6rem);margin:1.4rem 0;color:#fff">Anointed to build.<br>Appointed to <i class="gold-text">protect</i>.</h2>
+      <p class="reveal" data-d="2" style="font-weight:300;color:rgba(248,245,238,.66);max-width:32rem;margin-bottom:.5rem">Husband-and-wife team Simi and Zimilah Ajimatanrareje lead AMG as Senior Vice Presidents, driven by a simple conviction: every family deserves the strategies the wealthy have always used, explained plainly and executed excellently.</p>
+      <blockquote class="reveal" data-d="2">"Money is not the mission. Money is the instrument. The mission is a family that never has to start over."<footer style="font-size:.75rem;font-style:normal;letter-spacing:.2em;text-transform:uppercase;color:rgba(248,245,238,.5);margin-top:1rem">— Simi &amp; Zimilah Ajimatanrareje</footer></blockquote>
+      <div class="pillars">
+        <div class="pillar reveal" data-d="1"><span class="tick"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span><div><strong>Stewardship over speculation</strong><span>Proven, protected strategies. Never trends, never gambles.</span></div></div>
+        <div class="pillar reveal" data-d="2"><span class="tick"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span><div><strong>Education before transaction</strong><span>You will understand every vehicle before a single dollar moves.</span></div></div>
+        <div class="pillar reveal" data-d="3"><span class="tick"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span><div><strong>Generational horizon</strong><span>Every plan is stress-tested against a 100-year family timeline.</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ APPROACH ══ -->
+<section class="light" id="approach">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">The Private Client Process</span>
+      <h2 class="serif">Four movements,<br>orchestrated with <i>precision</i>.</h2>
+    </div>
+    <div class="steps">
+      <div class="step reveal"><div class="core"><span class="n">01</span><h4>Discovery</h4><p>A private consultation to map your assets, ambitions, obligations, and the legacy you intend to leave.</p></div></div>
+      <div class="step reveal" data-d="1"><div class="core"><span class="n">02</span><h4>Architecture</h4><p>A bespoke wealth blueprint (protection first, growth second, transfer always) modeled to your horizon.</p></div></div>
+      <div class="step reveal" data-d="2"><div class="core"><span class="n">03</span><h4>Execution</h4><p>White-glove implementation of every vehicle, handled end-to-end by your dedicated AMG strategist.</p></div></div>
+      <div class="step reveal" data-d="3"><div class="core"><span class="n">04</span><h4>Stewardship</h4><p>Annual legacy reviews that adapt the plan as your family, the law, and the markets evolve.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ QUOTE ══ -->
+<section class="quote-sec">
+  <div class="wrap">
+    <span class="mark reveal">"</span>
+    <blockquote class="reveal" data-d="1">AMG didn't just organize our finances. They changed the trajectory of our family. Our children will inherit a plan, not a problem.</blockquote>
+    <cite class="reveal" data-d="2">— The Okafor Family · Clients Since 2019</cite>
+  </div>
+</section>
+
+<!-- ══ LEGACY CTA ══ -->
+<div class="legacy">
+  <div class="shell reveal"><div class="core">
+    <span class="eyebrow">Your Move</span>
+    <h2 class="serif">The best time to build a legacy<br>was a generation ago. <i class="gold-text">The second best is today.</i></h2>
+    <p>One conversation. No obligation. A complete picture of where you stand, and a blueprint for where your family is going.</p>
+    <a href="#contact" class="btn btn-gold" style="font-size:1rem">Schedule Your Private Consultation
+      <span class="orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+    </a>
+  </div></div>
+</div>
+
+<!-- ══ CONTACT ══ -->
+<section class="light" id="contact" style="padding-top:7rem">
+  <div class="wrap contact-grid">
+    <div class="contact-info">
+      <span class="eyebrow reveal">Begin the Conversation</span>
+      <h2 class="serif reveal" data-d="1">Your legacy has a <i>first step</i>.</h2>
+      <p class="reveal" data-d="2">Tell us where you are. We'll show you what's possible, with discretion, clarity, and zero pressure.</p>
+      <div class="reveal" data-d="3">
+        <div class="c-line"><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>concierge@anointedmoneygroup.com</div>
+        <div class="c-line"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg>(800) 555-0147</div>
+        <div class="c-line"><svg viewBox="0 0 24 24"><path d="M12 21s-6-5.2-6-10a6 6 0 1112 0c0 4.8-6 10-6 10z"/><circle cx="12" cy="11" r="2.2"/></svg>Serving families nationwide · By appointment</div>
+      </div>
+    </div>
+    <div class="shell reveal" data-d="2">
+      <form class="core" onsubmit="event.preventDefault();this.querySelector('button').innerHTML='Request Received ✦';">
+        <div class="f-row">
+          <div class="field"><label for="fn">Full Name</label><input id="fn" type="text" placeholder="Alexandra Sterling" required></div>
+          <div class="field"><label for="em">Email</label><input id="em" type="email" placeholder="you@email.com" required></div>
+        </div>
+        <div class="f-row">
+          <div class="field"><label for="ph">Phone</label><input id="ph" type="tel" placeholder="(555) 000-0000"></div>
+          <div class="field"><label for="int">I'm Interested In</label>
+            <select id="int">
+              <option>Wealth Creation</option><option>Asset Protection</option>
+              <option>Retirement Planning</option><option>Financial Education</option>
+              <option>Generational Legacy</option><option>The Full Blueprint</option>
+            </select>
+          </div>
+        </div>
+        <div class="field"><label for="msg">Tell Us About Your Goals</label><textarea id="msg" placeholder="Where would you like your family to be in 30 years?"></textarea></div>
+        <button type="submit" class="btn btn-dark" style="width:100%;justify-content:space-between;padding-left:1.7rem">Request My Consultation
+          <span class="orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+        </button>
+        <p class="form-note">Private &amp; confidential. Your information is never sold or shared.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a class="brand" href="#top">
+        <span class="monogram">A</span>
+        <span class="brand-name">AMG<small>Anointed Money Group</small></span>
+      </a>
+      <p>Building generational wealth through protection, education, and intentional legacy design.</p>
+    </div>
+    <div><h5>Services</h5><a href="#services">Wealth Creation</a><a href="#services">Asset Protection</a><a href="#services">Retirement Planning</a><a href="#services">Financial Education</a><a href="#services">Generational Legacy</a></div>
+    <div><h5>Firm</h5><a href="#philosophy">Philosophy</a><a href="#approach">Our Process</a><a href="#contact">Consultations</a></div>
+    <div><h5>Connect</h5><a href="#contact">Email Us</a><a href="#contact">Book a Call</a><a href="#top">Instagram</a><a href="#top">LinkedIn</a></div>
+  </div>
+  <div class="foot-bottom">
+    <span>© 2026 Anointed Money Group. All rights reserved.</span>
+    <span>Insurance and financial products offered through licensed professionals. This site is for informational purposes only.</span>
+  </div>
+</footer>
+
+<script>
+// scroll reveal
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12,rootMargin:'0px 0px -8% 0px'});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+// animated counters
+const cio=new IntersectionObserver(es=>es.forEach(e=>{
+  if(!e.isIntersecting)return;cio.unobserve(e.target);
+  const el=e.target,end=+el.dataset.count,pre=el.dataset.prefix||'',suf=el.dataset.suffix||'',t0=performance.now(),dur=1800;
+  const tick=t=>{const p=Math.min((t-t0)/dur,1),ease=1-Math.pow(1-p,4);
+    el.textContent=pre+Math.round(end*ease).toLocaleString()+suf;
+    if(p<1)requestAnimationFrame(tick)};
+  requestAnimationFrame(tick);
+}),{threshold:.6});
+document.querySelectorAll('[data-count]').forEach(el=>cio.observe(el));
+
+// mobile menu
+const burger=document.getElementById('burger'),menu=document.getElementById('menu');
+burger.addEventListener('click',()=>{burger.classList.toggle('open');menu.classList.toggle('open');document.body.style.overflow=menu.classList.contains('open')?'hidden':''});
+menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{burger.classList.remove('open');menu.classList.remove('open');document.body.style.overflow=''}));
+</script>
+</body>
+</html>

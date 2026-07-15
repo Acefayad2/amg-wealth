@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STAR Result Received | AMG</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500;6..96,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/webp" href="assets/logo-mark.webp">
+<style>
+:root{--ink:#060A08;--green:#0B2E24;--gold:#C9A227;--gold-bright:#E8C766;--cream:#F1F0EC}
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;display:grid;place-items:center;padding:2rem;font-family:Jost,sans-serif;color:var(--cream);background:radial-gradient(720px 480px at 80% 0%,rgba(30,107,82,.34),transparent 62%),radial-gradient(640px 420px at 12% 100%,rgba(201,162,39,.13),transparent 58%),linear-gradient(180deg,#06110D,#060A08)}
+.card{width:min(100%,43rem);border-radius:18px;padding:.5rem;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);box-shadow:0 40px 90px -45px rgba(0,0,0,.75)}
+.core{border-radius:13px;padding:3rem;background:linear-gradient(155deg,rgba(12,42,32,.82),rgba(4,8,6,.96));text-align:center}
+.brand{display:inline-flex;align-items:center;gap:.7rem;margin-bottom:2rem;text-decoration:none;color:var(--cream)}
+.brand img{width:42px;height:42px;border-radius:50%}.brand span{font-size:.82rem;font-weight:600;letter-spacing:.18em}.brand small{display:block;font-size:8px;letter-spacing:.3em;color:var(--gold);text-transform:uppercase}
+.eyebrow{display:inline-flex;align-items:center;gap:.6rem;border:1px solid rgba(212,175,55,.35);border-radius:8px;padding:.42rem 1rem;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold-bright);background:rgba(212,175,55,.07)}
+.eyebrow:before{content:"";width:5px;height:5px;border-radius:50%;background:var(--gold)}
+h1{font-family:"Bodoni Moda",serif;font-size:clamp(2.5rem,7vw,4.8rem);line-height:1.03;margin:1.2rem 0;color:white}
+p{font-weight:300;color:rgba(248,245,238,.68);max-width:31rem;margin:0 auto 2rem}
+.btn{display:inline-flex;align-items:center;border-radius:12px;padding:.85rem 1.35rem;background:linear-gradient(120deg,#B8901F,#E0BC55 55%,#C9A227);color:#1A1405;text-decoration:none;font-weight:600}
+@media(max-width:640px){.core{padding:2.1rem 1.2rem}}
+</style>
+</head>
+<body>
+  <main class="card">
+    <div class="core">
+      <a class="brand" href="index.html">
+        <img src="assets/logo-mark.webp" alt="AMG monogram logo">
+        <span>AMG<small>Anointed Money Group</small></span>
+      </a>
+      <br>
+      <span class="eyebrow">STAR Result Received</span>
+      <h1>Your STAR result is ready.</h1>
+      <p>Thank you for completing the AMG STAR Personality Test. Your result helps AMG understand how you think, work, and lead.</p>
+      <a class="btn" href="assessment.html">Return to Assessment</a>
+    </div>
+  </main>
+</body>
+</html>

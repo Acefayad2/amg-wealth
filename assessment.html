@@ -355,6 +355,7 @@ async function showResults(){
   document.querySelector("#typeCopy").innerHTML = `<h3>${primaryName} Profile</h3><p>${types[primaryName].copy}</p><p><strong>${types[primaryName].thrive}</strong></p>`;
 
   const payload = {
+    formType:"personality",
     submittedAt:new Date().toISOString(),
     fullName:form.fullName.value.trim(),
     email:form.email.value.trim(),

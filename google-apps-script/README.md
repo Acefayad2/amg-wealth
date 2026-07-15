@@ -1,6 +1,9 @@
-# AMG Personality Google Sheet Endpoint
+# AMG Google Sheet Response Endpoint
 
-This script receives submissions from `assessment.html` and appends them to the `AMG Personality Responses` tab in:
+This script receives submissions from the AMG website and appends them to Google Sheet tabs:
+
+- `Consultation Responses` for the home-page consultation form
+- `AMG Personality Responses` for the direct-link personality test
 
 https://docs.google.com/spreadsheets/d/1Fj9mFhTfJkLXOvxIcdQIHOaZ6yDQHwcxV9KI4mpzQ6o/edit
 
@@ -13,6 +16,6 @@ https://docs.google.com/spreadsheets/d/1Fj9mFhTfJkLXOvxIcdQIHOaZ6yDQHwcxV9KI4mpz
 5. Set "Execute as" to yourself.
 6. Set access to "Anyone".
 7. Copy the Web App URL.
-8. Paste that URL into `assessment.html` as `GOOGLE_SCRIPT_URL`.
+8. Paste that URL into `index.html` and `assessment.html` as `GOOGLE_SCRIPT_URL`.
 
-The script creates the `AMG Personality Responses` tab and headers automatically on the first submission.
+The script creates both response tabs and headers automatically on the first submission.

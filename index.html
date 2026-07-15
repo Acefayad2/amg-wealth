@@ -793,6 +793,8 @@ body>footer{background:#050807;border-top:1px solid rgba(212,175,55,.15);padding
 </footer>
 
 <script>
+const GOOGLE_SCRIPT_URL = "";
+
 // scroll reveal
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12,rootMargin:'0px 0px -8% 0px'});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
@@ -812,6 +814,31 @@ document.querySelectorAll('[data-count]').forEach(el=>cio.observe(el));
 const burger=document.getElementById('burger'),menu=document.getElementById('menu');
 burger.addEventListener('click',()=>{burger.classList.toggle('open');menu.classList.toggle('open');document.body.style.overflow=menu.classList.contains('open')?'hidden':''});
 menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{burger.classList.remove('open');menu.classList.remove('open');document.body.style.overflow=''}));
+
+const consultationForm = document.querySelector('form[name="consultation"]');
+if (consultationForm) {
+  consultationForm.addEventListener('submit', async event => {
+    if (!GOOGLE_SCRIPT_URL) return;
+
+    event.preventDefault();
+    const formData = new FormData(consultationForm);
+    formData.set('formType', 'consultation');
+    formData.set('submittedAt', new Date().toISOString());
+    formData.set('source', 'AMG website consultation form');
+    formData.set('userAgent', navigator.userAgent);
+
+    try {
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(formData),
+      });
+    } finally {
+      window.location.href = consultationForm.action || '/thank-you.html';
+    }
+  });
+}
 </script>
 </body>
 </html>

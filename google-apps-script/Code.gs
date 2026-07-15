@@ -1,4 +1,4 @@
-const SPREADSHEET_ID = '1Fj9mFhTfJkLXOvxIcdQIHOaZ6yDQHwcxV9KI4mpzQ6o'
+const SPREADSHEET_ID = '18g_rHgbxuMAGru-cKXGd2lmwG8vhRq9bAcEzdFT2U8M'
 const PERSONALITY_SHEET_NAME = 'AMG Personality Responses'
 const CONSULTATION_SHEET_NAME = 'Consultation Responses'
 

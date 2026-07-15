@@ -5,7 +5,7 @@ This script receives submissions from the AMG website and appends them to Google
 - `Consultation Responses` for the home-page consultation form
 - `AMG Personality Responses` for the direct-link personality test
 
-https://docs.google.com/spreadsheets/d/1Fj9mFhTfJkLXOvxIcdQIHOaZ6yDQHwcxV9KI4mpzQ6o/edit
+https://docs.google.com/spreadsheets/d/18g_rHgbxuMAGru-cKXGd2lmwG8vhRq9bAcEzdFT2U8M/edit
 
 ## Deploy
 

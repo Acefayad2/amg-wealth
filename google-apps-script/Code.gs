@@ -1,13 +1,13 @@
 const SPREADSHEET_ID = '1Fj9mFhTfJkLXOvxIcdQIHOaZ6yDQHwcxV9KI4mpzQ6o'
-const SHEET_NAME = 'STAR Responses'
+const SHEET_NAME = 'AMG Personality Responses'
 
 const HEADERS = [
   'Submitted At',
   'Full Name',
   'Email',
   'Phone',
-  'Primary STAR Type',
-  'Secondary STAR Type',
+  'Primary Personality Type',
+  'Secondary Personality Type',
   'Structure Score',
   'Technical Score',
   'Action Score',
@@ -37,7 +37,7 @@ const HEADERS = [
 ]
 
 function doGet() {
-  return json_({ ok: true, message: 'AMG STAR endpoint is ready.' })
+  return json_({ ok: true, message: 'AMG Personality endpoint is ready.' })
 }
 
 function doPost(event) {
@@ -79,7 +79,7 @@ function doPost(event) {
       params.q18 || '',
       params.q19 || '',
       params.q20 || '',
-      params.source || 'AMG Netlify STAR assessment',
+      params.source || 'AMG Netlify Personality assessment',
       params.userAgent || '',
     ])
 

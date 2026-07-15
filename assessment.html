@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AMG STAR Personality Test</title>
-<meta name="description" content="Take the AMG STAR Personality Test and discover your Structure, Technical, Action, and Relationship leadership profile.">
+<title>AMG Personality Test</title>
+<meta name="description" content="Take the AMG Personality Test and discover your Structure, Technical, Action, and Relationship leadership profile.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500;6..96,600&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -126,9 +126,9 @@ footer{padding:2rem 0;color:rgba(241,240,236,.48);font-size:.8rem;text-align:cen
 
 <main>
   <section class="hero wrap">
-    <span class="eyebrow">AMG STAR Personality Test</span>
+    <span class="eyebrow">AMG Personality Test</span>
     <h1>One question at a time. <span class="gold-text">Clearer leadership insight.</span></h1>
-    <p class="lede">Move through each statement with focus. Your primary and secondary STAR type will appear at the end.</p>
+    <p class="lede">Move through each statement with focus. Your primary and secondary personality type will appear at the end.</p>
   </section>
 
   <section class="stage wrap">
@@ -172,7 +172,7 @@ footer{padding:2rem 0;color:rgba(241,240,236,.48);font-size:.8rem;text-align:cen
 
         <div class="screen results" id="results" aria-live="polite">
           <div class="result-head">
-            <span>Your STAR Results</span>
+            <span>Your AMG Personality Results</span>
             <h2 id="primaryType">Primary Type</h2>
             <p id="secondaryType"></p>
           </div>
@@ -344,7 +344,7 @@ async function showResults(){
   nextBtn.disabled = true;
   nextBtn.textContent = "Complete";
   document.querySelector("#primaryType").textContent = `${primaryName} (${types[primaryName].short})`;
-  document.querySelector("#secondaryType").textContent = `Secondary STAR Type: ${secondaryName} (${types[secondaryName].short})`;
+  document.querySelector("#secondaryType").textContent = `Secondary Personality Type: ${secondaryName} (${types[secondaryName].short})`;
   document.querySelector("#scoreGrid").innerHTML = Object.entries(scores).map(([name,score]) => `
     <div class="score-card">
       <strong>${name}</strong>
@@ -365,7 +365,7 @@ async function showResults(){
     technicalScore:scores.Technical,
     actionScore:scores.Action,
     relationshipScore:scores.Relationship,
-    source:"AMG Netlify STAR assessment",
+    source:"AMG Netlify Personality assessment",
     userAgent:navigator.userAgent
   };
   answers.forEach((answer,index) => payload[`q${index + 1}`] = answer);

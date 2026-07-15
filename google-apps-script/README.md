@@ -1,6 +1,6 @@
-# AMG STAR Google Sheet Endpoint
+# AMG Personality Google Sheet Endpoint
 
-This script receives submissions from `assessment.html` and appends them to the `STAR Responses` tab in:
+This script receives submissions from `assessment.html` and appends them to the `AMG Personality Responses` tab in:
 
 https://docs.google.com/spreadsheets/d/1Fj9mFhTfJkLXOvxIcdQIHOaZ6yDQHwcxV9KI4mpzQ6o/edit
 
@@ -15,4 +15,4 @@ https://docs.google.com/spreadsheets/d/1Fj9mFhTfJkLXOvxIcdQIHOaZ6yDQHwcxV9KI4mpz
 7. Copy the Web App URL.
 8. Paste that URL into `assessment.html` as `GOOGLE_SCRIPT_URL`.
 
-The script creates the `STAR Responses` tab and headers automatically on the first submission.
+The script creates the `AMG Personality Responses` tab and headers automatically on the first submission.

@@ -2,31 +2,31 @@
   publish = "."
   command = ""
 
-# Serve public Health resources on the AMG origin. Protected Life routes use a
-# normal redirect so the exam portal's signed Edge authorization still runs;
-# proxying those routes between Netlify sites would bypass that protection.
+# Learning routes use normal redirects so the exam portal's signed Edge
+# authorization always runs. A 200 proxy here would expose protected pages or
+# guide bytes without the portal's host-bound learner session.
 [[redirects]]
   from = "/practice"
   to = "https://amg-exam-portal.netlify.app/"
-  status = 200
+  status = 302
   force = true
 
 [[redirects]]
   from = "/practice/"
   to = "https://amg-exam-portal.netlify.app/"
-  status = 200
+  status = 302
   force = true
 
 [[redirects]]
   from = "/practice/health"
-  to = "https://amg-exam-portal.netlify.app/health/"
-  status = 200
+  to = "https://amg-exam-portal.netlify.app/course/health/"
+  status = 302
   force = true
 
 [[redirects]]
   from = "/practice/health/"
-  to = "https://amg-exam-portal.netlify.app/health/"
-  status = 200
+  to = "https://amg-exam-portal.netlify.app/course/health/"
+  status = 302
   force = true
 
 [[redirects]]
@@ -50,19 +50,31 @@
 [[redirects]]
   from = "/practice-assets/*"
   to = "https://amg-exam-portal.netlify.app/practice-assets/:splat"
-  status = 200
+  status = 302
   force = true
 
 [[redirects]]
   from = "/guides/accident-health.docx"
   to = "https://amg-exam-portal.netlify.app/Accident%20%26%20Health%20Study%20Guide.docx"
-  status = 200
+  status = 302
   force = true
 
 [[redirects]]
   from = "/guides/life-producer.docx"
   to = "https://amg-exam-portal.netlify.app/Life%20Producer%20Study%20Guide.docx"
-  status = 200
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/Accident & Health Study Guide.docx"
+  to = "https://amg-exam-portal.netlify.app/Accident%20%26%20Health%20Study%20Guide.docx"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/Life Producer Study Guide.docx"
+  to = "https://amg-exam-portal.netlify.app/Life%20Producer%20Study%20Guide.docx"
+  status = 302
   force = true
 
 [[headers]]

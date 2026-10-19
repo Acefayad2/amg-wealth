@@ -13,24 +13,18 @@ function redirectBlocks() {
   }))
 }
 
-test('only explicit public practice pages are reverse proxied', () => {
+test('no learning page, asset or guide is reverse proxied around the portal gate', () => {
   const proxies = redirectBlocks().filter(route => route.status === 200)
-  assert.deepEqual(
-    proxies.filter(route => route.from === '/practice' || route.from?.startsWith('/practice/')).map(route => route.from),
-    ['/practice', '/practice/', '/practice/health', '/practice/health/'],
-  )
-  assert.equal(proxies.some(route => route.from === '/practice/*'), false)
-  assert.equal(proxies.some(route => route.from?.includes('course')), false)
-  assert.equal(proxies.some(route => route.from?.includes('login')), false)
-  assert.equal(proxies.some(route => route.from?.includes('api')), false)
+  assert.deepEqual(proxies, [])
 })
 
-test('protected Life uses redirects while public assets and guides are explicit', () => {
+test('Life, Health, bundled question content and every guide alias redirect through the protected portal', () => {
   const routes = redirectBlocks()
+  for (const path of ['/practice', '/practice/', '/practice/health', '/practice/health/', '/practice-assets/*', '/course/*', '/login/*', '/guides/accident-health.docx', '/guides/life-producer.docx', '/Accident & Health Study Guide.docx', '/Life Producer Study Guide.docx']) {
+    assert.ok(routes.some(route => route.from === path && route.status === 302), path)
+  }
   assert.ok(routes.some(route => route.from === '/course/*' && route.status === 302))
   assert.ok(routes.some(route => route.from === '/login/*' && route.status === 302))
-  assert.ok(routes.some(route => route.from === '/practice-assets/*' && route.status === 200))
-  assert.ok(routes.some(route => route.from === '/guides/accident-health.docx' && route.status === 200))
-  assert.ok(routes.some(route => route.from === '/guides/life-producer.docx' && route.status === 200))
+  assert.ok(routes.some(route => route.from === '/practice/health/' && route.to.endsWith('/course/health/')))
   assert.match(resources, /href="\/practice\/health\/"/)
 })

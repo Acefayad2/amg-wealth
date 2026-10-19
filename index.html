@@ -36,6 +36,7 @@ body{
   overflow-x:hidden;
 }
 ::selection{background:var(--gold);color:var(--ink)}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--gold-bright);outline-offset:4px}
 
 /* ── film grain overlay ─────────────────────────── */
 .grain{
@@ -198,7 +199,7 @@ nav{
 }
 .hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:1.15fr .85fr;gap:5rem;align-items:center;max-width:1340px;margin:0 auto;width:100%}
 .hero h1{font-size:clamp(3rem,6.4vw,5.6rem);margin:1.6rem 0 1.8rem;color:var(--white)}
-.hero p.lede{font-size:1.08rem;font-weight:300;color:rgba(248,245,238,.72);max-width:33rem;margin-bottom:2.6rem}
+.hero p.lede{font-size:1.08rem;font-weight:300;color:rgba(255,255,255,.9);max-width:33rem;margin-bottom:2.6rem}
 .hero-ctas{display:flex;gap:1rem;flex-wrap:wrap;align-items:center}
 .hero-media{position:relative}
 .hero-media img{display:block;width:100%;height:560px;object-fit:cover}
@@ -211,7 +212,7 @@ nav{
 }
 .hero-card .hc-eyebrow{font-size:.6rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem}
 .hero-card .hc-title{font-family:'Bodoni Moda',serif;font-weight:600;font-size:1.35rem;line-height:1.1;color:var(--gold-bright);margin-bottom:.6rem}
-.hero-card .lbl{font-size:.72rem;line-height:1.5;color:rgba(248,245,238,.62)}
+.hero-card .lbl{font-size:.72rem;line-height:1.5;color:rgba(255,255,255,.88)}
 .scroll-hint{
   position:absolute;bottom:2.2rem;left:50%;transform:translateX(-50%);z-index:2;
   font-size:.62rem;letter-spacing:.32em;text-transform:uppercase;color:rgba(248,245,238,.4);
@@ -270,14 +271,14 @@ nav{
 .stat{text-align:center;position:relative}
 .stat+.stat::before{content:'';position:absolute;left:-1.5rem;top:12%;bottom:12%;width:1px;background:rgba(212,175,55,.18)}
 .stat .num{font-family:'Bodoni Moda',serif;font-size:clamp(2.4rem,4vw,3.4rem);color:var(--gold-bright)}
-.stat .lbl{font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(248,245,238,.55);margin-top:.4rem}
+.stat .lbl{font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.84);margin-top:.4rem}
 
 /* ── sections ───────────────────────────────────── */
 section{padding:8.5rem 6vw}
 .wrap{max-width:1340px;margin:0 auto}
 .sec-head{max-width:52rem;margin-bottom:4.5rem}
 .sec-head h2{font-size:clamp(2.4rem,4.6vw,4rem);margin:1.4rem 0 1.2rem}
-.sec-head p{font-weight:300;color:rgba(248,245,238,.66);font-size:1.05rem;max-width:38rem}
+.sec-head p{font-weight:300;color:rgba(255,255,255,.88);font-size:1.05rem;max-width:38rem}
 
 /* light (cream/marble) sections */
 .light{
@@ -312,7 +313,7 @@ section{padding:8.5rem 6vw}
 .bcard.dark .core{background:linear-gradient(155deg,#0F3D30,#0A281F);box-shadow:inset 0 1px 1px rgba(255,255,255,.1)}
 .bcard.dark{background:rgba(11,46,36,.35);border-color:rgba(212,175,55,.25)}
 .bcard.dark h3,.bcard.dark p{color:var(--cream)}
-.bcard.dark p{color:rgba(248,245,238,.66)}
+.bcard.dark p{color:rgba(255,255,255,.88)}
 .b-icon{
   width:52px;height:52px;border-radius:10px;margin-bottom:1.6rem;flex:none;
   background:linear-gradient(140deg,rgba(201,162,39,.16),rgba(201,162,39,.05));
@@ -362,7 +363,7 @@ section{padding:8.5rem 6vw}
 }
 .pillar .tick svg{width:11px;height:11px;stroke:var(--gold-bright);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .pillar strong{display:block;font-size:.95rem;font-weight:600;color:var(--white)}
-.pillar span{font-size:.88rem;font-weight:300;color:rgba(248,245,238,.6)}
+.pillar span{font-size:.88rem;font-weight:300;color:rgba(255,255,255,.86)}
 
 /* ── process ────────────────────────────────────── */
 .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1.4rem;counter-reset:step}
@@ -398,7 +399,8 @@ section{padding:8.5rem 6vw}
     linear-gradient(160deg,#0F3D30,#082018);
 }
 .legacy h2{font-size:clamp(2.6rem,5vw,4.4rem);color:var(--white);margin:1.5rem 0 1.2rem}
-.legacy p{font-weight:300;color:rgba(248,245,238,.68);max-width:34rem;margin:0 auto 2.8rem}
+.legacy p{font-weight:300;color:rgba(255,255,255,.88);max-width:34rem;margin:0 auto 2.8rem}
+.leadership-light{background:linear-gradient(160deg,#fff,#f1f0ec);color:var(--emerald-deep)}.leadership-light .svp-eyebrow{background:rgba(201,162,39,.08);color:#765d10;border-color:rgba(154,122,28,.34)}.leadership-light .leadership-title{color:var(--emerald-deep)!important}.leadership-light .leadership-copy{color:#294b41!important}.leadership-light blockquote{color:var(--emerald-deep)}.leadership-light .pillar strong{color:var(--emerald-deep)}.leadership-light .pillar span{color:#34564c}.leadership-light blockquote footer{color:#42645a!important}
 
 /* ── contact ────────────────────────────────────── */
 .contact-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:5rem;align-items:start}
@@ -668,7 +670,7 @@ body>footer{background:#050807;border-top:1px solid rgba(212,175,55,.15);padding
 </section>
 
 <!-- ══ PHILOSOPHY ══ -->
-<section id="philosophy" style="background:linear-gradient(180deg,#060A08,#081711)">
+<section class="leadership-light" id="philosophy">
   <div class="wrap split">
     <div class="reveal">
       <div class="shell"><div class="core founders-core">
@@ -681,8 +683,8 @@ body>footer{background:#050807;border-top:1px solid rgba(212,175,55,.15);padding
     </div>
     <div>
       <span class="eyebrow svp-eyebrow reveal">EXECUTIVE VICE PRESIDENTS</span>
-      <h2 class="serif reveal" data-d="1" style="font-size:clamp(2.3rem,4.2vw,3.6rem);margin:1.4rem 0;color:#fff">Anointed to build.<br>Appointed to <i class="gold-text">protect</i>.</h2>
-      <p class="reveal" data-d="2" style="font-weight:300;color:rgba(248,245,238,.66);max-width:32rem;margin-bottom:.5rem">Simi and Zamilah Ajimatanrareje stand at the front of AMG as Executive Vice Presidents, building with conviction, discipline, and a standard of excellence worthy of the families they serve. Their mandate is simple: bring the strategies the wealthy have always used into rooms where legacy is ready to be built.</p>
+      <h2 class="serif reveal leadership-title" data-d="1" style="font-size:clamp(2.3rem,4.2vw,3.6rem);margin:1.4rem 0">Anointed to build.<br>Appointed to <i class="gold-text">protect</i>.</h2>
+      <p class="reveal leadership-copy" data-d="2" style="font-weight:400;max-width:32rem;margin-bottom:.5rem">Simi and Zamilah Ajimatanrareje stand at the front of AMG as Executive Vice Presidents, building with conviction, discipline, and a standard of excellence worthy of the families they serve. Their mandate is simple: bring the strategies the wealthy have always used into rooms where legacy is ready to be built.</p>
       <blockquote class="reveal" data-d="2">"Money is not the mission. Money is the instrument. The mission is a family that never has to start over."<footer style="font-size:.75rem;font-style:normal;letter-spacing:.2em;text-transform:uppercase;color:rgba(248,245,238,.5);margin-top:1rem">— Simi &amp; Zamilah Ajimatanrareje</footer></blockquote>
       <div class="pillars">
         <div class="pillar reveal" data-d="1"><span class="tick"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span><div><strong>Stewardship over speculation</strong><span>Proven, protected strategies. Never trends, never gambles.</span></div></div>

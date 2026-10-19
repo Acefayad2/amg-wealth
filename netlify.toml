@@ -6,9 +6,15 @@
 # normal redirect so the exam portal's signed Edge authorization still runs;
 # proxying those routes between Netlify sites would bypass that protection.
 [[redirects]]
-  from = "/health/*"
-  to = "https://amg-exam-portal.netlify.app/health/:splat"
+  from = "/practice/*"
+  to = "https://amg-exam-portal.netlify.app/:splat"
   status = 200
+  force = true
+
+[[redirects]]
+  from = "/health/*"
+  to = "/practice/health/:splat"
+  status = 302
   force = true
 
 [[redirects]]

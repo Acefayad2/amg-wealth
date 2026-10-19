@@ -24,6 +24,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
+a:focus-visible,button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:4px}
 body{
   font-family:'Jost',sans-serif;
   background:
@@ -82,16 +83,16 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content
 }
 .eyebrow::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--gold)}
 h1{font-size:clamp(3rem,6vw,5.5rem);margin:1.5rem 0 1.4rem;color:var(--white)}
-.lede{font-size:1.05rem;font-weight:300;color:rgba(248,245,238,.68);max-width:35rem;margin-bottom:2.2rem}
+.lede{font-size:1.05rem;font-weight:300;color:rgba(255,255,255,.9);max-width:35rem;margin-bottom:2.2rem}
 .mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-top:2.2rem;max-width:37rem}
 .mini{
   border:1px solid rgba(212,175,55,.16);border-radius:10px;padding:1rem;
   background:rgba(255,255,255,.045);box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
 }
 .mini strong{display:block;font-family:'Bodoni Moda',serif;font-size:1.15rem;color:var(--gold-bright);margin-bottom:.25rem}
-.mini span{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(248,245,238,.52)}
+.mini span{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.84)}
 .contact-strip{display:flex;flex-direction:column;gap:.6rem;margin-top:1.3rem}
-.contact-strip a{display:inline-flex;align-items:center;gap:.65rem;color:rgba(248,245,238,.72);text-decoration:none;font-size:.9rem}
+.contact-strip a{display:inline-flex;align-items:center;gap:.65rem;color:rgba(255,255,255,.9);text-decoration:none;font-size:.9rem}
 .contact-strip a:hover{color:var(--gold-bright)}
 .contact-strip svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .coordinator-shell{
@@ -108,10 +109,11 @@ h1{font-size:clamp(3rem,6vw,5.5rem);margin:1.5rem 0 1.4rem;color:var(--white)}
 .coordinator-photo{width:168px;height:168px;object-fit:cover;border-radius:50%;border:3px solid rgba(232,199,102,.72);box-shadow:0 24px 54px -26px rgba(0,0,0,.9);margin-bottom:1.4rem}
 .coordinator-card h2{font-family:'Bodoni Moda',serif;font-size:2.25rem;line-height:1.1;color:#fff;margin:.8rem 0 .45rem}
 .coordinator-role{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-bright)}
-.coordinator-card p{max-width:29rem;font-weight:300;color:rgba(248,245,238,.68);margin-bottom:1.3rem}
+.coordinator-card p{max-width:29rem;font-weight:300;color:rgba(255,255,255,.9);margin-bottom:1.3rem}
 .coordinator-phone{font-family:'Bodoni Moda',serif;font-size:1.45rem;color:#fff;text-decoration:none;margin-bottom:1.25rem}
 .coordinator-phone:hover{color:var(--gold-bright)}
-.practice-section{margin-top:4rem;padding-top:1rem;scroll-margin-top:7rem}
+.licensing-journey{display:grid;gap:1rem;margin-top:4rem;scroll-margin-top:7rem}.journey-step{border:1px solid rgba(255,255,255,.11);border-radius:18px;padding:clamp(1.5rem,4vw,2.5rem);background:rgba(255,255,255,.045)}.journey-number{font-family:'Bodoni Moda',serif;font-size:2rem;color:var(--gold-bright)}.journey-step h2{font-family:'Bodoni Moda',serif;font-size:clamp(1.8rem,4vw,2.8rem);margin:.4rem 0 .7rem;color:#fff}.journey-step>p{max-width:48rem;color:rgba(255,255,255,.88);margin-bottom:1.2rem}.study-step{background:#fff;color:var(--emerald-deep);border-color:rgba(11,46,36,.12)}.study-step .section-heading h2,.study-step .practice-card h3{color:var(--emerald-deep)}.study-step>p,.study-step .section-heading p,.study-step .practice-card p{color:#294b41}.study-step .practice-card{background:#f6f5f1;border-color:rgba(11,46,36,.14)}.study-step .practice-card .coordinator-role{color:#765d10}.study-step .practice-actions a:not(.btn){color:#765d10;font-weight:600}
+.practice-section{padding-top:.5rem}
 .section-heading{max-width:45rem;margin-bottom:1.6rem}
 .section-heading h2{font-size:clamp(2.2rem,4vw,3.5rem);color:#fff;margin:.9rem 0 .7rem}
 .section-heading p{color:rgba(248,245,238,.64);font-weight:300}
@@ -203,38 +205,48 @@ footer a{color:var(--gold-bright);text-decoration:none}
     </section>
   </div>
 
-  <section class="practice-section" id="practice-tests">
-    <div class="section-heading">
-      <span class="eyebrow">Exam Preparation</span>
-      <h2 class="serif">Choose your <i class="gold-text">Practice Test</i>.</h2>
-      <p>Use the line that matches the license you are preparing for. Each option keeps its own study resources and access path.</p>
-    </div>
-    <div class="practice-grid">
-      <article class="practice-card">
-        <span class="coordinator-role">Life Producer</span>
-        <h3>Life Practice Test</h3>
-        <p>Enter the protected Life learning portal, where each new practice attempt rotates to another balanced question set.</p>
-        <div class="practice-actions">
-          <a class="btn btn-gold" href="/course/assessments/">Open Life Test<span class="orb" aria-hidden="true">→</span></a>
-          <a href="/guides/life-producer.docx">Download study guide</a>
+  <section class="licensing-journey" id="practice-tests" aria-label="Three steps to your licensing exam">
+    <article class="journey-step">
+      <span class="journey-number">01</span>
+      <h2>Book your exam</h2>
+      <p>Call Natasha to confirm the applicable licensing path and book the right exam before you begin studying.</p>
+      <a class="btn btn-gold" href="tel:+12222532959">Call Natasha to book<span class="orb" aria-hidden="true">→</span></a>
+    </article>
+    <article class="journey-step study-step">
+      <span class="journey-number">02</span>
+      <div class="practice-section">
+        <div class="section-heading">
+          <span class="eyebrow">Study for your exam</span>
+          <h2>Choose your producer program.</h2>
+          <p>Both study paths use AMG’s protected learning portal and the same access-code gate.</p>
         </div>
-      </article>
-      <article class="practice-card">
-        <span class="coordinator-role">Accident &amp; Health</span>
-        <h3>Health Practice Test</h3>
-        <p>Take the 90-question Maryland Accident &amp; Health practice test and review explanations after scoring.</p>
-        <div class="practice-actions">
-          <a class="btn btn-gold" href="/practice/health/">Open Health Test<span class="orb" aria-hidden="true">→</span></a>
-          <a href="/guides/accident-health.docx">Download study guide</a>
+        <div class="practice-grid">
+          <article class="practice-card">
+            <span class="coordinator-role">Life Producer</span>
+            <h3>Life Producer</h3>
+            <p>Continue the Life course, use rotating practice questions, and download the protected Life study guide.</p>
+            <div class="practice-actions">
+              <a class="btn btn-gold" href="/course/">Study Life<span class="orb" aria-hidden="true">→</span></a>
+              <a href="/guides/life-producer.docx">Download protected guide</a>
+            </div>
+          </article>
+          <article class="practice-card">
+            <span class="coordinator-role">Health &amp; Sickness</span>
+            <h3>Health &amp; Sickness</h3>
+            <p>Use the 90-question Health practice test and protected study guide. Video lessons are clearly marked coming soon.</p>
+            <div class="practice-actions">
+              <a class="btn btn-gold" href="/course/health/">Study Health<span class="orb" aria-hidden="true">→</span></a>
+              <a href="/guides/accident-health.docx">Download protected guide</a>
+            </div>
+          </article>
         </div>
-      </article>
-    </div>
-  </section>
-
-  <section class="steps">
-    <div class="step"><span>01</span><h3>Confirm Your State</h3><p>Review where you plan to write business and what licensing path applies before you spend time or money.</p></div>
-    <div class="step"><span>02</span><h3>Map the Timeline</h3><p>Leave with a practical sequence for pre-licensing, exam prep, fingerprints, appointments, and contracting.</p></div>
-    <div class="step"><span>03</span><h3>Move With Support</h3><p>Coordinate with AMG so the licensing process connects cleanly to onboarding and field readiness.</p></div>
+      </div>
+    </article>
+    <article class="journey-step">
+      <span class="journey-number">03</span>
+      <h2>Pass your exam</h2>
+      <p>Take the state exam you booked. Practice scores are study feedback, not a guarantee or official licensing result.</p>
+    </article>
   </section>
 </main>
 

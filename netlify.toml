@@ -2,9 +2,9 @@
   publish = "."
   command = ""
 
-# Serve the existing exam portal on the AMG site's public origin. The upstream
-# remains independent so its signed access flow, edge authorization, functions,
-# and course assets retain their established deployment boundary.
+# Serve public Health resources on the AMG origin. Protected Life routes use a
+# normal redirect so the exam portal's signed Edge authorization still runs;
+# proxying those routes between Netlify sites would bypass that protection.
 [[redirects]]
   from = "/health/*"
   to = "https://amg-exam-portal.netlify.app/health/:splat"
@@ -14,24 +14,18 @@
 [[redirects]]
   from = "/course/*"
   to = "https://amg-exam-portal.netlify.app/course/:splat"
-  status = 200
+  status = 302
   force = true
 
 [[redirects]]
   from = "/login/*"
   to = "https://amg-exam-portal.netlify.app/login/:splat"
-  status = 200
+  status = 302
   force = true
 
 [[redirects]]
   from = "/practice-assets/*"
   to = "https://amg-exam-portal.netlify.app/practice-assets/:splat"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/*"
-  to = "https://amg-exam-portal.netlify.app/api/:splat"
   status = 200
   force = true
 

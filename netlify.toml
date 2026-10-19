@@ -2,6 +2,51 @@
   publish = "."
   command = ""
 
+# Serve the existing exam portal on the AMG site's public origin. The upstream
+# remains independent so its signed access flow, edge authorization, functions,
+# and course assets retain their established deployment boundary.
+[[redirects]]
+  from = "/health/*"
+  to = "https://amg-exam-portal.netlify.app/health/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/course/*"
+  to = "https://amg-exam-portal.netlify.app/course/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/login/*"
+  to = "https://amg-exam-portal.netlify.app/login/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/practice-assets/*"
+  to = "https://amg-exam-portal.netlify.app/practice-assets/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/.netlify/functions/*"
+  to = "https://amg-exam-portal.netlify.app/.netlify/functions/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/Accident & Health Study Guide.docx"
+  to = "https://amg-exam-portal.netlify.app/Accident%20%26%20Health%20Study%20Guide.docx"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/Life Producer Study Guide.docx"
+  to = "https://amg-exam-portal.netlify.app/Life%20Producer%20Study%20Guide.docx"
+  status = 200
+  force = true
+
 [[headers]]
   for = "/*"
   [headers.values]

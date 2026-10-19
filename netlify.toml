@@ -30,8 +30,8 @@
   force = true
 
 [[redirects]]
-  from = "/.netlify/functions/*"
-  to = "https://amg-exam-portal.netlify.app/.netlify/functions/:splat"
+  from = "/api/*"
+  to = "https://amg-exam-portal.netlify.app/api/:splat"
   status = 200
   force = true
 

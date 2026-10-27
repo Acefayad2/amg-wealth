@@ -74,6 +74,42 @@ export default async function handler(req: Request, _context: Context) {
       return json({ id: data }, input.messageId ? 200 : 201);
     }
 
+    if (input.action === "save_recurring_reminder") {
+      const name = cleanText(input.name, 160, "Reminder name");
+      const body = cleanText(input.body, 1600, "Message");
+      if (input.status !== "draft") throw new Error("Recurring reminders stay inactive until delivery is approved.");
+      if (input.timezone !== "America/New_York") throw new Error("AMG recurring reminders use America/New_York.");
+      const localTime = typeof input.localTime === "string" ? input.localTime.trim() : "";
+      if (localTime && !/^([01]\d|2[0-3]):[0-5]\d$/.test(localTime)) throw new Error("Send time is invalid.");
+      const weekdays = Array.isArray(input.weekdays) ? input.weekdays.map(Number) : [];
+      if (!weekdays.length || weekdays.some((day, index) =>
+        !Number.isInteger(day) || day < 0 || day > 6 || weekdays.indexOf(day) !== index
+      )) throw new Error("Recurring weekdays are invalid.");
+      const startDate = String(input.startDate || "");
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(startDate)) throw new Error("Start date is invalid.");
+      const targetGroupId = input.targetGroupId ? requireUuid(input.targetGroupId, "Recipient group") : null;
+      const zoomUrl = typeof input.zoomUrl === "string" ? input.zoomUrl.trim() : "";
+      if (zoomUrl) {
+        const parsed = new URL(zoomUrl);
+        if (parsed.protocol !== "https:") throw new Error("Zoom URL must use HTTPS.");
+      }
+      const { data, error } = await client.rpc("amg_crm_save_recurring_reminder", {
+        p_id: input.id ? requireUuid(input.id, "Recurring reminder") : null,
+        p_name: name,
+        p_body: body,
+        p_target_group_id: targetGroupId,
+        p_zoom_url: zoomUrl || null,
+        p_timezone: input.timezone,
+        p_local_time: localTime || null,
+        p_weekdays: weekdays,
+        p_start_date: startDate,
+        p_status: "draft",
+        p_idempotency_key: requireUuid(input.idempotencyKey, "Request key"),
+      });
+      if (error) rpcError(error);
+      return json({ id: data }, input.id ? 200 : 201);
+    }
+
     return json({ error: "Action is invalid." }, 400);
   } catch (error) {
     const status = typeof error === "object" && error && "status" in error ? Number(error.status) : 400;

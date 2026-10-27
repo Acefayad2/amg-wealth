@@ -1,8 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
-import { STATUS_LABELS, calendarCells, defaultScheduleValue, eligibleTarget, filterContacts, localDayKey } from "../admin/core.mjs";
+import { STATUS_LABELS, calendarCells, defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, recurringCalendarEntries } from "../admin/core.mjs";
 
 const $ = (selector) => document.querySelector(selector);
-const state = { contacts: [], groups: [], messages: [], transport: {}, month: new Date(), search: "", draftId: null, messageRequestKey: null, messageBusy: false, contactBusy: false };
+const state = { contacts: [], groups: [], messages: [], recurring_reminders: [], transport: {}, month: new Date(), search: "", draftId: null, messageRequestKey: null, messageBusy: false, contactBusy: false, recurringDraftId: null, recurringRequestKey: null, recurringBusy: false };
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 let authClient = null;
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
@@ -41,6 +41,7 @@ async function load() {
 function render() {
   renderGroups();
   renderContacts();
+  renderRecurring();
   renderCalendar();
   renderMessages();
   renderStats();
@@ -52,6 +53,33 @@ function render() {
     : !enabled
       ? "Quo is configured but dispatch is intentionally disabled. Set the send approval flag only after sender, carrier registration, credits, contacts, and consent are verified."
       : "Quo dispatch is enabled. Only opted-in contacts can be scheduled, and opt-outs are checked again immediately before send.";
+}
+
+const weekdayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+function formatLocalTime(value) {
+  if (!value) return "Time needed";
+  const [hour, minute] = String(value).split(":").map(Number);
+  return new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit", timeZone: "UTC" })
+    .format(new Date(Date.UTC(2026, 0, 1, hour, minute)));
+}
+
+function renderRecurring() {
+  const reminders = state.recurring_reminders || [];
+  $("#recurring-list").innerHTML = reminders.length ? reminders.map((reminder) => {
+    const missing = [
+      !reminder.target_group_id && "recipient group",
+      reminder.meeting_url_required && !reminder.zoom_url && "Zoom URL",
+    ].filter(Boolean);
+    const schedule = reminder.weekdays.map((day) => weekdayNames[day]).join(", ") + " · " + formatLocalTime(reminder.local_time) + " ET";
+    const needs = missing.length ? "Needs " + missing.join(" and ") : "Ready for final provider approval";
+    return '<article class="message-row">' +
+      '<span class="status draft">Inactive draft</span>' +
+      '<div class="message-copy"><strong>' + escapeHtml(reminder.name) + '</strong><span>' + escapeHtml(schedule) + '</span><span class="needs-input">' + escapeHtml(needs) + '</span></div>' +
+      '<span class="message-meta">' + escapeHtml(reminder.target_group_name || "No audience selected") + '</span>' +
+      '<button class="secondary" data-edit-recurring="' + reminder.id + '">Edit</button></article>';
+  }).join("") : '<p class="empty">No recurring drafts yet.</p>';
+  document.querySelectorAll("[data-edit-recurring]").forEach((button) =>
+    button.addEventListener("click", () => editRecurring(button.dataset.editRecurring)));
 }
 
 function renderGroups() {
@@ -77,18 +105,29 @@ function renderContacts() {
 function renderCalendar() {
   $("#month-title").textContent = new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(state.month);
   const today = localDayKey(new Date());
+  const cells = calendarCells(state.month);
   const grouped = state.messages.filter((message) => message.scheduled_for).reduce((days, message) => {
     const key = localDayKey(message.scheduled_for);
     (days[key] ||= []).push(message);
     return days;
   }, {});
-  $("#calendar").innerHTML = calendarCells(state.month).map((date) => {
+  for (const reminder of state.recurring_reminders || []) {
+    for (const occurrence of recurringCalendarEntries(reminder, cells)) {
+      (grouped[occurrence.dateKey] ||= []).push({
+        body: occurrence.body,
+        status: "draft",
+        target_name: occurrence.name,
+        display_time: occurrence.displayTime,
+      });
+    }
+  }
+  $("#calendar").innerHTML = cells.map((date) => {
     const key = localDayKey(date);
     const messages = grouped[key] || [];
     const other = date.getMonth() !== state.month.getMonth();
     return `<button class="day${other ? " other" : ""}${key === today ? " today" : ""}" data-day="${key}">
       <span class="day-number">${date.getDate()}</span>
-      ${messages.slice(0, 3).map((message) => `<span class="calendar-message ${message.status}" title="${escapeHtml(message.body)}">${escapeHtml(formatTime(message.scheduled_for))} · ${escapeHtml(message.target_name)}</span>`).join("")}
+      ${messages.slice(0, 3).map((message) => `<span class="calendar-message ${message.status}" title="${escapeHtml(message.body)}">${escapeHtml(message.display_time || formatTime(message.scheduled_for))} · ${escapeHtml(message.target_name)}</span>`).join("")}
       ${messages.length > 3 ? `<span class="more">+${messages.length - 3} more</span>` : ""}
     </button>`;
   }).join("");
@@ -154,6 +193,66 @@ function editMessage(id) {
   $("#message-body").value = message.body;
   $("#message-timezone").value = message.timezone;
   $("#char-count").textContent = `${message.body.length} / 1600`;
+}
+
+function editRecurring(id) {
+  const reminder = (state.recurring_reminders || []).find((item) => item.id === id);
+  if (!reminder) return;
+  state.recurringDraftId = id;
+  state.recurringRequestKey = reminder.idempotency_key;
+  $("#recurring-form").reset();
+  $("#recurring-id").value = id;
+  $("#recurring-title").textContent = reminder.name;
+  $("#recurring-name").value = reminder.name;
+  $("#recurring-body").value = reminder.body;
+  $("#recurring-url").value = reminder.zoom_url || "";
+  $("#recurring-url-note").textContent = reminder.meeting_url_required
+    ? "Required before activation. No Zoom link has been inferred."
+    : "Optional for this reminder; no meeting link was requested.";
+  $("#recurring-time").value = reminder.local_time ? String(reminder.local_time).slice(0, 5) : "";
+  $("#recurring-timezone").value = reminder.timezone;
+  $("#recurring-group").innerHTML = '<option value="">Choose later</option>' + state.groups.map((group) =>
+    '<option value="' + group.id + '" ' + (group.id === reminder.target_group_id ? "selected" : "") + '>' + escapeHtml(group.name) + '</option>'
+  ).join("");
+  $("#recurring-days").textContent = "Repeats " + reminder.weekdays.map((day) => weekdayNames[day]).join(", ") + " in " + reminder.timezone + ".";
+  $("#recurring-error").textContent = "";
+  $("#recurring-dialog").showModal();
+}
+
+async function saveRecurring(event) {
+  event.preventDefault();
+  if (state.recurringBusy) return;
+  const reminder = (state.recurring_reminders || []).find((item) => item.id === state.recurringDraftId);
+  const error = $("#recurring-error");
+  const submit = event.submitter;
+  error.textContent = "";
+  state.recurringBusy = true;
+  submit.disabled = true;
+  try {
+    await api({
+      action: "save_recurring_reminder",
+      id: reminder.id,
+      name: $("#recurring-name").value,
+      body: $("#recurring-body").value,
+      targetGroupId: $("#recurring-group").value || null,
+      zoomUrl: $("#recurring-url").value,
+      timezone: reminder.timezone,
+      localTime: $("#recurring-time").value,
+      weekdays: reminder.weekdays,
+      startDate: reminder.start_date,
+      status: "draft",
+      idempotencyKey: state.recurringRequestKey,
+    });
+    $("#recurring-dialog").close();
+    await load();
+    toast("Inactive recurring draft saved.");
+  } catch (reason) {
+    error.textContent = reason.message;
+    error.focus();
+  } finally {
+    state.recurringBusy = false;
+    submit.disabled = false;
+  }
 }
 
 function openContact(id = null) {
@@ -224,6 +323,7 @@ $("#target-id").addEventListener("change", updateRecipientNote);
 $("#message-body").addEventListener("input", (event) => { $("#char-count").textContent = `${event.target.value.length} / 1600`; });
 $("#save-draft").addEventListener("click", () => saveMessage("draft"));
 $("#composer-form").addEventListener("submit", (event) => { event.preventDefault(); saveMessage("scheduled"); });
+$("#recurring-form").addEventListener("submit", saveRecurring);
 $("#prev-month").addEventListener("click", () => { state.month = new Date(state.month.getFullYear(), state.month.getMonth() - 1, 1); renderCalendar(); });
 $("#next-month").addEventListener("click", () => { state.month = new Date(state.month.getFullYear(), state.month.getMonth() + 1, 1); renderCalendar(); });
 $("#today").addEventListener("click", () => { state.month = new Date(); renderCalendar(); });
@@ -272,6 +372,11 @@ async function init() {
     $("#app").hidden = false;
     Object.assign(state, {
       groups: ["Marketing Directors", "AMG Hierarchy", "AMG Baseshop"].map((name, index) => ({ id: `00000000-0000-4000-8000-00000000000${index}`, name, member_count: 0, eligible_count: 0 })),
+      recurring_reminders: [
+        { id: "preview-book", name: "AMG Book Club", body: "Good morning, AMG! It’s time for AMG Book Club.", target_group_id: null, target_group_name: null, zoom_url: null, meeting_url_required: true, timezone: "America/New_York", local_time: "09:00:00", weekdays: [2, 3, 4, 5], start_date: "2026-10-01", status: "draft", idempotency_key: "00000000-0000-4000-8000-000000000010" },
+        { id: "preview-thursday", name: "BOM Thursday Reminder", body: "Good morning, AMG! Tonight’s BOM starts at 7 PM.", target_group_id: null, target_group_name: null, zoom_url: null, meeting_url_required: false, timezone: "America/New_York", local_time: "11:00:00", weekdays: [4], start_date: "2026-10-01", status: "draft", idempotency_key: "00000000-0000-4000-8000-000000000011" },
+        { id: "preview-friday", name: "BOM Saturday Reminder", body: "Good evening, AMG! Tomorrow’s BOM starts at 9 AM.", target_group_id: null, target_group_name: null, zoom_url: null, meeting_url_required: false, timezone: "America/New_York", local_time: "21:00:00", weekdays: [5], start_date: "2026-10-01", status: "draft", idempotency_key: "00000000-0000-4000-8000-000000000012" },
+      ],
       transport: { provider: "Quo", configured: false, enabled: false },
     });
     render();

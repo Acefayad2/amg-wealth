@@ -48,6 +48,10 @@
         <article><span class="dot sent"></span><div><strong id="sent-count">0</strong><span>Sent</span></div></article>
         <article><span class="dot failed"></span><div><strong id="failed-count">0</strong><span>Failed</span></div></article>
       </section>
+      <section class="queue-card recurring-card">
+        <div class="section-heading"><div><p class="eyebrow">Recurring drafts</p><h2>AMG reminders</h2></div></div>
+        <div id="recurring-list" class="message-list"></div>
+      </section>
       <section class="calendar-card">
         <div class="calendar-toolbar"><div><p class="eyebrow">Schedule</p><h2 id="month-title"></h2></div><div class="toolbar-actions"><button id="today" class="secondary">Today</button><button id="prev-month" class="icon-button" aria-label="Previous month">←</button><button id="next-month" class="icon-button" aria-label="Next month">→</button></div></div>
         <div class="weekdays" aria-hidden="true"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
@@ -66,6 +70,22 @@
       <div class="recipient-grid"><label>Send date and time<input id="scheduled-for" name="scheduled-for" type="datetime-local" autocomplete="off"></label><label>Timezone<input id="message-timezone" name="message-timezone" type="text" autocomplete="off" readonly></label></div>
       <p id="composer-error" class="form-error" role="alert" tabindex="-1"></p>
       <div class="dialog-actions"><button id="save-draft" type="button" class="secondary">Save draft</button><button id="schedule-message" type="submit" class="primary">Schedule message</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="recurring-dialog" class="dialog">
+    <form id="recurring-form" method="dialog" class="dialog-card">
+      <div class="dialog-heading"><div><p class="eyebrow">Inactive recurring draft</p><h2 id="recurring-title">Edit reminder</h2></div><button type="button" class="close" data-close="recurring-dialog" aria-label="Close">×</button></div>
+      <input id="recurring-id" name="recurring-id" type="hidden">
+      <label>Reminder name<input id="recurring-name" name="recurring-name" maxlength="160" autocomplete="off" required></label>
+      <label>Recipient group<select id="recurring-group" name="recurring-group" autocomplete="off"><option value="">Choose later</option></select><span class="field-meta">A verified opted-in audience is required before activation.</span></label>
+      <label>Meeting URL<input id="recurring-url" name="recurring-url" type="url" inputmode="url" placeholder="https://…" autocomplete="off"><span id="recurring-url-note" class="field-meta">No link has been inferred.</span></label>
+      <label>Message<textarea id="recurring-body" name="recurring-body" maxlength="1600" rows="7" autocomplete="off" required></textarea></label>
+      <div class="recipient-grid"><label>Send time<input id="recurring-time" name="recurring-time" type="time" autocomplete="off"><span class="field-meta">Leave blank while the time is undecided.</span></label><label>Timezone<input id="recurring-timezone" name="recurring-timezone" value="America/New_York" autocomplete="off" readonly></label></div>
+      <p id="recurring-days" class="recipient-note"></p>
+      <p class="recipient-note warning">This remains an inactive draft. Quo delivery cannot run until the audience, meeting URL, provider connection, and final approval are complete.</p>
+      <p id="recurring-error" class="form-error" role="alert" tabindex="-1"></p>
+      <div class="dialog-actions"><button type="button" class="secondary" data-close="recurring-dialog">Cancel</button><button type="submit" class="primary">Save inactive draft</button></div>
     </form>
   </dialog>
 

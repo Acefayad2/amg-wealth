@@ -44,3 +44,55 @@ export function eligibleTarget(targetType, target, contacts) {
     contact.consent_status === "opted_in" && contact.group_ids?.includes(target.id),
   );
 }
+
+function zonedParts(date, timeZone) {
+  return Object.fromEntries(
+    new Intl.DateTimeFormat("en-US", {
+      timeZone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hourCycle: "h23",
+    }).formatToParts(date).filter((part) => part.type !== "literal").map((part) => [part.type, Number(part.value)]),
+  );
+}
+
+export function zonedDateTimeToUtc(dateKey, localTime, timeZone) {
+  const [year, month, day] = dateKey.split("-").map(Number);
+  const [hour, minute] = localTime.split(":").map(Number);
+  const desired = Date.UTC(year, month - 1, day, hour, minute);
+  let candidate = new Date(desired);
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const parts = zonedParts(candidate, timeZone);
+    const represented = Date.UTC(parts.year, parts.month - 1, parts.day, parts.hour, parts.minute, parts.second);
+    const adjustment = desired - represented;
+    if (!adjustment) break;
+    candidate = new Date(candidate.getTime() + adjustment);
+  }
+  return candidate;
+}
+
+export function recurringCalendarEntries(reminder, dates) {
+  if (!reminder.local_time) return [];
+  const weekdays = new Set(reminder.weekdays || []);
+  const localTime = String(reminder.local_time).slice(0, 5);
+  const [hour, minute] = localTime.split(":").map(Number);
+  const displayTime = new Intl.DateTimeFormat("en-US", {
+    hour: "numeric", minute: "2-digit", timeZone: "UTC",
+  }).format(new Date(Date.UTC(2026, 0, 1, hour, minute))) + " ET";
+  return dates.flatMap((date) => {
+    const dateKey = localDayKey(date);
+    if (!weekdays.has(date.getDay()) || dateKey < reminder.start_date) return [];
+    return [{
+      dateKey,
+      scheduledFor: zonedDateTimeToUtc(dateKey, localTime, reminder.timezone).toISOString(),
+      displayTime,
+      name: reminder.name,
+      body: reminder.body,
+      status: reminder.status,
+    }];
+  });
+}

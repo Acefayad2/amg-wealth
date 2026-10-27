@@ -38,3 +38,10 @@ export function publicError(error: unknown) {
   }
   return "The CRM request could not be completed.";
 }
+
+export function verifySameOrigin(req: Request) {
+  const origin = req.headers.get("origin");
+  if (!origin || origin !== new URL(req.url).origin) {
+    throw Object.assign(new Error("Request origin is not allowed."), { status: 403 });
+  }
+}

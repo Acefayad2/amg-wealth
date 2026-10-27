@@ -1,18 +1,22 @@
-import { getUser, handleAuthCallback, login, logout } from "@netlify/identity";
+import { createClient } from "@supabase/supabase-js";
 import { STATUS_LABELS, calendarCells, defaultScheduleValue, eligibleTarget, filterContacts, localDayKey } from "../admin/core.mjs";
 
 const $ = (selector) => document.querySelector(selector);
-const state = { contacts: [], groups: [], messages: [], transport: {}, month: new Date(), search: "", draftId: null };
+const state = { contacts: [], groups: [], messages: [], transport: {}, month: new Date(), search: "", draftId: null, messageRequestKey: null, messageBusy: false, contactBusy: false };
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+let authClient = null;
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
 const initials = (name) => name.split(/\s+/).map((part) => part[0]).join("").slice(0, 2).toUpperCase();
 const formatTime = (value) => new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit" }).format(new Date(value));
 const formatDateTime = (value) => value ? new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value)) : "Not scheduled";
 
 async function api(body) {
+  const { data: sessionData } = await authClient.auth.getSession();
+  const token = sessionData.session?.access_token;
+  if (!token) throw new Error("Sign in required.");
   const response = await fetch("/api/admin/crm", {
     method: body ? "POST" : "GET",
-    headers: body ? { "content-type": "application/json" } : undefined,
+    headers: { ...(body ? { "content-type": "application/json" } : {}), authorization: `Bearer ${token}` },
     body: body ? JSON.stringify(body) : undefined,
   });
   const payload = await response.json().catch(() => ({}));
@@ -131,6 +135,7 @@ function updateRecipientNote() {
 
 function openComposer(type = "individual", id = null, day = null) {
   state.draftId = null;
+  state.messageRequestKey = crypto.randomUUID();
   $("#composer-form").reset();
   $("#target-type").value = type;
   $("#message-timezone").value = timezone;
@@ -167,8 +172,14 @@ function openContact(id = null) {
 }
 
 async function saveMessage(status) {
+  if (state.messageBusy) return;
   const error = $("#composer-error");
+  const form = $("#composer-form");
   error.textContent = "";
+  state.messageBusy = true;
+  form.setAttribute("aria-busy", "true");
+  $("#save-draft").disabled = true;
+  $("#schedule-message").disabled = true;
   try {
     const payload = {
       action: "save_message", messageId: state.draftId,
@@ -176,22 +187,35 @@ async function saveMessage(status) {
       targetId: $("#target-id").value, status,
       scheduledFor: status === "scheduled" ? new Date($("#scheduled-for").value).toISOString() : null,
       timezone: $("#message-timezone").value,
-      idempotencyKey: crypto.randomUUID(),
+      idempotencyKey: state.messageRequestKey,
     };
     await api(payload);
     $("#composer").close();
     await load();
     toast(status === "draft" ? "Draft saved." : "Message scheduled.");
-  } catch (reason) { error.textContent = reason.message; }
+  } catch (reason) {
+    error.textContent = reason.message;
+    error.focus();
+  } finally {
+    state.messageBusy = false;
+    form.removeAttribute("aria-busy");
+    $("#save-draft").disabled = false;
+    updateRecipientNote();
+  }
 }
 
 $("#login-form").addEventListener("submit", async (event) => {
   event.preventDefault();
   $("#login-error").textContent = "";
-  try { await login($("#login-email").value, $("#login-password").value); location.reload(); }
+  try {
+    if (!authClient) throw new Error("Sign-in service is still loading. Try again in a moment.");
+    const { error } = await authClient.auth.signInWithPassword({ email: $("#login-email").value, password: $("#login-password").value });
+    if (error) throw error;
+    location.reload();
+  }
   catch (error) { $("#login-error").textContent = error.message || "Sign in failed."; }
 });
-$("#sign-out").addEventListener("click", async () => { await logout(); location.reload(); });
+$("#sign-out").addEventListener("click", async () => { await authClient.auth.signOut(); location.reload(); });
 $("#new-message").addEventListener("click", () => openComposer());
 $("#add-contact").addEventListener("click", () => openContact());
 $("#contact-search").addEventListener("input", (event) => { state.search = event.target.value; renderContacts(); });
@@ -207,8 +231,13 @@ document.querySelectorAll("[data-close]").forEach((button) => button.addEventLis
 
 $("#contact-form").addEventListener("submit", async (event) => {
   event.preventDefault();
+  if (state.contactBusy) return;
   const error = $("#contact-error");
+  const submit = event.submitter;
   error.textContent = "";
+  state.contactBusy = true;
+  event.currentTarget.setAttribute("aria-busy", "true");
+  if (submit) submit.disabled = true;
   try {
     const previous = state.contacts.find((item) => item.id === $("#contact-id").value);
     const result = await api({
@@ -226,21 +255,21 @@ $("#contact-form").addEventListener("submit", async (event) => {
     $("#contact-dialog").close();
     await load();
     toast("Contact saved.");
-  } catch (reason) { error.textContent = reason.message; }
+  } catch (reason) {
+    error.textContent = reason.message;
+    error.focus();
+  } finally {
+    state.contactBusy = false;
+    event.currentTarget.removeAttribute("aria-busy");
+    if (submit) submit.disabled = false;
+  }
 });
 
 async function init() {
-  try { await handleAuthCallback(); } catch { /* A normal load has no callback token. */ }
   const localPreview = ["127.0.0.1", "localhost"].includes(location.hostname) && new URLSearchParams(location.search).has("preview");
-  const user = localPreview ? { roles: ["admin"] } : await getUser();
-  if (!user) return;
-  if (!user.roles?.includes("admin")) {
-    $("#login-error").textContent = "This account does not have AMG admin access.";
-    return;
-  }
-  $("#auth-view").hidden = true;
-  $("#app").hidden = false;
   if (localPreview) {
+    $("#auth-view").hidden = true;
+    $("#app").hidden = false;
     Object.assign(state, {
       groups: ["Marketing Directors", "AMG Hierarchy", "AMG Baseshop"].map((name, index) => ({ id: `00000000-0000-4000-8000-00000000000${index}`, name, member_count: 0, eligible_count: 0 })),
       transport: { provider: "Quo", configured: false, enabled: false },
@@ -248,8 +277,24 @@ async function init() {
     render();
     return;
   }
-  try { await load(); }
-  catch (error) { $("#transport-banner").textContent = error.message; }
+  try {
+    const response = await fetch("/api/admin/config", { headers: { accept: "application/json" } });
+    const config = await response.json();
+    if (!response.ok) throw new Error(config.error || "CRM backend is not configured.");
+    authClient = createClient(config.url, config.key, {
+      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
+    });
+    $("#login-submit").disabled = false;
+    const { data } = await authClient.auth.getUser();
+    if (!data.user) return;
+    await load();
+    $("#auth-view").hidden = true;
+    $("#app").hidden = false;
+  } catch (error) {
+    $("#login-error").textContent = error.message === "AMG CRM admin access required."
+      ? "This account does not have AMG CRM admin access."
+      : error.message;
+  }
 }
 
 init();

@@ -9,33 +9,34 @@
   <link rel="stylesheet" href="/admin/admin.css">
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
   <div id="auth-view" class="auth-view">
     <div class="auth-card">
-      <a href="/" class="brand"><img src="/assets/logo-mark.webp" alt=""><span>ANOINTED MONEY GROUP</span></a>
+      <a href="/" class="brand"><img src="/assets/logo-mark.webp" alt="" width="34" height="34"><span>ANOINTED MONEY GROUP</span></a>
       <p class="eyebrow">Restricted workspace</p>
       <h1>Admin sign in</h1>
-      <p class="muted">Use an invited AMG account with the <strong>admin</strong> role.</p>
+      <p class="muted">Use an approved AMG website CRM account.</p>
       <form id="login-form" class="stack">
-        <label>Email<input id="login-email" type="email" autocomplete="username" required></label>
-        <label>Password<input id="login-password" type="password" autocomplete="current-password" required></label>
-        <button class="primary" type="submit">Sign in</button>
-        <p id="login-error" class="form-error" role="alert"></p>
+        <label>Email<input id="login-email" name="email" type="email" autocomplete="username" required></label>
+        <label>Password<input id="login-password" name="password" type="password" autocomplete="current-password" required></label>
+        <button id="login-submit" class="primary" type="submit" disabled>Sign in</button>
+        <p id="login-error" class="form-error" role="alert" tabindex="-1"></p>
       </form>
     </div>
   </div>
 
   <div id="app" class="app" hidden>
     <aside class="sidebar">
-      <a href="/" class="brand"><img src="/assets/logo-mark.webp" alt=""><span>AMG</span></a>
+      <a href="/" class="brand"><img src="/assets/logo-mark.webp" alt="" width="34" height="34"><span>AMG</span></a>
       <div class="side-heading"><div><p class="eyebrow">CRM</p><h2>Contacts</h2></div><button id="add-contact" class="icon-button" title="Add contact" aria-label="Add contact">+</button></div>
-      <input id="contact-search" class="search" type="search" placeholder="Search contacts" aria-label="Search contacts">
+      <input id="contact-search" name="contact-search" class="search" type="search" placeholder="Search contacts" aria-label="Search contacts" autocomplete="off">
       <nav id="groups" class="groups" aria-label="Contact groups"></nav>
       <div class="list-heading"><span>All contacts</span><span id="contact-count">0</span></div>
       <div id="contacts" class="contacts"></div>
       <div class="sidebar-footer"><button id="sign-out" class="text-button">Sign out</button><a href="/">Back to website</a></div>
     </aside>
 
-    <main class="main">
+    <main id="main-content" class="main" tabindex="-1">
       <header class="topbar">
         <div><p class="eyebrow">Admin portal</p><h1>Communications calendar</h1><p class="muted">Plan individual and group messages from one place.</p></div>
         <button id="new-message" class="primary">New message</button>
@@ -59,11 +60,11 @@
   <dialog id="composer" class="dialog">
     <form id="composer-form" method="dialog" class="dialog-card">
       <div class="dialog-heading"><div><p class="eyebrow">Compose</p><h2>Schedule a text</h2></div><button type="button" class="close" data-close="composer" aria-label="Close">×</button></div>
-      <div class="recipient-grid"><label>Recipient type<select id="target-type"><option value="individual">Individual</option><option value="group">Group</option></select></label><label>Recipient<select id="target-id" required></select></label></div>
+      <div class="recipient-grid"><label>Recipient type<select id="target-type" name="target-type" autocomplete="off"><option value="individual">Individual</option><option value="group">Group</option></select></label><label>Recipient<select id="target-id" name="target-id" autocomplete="off" required></select></label></div>
       <div id="recipient-note" class="recipient-note"></div>
-      <label>Message<textarea id="message-body" maxlength="1600" rows="7" required placeholder="Write a clear, consent-based message…"></textarea><span class="field-meta"><span>Opt-out requests always override group membership.</span><span id="char-count">0 / 1600</span></span></label>
-      <div class="recipient-grid"><label>Send date and time<input id="scheduled-for" type="datetime-local"></label><label>Timezone<input id="message-timezone" type="text" readonly></label></div>
-      <p id="composer-error" class="form-error" role="alert"></p>
+      <label>Message<textarea id="message-body" name="message-body" maxlength="1600" rows="7" autocomplete="off" required placeholder="Write a clear, consent-based message…"></textarea><span class="field-meta"><span>Opt-out requests always override group membership.</span><span id="char-count">0 / 1600</span></span></label>
+      <div class="recipient-grid"><label>Send date and time<input id="scheduled-for" name="scheduled-for" type="datetime-local" autocomplete="off"></label><label>Timezone<input id="message-timezone" name="message-timezone" type="text" autocomplete="off" readonly></label></div>
+      <p id="composer-error" class="form-error" role="alert" tabindex="-1"></p>
       <div class="dialog-actions"><button id="save-draft" type="button" class="secondary">Save draft</button><button id="schedule-message" type="submit" class="primary">Schedule message</button></div>
     </form>
   </dialog>
@@ -71,13 +72,13 @@
   <dialog id="contact-dialog" class="dialog">
     <form id="contact-form" method="dialog" class="dialog-card compact">
       <div class="dialog-heading"><div><p class="eyebrow">Directory</p><h2 id="contact-title">Add contact</h2></div><button type="button" class="close" data-close="contact-dialog" aria-label="Close">×</button></div>
-      <input id="contact-id" type="hidden">
-      <label>Full name<input id="contact-name" maxlength="160" required></label>
-      <label>Phone number<input id="contact-phone" type="tel" placeholder="+12025550123" required><span class="field-meta">Use E.164 format with country code.</span></label>
-      <div class="recipient-grid"><label>Text consent<select id="contact-consent"><option value="pending">Pending / unknown</option><option value="opted_in">Verified opt-in</option><option value="opted_out">Opted out</option></select></label><label>Timezone<input id="contact-timezone" required></label></div>
-      <label>Consent evidence<textarea id="consent-evidence" rows="3" placeholder="Required for verified opt-in: how and when consent was recorded"></textarea></label>
+      <input id="contact-id" name="contact-id" type="hidden">
+      <label>Full name<input id="contact-name" name="contact-name" maxlength="160" autocomplete="off" required></label>
+      <label>Phone number<input id="contact-phone" name="contact-phone" type="tel" placeholder="+12025550123" autocomplete="off" required><span class="field-meta">Use E.164 format with country code.</span></label>
+      <div class="recipient-grid"><label>Text consent<select id="contact-consent" name="contact-consent" autocomplete="off"><option value="pending">Pending / unknown</option><option value="opted_in">Verified opt-in</option><option value="opted_out">Opted out</option></select></label><label>Timezone<input id="contact-timezone" name="contact-timezone" autocomplete="off" required></label></div>
+      <label>Consent evidence<textarea id="consent-evidence" name="consent-evidence" rows="3" autocomplete="off" placeholder="Required for verified opt-in: how and when consent was recorded"></textarea></label>
       <fieldset><legend>Groups</legend><div id="contact-groups" class="check-grid"></div></fieldset>
-      <p id="contact-error" class="form-error" role="alert"></p>
+      <p id="contact-error" class="form-error" role="alert" tabindex="-1"></p>
       <div class="dialog-actions"><button type="button" class="secondary" data-close="contact-dialog">Cancel</button><button type="submit" class="primary">Save contact</button></div>
     </form>
   </dialog>

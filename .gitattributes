@@ -1,0 +1,2 @@
+# Generated bundle can contain whitespace inside third-party worker string literals.
+admin/admin.js -whitespace

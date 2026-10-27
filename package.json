@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@netlify/functions": "latest",
-    "@netlify/identity": "latest",
+    "@supabase/supabase-js": "^2.58.0",
     "pg": "^8.23.1"
   },
   "devDependencies": {

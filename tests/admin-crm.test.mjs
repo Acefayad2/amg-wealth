@@ -41,3 +41,14 @@ test("migration creates requested groups and duplicate-send guardrails", () => {
   assert.match(sql, /idempotency_key UUID NOT NULL UNIQUE/);
   assert.match(sql, /consent_status IN \('pending', 'opted_in', 'opted_out'\)/);
 });
+
+test("CRM migration stays isolated from existing app tables and roles", () => {
+  const sql = fs.readFileSync(new URL("../database/migrations/20261027183000_create_admin_sms_crm.sql", import.meta.url), "utf8");
+  assert.match(sql, /amg_private\.crm_contacts/);
+  assert.match(sql, /amg_private\.crm_admins/);
+  assert.match(sql, /amg_private\.require_crm_admin/);
+  assert.doesNotMatch(sql, /ALTER TABLE public\.amg_app_/i);
+  assert.doesNotMatch(sql, /UPDATE public\.amg_app_/i);
+  assert.doesNotMatch(sql, /ALTER\s+.*auth\./i);
+  assert.doesNotMatch(sql, /UPDATE\s+auth\./i);
+});

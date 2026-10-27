@@ -1,8 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
-import { STATUS_LABELS, calendarCells, defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, recurringCalendarEntries } from "../admin/core.mjs";
+import { STATUS_LABELS, defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, recurringCalendarEntries, weekCells, weekRangeLabel } from "../admin/core.mjs";
 
 const $ = (selector) => document.querySelector(selector);
-const state = { contacts: [], groups: [], messages: [], recurring_reminders: [], transport: {}, month: new Date(), search: "", draftId: null, messageRequestKey: null, messageBusy: false, contactBusy: false, recurringDraftId: null, recurringRequestKey: null, recurringBusy: false };
+const state = { contacts: [], groups: [], messages: [], recurring_reminders: [], transport: {}, week: new Date(), search: "", draftId: null, messageRequestKey: null, messageBusy: false, contactBusy: false, recurringDraftId: null, recurringRequestKey: null, recurringBusy: false };
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 let authClient = null;
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
@@ -103,9 +103,9 @@ function renderContacts() {
 }
 
 function renderCalendar() {
-  $("#month-title").textContent = new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(state.month);
+  const cells = weekCells(state.week);
+  $("#week-title").textContent = weekRangeLabel(cells);
   const today = localDayKey(new Date());
-  const cells = calendarCells(state.month);
   const grouped = state.messages.filter((message) => message.scheduled_for).reduce((days, message) => {
     const key = localDayKey(message.scheduled_for);
     (days[key] ||= []).push(message);
@@ -118,17 +118,18 @@ function renderCalendar() {
         status: "draft",
         target_name: occurrence.name,
         display_time: occurrence.displayTime,
+        inactive_recurring: true,
       });
     }
   }
   $("#calendar").innerHTML = cells.map((date) => {
     const key = localDayKey(date);
     const messages = grouped[key] || [];
-    const other = date.getMonth() !== state.month.getMonth();
-    return `<button class="day${other ? " other" : ""}${key === today ? " today" : ""}" data-day="${key}">
-      <span class="day-number">${date.getDate()}</span>
-      ${messages.slice(0, 3).map((message) => `<span class="calendar-message ${message.status}" title="${escapeHtml(message.body)}">${escapeHtml(message.display_time || formatTime(message.scheduled_for))} · ${escapeHtml(message.target_name)}</span>`).join("")}
-      ${messages.length > 3 ? `<span class="more">+${messages.length - 3} more</span>` : ""}
+    const dayName = weekdayNames[date.getDay()];
+    const dateLabel = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(date);
+    return `<button class="day${key === today ? " today" : ""}" data-day="${key}" aria-label="${escapeHtml(`${dayName}, ${dateLabel}`)}">
+      <span class="day-number"><span class="day-weekday">${dayName}</span><span class="day-date">${escapeHtml(dateLabel)}</span></span>
+      ${messages.map((message) => `<span class="calendar-message ${message.status}" title="${escapeHtml(message.body)}">${message.inactive_recurring ? '<strong>Inactive</strong> · ' : ''}${escapeHtml(message.display_time || formatTime(message.scheduled_for))} · ${escapeHtml(message.target_name)}</span>`).join("")}
     </button>`;
   }).join("");
   document.querySelectorAll("[data-day]").forEach((button) => button.addEventListener("click", () => openComposer("individual", null, button.dataset.day)));
@@ -324,9 +325,9 @@ $("#message-body").addEventListener("input", (event) => { $("#char-count").textC
 $("#save-draft").addEventListener("click", () => saveMessage("draft"));
 $("#composer-form").addEventListener("submit", (event) => { event.preventDefault(); saveMessage("scheduled"); });
 $("#recurring-form").addEventListener("submit", saveRecurring);
-$("#prev-month").addEventListener("click", () => { state.month = new Date(state.month.getFullYear(), state.month.getMonth() - 1, 1); renderCalendar(); });
-$("#next-month").addEventListener("click", () => { state.month = new Date(state.month.getFullYear(), state.month.getMonth() + 1, 1); renderCalendar(); });
-$("#today").addEventListener("click", () => { state.month = new Date(); renderCalendar(); });
+$("#prev-week").addEventListener("click", () => { state.week = new Date(state.week.getFullYear(), state.week.getMonth(), state.week.getDate() - 7); renderCalendar(); });
+$("#next-week").addEventListener("click", () => { state.week = new Date(state.week.getFullYear(), state.week.getMonth(), state.week.getDate() + 7); renderCalendar(); });
+$("#today").addEventListener("click", () => { state.week = new Date(); renderCalendar(); });
 document.querySelectorAll("[data-close]").forEach((button) => button.addEventListener("click", () => $(`#${button.dataset.close}`).close()));
 
 $("#contact-form").addEventListener("submit", async (event) => {

@@ -27,3 +27,28 @@
   .groups{max-width:100%}
   .group-button{width:auto}
 }
+
+/* Weekly calendar: one accessible Sunday-to-Saturday view, with a stacked phone layout. */
+.calendar .day{min-height:180px;border-bottom:0}
+.calendar .day.other{background:#fff;color:inherit}
+.calendar .day.today{background:#f6fbf8}
+.calendar .day.today .day-number{display:flex;width:auto;height:auto;border-radius:0;background:transparent;color:var(--green)}
+.calendar .day-number{display:flex;justify-content:space-between;gap:6px;margin-bottom:9px;font-size:11px}
+.calendar .day-weekday{display:none}
+.calendar .day-date{white-space:nowrap}
+.calendar .calendar-message{margin:6px 0;padding:7px;line-height:1.35;overflow-wrap:anywhere;white-space:normal}
+.calendar .calendar-message strong{font-size:9px;text-transform:uppercase}
+@media(max-width:560px){
+  .calendar-toolbar{gap:10px}
+  .toolbar-actions{flex-wrap:wrap;justify-content:flex-end}
+  .toolbar-actions .secondary{display:block;width:100%;order:2}
+  .weekdays{display:none}
+  .calendar{grid-template-columns:1fr}
+  .calendar .day{min-height:82px;padding:11px 13px;border-right:0;border-bottom:1px solid var(--line)}
+  .calendar .day:last-child{border-bottom:0}
+  .calendar .day-weekday{display:inline}
+  .calendar .calendar-message{height:auto;padding:7px;border-left:3px solid currentColor;border-radius:5px;color:#5d6962!important;font-size:11px}
+  .calendar .calendar-message.scheduled{color:var(--blue)!important}
+  .calendar .calendar-message.sent{color:#23704b!important}
+  .calendar .calendar-message.failed{color:var(--red)!important}
+}

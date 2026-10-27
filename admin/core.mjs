@@ -6,15 +6,24 @@ export const STATUS_LABELS = {
   failed: "Failed",
 };
 
-export function calendarCells(month) {
-  const start = new Date(month.getFullYear(), month.getMonth(), 1);
-  const first = new Date(start);
-  first.setDate(1 - start.getDay());
-  return Array.from({ length: 42 }, (_, index) => {
+export function weekCells(reference) {
+  const first = new Date(reference.getFullYear(), reference.getMonth(), reference.getDate());
+  first.setDate(first.getDate() - first.getDay());
+  return Array.from({ length: 7 }, (_, index) => {
     const date = new Date(first);
     date.setDate(first.getDate() + index);
     return date;
   });
+}
+
+export function weekRangeLabel(dates) {
+  const first = dates[0];
+  const last = dates[dates.length - 1];
+  const start = new Intl.DateTimeFormat("en-US", {
+    month: "short", day: "numeric", ...(first.getFullYear() !== last.getFullYear() ? { year: "numeric" } : {}),
+  }).format(first);
+  const end = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(last);
+  return `${start}–${end}`;
 }
 
 export function localDayKey(value) {

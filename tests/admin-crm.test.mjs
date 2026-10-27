@@ -1,13 +1,15 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { calendarCells, defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, recurringCalendarEntries, zonedDateTimeToUtc } from "../admin/core.mjs";
+import { defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, recurringCalendarEntries, weekCells, weekRangeLabel, zonedDateTimeToUtc } from "../admin/core.mjs";
 
-test("calendar renders a stable six-week grid starting on Sunday", () => {
-  const cells = calendarCells(new Date(2026, 9, 1));
-  assert.equal(cells.length, 42);
+test("calendar renders one stable Sunday-through-Saturday week", () => {
+  const cells = weekCells(new Date(2026, 9, 27));
+  assert.equal(cells.length, 7);
   assert.equal(cells[0].getDay(), 0);
-  assert.equal(localDayKey(cells[0]), "2026-09-27");
+  assert.equal(localDayKey(cells[0]), "2026-10-25");
+  assert.equal(localDayKey(cells[6]), "2026-10-31");
+  assert.equal(weekRangeLabel(cells), "Oct 25–Oct 31, 2026");
 });
 
 test("schedule defaults one hour ahead on a quarter hour", () => {

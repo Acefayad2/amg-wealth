@@ -127,7 +127,7 @@ function renderCalendar() {
     const messages = grouped[key] || [];
     const dayName = weekdayNames[date.getDay()];
     const dateLabel = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(date);
-    return `<button class="day${key === today ? " today" : ""}" data-day="${key}" aria-label="${escapeHtml(`${dayName}, ${dateLabel}`)}">
+    return `<button class="day${key === today ? " today" : ""}" data-day="${key}">
       <span class="day-number"><span class="day-weekday">${dayName}</span><span class="day-date">${escapeHtml(dateLabel)}</span></span>
       ${messages.map((message) => `<span class="calendar-message ${message.status}" title="${escapeHtml(message.body)}">${message.inactive_recurring ? '<strong>Inactive</strong> · ' : ''}${escapeHtml(message.display_time || formatTime(message.scheduled_for))} · ${escapeHtml(message.target_name)}</span>`).join("")}
     </button>`;

@@ -1,0 +1,22 @@
+{
+  "name": "amg-wealth-site",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "esbuild src/admin.mjs --bundle --format=esm --outfile=admin/admin.js --minify",
+    "check": "tsc --noEmit",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "dependencies": {
+    "@netlify/functions": "latest",
+    "@netlify/identity": "latest",
+    "pg": "^8.23.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "@types/pg": "^8.23.1",
+    "esbuild": "latest",
+    "typescript": "latest"
+  }
+}

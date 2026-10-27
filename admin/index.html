@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>AMG Communications</title>
+  <link rel="icon" href="/assets/logo-mark.webp">
+  <link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body>
+  <div id="auth-view" class="auth-view">
+    <div class="auth-card">
+      <a href="/" class="brand"><img src="/assets/logo-mark.webp" alt=""><span>ANOINTED MONEY GROUP</span></a>
+      <p class="eyebrow">Restricted workspace</p>
+      <h1>Admin sign in</h1>
+      <p class="muted">Use an invited AMG account with the <strong>admin</strong> role.</p>
+      <form id="login-form" class="stack">
+        <label>Email<input id="login-email" type="email" autocomplete="username" required></label>
+        <label>Password<input id="login-password" type="password" autocomplete="current-password" required></label>
+        <button class="primary" type="submit">Sign in</button>
+        <p id="login-error" class="form-error" role="alert"></p>
+      </form>
+    </div>
+  </div>
+
+  <div id="app" class="app" hidden>
+    <aside class="sidebar">
+      <a href="/" class="brand"><img src="/assets/logo-mark.webp" alt=""><span>AMG</span></a>
+      <div class="side-heading"><div><p class="eyebrow">CRM</p><h2>Contacts</h2></div><button id="add-contact" class="icon-button" title="Add contact" aria-label="Add contact">+</button></div>
+      <input id="contact-search" class="search" type="search" placeholder="Search contacts" aria-label="Search contacts">
+      <nav id="groups" class="groups" aria-label="Contact groups"></nav>
+      <div class="list-heading"><span>All contacts</span><span id="contact-count">0</span></div>
+      <div id="contacts" class="contacts"></div>
+      <div class="sidebar-footer"><button id="sign-out" class="text-button">Sign out</button><a href="/">Back to website</a></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div><p class="eyebrow">Admin portal</p><h1>Communications calendar</h1><p class="muted">Plan individual and group messages from one place.</p></div>
+        <button id="new-message" class="primary">New message</button>
+      </header>
+      <section id="transport-banner" class="transport-banner" aria-live="polite"></section>
+      <section class="stats" aria-label="Message status summary">
+        <article><span class="dot draft"></span><div><strong id="draft-count">0</strong><span>Drafts</span></div></article>
+        <article><span class="dot scheduled"></span><div><strong id="scheduled-count">0</strong><span>Scheduled</span></div></article>
+        <article><span class="dot sent"></span><div><strong id="sent-count">0</strong><span>Sent</span></div></article>
+        <article><span class="dot failed"></span><div><strong id="failed-count">0</strong><span>Failed</span></div></article>
+      </section>
+      <section class="calendar-card">
+        <div class="calendar-toolbar"><div><p class="eyebrow">Schedule</p><h2 id="month-title"></h2></div><div class="toolbar-actions"><button id="today" class="secondary">Today</button><button id="prev-month" class="icon-button" aria-label="Previous month">←</button><button id="next-month" class="icon-button" aria-label="Next month">→</button></div></div>
+        <div class="weekdays" aria-hidden="true"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+        <div id="calendar" class="calendar"></div>
+      </section>
+      <section class="queue-card"><div class="section-heading"><div><p class="eyebrow">Queue</p><h2>Drafts and delivery history</h2></div></div><div id="message-list" class="message-list"></div></section>
+    </main>
+  </div>
+
+  <dialog id="composer" class="dialog">
+    <form id="composer-form" method="dialog" class="dialog-card">
+      <div class="dialog-heading"><div><p class="eyebrow">Compose</p><h2>Schedule a text</h2></div><button type="button" class="close" data-close="composer" aria-label="Close">×</button></div>
+      <div class="recipient-grid"><label>Recipient type<select id="target-type"><option value="individual">Individual</option><option value="group">Group</option></select></label><label>Recipient<select id="target-id" required></select></label></div>
+      <div id="recipient-note" class="recipient-note"></div>
+      <label>Message<textarea id="message-body" maxlength="1600" rows="7" required placeholder="Write a clear, consent-based message…"></textarea><span class="field-meta"><span>Opt-out requests always override group membership.</span><span id="char-count">0 / 1600</span></span></label>
+      <div class="recipient-grid"><label>Send date and time<input id="scheduled-for" type="datetime-local"></label><label>Timezone<input id="message-timezone" type="text" readonly></label></div>
+      <p id="composer-error" class="form-error" role="alert"></p>
+      <div class="dialog-actions"><button id="save-draft" type="button" class="secondary">Save draft</button><button id="schedule-message" type="submit" class="primary">Schedule message</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="contact-dialog" class="dialog">
+    <form id="contact-form" method="dialog" class="dialog-card compact">
+      <div class="dialog-heading"><div><p class="eyebrow">Directory</p><h2 id="contact-title">Add contact</h2></div><button type="button" class="close" data-close="contact-dialog" aria-label="Close">×</button></div>
+      <input id="contact-id" type="hidden">
+      <label>Full name<input id="contact-name" maxlength="160" required></label>
+      <label>Phone number<input id="contact-phone" type="tel" placeholder="+12025550123" required><span class="field-meta">Use E.164 format with country code.</span></label>
+      <div class="recipient-grid"><label>Text consent<select id="contact-consent"><option value="pending">Pending / unknown</option><option value="opted_in">Verified opt-in</option><option value="opted_out">Opted out</option></select></label><label>Timezone<input id="contact-timezone" required></label></div>
+      <label>Consent evidence<textarea id="consent-evidence" rows="3" placeholder="Required for verified opt-in: how and when consent was recorded"></textarea></label>
+      <fieldset><legend>Groups</legend><div id="contact-groups" class="check-grid"></div></fieldset>
+      <p id="contact-error" class="form-error" role="alert"></p>
+      <div class="dialog-actions"><button type="button" class="secondary" data-close="contact-dialog">Cancel</button><button type="submit" class="primary">Save contact</button></div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="/admin/admin.js"></script>
+</body>
+</html>

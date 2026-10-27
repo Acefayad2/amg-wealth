@@ -1,6 +1,10 @@
 [build]
   publish = "."
-  command = ""
+  command = "npm run build"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
 
 # Serve public Health resources on the AMG origin. Protected Life routes use a
 # normal redirect so the exam portal's signed Edge authorization still runs;

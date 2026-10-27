@@ -1,8 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
 
 export function getSupabaseConfig() {
-  const url = Netlify.env.get("SUPABASE_URL");
-  const key = Netlify.env.get("SUPABASE_PUBLISHABLE_KEY");
+  const url = Netlify.env.get("SUPABASE_URL") || process.env.SUPABASE_URL;
+  const key = Netlify.env.get("SUPABASE_PUBLISHABLE_KEY") || process.env.SUPABASE_PUBLISHABLE_KEY;
   if (!url || !key) throw Object.assign(new Error("CRM backend is not configured."), { status: 503 });
   return { url, key };
 }

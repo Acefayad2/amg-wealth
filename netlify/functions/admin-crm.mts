@@ -1,5 +1,6 @@
 import type { Config, Context } from "@netlify/functions";
 import { cleanText, E164, publicError, requireUuid, validTimezone, verifySameOrigin } from "./_shared/crm.mjs";
+import { verifyQuoTransport } from "./_shared/quo.mjs";
 import { getUserClient } from "./_shared/supabase.mjs";
 
 const headers = { "cache-control": "no-store", "content-type": "application/json; charset=utf-8" };
@@ -16,11 +17,13 @@ export default async function handler(req: Request, _context: Context) {
     if (req.method === "GET") {
       const { data, error } = await client.rpc("amg_crm_get_state");
       if (error) rpcError(error);
-      return json({ ...(data as Record<string, unknown>), transport: {
-        provider: "Quo",
-        configured: Boolean(Netlify.env.get("QUO_API_KEY") && Netlify.env.get("QUO_FROM_NUMBER")),
+      const transport = await verifyQuoTransport({
+        apiKey: Netlify.env.get("QUO_API_KEY"),
+        fromNumber: Netlify.env.get("QUO_FROM_NUMBER"),
+        phoneNumberId: Netlify.env.get("QUO_PHONE_NUMBER_ID"),
         enabled: Netlify.env.get("AMG_QUO_SEND_ENABLED") === "true",
-      } });
+      });
+      return json({ ...(data as Record<string, unknown>), transport });
     }
     if (req.method !== "POST") return json({ error: "Method not allowed." }, 405);
     verifySameOrigin(req);

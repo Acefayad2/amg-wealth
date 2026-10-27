@@ -45,13 +45,15 @@ function render() {
   renderCalendar();
   renderMessages();
   renderStats();
-  const { configured, enabled } = state.transport;
+  const { configured, verified, enabled } = state.transport;
   const banner = $("#transport-banner");
   banner.classList.toggle("ready", configured && enabled);
   banner.textContent = !configured
     ? "Quo sending is locked: add the approved API key and AMG sender number before enabling dispatch. Drafts and schedules remain visible, but no texts will send."
+    : !verified
+      ? "Quo credentials are stored, but the approved AMG sender could not be verified. Dispatch remains disabled."
     : !enabled
-      ? "Quo is configured but dispatch is intentionally disabled. Set the send approval flag only after sender, carrier registration, credits, contacts, and consent are verified."
+      ? "Quo is connected to the approved AMG sender, but dispatch is intentionally disabled. Contacts, consent, audience, and each activation still require approval."
       : "Quo dispatch is enabled. Only opted-in contacts can be scheduled, and opt-outs are checked again immediately before send.";
 }
 

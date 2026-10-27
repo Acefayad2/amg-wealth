@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, recurringCalendarEntries, weekCells, weekRangeLabel, zonedDateTimeToUtc } from "../admin/core.mjs";
+import { verifyQuoTransport } from "../netlify/functions/_shared/quo.mjs";
 
 test("calendar renders one stable Sunday-through-Saturday week", () => {
   const cells = weekCells(new Date(2026, 9, 27));
@@ -35,6 +36,26 @@ test("only opted-in individuals or groups with opted-in members are eligible", (
   assert.equal(eligibleTarget("individual", contacts[1], contacts), false);
   assert.equal(eligibleTarget("group", { id: "g" }, contacts), true);
   assert.equal(eligibleTarget("group", { id: "empty" }, contacts), false);
+});
+
+test("Quo validation is read-only and only verifies the approved sender identity", async () => {
+  let request;
+  const result = await verifyQuoTransport({
+    apiKey: "test-key", fromNumber: "+13017602910", phoneNumberId: "PNqGQouhRT", enabled: false,
+    fetchImpl: async (url, options) => {
+      request = { url, options };
+      return { ok: true, json: async () => ({ data: [{ id: "PNqGQouhRT", number: "+13017602910" }] }) };
+    },
+  });
+  assert.equal(request.url, "https://api.quo.com/v1/phone-numbers");
+  assert.equal(request.options.method, "GET");
+  assert.deepEqual(result, { provider: "Quo", configured: true, verified: true, enabled: false });
+  const mismatch = await verifyQuoTransport({
+    apiKey: "test-key", fromNumber: "+13017602910", phoneNumberId: "PN-other",
+    fetchImpl: async () => ({ ok: true, json: async () => ({ data: [{ id: "PNqGQouhRT", number: "+13017602910" }] }) }),
+  });
+  assert.equal(mismatch.verified, false);
+  assert.equal(mismatch.enabled, false);
 });
 
 test("recurring reminders stay at 9 AM New York across daylight saving time", () => {

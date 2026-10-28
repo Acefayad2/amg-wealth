@@ -8,18 +8,21 @@
 # Short, memorable entry points for the AMG payment checkout.
 [[redirects]]
   from = "/pay"
-  to = "/pay.html"
-  status = 200
+  to = "https://mylaunch.dev/invoice/amg"
+  status = 302
+  force = true
 
 [[redirects]]
   from = "/checkout"
-  to = "/pay.html"
-  status = 200
+  to = "https://mylaunch.dev/invoice/amg"
+  status = 302
+  force = true
 
 [[redirects]]
   from = "/secure-payment"
-  to = "/pay.html"
-  status = 200
+  to = "https://mylaunch.dev/invoice/amg"
+  status = 302
+  force = true
 
 # Serve public Health resources on the AMG origin. Protected Life routes use a
 # normal redirect so the exam portal's signed Edge authorization still runs;

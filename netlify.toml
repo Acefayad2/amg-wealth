@@ -2,6 +2,25 @@
   publish = "."
   command = ""
 
+[functions]
+  directory = "netlify/functions"
+
+# Short, memorable entry points for the AMG payment checkout.
+[[redirects]]
+  from = "/pay"
+  to = "/pay.html"
+  status = 200
+
+[[redirects]]
+  from = "/checkout"
+  to = "/pay.html"
+  status = 200
+
+[[redirects]]
+  from = "/secure-payment"
+  to = "/pay.html"
+  status = 200
+
 # Serve public Health resources on the AMG origin. Protected Life routes use a
 # normal redirect so the exam portal's signed Edge authorization still runs;
 # proxying those routes between Netlify sites would bypass that protection.

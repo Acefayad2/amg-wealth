@@ -2,6 +2,9 @@
   publish = "."
   command = ""
 
+[functions]
+  directory = "netlify/functions"
+
 # Serve public Health resources on the AMG origin. Protected Life routes use a
 # normal redirect so the exam portal's signed Edge authorization still runs;
 # proxying those routes between Netlify sites would bypass that protection.

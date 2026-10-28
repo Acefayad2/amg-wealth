@@ -1,5 +1,14 @@
 const STRIPE_API = 'https://api.stripe.com/v1';
 
+const INVOICES = new Map([
+  ['LP-AMG-20261027-01', {
+    amountInCents: 450_000,
+    customer: 'Anointed Money Group (AMG)',
+    description: 'Website, domain, SMS administration and Supabase setup',
+    label: 'LaunchPoint Website and CRM Invoice'
+  }]
+]);
+
 const responseHeaders = {
   'content-type': 'application/json; charset=utf-8',
   'cache-control': 'no-store',
@@ -44,26 +53,19 @@ export default async (request: Request) => {
     const payload = await request.json().catch(() => ({}));
     const name = cleanText(payload.name, 100);
     const email = cleanText(payload.email, 160).toLowerCase();
-    const description = cleanText(payload.description, 120);
-    const reference = cleanText(payload.reference, 80);
-    const amount = Number(payload.amount);
-    const amountInCents = Math.round(amount * 100);
+    const invoiceId = cleanText(payload.invoiceId, 80);
+    const invoice = INVOICES.get(invoiceId);
     const requestId = /^[a-f0-9-]{36}$/i.test(payload.requestId || '') ? payload.requestId : crypto.randomUUID();
 
+    if (!invoice) return json({ error: 'This invoice could not be found.' }, 404);
     if (!name) return json({ error: 'Enter your full name.' }, 400);
     if (!validEmail(email)) return json({ error: 'Enter a valid email address.' }, 400);
-    if (!description) return json({ error: 'Tell us what this payment is for.' }, 400);
-    if (!Number.isFinite(amount) || amountInCents < 100 || amountInCents > 5_000_000) {
-      return json({ error: 'Enter an amount between $1 and $50,000.' }, 400);
-    }
 
     const origin = new URL(request.url).origin;
     const siteUrl = (Netlify.env.get('URL') || origin || 'https://anointedmoneygroup.com').replace(/\/$/, '');
-    const paymentLabel = `AMG - ${description}`.slice(0, 127);
-    const paymentDescription = reference ? `Reference: ${reference}` : `Payment from ${name}`;
     const metadata = {
+      invoice_id: invoiceId,
       payer_name: name,
-      payment_reference: reference || 'none',
       request_id: requestId
     };
 
@@ -75,21 +77,21 @@ export default async (request: Request) => {
       billing_address_collection: 'auto',
       'phone_number_collection[enabled]': 'true',
       'line_items[0][price_data][currency]': 'usd',
-      'line_items[0][price_data][unit_amount]': String(amountInCents),
-      'line_items[0][price_data][product_data][name]': paymentLabel,
-      'line_items[0][price_data][product_data][description]': paymentDescription.slice(0, 500),
+      'line_items[0][price_data][unit_amount]': String(invoice.amountInCents),
+      'line_items[0][price_data][product_data][name]': invoice.label,
+      'line_items[0][price_data][product_data][description]': `${invoice.customer} - ${invoiceId} - ${invoice.description}`.slice(0, 500),
       'line_items[0][quantity]': '1',
-      'payment_intent_data[description]': `${name}: ${description}`.slice(0, 500),
+      'payment_intent_data[description]': `${invoiceId}: ${invoice.label}`.slice(0, 500),
+      'payment_intent_data[metadata][invoice_id]': metadata.invoice_id,
       'payment_intent_data[metadata][payer_name]': metadata.payer_name,
-      'payment_intent_data[metadata][payment_reference]': metadata.payment_reference,
       'payment_intent_data[metadata][request_id]': metadata.request_id,
+      'metadata[invoice_id]': metadata.invoice_id,
       'metadata[payer_name]': metadata.payer_name,
-      'metadata[payment_reference]': metadata.payment_reference,
       'metadata[request_id]': metadata.request_id,
-      'custom_text[submit][message]': 'Your payment is processed securely by Stripe.'
+      'custom_text[submit][message]': `Payment for LaunchPoint invoice ${invoiceId}. Processed securely by Stripe.`
     });
 
-    const session = await createCheckoutSession(stripeSecret, body, `${requestId}-amg-checkout`);
+    const session = await createCheckoutSession(stripeSecret, body, `${requestId}-${invoiceId}`);
     return json({ url: session.url, sessionId: session.id });
   } catch (error) {
     return json({ error: error instanceof Error ? error.message : 'Checkout could not be started.' }, 500);

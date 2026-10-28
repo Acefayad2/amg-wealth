@@ -24,18 +24,18 @@ test('reports whether Stripe is connected without exposing a key', async () => {
   assert.deepEqual(await response.json(), { stripeConnected: true });
 });
 
-test('rejects an invalid payment amount before calling Stripe', async () => {
+test('rejects an invoice that is not in the server-side catalog', async () => {
   setNetlifyEnv({ AMG_STRIPE_SECRET_KEY: 'rk_live_example' });
   const response = await handler(new Request('https://example.com/api/amg-checkout', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ name: 'Amina Cole', email: 'amina@example.com', description: 'Consultation', amount: 0 })
+    body: JSON.stringify({ name: 'Amina Cole', email: 'amina@example.com', invoiceId: 'not-a-real-invoice' })
   }));
-  assert.equal(response.status, 400);
-  assert.match((await response.json()).error, /amount/i);
+  assert.equal(response.status, 404);
+  assert.match((await response.json()).error, /invoice/i);
 });
 
-test('creates a Stripe Checkout Session with wallet-compatible card checkout', async (t) => {
+test('creates a fixed-price Stripe Checkout Session for the AMG invoice', async (t) => {
   setNetlifyEnv({ AMG_STRIPE_SECRET_KEY: 'rk_live_example', URL: 'https://anointedmoneygroup.com' });
   const originalFetch = globalThis.fetch;
   t.after(() => { globalThis.fetch = originalFetch; });
@@ -57,9 +57,8 @@ test('creates a Stripe Checkout Session with wallet-compatible card checkout', a
     body: JSON.stringify({
       name: 'Amina Cole',
       email: 'amina@example.com',
-      description: 'Licensing program',
-      reference: 'AMG-2048',
-      amount: 275,
+      invoiceId: 'LP-AMG-20261027-01',
+      amount: 1,
       requestId: '550e8400-e29b-41d4-a716-446655440000'
     })
   }));
@@ -67,7 +66,8 @@ test('creates a Stripe Checkout Session with wallet-compatible card checkout', a
   assert.equal(response.status, 200);
   assert.deepEqual(await response.json(), { url: 'https://checkout.stripe.com/c/pay/example', sessionId: 'cs_test_123' });
   assert.equal(stripeBody.get('mode'), 'payment');
-  assert.equal(stripeBody.get('line_items[0][price_data][unit_amount]'), '27500');
+  assert.equal(stripeBody.get('line_items[0][price_data][unit_amount]'), '450000');
+  assert.equal(stripeBody.get('metadata[invoice_id]'), 'LP-AMG-20261027-01');
   assert.equal(stripeBody.get('customer_email'), 'amina@example.com');
   assert.equal(stripeBody.get('phone_number_collection[enabled]'), 'true');
   assert.equal(stripeBody.get('success_url'), 'https://anointedmoneygroup.com/payment-success.html?session_id={CHECKOUT_SESSION_ID}');

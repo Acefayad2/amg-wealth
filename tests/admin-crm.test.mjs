@@ -4,6 +4,13 @@ import fs from "node:fs";
 import { defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, recurringCalendarEntries, weekCells, weekRangeLabel, zonedDateTimeToUtc } from "../admin/core.mjs";
 import { verifyQuoTransport } from "../netlify/functions/_shared/quo.mjs";
 import { isOptOutKeyword, outboundContent, personalizeOutbound, withFirstContactOptOut } from "../integrations/message-content.mjs";
+import { verifyStorageConnection } from "../netlify/functions/_shared/storage.mjs";
+
+test("storage readiness succeeds, fails closed, and times out without leaking details", async () => {
+  assert.equal(await verifyStorageConnection(async () => ({ rows: [{ one: 1 }] }), 20), true);
+  assert.equal(await verifyStorageConnection(async () => { throw new Error("secret connection detail"); }, 20), false);
+  assert.equal(await verifyStorageConnection(() => new Promise(() => {}), 5), false);
+});
 
 test("calendar renders one stable Sunday-through-Saturday week", () => {
   const cells = weekCells(new Date(2026, 9, 27));
@@ -173,12 +180,17 @@ test("dispatch implementation rechecks the global switch before every recipient"
   const handler = fs.readFileSync(new URL("../netlify/functions/admin-crm.mts", import.meta.url), "utf8");
   assert.match(handler, /input\.action === "set_dispatch_enabled"/);
   assert.match(handler, /if \(!verified\.verified\)/);
+  assert.match(handler, /if \(!await verifyCrmStorage\(\)\)/);
+  assert.match(handler, /storage_verified: await verifyCrmStorage\(\)/);
   assert.match(handler, /p_expected_version: expectedVersion/);
   assert.match(handler, /error\.code === "40001"[\s\S]*status: 409/);
   assert.match(handler, /\[401, 403, 409, 503\]/);
   const html = fs.readFileSync(new URL("../admin/index.html", import.meta.url), "utf8");
   assert.match(html, /Eligible scheduled messages may send when a dispatcher is running/);
   assert.match(html, /Incomplete reminders remain blocked/);
+  const adminSource = fs.readFileSync(new URL("../src/admin.mjs", import.meta.url), "utf8");
+  assert.match(adminSource, /!state\.storage_verified/);
+  assert.match(adminSource, /scheduler storage is unavailable/i);
 });
 
 test("scheduled worker is serialized, bounded, and refuses stale backlogs", () => {

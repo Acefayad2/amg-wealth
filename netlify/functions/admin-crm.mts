@@ -2,6 +2,7 @@ import type { Config, Context } from "@netlify/functions";
 import { cleanText, E164, publicError, requireUuid, validTimezone, verifySameOrigin } from "./_shared/crm.mjs";
 import { verifyQuoTransport } from "./_shared/quo.mjs";
 import { getUserClient } from "./_shared/supabase.mjs";
+import { verifyCrmStorage } from "./_shared/db.mjs";
 
 const headers = { "cache-control": "no-store", "content-type": "application/json; charset=utf-8" };
 const json = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status, headers });
@@ -30,6 +31,7 @@ export default async function handler(req: Request, _context: Context) {
         enabled: Boolean((dispatchControl as { enabled?: boolean })?.enabled) && !emergencyDisabled,
       });
       return json({ ...(data as Record<string, unknown>), dispatch_control: dispatchControl, scheduler_events: schedulerEvents,
+        storage_verified: await verifyCrmStorage(),
         transport: { ...transport, emergency_disabled: emergencyDisabled } });
     }
     if (req.method !== "POST") return json({ error: "Method not allowed." }, 405);
@@ -43,6 +45,9 @@ export default async function handler(req: Request, _context: Context) {
       if (input.enabled) {
         if (Netlify.env.get("AMG_QUO_EMERGENCY_DISABLE") === "true") {
           throw Object.assign(new Error("The emergency sending lock is active."), { status: 503 });
+        }
+        if (!await verifyCrmStorage()) {
+          throw Object.assign(new Error("CRM scheduler storage is unavailable. Sending remains disabled."), { status: 503 });
         }
         const verified = await verifyQuoTransport({
           apiKey: Netlify.env.get("QUO_API_KEY"), fromNumber: Netlify.env.get("QUO_FROM_NUMBER"),

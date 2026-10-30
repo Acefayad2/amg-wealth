@@ -2,7 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { STATUS_LABELS, defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, recurringCalendarEntries, weekCells, weekRangeLabel } from "../admin/core.mjs";
 
 const $ = (selector) => document.querySelector(selector);
-const state = { contacts: [], groups: [], messages: [], recurring_reminders: [], scheduler_events: [], dispatch_control: { enabled: false, version: 1, audit: [] }, transport: {}, week: new Date(), search: "", draftId: null, messageRequestKey: null, messageBusy: false, contactBusy: false, recurringDraftId: null, recurringRequestKey: null, recurringBusy: false, recurringStatusBusy: false, dispatchBusy: false };
+const state = { contacts: [], groups: [], messages: [], recurring_reminders: [], scheduler_events: [], dispatch_control: { enabled: false, version: 1, audit: [] }, storage_verified: false, transport: {}, week: new Date(), search: "", draftId: null, messageRequestKey: null, messageBusy: false, contactBusy: false, recurringDraftId: null, recurringRequestKey: null, recurringBusy: false, recurringStatusBusy: false, dispatchBusy: false };
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 let authClient = null;
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
@@ -48,11 +48,13 @@ function render() {
   renderStats();
   const { configured, verified, enabled } = state.transport;
   const banner = $("#transport-banner");
-  banner.classList.toggle("ready", configured && enabled);
+  banner.classList.toggle("ready", configured && state.storage_verified && enabled);
   banner.textContent = !configured
     ? "Quo sending is locked: add the approved API key and AMG sender number before enabling dispatch. Drafts and schedules remain visible, but no texts will send."
     : !verified
       ? "Quo credentials are stored, but the approved AMG sender could not be verified. Dispatch remains disabled."
+    : !state.storage_verified
+      ? "Quo is connected, but scheduler storage is unavailable. Sending is locked until the server-only database connection is verified."
     : !enabled
       ? "Quo is connected to the approved AMG sender, but dispatch is intentionally disabled. Contacts, consent, audience, and each activation still require approval."
       : "Quo dispatch is enabled. Only opted-in contacts can be scheduled, and opt-outs are checked again immediately before send.";
@@ -67,6 +69,8 @@ function renderDispatchControl() {
   $("#sending-control-title").textContent = effectiveEnabled ? "Sending enabled" : "Sending disabled";
   $("#sending-control-detail").textContent = control.enabled && state.transport?.emergency_disabled
     ? "The portal switch is on, but the emergency lock is blocking delivery."
+    : control.enabled && !state.storage_verified
+      ? "The portal switch is on, but scheduler storage is unavailable. Delivery remains blocked."
     : control.enabled && !state.transport?.verified
       ? "The portal switch is on, but the approved Quo sender is not verified. Delivery remains blocked."
       : effectiveEnabled
@@ -78,7 +82,7 @@ function renderDispatchControl() {
     : "No sending-control changes have been recorded.";
   const button = $("#toggle-sending");
   button.textContent = control.enabled ? "Disable sending" : "Enable sending";
-  button.disabled = state.dispatchBusy || (!control.enabled && (!state.transport?.verified || state.transport?.emergency_disabled));
+  button.disabled = state.dispatchBusy || (!control.enabled && (!state.storage_verified || !state.transport?.verified || state.transport?.emergency_disabled));
 }
 
 async function setDispatchEnabled(enabled) {
@@ -451,7 +455,8 @@ $("#contact-form").addEventListener("submit", async (event) => {
 });
 
 async function init() {
-  const localPreview = ["127.0.0.1", "localhost"].includes(location.hostname) && new URLSearchParams(location.search).has("preview");
+  const previewParams = new URLSearchParams(location.search);
+  const localPreview = ["127.0.0.1", "localhost"].includes(location.hostname) && previewParams.has("preview");
   if (localPreview) {
     $("#auth-view").hidden = true;
     $("#app").hidden = false;
@@ -463,6 +468,7 @@ async function init() {
         { id: "preview-friday", name: "BOM Saturday Reminder", body: "Good evening, AMG! Tomorrow’s BOM starts at 9 AM.", target_group_id: null, target_group_name: null, zoom_url: null, meeting_url_required: false, timezone: "America/New_York", local_time: "21:00:00", weekdays: [5], start_date: "2026-10-01", status: "draft", idempotency_key: "00000000-0000-4000-8000-000000000012" },
       ],
       transport: { provider: "Quo", configured: true, verified: true, enabled: false, emergency_disabled: false },
+      storage_verified: !previewParams.has("storage-off"),
       dispatch_control: { enabled: false, version: 1, changed_at: null, changed_by: null, audit: [] },
     });
     render();

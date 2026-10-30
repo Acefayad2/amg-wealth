@@ -12,6 +12,16 @@ test("storage readiness succeeds, fails closed, and times out without leaking de
   assert.equal(await verifyStorageConnection(() => new Promise(() => {}), 5), false);
 });
 
+test("CRM storage accepts a full URL or the isolated AMG Portal pooler password", () => {
+  const source = fs.readFileSync(new URL("../netlify/functions/_shared/db.mts", import.meta.url), "utf8");
+  assert.match(source, /AMG_CRM_DATABASE_URL/);
+  assert.match(source, /AMG_CRM_DATABASE_PASSWORD/);
+  assert.match(source, /aws-1-us-east-2\.pooler\.supabase\.com/);
+  assert.match(source, /postgres\.jkwhoisuhcbkokwntrfg/);
+  assert.match(source, /if \(!connectionString && !password\)/);
+  assert.doesNotMatch(source, /console\.(?:log|error).*password/i);
+});
+
 test("calendar renders one stable Sunday-through-Saturday week", () => {
   const cells = weekCells(new Date(2026, 9, 27));
   assert.equal(cells.length, 7);

@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "esbuild src/admin.mjs --bundle --format=esm --outfile=admin/admin.js --minify",
+    "build": "esbuild src/admin.mjs --bundle --format=esm --outfile=admin/admin.js --minify && esbuild src/admin-setup.mjs --bundle --format=esm --outfile=admin/setup/setup.js --minify",
     "check": "tsc --noEmit",
     "test": "node --test tests/*.test.mjs"
   },

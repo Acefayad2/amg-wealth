@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Set up AMG dashboard access</title>
+  <link rel="icon" href="/assets/logo-mark.webp">
+  <link rel="stylesheet" href="/admin/admin.css">
+  <link rel="stylesheet" href="/admin/setup/setup.css">
+</head>
+<body>
+  <main class="auth-view setup-view">
+    <section class="auth-card setup-card" aria-labelledby="setup-title">
+      <a href="/" class="brand"><img src="/assets/logo-mark.webp" alt="" width="34" height="34"><span>ANOINTED MONEY GROUP</span></a>
+      <p class="eyebrow">Restricted workspace</p>
+      <h1 id="setup-title">Set up dashboard access</h1>
+      <p id="setup-intro" class="muted">Use your approved AMG admin email and current password, then choose a new dashboard password.</p>
+
+      <div id="link-error" class="setup-notice warning" role="alert" hidden></div>
+
+      <form id="setup-form" class="stack" novalidate>
+        <label>Email
+          <input id="setup-email" name="email" type="email" inputmode="email" autocomplete="username" required>
+        </label>
+        <label id="current-password-field">Current password
+          <input id="current-password" name="current-password" type="password" autocomplete="current-password" required>
+          <span class="field-meta">This re-verifies the existing account through Supabase Auth. The website does not log the password.</span>
+        </label>
+        <label>New password
+          <input id="new-password" name="new-password" type="password" autocomplete="new-password" minlength="12" required aria-describedby="password-rules">
+        </label>
+        <ul id="password-rules" class="password-rules" aria-label="Password requirements">
+          <li data-rule="length">12 or more characters</li>
+          <li data-rule="upper">An uppercase letter</li>
+          <li data-rule="lower">A lowercase letter</li>
+          <li data-rule="number">A number</li>
+          <li data-rule="symbol">A symbol</li>
+        </ul>
+        <label>Confirm new password
+          <input id="confirm-password" name="confirm-password" type="password" autocomplete="new-password" minlength="12" required>
+        </label>
+        <p id="setup-error" class="form-error" role="alert" tabindex="-1"></p>
+        <button id="setup-submit" class="primary" type="submit" disabled>Save new password</button>
+      </form>
+
+      <section id="setup-success" class="setup-success" role="status" tabindex="-1" hidden>
+        <h2>Password saved</h2>
+        <p>Your existing AMG admin account is ready. Sign in with the new password.</p>
+        <a class="primary button-link" href="/admin/">Go to dashboard sign in</a>
+      </section>
+
+      <div id="recovery-panel" class="recovery-panel">
+        <h2>Forgot your current password?</h2>
+        <p class="muted">Enter your email above, then request a one-time recovery email. For privacy, the result does not reveal whether an account exists.</p>
+        <button id="send-recovery" class="secondary" type="button" disabled>Send secure recovery email</button>
+        <p id="recovery-status" class="field-meta" role="status" tabindex="-1"></p>
+      </div>
+      <p class="setup-footer"><a href="/admin/">Back to dashboard sign in</a></p>
+    </section>
+  </main>
+  <script type="module" src="/admin/setup/setup.js"></script>
+</body>
+</html>

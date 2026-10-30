@@ -27,12 +27,14 @@ test("expired or invalid auth links produce useful non-secret errors", () => {
   assert.equal(authLinkError("https://example.test/admin/setup/"), "");
 });
 
-test("setup source updates only an authenticated existing admin account", () => {
+test("setup source preserves existing-admin recovery and adds verified phone invitation acceptance", () => {
   const source = fs.readFileSync(new URL("../src/admin-setup.mjs", import.meta.url), "utf8");
   assert.match(source, /signInWithPassword/);
   assert.match(source, /\/api\/admin\/crm/);
   assert.match(source, /updateUser\(\{ password \}\)/);
   assert.match(source, /resetPasswordForEmail/);
+  assert.match(source, /verifyOtp/);
+  assert.match(source, /amg_crm_accept_phone_admin_invite/);
   assert.doesNotMatch(source, /\.signUp\(|auth\.admin|service_role/i);
   assert.match(source, /setupBusy/);
   assert.match(source, /PASSWORD_RECOVERY/);

@@ -47,6 +47,19 @@
         <div><p class="eyebrow">Delivery control</p><h2 id="sending-control-title">Sending disabled</h2><p id="sending-control-detail" class="muted"></p><p id="sending-control-audit" class="audit-note"></p></div>
         <button id="toggle-sending" class="secondary" type="button">Enable sending</button>
       </section>
+      <section class="queue-card admin-access-card" aria-labelledby="admin-access-title">
+        <div class="section-heading"><div><p class="eyebrow">Access</p><h2 id="admin-access-title">Admin invitations</h2></div></div>
+        <div class="admin-invite-body">
+          <p class="muted">Invite only a specifically approved AMG CRM administrator. The private text is bound to the intended phone; the recipient must verify that phone and their chosen email before access is granted.</p>
+          <form id="admin-invite-form" class="admin-invite-form">
+            <label>Approved admin phone<input id="admin-invite-phone" name="admin-invite-phone" type="tel" inputmode="tel" autocomplete="off" placeholder="+12025550123" maxlength="16" required></label>
+            <button id="admin-invite-submit" class="secondary" type="submit">Send private setup text</button>
+          </form>
+          <p id="admin-invite-error" class="form-error" role="alert" tabindex="-1"></p>
+          <p class="field-meta">You will confirm the exact phone before sending. This sends a single-use link and does not grant access until both phone and chosen email are verified. Provider opt-outs are checked first.</p>
+          <div id="admin-invitations" class="message-list compact-list"></div>
+        </div>
+      </section>
       <section class="stats" aria-label="Message status summary">
         <article><span class="dot draft"></span><div><strong id="draft-count">0</strong><span>Drafts</span></div></article>
         <article><span class="dot scheduled"></span><div><strong id="scheduled-count">0</strong><span>Scheduled</span></div></article>

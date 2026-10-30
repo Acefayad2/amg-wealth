@@ -30,6 +30,6 @@ export function authLinkError(urlValue) {
   const params = new URLSearchParams(url.hash.replace(/^#/, ""));
   const code = params.get("error_code") || params.get("error");
   if (!code) return "";
-  if (["otp_expired", "access_denied"].includes(code)) return "This setup link has expired or was already used. Request a new secure recovery email below.";
-  return "This setup link could not be verified. Request a new secure recovery email below.";
+  if (["otp_expired", "access_denied"].includes(code)) return "This setup link has expired or was already used. Request a new secure setup email from an AMG administrator.";
+  return "This setup link could not be verified. Request a new secure setup email from an AMG administrator.";
 }

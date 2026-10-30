@@ -15,6 +15,7 @@ CREATE TABLE amg_private.crm_admin_invitations (
   chosen_email TEXT,
   otp_request_count INTEGER NOT NULL DEFAULT 0 CHECK (otp_request_count BETWEEN 0 AND 5),
   last_otp_requested_at TIMESTAMPTZ,
+  otp_hook_claimed_count INTEGER NOT NULL DEFAULT 0 CHECK (otp_hook_claimed_count BETWEEN 0 AND 5),
   accepted_at TIMESTAMPTZ,
   failure_reason TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -22,7 +23,31 @@ CREATE TABLE amg_private.crm_admin_invitations (
   CHECK ((status = 'accepted') = (verified_user_id IS NOT NULL AND chosen_email IS NOT NULL AND accepted_at IS NOT NULL))
 );
 
+ALTER TABLE amg_private.crm_admin_invitations ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON amg_private.crm_admin_invitations FROM PUBLIC, anon, authenticated;
+
+-- Auth stores international phones without a leading plus; all comparisons use
+-- one strict canonical representation, never a lossy punctuation-strip.
+CREATE OR REPLACE FUNCTION amg_private.canonical_invite_phone(p_phone TEXT)
+RETURNS TEXT LANGUAGE sql IMMUTABLE STRICT SET search_path = '' AS $$
+  SELECT CASE WHEN btrim(p_phone) ~ '^\+?[1-9][0-9]{7,14}$'
+    THEN '+' || ltrim(btrim(p_phone), '+') ELSE NULL END;
+$$;
+REVOKE ALL ON FUNCTION amg_private.canonical_invite_phone(TEXT) FROM PUBLIC, anon, authenticated;
+
+-- No code or credential is stored: only the signed event's identifier and outcome.
+CREATE TABLE amg_private.crm_admin_otp_deliveries (
+  webhook_id TEXT PRIMARY KEY CHECK (length(webhook_id) BETWEEN 1 AND 200),
+  invitation_id UUID NOT NULL REFERENCES amg_private.crm_admin_invitations(id),
+  user_id UUID NOT NULL REFERENCES auth.users(id),
+  request_number INTEGER NOT NULL CHECK (request_number BETWEEN 1 AND 5),
+  status TEXT NOT NULL DEFAULT 'sending' CHECK (status IN ('sending', 'sent', 'failed', 'uncertain')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (invitation_id, request_number)
+);
+ALTER TABLE amg_private.crm_admin_otp_deliveries ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON amg_private.crm_admin_otp_deliveries FROM PUBLIC, anon, authenticated;
 
 CREATE OR REPLACE FUNCTION public.amg_crm_get_admin_invitations()
 RETURNS JSONB LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = '' AS $$
@@ -56,7 +81,10 @@ BEGIN
   IF FOUND AND invite.status = 'accepted' THEN
     RAISE EXCEPTION 'This phone already completed an AMG CRM invitation' USING ERRCODE = '23505';
   END IF;
-  IF FOUND AND invite.status IN ('prepared', 'sent', 'phone_verified') AND invite.expires_at > NOW() THEN
+  -- A prepared operation may already have reached the provider if its outcome
+  -- recording failed. Never reset it or an uncertain operation, even after expiry.
+  IF FOUND AND (invite.status IN ('prepared', 'uncertain') OR
+    (invite.status IN ('sent', 'phone_verified') AND invite.expires_at > NOW())) THEN
     RETURN jsonb_build_object('id', invite.id, 'phone', invite.phone, 'should_send', false);
   END IF;
   INSERT INTO amg_private.crm_admin_invitations
@@ -64,7 +92,7 @@ BEGIN
   VALUES (normalized_phone, normalized_hash, 'prepared', auth.uid(), NOW() + INTERVAL '1 hour', NULL, NULL, NULL, NULL, NOW())
   ON CONFLICT (phone) DO UPDATE SET token_hash = EXCLUDED.token_hash, status = 'prepared', invited_by = auth.uid(),
     invited_at = NULL, expires_at = NOW() + INTERVAL '1 hour', verified_user_id = NULL,
-    chosen_email = NULL, otp_request_count = 0, last_otp_requested_at = NULL,
+    chosen_email = NULL, last_otp_requested_at = NULL,
     accepted_at = NULL, failure_reason = NULL, updated_at = NOW()
   RETURNING * INTO invite;
   RETURN jsonb_build_object('id', invite.id, 'phone', invite.phone, 'should_send', true);
@@ -90,7 +118,7 @@ $$;
 
 CREATE OR REPLACE FUNCTION public.amg_crm_find_auth_user_by_phone(p_phone TEXT)
 RETURNS UUID LANGUAGE sql STABLE SECURITY DEFINER SET search_path = '' AS $$
-  SELECT id FROM auth.users WHERE phone = btrim(COALESCE(p_phone, '')) LIMIT 1;
+  SELECT id FROM auth.users WHERE amg_private.canonical_invite_phone(phone) = amg_private.canonical_invite_phone(p_phone) LIMIT 1;
 $$;
 
 CREATE OR REPLACE FUNCTION public.amg_crm_record_phone_admin_invite_user(p_id UUID, p_user_id UUID)
@@ -101,7 +129,7 @@ BEGIN
   FROM auth.users u
   WHERE i.id = p_id AND i.status = 'prepared'
     AND (i.provisioned_user_id IS NULL OR i.provisioned_user_id = p_user_id)
-    AND u.id = p_user_id AND u.phone = i.phone AND u.email IS NULL;
+    AND u.id = p_user_id AND amg_private.canonical_invite_phone(u.phone) = i.phone AND NULLIF(u.email, '') IS NULL AND u.phone_confirmed_at IS NULL;
   IF NOT FOUND THEN
     RAISE EXCEPTION 'The provisioned phone account does not match this invitation' USING ERRCODE = '42501';
   END IF;
@@ -112,9 +140,9 @@ CREATE OR REPLACE FUNCTION public.amg_crm_invite_owns_auth_user(p_id UUID, p_use
 RETURNS BOOLEAN LANGUAGE sql STABLE SECURITY DEFINER SET search_path = '' AS $$
   SELECT EXISTS (
     SELECT 1 FROM amg_private.crm_admin_invitations i
-    JOIN auth.users u ON u.id = p_user_id AND u.phone = i.phone
+    JOIN auth.users u ON u.id = p_user_id AND amg_private.canonical_invite_phone(u.phone) = i.phone
     WHERE i.id = p_id AND i.provisioned_user_id = p_user_id
-      AND i.status = 'prepared' AND u.email IS NULL
+      AND i.status = 'prepared' AND NULLIF(u.email, '') IS NULL AND u.phone_confirmed_at IS NULL
   );
 $$;
 
@@ -125,7 +153,7 @@ BEGIN
   UPDATE amg_private.crm_admin_invitations
   SET otp_request_count = otp_request_count + 1, last_otp_requested_at = NOW(), updated_at = NOW()
   WHERE token_hash = encode(extensions.digest(COALESCE(p_token, ''), 'sha256'), 'hex')
-    AND phone = btrim(COALESCE(p_phone, ''))
+    AND phone = amg_private.canonical_invite_phone(p_phone)
     AND status = 'sent' AND expires_at > NOW()
     AND otp_request_count < 5
     AND (last_otp_requested_at IS NULL OR last_otp_requested_at <= NOW() - INTERVAL '60 seconds')
@@ -134,12 +162,53 @@ BEGIN
 END;
 $$;
 
+-- Called only after the HTTP hook signature is verified. Consume one recent
+-- private-token-authorized request under a row lock; direct Auth calls cannot
+-- manufacture additional sends. Unknown outcomes are never retried automatically.
+CREATE OR REPLACE FUNCTION public.amg_crm_claim_admin_otp_delivery(p_webhook_id TEXT, p_user_id UUID, p_phone TEXT)
+RETURNS TEXT LANGUAGE plpgsql SECURITY DEFINER SET search_path = '' AS $$
+DECLARE invite amg_private.crm_admin_invitations%ROWTYPE;
+  prior amg_private.crm_admin_otp_deliveries%ROWTYPE;
+BEGIN
+  IF p_webhook_id IS NULL OR length(p_webhook_id) NOT BETWEEN 1 AND 200 THEN RETURN 'blocked'; END IF;
+  PERFORM pg_advisory_xact_lock(hashtextextended(p_webhook_id, 1));
+  SELECT * INTO prior FROM amg_private.crm_admin_otp_deliveries WHERE webhook_id = p_webhook_id;
+  IF FOUND THEN
+    IF prior.user_id = p_user_id AND prior.status = 'sent' THEN RETURN 'sent'; END IF;
+    RETURN 'blocked';
+  END IF;
+  SELECT i.* INTO invite FROM amg_private.crm_admin_invitations i
+  JOIN auth.users u ON u.id = p_user_id AND i.provisioned_user_id = u.id
+    AND amg_private.canonical_invite_phone(u.phone) = i.phone
+  WHERE i.phone = amg_private.canonical_invite_phone(p_phone)
+    AND i.status = 'sent' AND i.expires_at > NOW()
+  FOR UPDATE OF i;
+  IF NOT FOUND OR invite.last_otp_requested_at IS NULL
+    OR invite.last_otp_requested_at < NOW() - INTERVAL '30 seconds'
+    OR invite.otp_request_count <= invite.otp_hook_claimed_count THEN RETURN 'blocked'; END IF;
+  INSERT INTO amg_private.crm_admin_otp_deliveries (webhook_id, invitation_id, user_id, request_number)
+  VALUES (p_webhook_id, invite.id, p_user_id, invite.otp_request_count);
+  UPDATE amg_private.crm_admin_invitations SET otp_hook_claimed_count = otp_request_count WHERE id = invite.id;
+  RETURN 'send';
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION public.amg_crm_record_admin_otp_delivery(p_webhook_id TEXT, p_outcome TEXT)
+RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER SET search_path = '' AS $$
+BEGIN
+  IF p_outcome NOT IN ('sent', 'failed', 'uncertain') THEN RAISE EXCEPTION 'Invalid OTP outcome'; END IF;
+  UPDATE amg_private.crm_admin_otp_deliveries SET status = p_outcome, updated_at = NOW()
+  WHERE webhook_id = p_webhook_id AND status = 'sending';
+  IF NOT FOUND THEN RAISE EXCEPTION 'OTP delivery is not pending'; END IF;
+END;
+$$;
+
 CREATE OR REPLACE FUNCTION public.amg_crm_bind_verified_invite_phone(p_token TEXT)
 RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER SET search_path = '' AS $$
 DECLARE current_phone TEXT; confirmed_at TIMESTAMPTZ;
 BEGIN
   IF auth.uid() IS NULL THEN RAISE EXCEPTION 'Sign in required' USING ERRCODE = '42501'; END IF;
-  SELECT phone, phone_confirmed_at INTO current_phone, confirmed_at FROM auth.users WHERE id = auth.uid();
+  SELECT amg_private.canonical_invite_phone(phone), phone_confirmed_at INTO current_phone, confirmed_at FROM auth.users WHERE id = auth.uid();
   IF current_phone IS NULL OR confirmed_at IS NULL THEN
     RAISE EXCEPTION 'Verified phone required' USING ERRCODE = '42501';
   END IF;
@@ -147,6 +216,7 @@ BEGIN
   SET status = 'phone_verified', verified_user_id = auth.uid(), updated_at = NOW()
   WHERE token_hash = encode(extensions.digest(COALESCE(p_token, ''), 'sha256'), 'hex')
     AND phone = current_phone AND status IN ('sent', 'phone_verified')
+    AND provisioned_user_id = auth.uid()
     AND (verified_user_id IS NULL OR verified_user_id = auth.uid()) AND expires_at > NOW();
   IF NOT FOUND THEN RAISE EXCEPTION 'Invitation does not match this verified phone' USING ERRCODE = '42501'; END IF;
 END;
@@ -158,7 +228,7 @@ DECLARE current_phone TEXT; current_email TEXT; phone_confirmed TIMESTAMPTZ; ema
   invite amg_private.crm_admin_invitations%ROWTYPE;
 BEGIN
   IF auth.uid() IS NULL THEN RAISE EXCEPTION 'Sign in required' USING ERRCODE = '42501'; END IF;
-  SELECT phone, lower(email), phone_confirmed_at, email_confirmed_at
+  SELECT amg_private.canonical_invite_phone(phone), NULLIF(lower(email), ''), phone_confirmed_at, email_confirmed_at
   INTO current_phone, current_email, phone_confirmed, email_confirmed
   FROM auth.users WHERE id = auth.uid();
   IF current_phone IS NULL OR phone_confirmed IS NULL OR current_email IS NULL OR email_confirmed IS NULL THEN
@@ -194,3 +264,8 @@ GRANT EXECUTE ON FUNCTION public.amg_crm_find_auth_user_by_phone(TEXT) TO servic
 GRANT EXECUTE ON FUNCTION public.amg_crm_record_phone_admin_invite_user(UUID, UUID) TO service_role;
 GRANT EXECUTE ON FUNCTION public.amg_crm_invite_owns_auth_user(UUID, UUID) TO service_role;
 GRANT EXECUTE ON FUNCTION public.amg_crm_claim_phone_admin_otp(TEXT, TEXT) TO service_role;
+
+REVOKE ALL ON FUNCTION public.amg_crm_claim_admin_otp_delivery(TEXT, UUID, TEXT) FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.amg_crm_record_admin_otp_delivery(TEXT, TEXT) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.amg_crm_claim_admin_otp_delivery(TEXT, UUID, TEXT) TO service_role;
+GRANT EXECUTE ON FUNCTION public.amg_crm_record_admin_otp_delivery(TEXT, TEXT) TO service_role;

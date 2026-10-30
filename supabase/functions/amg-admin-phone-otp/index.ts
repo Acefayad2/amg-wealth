@@ -1,10 +1,12 @@
 import { createClient } from "npm:@supabase/supabase-js@2.58.0";
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 
-const headers = { "cache-control": "no-store", "content-type": "application/json; charset=utf-8" };
-const json = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status, headers });
+import { invitationCors } from "./cors.mjs";
 
 serve(async (req) => {
+  const { headers, response } = invitationCors(req);
+  if (response) return response;
+  const json = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status, headers });
   if (req.method !== "POST") return json({ error: "Method not allowed." }, 405);
   const url = Deno.env.get("SUPABASE_URL");
   const anonKey = Deno.env.get("SUPABASE_ANON_KEY");

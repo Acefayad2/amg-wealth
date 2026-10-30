@@ -17,7 +17,7 @@ const setupDocs = fs.readFileSync(new URL("../docs/admin-crm-setup.md", import.m
 test("admin access requires the exact invited phone plus confirmed phone and chosen email", () => {
   assert.match(migration, /phone TEXT NOT NULL UNIQUE/);
   assert.match(migration, /token_hash TEXT NOT NULL UNIQUE/);
-  assert.match(migration, /SELECT phone, lower\(email\), phone_confirmed_at, email_confirmed_at/);
+  assert.match(migration, /SELECT amg_private\.canonical_invite_phone\(phone\), NULLIF\(lower\(email\), ''\), phone_confirmed_at, email_confirmed_at/);
   assert.match(migration, /phone = current_phone AND verified_user_id = auth\.uid\(\)/);
   assert.match(migration, /INSERT INTO amg_private\.crm_admins \(user_id, granted_by\) VALUES \(auth\.uid\(\), invite\.invited_by\)/);
   assert.doesNotMatch(migration, /raw_user_meta_data|user_metadata|p_role/i);
@@ -32,7 +32,7 @@ test("only CRM admins prepare phone invites and repeated clicks cannot duplicate
   assert.match(migration, /REVOKE ALL ON amg_private\.crm_admin_invitations FROM PUBLIC, anon, authenticated/);
   assert.match(migration, /GRANT EXECUTE ON FUNCTION public\.amg_crm_record_phone_admin_invite_result\(UUID, TEXT, TEXT\) TO service_role/);
   assert.match(migration, /provisioned_user_id UUID REFERENCES auth\.users\(id\) ON DELETE SET NULL/);
-  assert.match(migration, /amg_crm_record_phone_admin_invite_user[\s\S]*u\.phone = i\.phone AND u\.email IS NULL/);
+  assert.match(migration, /amg_crm_record_phone_admin_invite_user[\s\S]*canonical_invite_phone\(u\.phone\) = i\.phone AND NULLIF\(u\.email, ''\) IS NULL/);
   assert.match(migration, /amg_crm_invite_owns_auth_user[\s\S]*i\.provisioned_user_id = p_user_id/);
   assert.match(inviteFunction, /amg_crm_invite_owns_auth_user/);
   assert.match(inviteFunction, /amg_crm_record_phone_admin_invite_user/);
@@ -78,8 +78,8 @@ test("Quo Auth hook accepts a verified OTP event with the fixed sender", async (
     return new Response(JSON.stringify({ data: { id: "msg_test" } }), { status: 202 });
   };
   const result = await handleVerifiedSmsEvent(
-    { user: { phone: "+12025550123" }, sms: { otp: "123456" } },
-    { quoKey: "test-key", phoneNumberId: "PNqGQouhRT" }, fetcher,
+    { user: { id: "11111111-1111-4111-8111-111111111111", phone: "+12025550123" }, sms: { otp: "123456" } },
+    { quoKey: "test-key", phoneNumberId: "PNqGQouhRT", webhookId: "hook-test", deliveryStore: { claim: async () => "send", record: async () => {} } }, fetcher,
   );
   assert.equal(result.status, 200);
   assert.equal(calls.length, 2);
@@ -92,14 +92,14 @@ test("Quo Auth hook accepts a verified OTP event with the fixed sender", async (
 test("Quo Auth hook suppresses opted-out phones and provider failures", async () => {
   let calls = 0;
   const optedOut = await handleVerifiedSmsEvent(
-    { user: { phone: "+12025550123" }, sms: { otp: "123456" } },
-    { quoKey: "test-key", phoneNumberId: "PNqGQouhRT" },
+    { user: { id: "11111111-1111-4111-8111-111111111111", phone: "+12025550123" }, sms: { otp: "123456" } },
+    { quoKey: "test-key", phoneNumberId: "PNqGQouhRT", webhookId: "hook-test", deliveryStore: { claim: async () => "send", record: async () => {} } },
     async () => { calls += 1; return new Response(JSON.stringify({ data: [{ direction: "incoming", from: "+12025550123", text: "STOP" }] }), { status: 200 }); },
   );
   assert.equal(optedOut.status, 403);
   assert.equal(calls, 1);
   const unavailable = await handleVerifiedSmsEvent(
-    { user: { phone: "+12025550123" }, sms: { otp: "123456" } },
+    { user: { id: "11111111-1111-4111-8111-111111111111", phone: "+12025550123" }, sms: { otp: "123456" } },
     { quoKey: "", phoneNumberId: "PNqGQouhRT" }, async () => { throw new Error("must not call"); },
   );
   assert.equal(unavailable.status, 503);

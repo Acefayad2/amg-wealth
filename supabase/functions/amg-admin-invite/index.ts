@@ -134,7 +134,8 @@ serve(async (req) => {
     const providerPayload = await providerResponse.json().catch(() => ({}));
     const accepted = providerResponse.status === 202 && Boolean(providerPayload?.data?.id);
     const { error: recordError } = await admin.rpc("amg_crm_record_phone_admin_invite_result", {
-      p_id: prepared.id, p_outcome: accepted ? "sent" : "failed",
+      p_id: prepared.id, p_outcome: accepted ? "sent" :
+        (providerResponse.status >= 400 && providerResponse.status < 500 ? "failed" : "uncertain"),
       p_failure_reason: accepted ? null : `Quo rejected the invitation (${providerResponse.status}).`,
     });
     if (recordError) return json({ error: "The invitation outcome could not be recorded and must not be retried." }, 503);

@@ -57,7 +57,7 @@ function render() {
       ? "Quo is connected, but scheduler storage is unavailable. Sending is locked until the server-only database connection is verified."
     : !enabled
       ? "Quo is connected to the approved AMG sender, but dispatch is intentionally disabled. Contacts, consent, audience, and each activation still require approval."
-      : "Quo dispatch is enabled. Only opted-in contacts can be scheduled, and opt-outs are checked again immediately before send.";
+      : "Quo dispatch is enabled. Only opted-in contacts can receive immediate or scheduled texts, and opt-outs are checked again before every send.";
   renderDispatchControl();
 }
 
@@ -74,8 +74,8 @@ function renderDispatchControl() {
     : control.enabled && !state.transport?.verified
       ? "The portal switch is on, but the approved Quo sender is not verified. Delivery remains blocked."
       : effectiveEnabled
-        ? "Eligible scheduled messages may be dispatched. Opt-outs are checked again before every recipient."
-        : "The global CRM delivery switch is off. Drafts and schedules cannot dispatch.";
+        ? "Send now and eligible scheduled messages may dispatch. Opt-outs are checked again before every recipient."
+        : "The global CRM delivery switch is off. Immediate and scheduled messages cannot dispatch.";
   const latest = control.audit?.[0];
   $("#sending-control-audit").textContent = latest
     ? `Last ${latest.new_enabled ? "enabled" : "disabled"} by ${latest.changed_by || "an AMG CRM admin"} · ${formatDateTime(latest.changed_at)}`
@@ -225,7 +225,7 @@ function renderMessages() {
       <div class="message-copy"><strong>${escapeHtml(message.body)}</strong><span>${escapeHtml(message.target_name)} · ${message.recipient_count} recipient${message.recipient_count === 1 ? "" : "s"}</span>${message.failure_reason ? `<span class="needs-input">${escapeHtml(message.failure_reason)}</span>` : ""}</div>
       <span class="message-meta">${escapeHtml(formatDateTime(message.scheduled_for || message.created_at))}</span>
       ${message.status === "draft" ? `<button class="secondary" data-edit-message="${message.id}">Edit</button>` : ""}
-    </article>`).join("") : `<p class="empty">No messages yet. Draft or schedule the first communication.</p>`;
+    </article>`).join("") : `<p class="empty">No messages yet. Draft, send now, or schedule the first communication.</p>`;
   document.querySelectorAll("[data-edit-message]").forEach((button) => button.addEventListener("click", () => editMessage(button.dataset.editMessage)));
 }
 
@@ -250,9 +250,16 @@ function updateRecipientNote() {
   note.classList.toggle("warning", target && !eligible);
   note.textContent = !target ? "Choose a recipient. Drafts can be saved before consent is verified."
     : type === "individual"
-      ? eligible ? "Verified opt-in. Consent will be checked again at dispatch." : `This contact is ${target.consent_status.replace("_", " ")} and cannot be scheduled.`
-      : eligible ? `${target.eligible_count} opted-in member${target.eligible_count === 1 ? "" : "s"} will be snapshotted for this schedule.` : "This group has no opted-in members and cannot be scheduled.";
+      ? eligible ? "Verified opt-in. Consent will be checked again before immediate or scheduled delivery." : `This contact is ${target.consent_status.replace("_", " ")} and cannot receive a text.`
+      : eligible ? `${target.eligible_count} opted-in member${target.eligible_count === 1 ? "" : "s"} will receive separate messages.` : "This group has no opted-in members and cannot receive a text.";
   $("#schedule-message").disabled = Boolean(target && !eligible);
+  const sendNow = $("#send-now");
+  const immediateReady = Boolean(target && eligible && state.dispatch_control?.enabled && state.storage_verified &&
+    state.transport?.verified && state.transport?.enabled && !state.transport?.emergency_disabled && !state.messageBusy);
+  sendNow.disabled = !immediateReady;
+  sendNow.title = immediateReady ? "Send immediately through the approved AMG Quo number."
+    : !state.dispatch_control?.enabled ? "Enable the global sending control before using Send now."
+      : "Choose an eligible opted-in recipient and verify the delivery connection.";
 }
 
 function openComposer(type = "individual", id = null, day = null) {
@@ -361,6 +368,7 @@ async function saveMessage(status) {
   state.messageBusy = true;
   form.setAttribute("aria-busy", "true");
   $("#save-draft").disabled = true;
+  $("#send-now").disabled = true;
   $("#schedule-message").disabled = true;
   try {
     const payload = {
@@ -386,6 +394,64 @@ async function saveMessage(status) {
   }
 }
 
+function openSendNowConfirmation() {
+  const form = $("#composer-form");
+  if (!form.reportValidity()) return;
+  const type = $("#target-type").value;
+  const id = $("#target-id").value;
+  const target = (type === "individual" ? state.contacts : state.groups).find((item) => item.id === id);
+  if (!eligibleTarget(type, target, state.contacts)) {
+    $("#composer-error").textContent = "Choose an eligible opted-in recipient before sending.";
+    return;
+  }
+  if (!state.dispatch_control?.enabled || !state.storage_verified || !state.transport?.verified ||
+    !state.transport?.enabled || state.transport?.emergency_disabled) {
+    $("#composer-error").textContent = "Send now is unavailable until the verified delivery connection and global sending control are on.";
+    return;
+  }
+  const count = type === "individual" ? 1 : target.eligible_count;
+  const label = target.full_name || target.name || target.phone;
+  $("#send-now-summary").textContent = `Send now to ${label} as ${count} separate message${count === 1 ? "" : "s"}?`;
+  $("#send-now-error").textContent = "";
+  $("#send-now-dialog").showModal();
+}
+
+async function sendMessageNow(event) {
+  event.preventDefault();
+  if (state.messageBusy) return;
+  state.messageBusy = true;
+  const submit = $("#confirm-send-now");
+  const error = $("#send-now-error");
+  submit.disabled = true;
+  error.textContent = "";
+  try {
+    const result = await api({
+      action: "send_message_now",
+      messageId: state.draftId,
+      body: $("#message-body").value,
+      targetType: $("#target-type").value,
+      targetId: $("#target-id").value,
+      timezone: $("#message-timezone").value,
+      idempotencyKey: state.messageRequestKey,
+    });
+    await load();
+    if (result.status !== "sent") throw new Error(result.uncertain > 0
+      ? "The provider outcome is uncertain. The portal will not retry this message automatically."
+      : "The message was not accepted. Review its status before trying anything else.");
+    $("#send-now-dialog").close();
+    $("#composer").close();
+    toast("Message accepted by Quo.");
+  } catch (reason) {
+    error.textContent = reason.message;
+    error.focus();
+    await load().catch(() => {});
+  } finally {
+    state.messageBusy = false;
+    submit.disabled = false;
+    updateRecipientNote();
+  }
+}
+
 $("#login-form").addEventListener("submit", async (event) => {
   event.preventDefault();
   $("#login-error").textContent = "";
@@ -405,7 +471,9 @@ $("#target-type").addEventListener("change", (event) => targetOptions(event.targ
 $("#target-id").addEventListener("change", updateRecipientNote);
 $("#message-body").addEventListener("input", (event) => { $("#char-count").textContent = `${event.target.value.length} / 1600`; });
 $("#save-draft").addEventListener("click", () => saveMessage("draft"));
+$("#send-now").addEventListener("click", openSendNowConfirmation);
 $("#composer-form").addEventListener("submit", (event) => { event.preventDefault(); saveMessage("scheduled"); });
+$("#send-now-form").addEventListener("submit", sendMessageNow);
 $("#recurring-form").addEventListener("submit", saveRecurring);
 $("#toggle-sending").addEventListener("click", () => {
   if (state.dispatch_control.enabled) setDispatchEnabled(false);

@@ -14,7 +14,7 @@ export function getSupabaseConfig() {
   return { url, key };
 }
 
-export async function getUserClient(req: Request) {
+export async function getAuthenticatedUser(req: Request) {
   const authorization = req.headers.get("authorization") || "";
   const token = authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
   if (!token) throw Object.assign(new Error("Sign in required."), { status: 401 });
@@ -25,5 +25,9 @@ export async function getUserClient(req: Request) {
   });
   const { data, error } = await client.auth.getUser(token);
   if (error || !data.user) throw Object.assign(new Error("Sign in required."), { status: 401 });
-  return client;
+  return { client, user: data.user };
+}
+
+export async function getUserClient(req: Request) {
+  return (await getAuthenticatedUser(req)).client;
 }

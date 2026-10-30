@@ -1,8 +1,9 @@
 import type { Config, Context } from "@netlify/functions";
 import { cleanText, E164, publicError, requireUuid, validTimezone, verifySameOrigin } from "./_shared/crm.mjs";
 import { verifyQuoTransport } from "./_shared/quo.mjs";
-import { getUserClient } from "./_shared/supabase.mjs";
+import { getAuthenticatedUser } from "./_shared/supabase.mjs";
 import { verifyCrmStorage } from "./_shared/db.mjs";
+import { sendImmediateMessage } from "../../integrations/quo-dispatch.mjs";
 
 const headers = { "cache-control": "no-store", "content-type": "application/json; charset=utf-8" };
 const json = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status, headers });
@@ -15,7 +16,7 @@ function rpcError(error: { code?: string; message?: string }): never {
 
 export default async function handler(req: Request, _context: Context) {
   try {
-    const client = await getUserClient(req);
+    const { client, user } = await getAuthenticatedUser(req);
     if (req.method === "GET") {
       const { data, error } = await client.rpc("amg_crm_get_state");
       if (error) rpcError(error);
@@ -109,6 +110,29 @@ export default async function handler(req: Request, _context: Context) {
       });
       if (error) rpcError(error);
       return json({ id: data }, input.messageId ? 200 : 201);
+    }
+
+    if (input.action === "send_message_now") {
+      if (Netlify.env.get("AMG_QUO_EMERGENCY_DISABLE") === "true") {
+        throw Object.assign(new Error("The emergency sending lock is active."), { status: 503 });
+      }
+      if (!await verifyCrmStorage()) {
+        throw Object.assign(new Error("CRM delivery storage is unavailable. Nothing was sent."), { status: 503 });
+      }
+      const body = cleanText(input.body, 1600, "Message");
+      const targetType = input.targetType;
+      if (targetType !== "individual" && targetType !== "group") throw new Error("Recipient type is invalid.");
+      if (!validTimezone(input.timezone)) throw new Error("Timezone is invalid.");
+      const result = await sendImmediateMessage({
+        messageId: input.messageId ? requireUuid(input.messageId, "Message") : null,
+        body,
+        targetType,
+        targetId: requireUuid(input.targetId, "Recipient"),
+        timezone: String(input.timezone),
+        idempotencyKey: requireUuid(input.idempotencyKey, "Request key"),
+        actorId: user.id,
+      });
+      return json(result, 200);
     }
 
     if (input.action === "save_recurring_reminder") {

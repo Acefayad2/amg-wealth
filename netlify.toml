@@ -1,9 +1,10 @@
 [build]
   publish = "."
-  command = ""
+  command = "npm run build"
 
 [functions]
   directory = "netlify/functions"
+  node_bundler = "esbuild"
 
 # Short, memorable entry points for the AMG payment checkout.
 [[redirects]]
@@ -93,3 +94,9 @@
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://jkwhoisuhcbkokwntrfg.supabase.co; base-uri 'none'; form-action 'self'; frame-ancestors 'none'"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"

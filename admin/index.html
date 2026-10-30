@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>AMG Communications</title>
+  <link rel="icon" href="/assets/logo-mark.webp">
+  <link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <div id="auth-view" class="auth-view">
+    <div class="auth-card">
+      <a href="/" class="brand"><img src="/assets/logo-mark.webp" alt="" width="34" height="34"><span>ANOINTED MONEY GROUP</span></a>
+      <p class="eyebrow">Restricted workspace</p>
+      <h1>Admin sign in</h1>
+      <p class="muted">Use an approved AMG website CRM account.</p>
+      <form id="login-form" class="stack">
+        <label>Email<input id="login-email" name="email" type="email" autocomplete="username" required></label>
+        <label>Password<input id="login-password" name="password" type="password" autocomplete="current-password" required></label>
+        <button id="login-submit" class="primary" type="submit" disabled>Sign in</button>
+        <p id="login-error" class="form-error" role="alert" tabindex="-1"></p>
+      </form>
+    </div>
+  </div>
+
+  <div id="app" class="app" hidden>
+    <aside class="sidebar">
+      <a href="/" class="brand"><img src="/assets/logo-mark.webp" alt="" width="34" height="34"><span>AMG</span></a>
+      <div class="side-heading"><div><p class="eyebrow">CRM</p><h2>Contacts</h2></div><button id="add-contact" class="icon-button" title="Add contact" aria-label="Add contact">+</button></div>
+      <input id="contact-search" name="contact-search" class="search" type="search" placeholder="Search contacts" aria-label="Search contacts" autocomplete="off">
+      <nav id="groups" class="groups" aria-label="Contact groups"></nav>
+      <div class="list-heading"><span>All contacts</span><span id="contact-count">0</span></div>
+      <div id="contacts" class="contacts"></div>
+      <div class="sidebar-footer"><button id="sign-out" class="text-button">Sign out</button><a href="/">Back to website</a></div>
+    </aside>
+
+    <main id="main-content" class="main" tabindex="-1">
+      <header class="topbar">
+        <div><p class="eyebrow">Admin portal</p><h1>Communications calendar</h1><p class="muted">Plan individual and group messages from one place.</p></div>
+        <button id="new-message" class="primary">New message</button>
+      </header>
+      <section id="transport-banner" class="transport-banner" aria-live="polite"></section>
+      <section class="transport-control" aria-labelledby="sending-control-title">
+        <div><p class="eyebrow">Delivery control</p><h2 id="sending-control-title">Sending disabled</h2><p id="sending-control-detail" class="muted"></p><p id="sending-control-audit" class="audit-note"></p></div>
+        <button id="toggle-sending" class="secondary" type="button">Enable sending</button>
+      </section>
+      <section class="stats" aria-label="Message status summary">
+        <article><span class="dot draft"></span><div><strong id="draft-count">0</strong><span>Drafts</span></div></article>
+        <article><span class="dot scheduled"></span><div><strong id="scheduled-count">0</strong><span>Scheduled</span></div></article>
+        <article><span class="dot sent"></span><div><strong id="sent-count">0</strong><span>Sent</span></div></article>
+        <article><span class="dot failed"></span><div><strong id="failed-count">0</strong><span>Failed</span></div></article>
+      </section>
+      <section class="queue-card recurring-card">
+        <div class="section-heading"><div><p class="eyebrow">Recurring drafts</p><h2>AMG reminders</h2></div></div>
+        <div id="recurring-list" class="message-list"></div>
+      </section>
+      <section class="calendar-card">
+        <div class="calendar-toolbar"><div><p class="eyebrow">Weekly schedule</p><h2 id="week-title"></h2></div><div class="toolbar-actions"><button id="today" class="secondary">Today</button><button id="prev-week" class="icon-button" aria-label="Previous week">←</button><button id="next-week" class="icon-button" aria-label="Next week">→</button></div></div>
+        <div class="weekdays" aria-hidden="true"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+        <div id="calendar" class="calendar"></div>
+      </section>
+      <section class="queue-card"><div class="section-heading"><div><p class="eyebrow">Queue</p><h2>Drafts and delivery history</h2></div></div><div id="message-list" class="message-list"></div></section>
+    </main>
+  </div>
+
+  <dialog id="composer" class="dialog">
+    <form id="composer-form" method="dialog" class="dialog-card">
+      <div class="dialog-heading"><div><p class="eyebrow">Compose</p><h2>Schedule a text</h2></div><button type="button" class="close" data-close="composer" aria-label="Close">×</button></div>
+      <div class="recipient-grid"><label>Recipient type<select id="target-type" name="target-type" autocomplete="off"><option value="individual">Individual</option><option value="group">Group</option></select></label><label>Recipient<select id="target-id" name="target-id" autocomplete="off" required></select></label></div>
+      <div id="recipient-note" class="recipient-note"></div>
+      <label>Message<textarea id="message-body" name="message-body" maxlength="1600" rows="7" autocomplete="off" required placeholder="Write a clear, consent-based message…"></textarea><span class="field-meta"><span>Opt-out requests always override group membership.</span><span id="char-count">0 / 1600</span></span></label>
+      <div class="recipient-grid"><label>Send date and time<input id="scheduled-for" name="scheduled-for" type="datetime-local" autocomplete="off"></label><label>Timezone<input id="message-timezone" name="message-timezone" type="text" autocomplete="off" readonly></label></div>
+      <p id="composer-error" class="form-error" role="alert" tabindex="-1"></p>
+      <div class="dialog-actions"><button id="save-draft" type="button" class="secondary">Save draft</button><button id="schedule-message" type="submit" class="primary">Schedule message</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="recurring-dialog" class="dialog">
+    <form id="recurring-form" method="dialog" class="dialog-card">
+      <div class="dialog-heading"><div><p class="eyebrow">Inactive recurring draft</p><h2 id="recurring-title">Edit reminder</h2></div><button type="button" class="close" data-close="recurring-dialog" aria-label="Close">×</button></div>
+      <input id="recurring-id" name="recurring-id" type="hidden">
+      <label>Reminder name<input id="recurring-name" name="recurring-name" maxlength="160" autocomplete="off" required></label>
+      <label>Recipient group<select id="recurring-group" name="recurring-group" autocomplete="off"><option value="">Choose later</option></select><span class="field-meta">A verified opted-in audience is required before activation.</span></label>
+      <label>Meeting URL<input id="recurring-url" name="recurring-url" type="url" inputmode="url" placeholder="https://…" autocomplete="off"><span id="recurring-url-note" class="field-meta">No link has been inferred.</span></label>
+      <label>Message<textarea id="recurring-body" name="recurring-body" maxlength="1600" rows="7" autocomplete="off" required></textarea></label>
+      <div class="recipient-grid"><label>Send time<input id="recurring-time" name="recurring-time" type="time" autocomplete="off"><span class="field-meta">Leave blank while the time is undecided.</span></label><label>Timezone<input id="recurring-timezone" name="recurring-timezone" value="America/New_York" autocomplete="off" readonly></label></div>
+      <p id="recurring-days" class="recipient-note"></p>
+      <p class="recipient-note warning">This remains an inactive draft until its audience, any required meeting URL, and explicit activation are complete. The global sending control does not activate this reminder.</p>
+      <p id="recurring-error" class="form-error" role="alert" tabindex="-1"></p>
+      <div class="dialog-actions"><button type="button" class="secondary" data-close="recurring-dialog">Cancel</button><button type="submit" class="primary">Save inactive draft</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="enable-sending-dialog" class="dialog">
+    <form id="enable-sending-form" method="dialog" class="dialog-card compact">
+      <div class="dialog-heading"><div><p class="eyebrow">Confirm delivery control</p><h2>Enable text sending?</h2></div><button type="button" class="close" data-close="enable-sending-dialog" aria-label="Close">×</button></div>
+      <p>Eligible scheduled messages may send when a dispatcher is running. Opt-outs are checked again before every recipient.</p>
+      <p class="recipient-note warning">Incomplete reminders remain blocked. AMG Book Club still needs an approved audience and Zoom URL, and every audience must contain verified opted-in contacts.</p>
+      <p id="enable-sending-error" class="form-error" role="alert" tabindex="-1"></p>
+      <div class="dialog-actions"><button type="button" class="secondary" data-close="enable-sending-dialog">Cancel</button><button id="confirm-enable-sending" type="submit" class="primary">Enable sending</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="contact-dialog" class="dialog">
+    <form id="contact-form" method="dialog" class="dialog-card compact">
+      <div class="dialog-heading"><div><p class="eyebrow">Directory</p><h2 id="contact-title">Add contact</h2></div><button type="button" class="close" data-close="contact-dialog" aria-label="Close">×</button></div>
+      <input id="contact-id" name="contact-id" type="hidden">
+      <label>Full name <span class="optional">(optional)</span><input id="contact-name" name="contact-name" maxlength="160" autocomplete="off"><span class="field-meta">When present, supported greetings are personalized at send time.</span></label>
+      <label>Phone number<input id="contact-phone" name="contact-phone" type="tel" placeholder="+12025550123" autocomplete="off" required><span class="field-meta">Use E.164 format with country code.</span></label>
+      <div class="recipient-grid"><label>Text consent<select id="contact-consent" name="contact-consent" autocomplete="off"><option value="pending">Pending / unknown</option><option value="opted_in">Verified opt-in</option><option value="opted_out">Opted out</option></select></label><label>Timezone<input id="contact-timezone" name="contact-timezone" autocomplete="off" required></label></div>
+      <label>Consent evidence<textarea id="consent-evidence" name="consent-evidence" rows="3" autocomplete="off" placeholder="Required for verified opt-in: how and when consent was recorded"></textarea></label>
+      <p class="recipient-note">A recipient’s first accepted CRM text includes “Reply STOP to opt out.” Provider opt-out history is checked again before every future recipient.</p>
+      <fieldset><legend>Groups</legend><div id="contact-groups" class="check-grid"></div></fieldset>
+      <p id="contact-error" class="form-error" role="alert" tabindex="-1"></p>
+      <div class="dialog-actions"><button type="button" class="secondary" data-close="contact-dialog">Cancel</button><button type="submit" class="primary">Save contact</button></div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="/admin/admin.js"></script>
+</body>
+</html>

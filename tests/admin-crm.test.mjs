@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import { defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, recurringCalendarEntries, weekCells, weekRangeLabel, zonedDateTimeToUtc } from "../admin/core.mjs";
 import { verifyQuoTransport } from "../netlify/functions/_shared/quo.mjs";
+import { isOptOutKeyword, outboundContent, personalizeOutbound, withFirstContactOptOut } from "../integrations/message-content.mjs";
 
 test("calendar renders one stable Sunday-through-Saturday week", () => {
   const cells = weekCells(new Date(2026, 9, 27));
@@ -25,6 +26,30 @@ test("contact filtering checks names and phone numbers", () => {
   ];
   assert.deepEqual(filterContacts(contacts, "car"), [contacts[0]]);
   assert.deepEqual(filterContacts(contacts, "410"), [contacts[1]]);
+  const phoneOnly = { full_name: null, phone: "+13015550111" };
+  assert.deepEqual(filterContacts([phoneOnly], "301"), [phoneOnly]);
+});
+
+test("outbound copy personalizes safely and uses a general phone-only greeting", () => {
+  assert.equal(
+    personalizeOutbound("Good morning, AMG! It’s time for Book Club.", "  Safinat Jones  "),
+    "Good morning, Safinat! It’s time for Book Club.",
+  );
+  assert.equal(personalizeOutbound("Tonight’s call starts at 8.", "Simisola Ade"), "Hi Simisola,\n\nTonight’s call starts at 8.");
+  assert.equal(personalizeOutbound("Tonight’s call starts at 8.", "   "), "Hello,\n\nTonight’s call starts at 8.");
+  assert.equal(personalizeOutbound("Hi Zamilah! Already personal.", "Zamilah Jones"), "Hi Zamilah! Already personal.");
+  assert.doesNotMatch(personalizeOutbound("Reminder", undefined), /undefined|null/i);
+});
+
+test("first-contact notice is included once in composed content and length is enforced", () => {
+  assert.equal(withFirstContactOptOut("Hello,\n\nWelcome.", true), "Hello,\n\nWelcome.\n\nReply STOP to opt out.");
+  assert.equal(withFirstContactOptOut("Welcome. Reply STOP to opt out.", true), "Welcome. Reply STOP to opt out.");
+  assert.equal(withFirstContactOptOut("Welcome.", false), "Welcome.");
+  assert.throws(() => outboundContent("x".repeat(1590), "Safinat", true), /exceeds 1600/);
+  for (const keyword of ["STOP", " stop ", "StopAll", "UNSUBSCRIBE", "cancel", "END", "quit"]) {
+    assert.equal(isOptOutKeyword(keyword), true);
+  }
+  assert.equal(isOptOutKeyword("please stop by"), false);
 });
 
 test("only opted-in individuals or groups with opted-in members are eligible", () => {
@@ -122,4 +147,47 @@ test("recurring migration seeds inactive drafts and prevents duplicate occurrenc
   const requirements = fs.readFileSync(new URL("../database/migrations/20261027233000_recurring_reminder_requirements.sql", import.meta.url), "utf8");
   assert.match(requirements, /meeting_url_required = TRUE[\s\S]*AMG Book Club/);
   assert.match(requirements, /NOT meeting_url_required OR zoom_url IS NOT NULL/);
+});
+
+test("dispatch control is fail-closed, admin-only, audited, and concurrency-safe", () => {
+  const sql = fs.readFileSync(new URL("../database/migrations/20261028010000_add_dispatch_control.sql", import.meta.url), "utf8");
+  assert.match(sql, /enabled BOOLEAN NOT NULL DEFAULT FALSE/);
+  assert.match(sql, /PERFORM amg_private\.require_crm_admin\(\)/);
+  assert.match(sql, /current_version <> p_expected_version/);
+  assert.match(sql, /WHERE singleton = TRUE AND version=current_version/);
+  assert.match(sql, /INSERT INTO amg_private\.crm_dispatch_audit/);
+  assert.match(sql, /REVOKE ALL ON amg_private\.crm_dispatch_control, amg_private\.crm_dispatch_audit/);
+  assert.match(sql, /GRANT EXECUTE ON FUNCTION public\.amg_crm_set_dispatch_enabled\(BOOLEAN,BIGINT\) TO authenticated/);
+  assert.doesNotMatch(sql, /amg_private\.(?:notification|cft_|push_|role_|ai_)/);
+});
+
+test("dispatch implementation rechecks the global switch before every recipient", () => {
+  const source = fs.readFileSync(new URL("../integrations/quo-dispatch.mts", import.meta.url), "utf8");
+  assert.match(source, /AMG_QUO_EMERGENCY_DISABLE/);
+  assert.match(source, /SELECT enabled FROM amg_private\.crm_dispatch_control/);
+  assert.ok((source.match(/!await dispatchEnabled/g) || []).length >= 2);
+  assert.match(source, /consent_status !== "opted_in"/);
+  assert.match(source, /providerOptOut/);
+  assert.match(source, /first_outbound_accepted_at=COALESCE/);
+  assert.match(source, /for \(const item of deliveries\)/);
+  const handler = fs.readFileSync(new URL("../netlify/functions/admin-crm.mts", import.meta.url), "utf8");
+  assert.match(handler, /input\.action === "set_dispatch_enabled"/);
+  assert.match(handler, /if \(!verified\.verified\)/);
+  assert.match(handler, /p_expected_version: expectedVersion/);
+  assert.match(handler, /error\.code === "40001"[\s\S]*status: 409/);
+  assert.match(handler, /\[401, 403, 409, 503\]/);
+  const html = fs.readFileSync(new URL("../admin/index.html", import.meta.url), "utf8");
+  assert.match(html, /Eligible scheduled messages may send when a dispatcher is running/);
+  assert.match(html, /Incomplete reminders remain blocked/);
+});
+
+test("optional names and provider opt-outs are isolated to website CRM", () => {
+  const sql = fs.readFileSync(new URL("../database/migrations/20261028020000_contact_opt_out_and_optional_name.sql", import.meta.url), "utf8");
+  assert.match(sql, /ALTER COLUMN full_name DROP NOT NULL/);
+  assert.match(sql, /first_outbound_accepted_at TIMESTAMPTZ/);
+  assert.match(sql, /opted_out_at TIMESTAMPTZ/);
+  assert.match(sql, /COALESCE\(full_name, phone\)/);
+  assert.match(sql, /normalized_name TEXT := nullif\(btrim\(p_full_name\), ''\)/);
+  assert.doesNotMatch(sql, /amg_private\.(?:notification|cft_|push_|role_|ai_)/);
+  assert.doesNotMatch(sql, /ALTER\s+.*auth\./i);
 });

@@ -42,6 +42,10 @@
         <button id="new-message" class="primary">New message</button>
       </header>
       <section id="transport-banner" class="transport-banner" aria-live="polite"></section>
+      <section class="transport-control" aria-labelledby="sending-control-title">
+        <div><p class="eyebrow">Delivery control</p><h2 id="sending-control-title">Sending disabled</h2><p id="sending-control-detail" class="muted"></p><p id="sending-control-audit" class="audit-note"></p></div>
+        <button id="toggle-sending" class="secondary" type="button">Enable sending</button>
+      </section>
       <section class="stats" aria-label="Message status summary">
         <article><span class="dot draft"></span><div><strong id="draft-count">0</strong><span>Drafts</span></div></article>
         <article><span class="dot scheduled"></span><div><strong id="scheduled-count">0</strong><span>Scheduled</span></div></article>
@@ -83,9 +87,19 @@
       <label>Message<textarea id="recurring-body" name="recurring-body" maxlength="1600" rows="7" autocomplete="off" required></textarea></label>
       <div class="recipient-grid"><label>Send time<input id="recurring-time" name="recurring-time" type="time" autocomplete="off"><span class="field-meta">Leave blank while the time is undecided.</span></label><label>Timezone<input id="recurring-timezone" name="recurring-timezone" value="America/New_York" autocomplete="off" readonly></label></div>
       <p id="recurring-days" class="recipient-note"></p>
-      <p class="recipient-note warning">This remains an inactive draft. Quo delivery cannot run until the audience, meeting URL, provider connection, and final approval are complete.</p>
+      <p class="recipient-note warning">This remains an inactive draft until its audience, any required meeting URL, and explicit activation are complete. The global sending control does not activate this reminder.</p>
       <p id="recurring-error" class="form-error" role="alert" tabindex="-1"></p>
       <div class="dialog-actions"><button type="button" class="secondary" data-close="recurring-dialog">Cancel</button><button type="submit" class="primary">Save inactive draft</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="enable-sending-dialog" class="dialog">
+    <form id="enable-sending-form" method="dialog" class="dialog-card compact">
+      <div class="dialog-heading"><div><p class="eyebrow">Confirm delivery control</p><h2>Enable text sending?</h2></div><button type="button" class="close" data-close="enable-sending-dialog" aria-label="Close">×</button></div>
+      <p>Eligible scheduled messages may send when a dispatcher is running. Opt-outs are checked again before every recipient.</p>
+      <p class="recipient-note warning">Incomplete reminders remain blocked. AMG Book Club still needs an approved audience and Zoom URL, and every audience must contain verified opted-in contacts.</p>
+      <p id="enable-sending-error" class="form-error" role="alert" tabindex="-1"></p>
+      <div class="dialog-actions"><button type="button" class="secondary" data-close="enable-sending-dialog">Cancel</button><button id="confirm-enable-sending" type="submit" class="primary">Enable sending</button></div>
     </form>
   </dialog>
 
@@ -93,10 +107,11 @@
     <form id="contact-form" method="dialog" class="dialog-card compact">
       <div class="dialog-heading"><div><p class="eyebrow">Directory</p><h2 id="contact-title">Add contact</h2></div><button type="button" class="close" data-close="contact-dialog" aria-label="Close">×</button></div>
       <input id="contact-id" name="contact-id" type="hidden">
-      <label>Full name<input id="contact-name" name="contact-name" maxlength="160" autocomplete="off" required></label>
+      <label>Full name <span class="optional">(optional)</span><input id="contact-name" name="contact-name" maxlength="160" autocomplete="off"><span class="field-meta">When present, supported greetings are personalized at send time.</span></label>
       <label>Phone number<input id="contact-phone" name="contact-phone" type="tel" placeholder="+12025550123" autocomplete="off" required><span class="field-meta">Use E.164 format with country code.</span></label>
       <div class="recipient-grid"><label>Text consent<select id="contact-consent" name="contact-consent" autocomplete="off"><option value="pending">Pending / unknown</option><option value="opted_in">Verified opt-in</option><option value="opted_out">Opted out</option></select></label><label>Timezone<input id="contact-timezone" name="contact-timezone" autocomplete="off" required></label></div>
       <label>Consent evidence<textarea id="consent-evidence" name="consent-evidence" rows="3" autocomplete="off" placeholder="Required for verified opt-in: how and when consent was recorded"></textarea></label>
+      <p class="recipient-note">A recipient’s first accepted CRM text includes “Reply STOP to opt out.” Provider opt-out history is checked again before every future recipient.</p>
       <fieldset><legend>Groups</legend><div id="contact-groups" class="check-grid"></div></fieldset>
       <p id="contact-error" class="form-error" role="alert" tabindex="-1"></p>
       <div class="dialog-actions"><button type="button" class="secondary" data-close="contact-dialog">Cancel</button><button type="submit" class="primary">Save contact</button></div>

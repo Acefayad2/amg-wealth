@@ -10,8 +10,22 @@ function redirectBlocks() {
     from: block.match(/\bfrom\s*=\s*"([^"]+)"/)?.[1],
     to: block.match(/\bto\s*=\s*"([^"]+)"/)?.[1],
     status: Number(block.match(/\bstatus\s*=\s*(\d+)/)?.[1]),
+    force: /\bforce\s*=\s*true/.test(block),
   }))
 }
+
+test('payment entry points remain forced LaunchPoint redirects', () => {
+  const routes = redirectBlocks()
+  for (const from of ['/pay', '/checkout', '/secure-payment']) {
+    const route = routes.find(candidate => candidate.from === from)
+    assert.deepEqual(
+      { to: route?.to, status: route?.status, force: route?.force },
+      { to: 'https://mylaunch.dev/invoice/amg', status: 302, force: true },
+    )
+  }
+  assert.equal((config.match(/^\[functions\]$/gm) || []).length, 1)
+  assert.match(config, /node_bundler\s*=\s*"esbuild"/)
+})
 
 test('only explicit public practice pages are reverse proxied', () => {
   const proxies = redirectBlocks().filter(route => route.status === 200)

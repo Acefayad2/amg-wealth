@@ -6,9 +6,6 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
-[functions]
-  directory = "netlify/functions"
-
 # Short, memorable entry points for the AMG payment checkout.
 [[redirects]]
   from = "/pay"

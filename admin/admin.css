@@ -13,6 +13,7 @@
 
 /* Keep dense calendar and contact navigation inside narrow phone viewports. */
 .app,.sidebar,.day{min-width:0}
+.transport-control{display:flex;align-items:center;justify-content:space-between;gap:24px;margin:0 0 18px;padding:18px 20px;border:1px solid var(--line);border-radius:14px;background:#fff}.transport-control h2{margin:0;font-family:"Playfair Display",serif;font-size:22px}.transport-control .muted{font-size:12px}.audit-note{margin:7px 0 0;color:var(--muted);font-size:11px}.transport-control.enabled{border-color:#e3cf94;background:#fffaf0}.transport-control.enabled #toggle-sending{border-color:var(--red);color:var(--red)}
 @media(max-width:900px){
   .app{grid-template-columns:minmax(0,1fr)}
   .sidebar{width:100%}
@@ -26,6 +27,7 @@
   .topbar{flex-wrap:wrap}
   .groups{max-width:100%}
   .group-button{width:auto}
+  .transport-control{align-items:flex-start;flex-direction:column}.transport-control #toggle-sending{width:100%}
 }
 
 /* Weekly calendar: one accessible Sunday-to-Saturday view, with a stacked phone layout. */

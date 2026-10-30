@@ -2,11 +2,12 @@ import { createClient } from "@supabase/supabase-js";
 import { STATUS_LABELS, defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, recurringCalendarEntries, weekCells, weekRangeLabel } from "../admin/core.mjs";
 
 const $ = (selector) => document.querySelector(selector);
-const state = { contacts: [], groups: [], messages: [], recurring_reminders: [], transport: {}, week: new Date(), search: "", draftId: null, messageRequestKey: null, messageBusy: false, contactBusy: false, recurringDraftId: null, recurringRequestKey: null, recurringBusy: false };
+const state = { contacts: [], groups: [], messages: [], recurring_reminders: [], dispatch_control: { enabled: false, version: 1, audit: [] }, transport: {}, week: new Date(), search: "", draftId: null, messageRequestKey: null, messageBusy: false, contactBusy: false, recurringDraftId: null, recurringRequestKey: null, recurringBusy: false, dispatchBusy: false };
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 let authClient = null;
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
-const initials = (name) => name.split(/\s+/).map((part) => part[0]).join("").slice(0, 2).toUpperCase();
+const initials = (name) => String(name || "?").split(/\s+/).map((part) => part[0]).join("").slice(0, 2).toUpperCase();
+const contactLabel = (contact) => contact.full_name || contact.phone;
 const formatTime = (value) => new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit" }).format(new Date(value));
 const formatDateTime = (value) => value ? new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value)) : "Not scheduled";
 
@@ -55,6 +56,50 @@ function render() {
     : !enabled
       ? "Quo is connected to the approved AMG sender, but dispatch is intentionally disabled. Contacts, consent, audience, and each activation still require approval."
       : "Quo dispatch is enabled. Only opted-in contacts can be scheduled, and opt-outs are checked again immediately before send.";
+  renderDispatchControl();
+}
+
+function renderDispatchControl() {
+  const control = state.dispatch_control || { enabled: false, version: 1, audit: [] };
+  const card = $(".transport-control");
+  const effectiveEnabled = Boolean(control.enabled && state.transport?.enabled);
+  card.classList.toggle("enabled", effectiveEnabled);
+  $("#sending-control-title").textContent = effectiveEnabled ? "Sending enabled" : "Sending disabled";
+  $("#sending-control-detail").textContent = control.enabled && state.transport?.emergency_disabled
+    ? "The portal switch is on, but the emergency lock is blocking delivery."
+    : control.enabled && !state.transport?.verified
+      ? "The portal switch is on, but the approved Quo sender is not verified. Delivery remains blocked."
+      : effectiveEnabled
+        ? "Eligible scheduled messages may be dispatched. Opt-outs are checked again before every recipient."
+        : "The global CRM delivery switch is off. Drafts and schedules cannot dispatch.";
+  const latest = control.audit?.[0];
+  $("#sending-control-audit").textContent = latest
+    ? `Last ${latest.new_enabled ? "enabled" : "disabled"} by ${latest.changed_by || "an AMG CRM admin"} · ${formatDateTime(latest.changed_at)}`
+    : "No sending-control changes have been recorded.";
+  const button = $("#toggle-sending");
+  button.textContent = control.enabled ? "Disable sending" : "Enable sending";
+  button.disabled = state.dispatchBusy || (!control.enabled && (!state.transport?.verified || state.transport?.emergency_disabled));
+}
+
+async function setDispatchEnabled(enabled) {
+  if (state.dispatchBusy) return;
+  state.dispatchBusy = true;
+  renderDispatchControl();
+  const error = $("#enable-sending-error");
+  error.textContent = "";
+  try {
+    await api({ action: "set_dispatch_enabled", enabled, expectedVersion: state.dispatch_control.version });
+    if ($("#enable-sending-dialog").open) $("#enable-sending-dialog").close();
+    await load();
+    toast(enabled ? "Sending enabled." : "Sending disabled immediately.");
+  } catch (reason) {
+    error.textContent = reason.message;
+    if (enabled) error.focus(); else toast(reason.message);
+    await load().catch(() => {});
+  } finally {
+    state.dispatchBusy = false;
+    renderDispatchControl();
+  }
 }
 
 const weekdayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -98,7 +143,7 @@ function renderContacts() {
   $("#contacts").innerHTML = contacts.length ? contacts.map((contact) => `
     <button class="contact-button" data-contact="${contact.id}">
       <span class="avatar">${escapeHtml(initials(contact.full_name))}</span>
-      <span class="contact-copy"><strong>${escapeHtml(contact.full_name)}</strong><small>${escapeHtml(contact.phone)}</small></span>
+      <span class="contact-copy"><strong>${escapeHtml(contactLabel(contact))}</strong><small>${contact.full_name ? escapeHtml(contact.phone) : "Phone-only contact"}</small></span>
       <span class="consent-dot ${contact.consent_status}" title="${escapeHtml(contact.consent_status.replace("_", " "))}"></span>
     </button>`).join("") : `<p class="empty">${state.search ? "No contacts match." : "No contacts yet. Add only verified AMG contacts."}</p>`;
   document.querySelectorAll("[data-contact]").forEach((button) => button.addEventListener("click", () => openContact(button.dataset.contact)));
@@ -157,7 +202,7 @@ function renderStats() {
 
 function targetOptions(type, selected) {
   const source = type === "individual" ? state.contacts : state.groups;
-  $("#target-id").innerHTML = `<option value="">Select ${type === "individual" ? "a contact" : "a group"}</option>` + source.map((item) => `<option value="${item.id}" ${item.id === selected ? "selected" : ""}>${escapeHtml(item.full_name || item.name)}</option>`).join("");
+  $("#target-id").innerHTML = `<option value="">Select ${type === "individual" ? "a contact" : "a group"}</option>` + source.map((item) => `<option value="${item.id}" ${item.id === selected ? "selected" : ""}>${escapeHtml(item.full_name || item.name || item.phone)}</option>`).join("");
   updateRecipientNote();
 }
 
@@ -327,6 +372,11 @@ $("#message-body").addEventListener("input", (event) => { $("#char-count").textC
 $("#save-draft").addEventListener("click", () => saveMessage("draft"));
 $("#composer-form").addEventListener("submit", (event) => { event.preventDefault(); saveMessage("scheduled"); });
 $("#recurring-form").addEventListener("submit", saveRecurring);
+$("#toggle-sending").addEventListener("click", () => {
+  if (state.dispatch_control.enabled) setDispatchEnabled(false);
+  else { $("#enable-sending-error").textContent = ""; $("#enable-sending-dialog").showModal(); }
+});
+$("#enable-sending-form").addEventListener("submit", (event) => { event.preventDefault(); setDispatchEnabled(true); });
 $("#prev-week").addEventListener("click", () => { state.week = new Date(state.week.getFullYear(), state.week.getMonth(), state.week.getDate() - 7); renderCalendar(); });
 $("#next-week").addEventListener("click", () => { state.week = new Date(state.week.getFullYear(), state.week.getMonth(), state.week.getDate() + 7); renderCalendar(); });
 $("#today").addEventListener("click", () => { state.week = new Date(); renderCalendar(); });
@@ -335,11 +385,12 @@ document.querySelectorAll("[data-close]").forEach((button) => button.addEventLis
 $("#contact-form").addEventListener("submit", async (event) => {
   event.preventDefault();
   if (state.contactBusy) return;
+  const form = event.currentTarget;
   const error = $("#contact-error");
   const submit = event.submitter;
   error.textContent = "";
   state.contactBusy = true;
-  event.currentTarget.setAttribute("aria-busy", "true");
+  form.setAttribute("aria-busy", "true");
   if (submit) submit.disabled = true;
   try {
     const previous = state.contacts.find((item) => item.id === $("#contact-id").value);
@@ -363,7 +414,7 @@ $("#contact-form").addEventListener("submit", async (event) => {
     error.focus();
   } finally {
     state.contactBusy = false;
-    event.currentTarget.removeAttribute("aria-busy");
+    form.removeAttribute("aria-busy");
     if (submit) submit.disabled = false;
   }
 });
@@ -380,7 +431,8 @@ async function init() {
         { id: "preview-thursday", name: "BOM Thursday Reminder", body: "Good morning, AMG! Tonight’s BOM starts at 7 PM.", target_group_id: null, target_group_name: null, zoom_url: null, meeting_url_required: false, timezone: "America/New_York", local_time: "11:00:00", weekdays: [4], start_date: "2026-10-01", status: "draft", idempotency_key: "00000000-0000-4000-8000-000000000011" },
         { id: "preview-friday", name: "BOM Saturday Reminder", body: "Good evening, AMG! Tomorrow’s BOM starts at 9 AM.", target_group_id: null, target_group_name: null, zoom_url: null, meeting_url_required: false, timezone: "America/New_York", local_time: "21:00:00", weekdays: [5], start_date: "2026-10-01", status: "draft", idempotency_key: "00000000-0000-4000-8000-000000000012" },
       ],
-      transport: { provider: "Quo", configured: false, enabled: false },
+      transport: { provider: "Quo", configured: true, verified: true, enabled: false, emergency_disabled: false },
+      dispatch_control: { enabled: false, version: 1, changed_at: null, changed_by: null, audit: [] },
     });
     render();
     return;

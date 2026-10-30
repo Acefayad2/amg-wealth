@@ -8,6 +8,7 @@ const json = (value: unknown, status = 200) => new Response(JSON.stringify(value
 
 function rpcError(error: { code?: string; message?: string }): never {
   if (error.code === "42501") throw Object.assign(new Error("AMG CRM admin access required."), { status: 403 });
+  if (error.code === "40001") throw Object.assign(new Error("Sending control changed; refresh and try again."), { status: 409 });
   throw new Error(error.message || "The CRM request could not be completed.");
 }
 
@@ -17,20 +18,46 @@ export default async function handler(req: Request, _context: Context) {
     if (req.method === "GET") {
       const { data, error } = await client.rpc("amg_crm_get_state");
       if (error) rpcError(error);
+      const { data: dispatchControl, error: dispatchError } = await client.rpc("amg_crm_get_dispatch_control");
+      if (dispatchError) rpcError(dispatchError);
+      const emergencyDisabled = Netlify.env.get("AMG_QUO_EMERGENCY_DISABLE") === "true";
       const transport = await verifyQuoTransport({
         apiKey: Netlify.env.get("QUO_API_KEY"),
         fromNumber: Netlify.env.get("QUO_FROM_NUMBER"),
         phoneNumberId: Netlify.env.get("QUO_PHONE_NUMBER_ID"),
-        enabled: Netlify.env.get("AMG_QUO_SEND_ENABLED") === "true",
+        enabled: Boolean((dispatchControl as { enabled?: boolean })?.enabled) && !emergencyDisabled,
       });
-      return json({ ...(data as Record<string, unknown>), transport });
+      return json({ ...(data as Record<string, unknown>), dispatch_control: dispatchControl,
+        transport: { ...transport, emergency_disabled: emergencyDisabled } });
     }
     if (req.method !== "POST") return json({ error: "Method not allowed." }, 405);
     verifySameOrigin(req);
     const input = await req.json() as Record<string, unknown>;
 
+    if (input.action === "set_dispatch_enabled") {
+      if (typeof input.enabled !== "boolean") throw new Error("Sending state is invalid.");
+      const expectedVersion = Number(input.expectedVersion);
+      if (!Number.isSafeInteger(expectedVersion) || expectedVersion < 1) throw new Error("Sending state version is invalid.");
+      if (input.enabled) {
+        if (Netlify.env.get("AMG_QUO_EMERGENCY_DISABLE") === "true") {
+          throw Object.assign(new Error("The emergency sending lock is active."), { status: 503 });
+        }
+        const verified = await verifyQuoTransport({
+          apiKey: Netlify.env.get("QUO_API_KEY"), fromNumber: Netlify.env.get("QUO_FROM_NUMBER"),
+          phoneNumberId: Netlify.env.get("QUO_PHONE_NUMBER_ID"), enabled: false,
+        });
+        if (!verified.verified) throw Object.assign(new Error("The approved AMG Quo sender is not verified."), { status: 503 });
+      }
+      const { data, error } = await client.rpc("amg_crm_set_dispatch_enabled", {
+        p_enabled: input.enabled, p_expected_version: expectedVersion,
+      });
+      if (error) rpcError(error);
+      return json({ dispatch_control: data });
+    }
+
     if (input.action === "save_contact") {
-      const fullName = cleanText(input.fullName, 160, "Contact name");
+      const fullName = typeof input.fullName === "string" ? input.fullName.trim() : "";
+      if ([...fullName].length > 160) throw new Error("Contact name must be 160 characters or fewer.");
       const phone = cleanText(input.phone, 16, "Phone number");
       if (!E164.test(phone)) throw new Error("Phone number must use E.164 format, such as +12025550123.");
       const consentStatus = String(input.consentStatus);
@@ -40,7 +67,7 @@ export default async function handler(req: Request, _context: Context) {
       if (!validTimezone(input.timezone)) throw new Error("Timezone is invalid.");
       const id = input.id ? requireUuid(input.id, "Contact") : null;
       const { data, error } = await client.rpc("amg_crm_save_contact", {
-        p_id: id, p_full_name: fullName, p_phone: phone, p_consent_status: consentStatus,
+        p_id: id, p_full_name: fullName || null, p_phone: phone, p_consent_status: consentStatus,
         p_consent_evidence: evidence, p_timezone: input.timezone,
       });
       if (error) rpcError(error);
@@ -116,7 +143,7 @@ export default async function handler(req: Request, _context: Context) {
     return json({ error: "Action is invalid." }, 400);
   } catch (error) {
     const status = typeof error === "object" && error && "status" in error ? Number(error.status) : 400;
-    return json({ error: [401, 403, 503].includes(status) ? (error as Error).message : publicError(error) }, status || 400);
+    return json({ error: [401, 403, 409, 503].includes(status) ? (error as Error).message : publicError(error) }, status || 400);
   }
 }
 

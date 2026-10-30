@@ -88,17 +88,32 @@ serve(async (req) => {
     const { data: existingId, error: lookupError } = await admin.rpc("amg_crm_find_auth_user_by_phone", { p_phone: phone });
     if (lookupError) throw new Error("Existing account state could not be checked.");
     if (existingId) {
-      await admin.rpc("amg_crm_record_phone_admin_invite_result", {
-        p_id: prepared.id, p_outcome: "failed", p_failure_reason: "An existing phone account requires administrator review.",
+      const { data: owned, error: ownershipError } = await admin.rpc("amg_crm_invite_owns_auth_user", {
+        p_id: prepared.id, p_user_id: existingId,
       });
-      return json({ error: "An account already uses this phone. Review it without changing its credentials before inviting." }, 409);
-    }
-    const { error: createError } = await admin.auth.admin.createUser({ phone, phone_confirm: false });
-    if (createError) {
-      await admin.rpc("amg_crm_record_phone_admin_invite_result", {
-        p_id: prepared.id, p_outcome: "failed", p_failure_reason: "Supabase Auth did not create the phone account.",
+      if (ownershipError || !owned) {
+        await admin.rpc("amg_crm_record_phone_admin_invite_result", {
+          p_id: prepared.id, p_outcome: "failed", p_failure_reason: "An unrelated existing phone account requires administrator review.",
+        });
+        return json({ error: "An account already uses this phone. Review it without changing its credentials before inviting." }, 409);
+      }
+    } else {
+      const { data: created, error: createError } = await admin.auth.admin.createUser({ phone, phone_confirm: false });
+      if (createError || !created.user?.id) {
+        await admin.rpc("amg_crm_record_phone_admin_invite_result", {
+          p_id: prepared.id, p_outcome: "failed", p_failure_reason: "Supabase Auth did not create the phone account.",
+        });
+        throw new Error("The phone account could not be prepared.");
+      }
+      const { error: recordUserError } = await admin.rpc("amg_crm_record_phone_admin_invite_user", {
+        p_id: prepared.id, p_user_id: created.user.id,
       });
-      throw new Error("The phone account could not be prepared.");
+      if (recordUserError) {
+        await admin.rpc("amg_crm_record_phone_admin_invite_result", {
+          p_id: prepared.id, p_outcome: "failed", p_failure_reason: "The prepared phone account could not be bound to its invitation.",
+        });
+        throw new Error("The phone account could not be safely bound to this invitation.");
+      }
     }
     const privateUrl = `${setupUrl}?invite=${encodeURIComponent(token)}`;
     const content = `AMG admin invitation: Open this private link to verify your phone, choose your email, and create your dashboard password: ${privateUrl}\n\nThis link expires in 1 hour and can be used once. Reply STOP to opt out.`;

@@ -10,8 +10,11 @@ CREATE TABLE amg_private.crm_admin_invitations (
   invited_by UUID NOT NULL REFERENCES auth.users(id),
   invited_at TIMESTAMPTZ,
   expires_at TIMESTAMPTZ NOT NULL,
+  provisioned_user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
   verified_user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
   chosen_email TEXT,
+  otp_request_count INTEGER NOT NULL DEFAULT 0 CHECK (otp_request_count BETWEEN 0 AND 5),
+  last_otp_requested_at TIMESTAMPTZ,
   accepted_at TIMESTAMPTZ,
   failure_reason TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -61,7 +64,8 @@ BEGIN
   VALUES (normalized_phone, normalized_hash, 'prepared', auth.uid(), NOW() + INTERVAL '1 hour', NULL, NULL, NULL, NULL, NOW())
   ON CONFLICT (phone) DO UPDATE SET token_hash = EXCLUDED.token_hash, status = 'prepared', invited_by = auth.uid(),
     invited_at = NULL, expires_at = NOW() + INTERVAL '1 hour', verified_user_id = NULL,
-    chosen_email = NULL, accepted_at = NULL, failure_reason = NULL, updated_at = NOW()
+    chosen_email = NULL, otp_request_count = 0, last_otp_requested_at = NULL,
+    accepted_at = NULL, failure_reason = NULL, updated_at = NOW()
   RETURNING * INTO invite;
   RETURN jsonb_build_object('id', invite.id, 'phone', invite.phone, 'should_send', true);
 END;
@@ -89,14 +93,45 @@ RETURNS UUID LANGUAGE sql STABLE SECURITY DEFINER SET search_path = '' AS $$
   SELECT id FROM auth.users WHERE phone = btrim(COALESCE(p_phone, '')) LIMIT 1;
 $$;
 
-CREATE OR REPLACE FUNCTION public.amg_crm_validate_phone_admin_invite(p_token TEXT, p_phone TEXT)
+CREATE OR REPLACE FUNCTION public.amg_crm_record_phone_admin_invite_user(p_id UUID, p_user_id UUID)
+RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER SET search_path = '' AS $$
+BEGIN
+  UPDATE amg_private.crm_admin_invitations i
+  SET provisioned_user_id = p_user_id, updated_at = NOW()
+  FROM auth.users u
+  WHERE i.id = p_id AND i.status = 'prepared'
+    AND (i.provisioned_user_id IS NULL OR i.provisioned_user_id = p_user_id)
+    AND u.id = p_user_id AND u.phone = i.phone AND u.email IS NULL;
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'The provisioned phone account does not match this invitation' USING ERRCODE = '42501';
+  END IF;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION public.amg_crm_invite_owns_auth_user(p_id UUID, p_user_id UUID)
 RETURNS BOOLEAN LANGUAGE sql STABLE SECURITY DEFINER SET search_path = '' AS $$
   SELECT EXISTS (
     SELECT 1 FROM amg_private.crm_admin_invitations i
-    WHERE i.token_hash = encode(extensions.digest(COALESCE(p_token, ''), 'sha256'), 'hex')
-      AND i.phone = btrim(COALESCE(p_phone, ''))
-      AND i.status = 'sent' AND i.expires_at > NOW()
+    JOIN auth.users u ON u.id = p_user_id AND u.phone = i.phone
+    WHERE i.id = p_id AND i.provisioned_user_id = p_user_id
+      AND i.status = 'prepared' AND u.email IS NULL
   );
+$$;
+
+CREATE OR REPLACE FUNCTION public.amg_crm_claim_phone_admin_otp(p_token TEXT, p_phone TEXT)
+RETURNS BOOLEAN LANGUAGE plpgsql SECURITY DEFINER SET search_path = '' AS $$
+DECLARE claimed_id UUID;
+BEGIN
+  UPDATE amg_private.crm_admin_invitations
+  SET otp_request_count = otp_request_count + 1, last_otp_requested_at = NOW(), updated_at = NOW()
+  WHERE token_hash = encode(extensions.digest(COALESCE(p_token, ''), 'sha256'), 'hex')
+    AND phone = btrim(COALESCE(p_phone, ''))
+    AND status = 'sent' AND expires_at > NOW()
+    AND otp_request_count < 5
+    AND (last_otp_requested_at IS NULL OR last_otp_requested_at <= NOW() - INTERVAL '60 seconds')
+  RETURNING id INTO claimed_id;
+  RETURN claimed_id IS NOT NULL;
+END;
 $$;
 
 CREATE OR REPLACE FUNCTION public.amg_crm_bind_verified_invite_phone(p_token TEXT)
@@ -145,13 +180,17 @@ REVOKE ALL ON FUNCTION public.amg_crm_get_admin_invitations() FROM PUBLIC, anon,
 REVOKE ALL ON FUNCTION public.amg_crm_prepare_phone_admin_invite(TEXT, TEXT) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION public.amg_crm_record_phone_admin_invite_result(UUID, TEXT, TEXT) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION public.amg_crm_find_auth_user_by_phone(TEXT) FROM PUBLIC, anon, authenticated;
-REVOKE ALL ON FUNCTION public.amg_crm_validate_phone_admin_invite(TEXT, TEXT) FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.amg_crm_record_phone_admin_invite_user(UUID, UUID) FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.amg_crm_invite_owns_auth_user(UUID, UUID) FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.amg_crm_claim_phone_admin_otp(TEXT, TEXT) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION public.amg_crm_bind_verified_invite_phone(TEXT) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION public.amg_crm_accept_phone_admin_invite(TEXT) FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.amg_crm_get_admin_invitations() TO authenticated;
 GRANT EXECUTE ON FUNCTION public.amg_crm_prepare_phone_admin_invite(TEXT, TEXT) TO authenticated;
-GRANT EXECUTE ON FUNCTION public.amg_crm_validate_phone_admin_invite(TEXT, TEXT) TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.amg_crm_bind_verified_invite_phone(TEXT) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.amg_crm_accept_phone_admin_invite(TEXT) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.amg_crm_record_phone_admin_invite_result(UUID, TEXT, TEXT) TO service_role;
 GRANT EXECUTE ON FUNCTION public.amg_crm_find_auth_user_by_phone(TEXT) TO service_role;
+GRANT EXECUTE ON FUNCTION public.amg_crm_record_phone_admin_invite_user(UUID, UUID) TO service_role;
+GRANT EXECUTE ON FUNCTION public.amg_crm_invite_owns_auth_user(UUID, UUID) TO service_role;
+GRANT EXECUTE ON FUNCTION public.amg_crm_claim_phone_admin_otp(TEXT, TEXT) TO service_role;

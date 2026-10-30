@@ -8,7 +8,8 @@ serve(async (req) => {
   if (req.method !== "POST") return json({ error: "Method not allowed." }, 405);
   const url = Deno.env.get("SUPABASE_URL");
   const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
-  if (!url || !anonKey) return json({ error: "Phone verification is unavailable." }, 503);
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (!url || !anonKey || !serviceKey) return json({ error: "Phone verification is unavailable." }, 503);
   try {
     const input = await req.json();
     const phone = String(input?.phone || "").trim();
@@ -16,11 +17,12 @@ serve(async (req) => {
     if (!/^\+[1-9][0-9]{7,14}$/.test(phone) || token.length < 32 || token.length > 128) {
       return json({ error: "Invitation details are invalid." }, 400);
     }
-    const client = createClient(url, anonKey, { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } });
-    const { data: valid, error: validationError } = await client.rpc("amg_crm_validate_phone_admin_invite", {
+    const admin = createClient(url, serviceKey, { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } });
+    const { data: claimed, error: claimError } = await admin.rpc("amg_crm_claim_phone_admin_otp", {
       p_token: token, p_phone: phone,
     });
-    if (validationError || !valid) return json({ error: "This private invitation is expired or does not match that phone." }, 403);
+    if (claimError || !claimed) return json({ error: "This invitation is invalid, expired, or has reached its verification-code limit." }, 429);
+    const client = createClient(url, anonKey, { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } });
     const { error } = await client.auth.signInWithOtp({ phone, options: { shouldCreateUser: false } });
     if (error) return json({ error: "The verification code could not be sent." }, 503);
     return json({ ok: true });

@@ -1,5 +1,4 @@
 import { createClient } from "npm:@supabase/supabase-js@2.58.0";
-import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 
 const headers = { "cache-control": "no-store", "content-type": "application/json; charset=utf-8" };
 const json = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status, headers });
@@ -34,7 +33,7 @@ async function hasProviderOptOut(apiKey: string, phoneNumberId: string, phone: s
   throw new Error("Provider history exceeded the safe verification limit.");
 }
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method !== "POST") return json({ error: "Method not allowed." }, 405);
   const authorization = req.headers.get("authorization") || "";
   if (!authorization.startsWith("Bearer ")) return json({ error: "Sign in required." }, 401);

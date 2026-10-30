@@ -1,9 +1,8 @@
 import { createClient } from "npm:@supabase/supabase-js@2.58.0";
-import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 
 import { invitationCors } from "./cors.mjs";
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   const { headers, response } = invitationCors(req);
   if (response) return response;
   const json = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status, headers });

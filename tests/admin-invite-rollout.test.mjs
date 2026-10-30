@@ -130,3 +130,10 @@ test('outcome RPC uses remaining request budget, leaving sending claim fail clos
   assert.equal((await handleVerifiedSmsEvent(event, f.config, f.fetcher)).status, 403);
   assert.equal(f.posts(), 1);
 });
+test('Edge entry points use supported native Deno server API', () => {
+  for (const name of ['amg-admin-invite', 'amg-admin-phone-otp', 'amg-auth-sms-hook']) {
+    const source = fs.readFileSync(new URL(`../supabase/functions/${name}/index.ts`, import.meta.url), 'utf8');
+    assert.match(source, /Deno\.serve\(async/);
+    assert.doesNotMatch(source, /std@.*http\/server/);
+  }
+});

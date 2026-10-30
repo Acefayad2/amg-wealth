@@ -2,6 +2,8 @@ import { getPool } from "../netlify/functions/_shared/db.mjs";
 import { isOptOutKeyword, outboundContent } from "./message-content.mjs";
 
 type Delivery = { id: string; message_id: string; phone_snapshot: string; body: string; contact_id: string };
+const PROVIDER_TIMEOUT_MS = 8_000;
+const CLAIM_BATCH_SIZE = 10;
 
 async function dispatchEnabled(pool = getPool()) {
   if (Netlify.env.get("AMG_QUO_EMERGENCY_DISABLE") === "true") return false;
@@ -22,6 +24,7 @@ async function markDelivery(id: string, status: "failed" | "skipped_opt_out", de
 }
 
 async function providerOptOut(apiKey: string, phoneNumberId: string, participant: string) {
+  const deadline = Date.now() + PROVIDER_TIMEOUT_MS;
   let pageToken = "";
   for (let page = 0; page < 20; page += 1) {
     const url = new URL("https://api.quo.com/v1/messages");
@@ -29,7 +32,10 @@ async function providerOptOut(apiKey: string, phoneNumberId: string, participant
     url.searchParams.append("participants", participant);
     url.searchParams.set("maxResults", "100");
     if (pageToken) url.searchParams.set("pageToken", pageToken);
-    const response = await fetch(url, { headers: { authorization: apiKey, accept: "application/json" } });
+    const response = await fetch(url, {
+      headers: { authorization: apiKey, accept: "application/json" },
+      signal: AbortSignal.timeout(Math.max(1, deadline - Date.now())),
+    });
     if (!response.ok) throw new Error(`Quo opt-out check failed (${response.status}).`);
     const payload = await response.json() as {
       data?: Array<{ id?: string; direction?: string; from?: string; text?: string; createdAt?: string }>;
@@ -120,12 +126,20 @@ async function deliver(item: Delivery, apiKey: string, from: string, phoneNumber
     return;
   }
 
+  // Recheck immediately before the external side effect. Disabling from the
+  // portal or emergency lock therefore stops recipients still in preflight.
+  if (!await dispatchEnabled(pool)) {
+    await markDelivery(item.id, "failed", { error: "Dispatch was disabled immediately before send." }, pool);
+    return;
+  }
+
   // A network error has an uncertain provider outcome. Leave the recipient in
   // `sending` so it cannot be retried automatically or duplicate a text.
   const response = await fetch("https://api.quo.com/v1/messages", {
     method: "POST",
     headers: { Authorization: apiKey, "content-type": "application/json" },
     body: JSON.stringify({ content, from, to: [item.phone_snapshot] }),
+    signal: AbortSignal.timeout(PROVIDER_TIMEOUT_MS),
   });
   const payload = await response.json().catch(() => ({})) as { data?: { id?: string }; message?: string };
   if (response.status !== 202 || !payload.data?.id) {
@@ -135,8 +149,6 @@ async function deliver(item: Delivery, apiKey: string, from: string, phoneNumber
   await markAccepted(item, payload.data.id, noticeRequired, pool);
 }
 
-// Prepared integration only. Do not expose or schedule this function until a
-// dedicated AMG key, sender approval, storage, and dispatch approval exist.
 export async function dispatchDueMessages() {
   if (!await dispatchEnabled()) {
     return new Response("Quo dispatch is disabled.", { status: 503 });
@@ -152,10 +164,34 @@ export async function dispatchDueMessages() {
   let deliveries: Delivery[] = [];
   try {
     await client.query("BEGIN");
+    await client.query(
+      `WITH stale AS (
+         UPDATE amg_private.crm_messages
+         SET status='failed',failure_reason='Missed the 10-minute safe dispatch window; no backlog was sent and uncertain recipients were not retried.',updated_at=NOW()
+         WHERE status IN ('scheduled','sending') AND scheduled_for < NOW() - INTERVAL '10 minutes'
+         RETURNING id
+       )
+       UPDATE amg_private.crm_message_recipients r
+       SET status='failed',failure_reason='Message expired before dispatch.'
+       FROM stale WHERE r.message_id=stale.id AND r.status='scheduled'`,
+    );
+    await client.query(
+      `WITH stale AS (
+         UPDATE amg_private.crm_messages
+         SET status='failed',failure_reason='Dispatch heartbeat expired; uncertain recipients were not retried.',updated_at=NOW()
+         WHERE status='sending' AND updated_at < NOW() - INTERVAL '15 minutes'
+         RETURNING id
+       )
+       UPDATE amg_private.crm_message_recipients r
+       SET status='failed',failure_reason='Dispatch heartbeat expired before claim.'
+       FROM stale WHERE r.message_id=stale.id AND r.status='scheduled'`,
+    );
     const message = await client.query(
       `SELECT id,body FROM amg_private.crm_messages
-       WHERE status='scheduled' AND scheduled_for <= NOW()
-       ORDER BY scheduled_for FOR UPDATE SKIP LOCKED LIMIT 1`,
+       WHERE scheduled_for BETWEEN NOW() - INTERVAL '10 minutes' AND NOW()
+         AND (status='scheduled' OR (status='sending' AND updated_at >= NOW() - INTERVAL '15 minutes'))
+       ORDER BY CASE WHEN status='scheduled' THEN 0 ELSE 1 END, updated_at, scheduled_for
+       FOR UPDATE SKIP LOCKED LIMIT 1`,
     );
     if (!message.rows[0]) {
       await client.query("COMMIT");
@@ -166,8 +202,11 @@ export async function dispatchDueMessages() {
     const claimed = await client.query<Delivery>(
       `UPDATE amg_private.crm_message_recipients r SET status='sending',claimed_at=NOW()
        FROM amg_private.crm_messages m
-       WHERE r.message_id=m.id AND m.id=$1 AND r.status='scheduled'
-       RETURNING r.id,r.message_id,r.phone_snapshot,r.contact_id,m.body`, [messageId],
+       WHERE r.id IN (
+         SELECT id FROM amg_private.crm_message_recipients
+         WHERE message_id=$1 AND status='scheduled' ORDER BY id FOR UPDATE SKIP LOCKED LIMIT $2
+       ) AND r.message_id=m.id
+       RETURNING r.id,r.message_id,r.phone_snapshot,r.contact_id,m.body`, [messageId, CLAIM_BATCH_SIZE],
     );
     deliveries = claimed.rows;
     await client.query("COMMIT");
@@ -178,24 +217,49 @@ export async function dispatchDueMessages() {
     client.release();
   }
 
-  for (const item of deliveries) {
-    await deliver(item, apiKey, from, phoneNumberId);
-  }
+  // Each recipient remains an individual Quo conversation. A small parallel
+  // batch stays within the scheduled-function budget without creating a group
+  // text or sacrificing per-contact consent and STOP checks.
+  await Promise.allSettled(deliveries.map((item) => deliver(item, apiKey, from, phoneNumberId)));
 
   const summary = await pool.query(
     `SELECT count(*) FILTER (WHERE status='sent')::int AS sent,
       count(*) FILTER (WHERE status='failed')::int AS failed,
-      count(*) FILTER (WHERE status='skipped_opt_out')::int AS skipped
+      count(*) FILTER (WHERE status='skipped_opt_out')::int AS skipped,
+      count(*) FILTER (WHERE status='scheduled')::int AS pending,
+      count(*) FILTER (WHERE status='sending')::int AS uncertain
      FROM amg_private.crm_message_recipients WHERE message_id=$1`, [messageId],
   );
-  const { sent, failed, skipped } = summary.rows[0];
-  const finalStatus = failed > 0 || sent === 0 ? "failed" : "sent";
+  const { sent, failed, skipped, pending, uncertain } = summary.rows[0];
+  if (pending > 0) {
+    await pool.query("UPDATE amg_private.crm_messages SET updated_at=NOW() WHERE id=$1 AND status='sending'", [messageId]);
+    return Response.json({ messageId, sent, failed, skipped, pending, status: "sending" });
+  }
+  const finalStatus = failed > 0 || sent === 0 || uncertain > 0 ? "failed" : "sent";
   const reason = finalStatus === "failed"
-    ? (sent === 0 && skipped > 0 ? "No recipients remained opted in at dispatch time." : `${failed} recipient delivery failed.`)
+    ? (uncertain > 0 ? `${uncertain} provider outcome remains uncertain and was not retried.`
+      : sent === 0 && skipped > 0 ? "No recipients remained opted in at dispatch time." : `${failed} recipient delivery failed.`)
     : null;
   await pool.query(
     "UPDATE amg_private.crm_messages SET status=$1,failure_reason=$2,updated_at=NOW() WHERE id=$3 AND status='sending'",
     [finalStatus, reason, messageId],
   );
-  return Response.json({ messageId, sent, failed, skipped, status: finalStatus });
+  return Response.json({ messageId, sent, failed, skipped, uncertain, status: finalStatus });
+}
+
+export async function runScheduledDispatch() {
+  const pool = getPool();
+  const lockClient = await pool.connect();
+  let locked = false;
+  try {
+    const lock = await lockClient.query("SELECT pg_try_advisory_lock(730301) AS locked");
+    locked = lock.rows[0]?.locked === true;
+    if (!locked) return new Response("Another scheduler invocation owns the dispatch lock.", { status: 202 });
+    if (!await dispatchEnabled(pool)) return new Response("CRM sending is off; no reminders were materialized.");
+    await pool.query("SELECT amg_private.materialize_due_recurring(NOW())");
+    return await dispatchDueMessages();
+  } finally {
+    if (locked) await lockClient.query("SELECT pg_advisory_unlock(730301)");
+    lockClient.release();
+  }
 }

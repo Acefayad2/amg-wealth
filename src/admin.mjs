@@ -2,7 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { STATUS_LABELS, defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, recurringCalendarEntries, weekCells, weekRangeLabel } from "../admin/core.mjs";
 
 const $ = (selector) => document.querySelector(selector);
-const state = { contacts: [], groups: [], messages: [], recurring_reminders: [], dispatch_control: { enabled: false, version: 1, audit: [] }, transport: {}, week: new Date(), search: "", draftId: null, messageRequestKey: null, messageBusy: false, contactBusy: false, recurringDraftId: null, recurringRequestKey: null, recurringBusy: false, dispatchBusy: false };
+const state = { contacts: [], groups: [], messages: [], recurring_reminders: [], scheduler_events: [], dispatch_control: { enabled: false, version: 1, audit: [] }, transport: {}, week: new Date(), search: "", draftId: null, messageRequestKey: null, messageBusy: false, contactBusy: false, recurringDraftId: null, recurringRequestKey: null, recurringBusy: false, recurringStatusBusy: false, dispatchBusy: false };
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 let authClient = null;
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
@@ -113,20 +113,51 @@ function formatLocalTime(value) {
 function renderRecurring() {
   const reminders = state.recurring_reminders || [];
   $("#recurring-list").innerHTML = reminders.length ? reminders.map((reminder) => {
+    const group = state.groups.find((item) => item.id === reminder.target_group_id);
+    const lastEvent = (state.scheduler_events || []).find((item) => item.reminder_id === reminder.id);
     const missing = [
       !reminder.target_group_id && "recipient group",
+      reminder.target_group_id && !(group?.eligible_count > 0) && "opted-in recipients",
+      (group?.eligible_count || 0) > 100 && "an audience of 100 or fewer",
+      !reminder.local_time && "send time",
       reminder.meeting_url_required && !reminder.zoom_url && "Zoom URL",
     ].filter(Boolean);
     const schedule = reminder.weekdays.map((day) => weekdayNames[day]).join(", ") + " · " + formatLocalTime(reminder.local_time) + " ET";
-    const needs = missing.length ? "Needs " + missing.join(" and ") : "Ready for final provider approval";
+    const needs = missing.length ? "Needs " + missing.join(" and ") : reminder.status === "active" ? "Active schedule" : "Ready to activate";
+    const statusLabel = reminder.status === "active" ? "Active" : reminder.status === "paused" ? "Paused" : "Inactive draft";
+    const nextStatus = reminder.status === "active" ? "paused" : "active";
+    const actionLabel = reminder.status === "active" ? "Pause" : "Activate";
     return '<article class="message-row">' +
-      '<span class="status draft">Inactive draft</span>' +
-      '<div class="message-copy"><strong>' + escapeHtml(reminder.name) + '</strong><span>' + escapeHtml(schedule) + '</span><span class="needs-input">' + escapeHtml(needs) + '</span></div>' +
+      '<span class="status ' + escapeHtml(reminder.status) + '">' + statusLabel + '</span>' +
+      '<div class="message-copy"><strong>' + escapeHtml(reminder.name) + '</strong><span>' + escapeHtml(schedule) + '</span><span class="needs-input">' + escapeHtml(needs) + '</span>' + (lastEvent?.failure_reason ? '<span class="needs-input">Last run: ' + escapeHtml(lastEvent.failure_reason) + '</span>' : '') + '</div>' +
       '<span class="message-meta">' + escapeHtml(reminder.target_group_name || "No audience selected") + '</span>' +
-      '<button class="secondary" data-edit-recurring="' + reminder.id + '">Edit</button></article>';
+      '<span class="row-actions">' + (reminder.status === "active" ? '' : '<button class="secondary" data-edit-recurring="' + reminder.id + '">Edit</button>') +
+      '<button class="secondary" data-recurring-status="' + reminder.id + '" data-next-status="' + nextStatus + '" ' + (nextStatus === "active" && missing.length ? 'disabled title="Complete the missing readiness items first."' : '') + '>' + actionLabel + '</button></span></article>';
   }).join("") : '<p class="empty">No recurring drafts yet.</p>';
   document.querySelectorAll("[data-edit-recurring]").forEach((button) =>
     button.addEventListener("click", () => editRecurring(button.dataset.editRecurring)));
+  document.querySelectorAll("[data-recurring-status]").forEach((button) =>
+    button.addEventListener("click", () => setRecurringStatus(button.dataset.recurringStatus, button.dataset.nextStatus)));
+}
+
+async function setRecurringStatus(id, status) {
+  if (state.recurringStatusBusy) return;
+  const reminder = (state.recurring_reminders || []).find((item) => item.id === id);
+  if (!reminder) return;
+  const activating = status === "active";
+  if (!window.confirm(activating
+    ? `Activate ${reminder.name}? Occurrences can send only when the separate global sending switch is also on.`
+    : `Pause ${reminder.name}? Future occurrences will not be created.`)) return;
+  state.recurringStatusBusy = true;
+  try {
+    await api({ action: "set_recurring_status", id, status, expectedUpdatedAt: reminder.updated_at });
+    await load();
+    toast(activating ? "Recurring reminder activated." : "Recurring reminder paused.");
+  } catch (reason) {
+    toast(reason.message);
+  } finally {
+    state.recurringStatusBusy = false;
+  }
 }
 
 function renderGroups() {
@@ -187,7 +218,7 @@ function renderMessages() {
   list.innerHTML = state.messages.length ? state.messages.map((message) => `
     <article class="message-row">
       <span class="status ${message.status}">${escapeHtml(STATUS_LABELS[message.status] || message.status)}</span>
-      <div class="message-copy"><strong>${escapeHtml(message.body)}</strong><span>${escapeHtml(message.target_name)} · ${message.recipient_count} recipient${message.recipient_count === 1 ? "" : "s"}</span></div>
+      <div class="message-copy"><strong>${escapeHtml(message.body)}</strong><span>${escapeHtml(message.target_name)} · ${message.recipient_count} recipient${message.recipient_count === 1 ? "" : "s"}</span>${message.failure_reason ? `<span class="needs-input">${escapeHtml(message.failure_reason)}</span>` : ""}</div>
       <span class="message-meta">${escapeHtml(formatDateTime(message.scheduled_for || message.created_at))}</span>
       ${message.status === "draft" ? `<button class="secondary" data-edit-message="${message.id}">Edit</button>` : ""}
     </article>`).join("") : `<p class="empty">No messages yet. Draft or schedule the first communication.</p>`;

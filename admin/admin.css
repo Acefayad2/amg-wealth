@@ -23,6 +23,8 @@
   .sidebar .search{margin:13px 0 10px}
   .groups{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
+.row-actions{display:flex;gap:7px;justify-content:flex-end}.row-actions button:disabled{cursor:not-allowed;opacity:.5}
+@media(max-width:760px){.row-actions{grid-column:2/-1;justify-content:flex-start}}
 @media(max-width:560px){
   .topbar{flex-wrap:wrap}
   .groups{max-width:100%}

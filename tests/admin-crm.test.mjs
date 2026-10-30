@@ -169,7 +169,7 @@ test("dispatch implementation rechecks the global switch before every recipient"
   assert.match(source, /consent_status !== "opted_in"/);
   assert.match(source, /providerOptOut/);
   assert.match(source, /first_outbound_accepted_at=COALESCE/);
-  assert.match(source, /for \(const item of deliveries\)/);
+  assert.match(source, /Promise\.allSettled\(deliveries\.map/);
   const handler = fs.readFileSync(new URL("../netlify/functions/admin-crm.mts", import.meta.url), "utf8");
   assert.match(handler, /input\.action === "set_dispatch_enabled"/);
   assert.match(handler, /if \(!verified\.verified\)/);
@@ -179,6 +179,48 @@ test("dispatch implementation rechecks the global switch before every recipient"
   const html = fs.readFileSync(new URL("../admin/index.html", import.meta.url), "utf8");
   assert.match(html, /Eligible scheduled messages may send when a dispatcher is running/);
   assert.match(html, /Incomplete reminders remain blocked/);
+});
+
+test("scheduled worker is serialized, bounded, and refuses stale backlogs", () => {
+  const source = fs.readFileSync(new URL("../integrations/quo-dispatch.mts", import.meta.url), "utf8");
+  const scheduler = fs.readFileSync(new URL("../netlify/functions/admin-crm-scheduler.mts", import.meta.url), "utf8");
+  assert.match(scheduler, /schedule: "\* \* \* \* \*"/);
+  assert.match(source, /pg_try_advisory_lock\(730301\)/);
+  assert.match(source, /CLAIM_BATCH_SIZE = 10/);
+  assert.match(source, /scheduled_for < NOW\(\) - INTERVAL '10 minutes'/);
+  assert.match(source, /updated_at < NOW\(\) - INTERVAL '15 minutes'/);
+  assert.match(source, /provider outcome remains uncertain and was not retried/);
+  assert.match(source, /CRM sending is off; no reminders were materialized/);
+  assert.ok((source.match(/!await dispatchEnabled/g) || []).length >= 3);
+  assert.match(source, /status IN \('scheduled','sending'\) AND scheduled_for < NOW\(\) - INTERVAL '10 minutes'/);
+  assert.match(source, /AbortSignal\.timeout\(PROVIDER_TIMEOUT_MS\)/);
+  assert.match(source, /Promise\.allSettled\(deliveries\.map/);
+});
+
+test("recurring scheduler migration is DST-aware, idempotent, private, and fail-closed", () => {
+  const sql = fs.readFileSync(new URL("../database/migrations/20261030130000_add_safe_recurring_scheduler.sql", import.meta.url), "utf8");
+  assert.match(sql, /AT TIME ZONE reminder\.timezone/);
+  assert.match(sql, /ON CONFLICT \(reminder_id,occurrence_local_date\) DO NOTHING/);
+  assert.match(sql, /Missed the 10-minute safe dispatch window; no backlog was sent/);
+  assert.match(sql, /eligible_count NOT BETWEEN 1 AND 100/);
+  assert.match(sql, /reminder\.meeting_url_required AND reminder\.zoom_url IS NULL/);
+  assert.match(sql, /REVOKE ALL ON FUNCTION amg_private\.materialize_due_recurring\(TIMESTAMPTZ\)/);
+  assert.match(sql, /PERFORM amg_private\.require_crm_admin\(\)/);
+  assert.match(sql, /Recurring reminder changed; refresh and try again/);
+  assert.match(sql, /FOR UPDATE OF rr/);
+  assert.doesNotMatch(sql, /UPDATE\s+auth\.|ALTER\s+.*auth\./i);
+  assert.doesNotMatch(sql, /UPDATE\s+amg_private\.crm_dispatch_control\s+SET\s+enabled\s*=\s*TRUE/i);
+});
+
+test("admin readiness controls keep activation separate from global sending", () => {
+  const source = fs.readFileSync(new URL("../src/admin.mjs", import.meta.url), "utf8");
+  const handler = fs.readFileSync(new URL("../netlify/functions/admin-crm.mts", import.meta.url), "utf8");
+  assert.match(source, /Occurrences can send only when the separate global sending switch is also on/);
+  assert.match(source, /Complete the missing readiness items first/);
+  assert.match(source, /state\.recurringStatusBusy/);
+  assert.match(handler, /input\.action === "set_recurring_status"/);
+  assert.match(handler, /p_expected_updated_at: expectedUpdatedAtRaw/);
+  assert.doesNotMatch(handler, /p_expected_updated_at: expectedUpdatedAt\.toISOString\(\)/);
 });
 
 test("optional names and provider opt-outs are isolated to website CRM", () => {

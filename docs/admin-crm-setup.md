@@ -12,6 +12,18 @@ The `/admin/` interface uses AMG Portal Supabase authentication and isolated CRM
 6. Keep the portal's global delivery control disabled until production sending is approved. The database switch defaults to off, uses optimistic version checks, and records every change in the CRM audit trail.
 7. If a dispatcher is later exposed through a protected scheduled function, it must call `integrations/quo-dispatch.mts`. That integration checks the database switch before claiming work and again before every recipient. Set `AMG_QUO_EMERGENCY_DISABLE=true` to stop delivery independently of the portal.
 
+## Admin invitation prerequisites
+
+The invitation implementation is intentionally inert until its separate database migration, Supabase Edge Functions, and a supported phone-verification provider are approved and configured.
+
+1. Apply `20261030163547_admin_invitation_onboarding.sql` only after the exact invitee phone and full CRM-admin access have been approved. It adds a private invitation ledger and restricted RPCs; it does not add a user or grant access by itself.
+2. Deploy `supabase/functions/amg-admin-invite` and `supabase/functions/amg-admin-phone-otp`. Supabase supplies its service-role credential inside the trusted Edge Function runtime; do not copy that credential into Netlify or browser code.
+3. Enable Supabase phone authentication with a supported SMS provider (Twilio, MessageBird, Vonage, TextLocal, or an approved Send SMS Hook). Quo is not a built-in Supabase phone provider. Using Quo for OTPs requires a separately reviewed signed Send SMS Hook, its own hook secret, rate-limit/CAPTCHA review, and explicit approval for authentication SMS charges and Auth configuration changes.
+4. Verify that Supabase email confirmation is required for email changes. Do not activate this flow with automatic email confirmation enabled: the acceptance RPC relies on `email_confirmed_at` as proof that the recipient controls the chosen address.
+5. Keep `https://anointedmoneygroup.com/admin/setup/` in the exact Supabase Auth redirect allowlist. The admin invitation function sends one private, expiring Quo link to the approved phone only after checking provider opt-out history.
+6. The recipient opens that link, enters the same phone, verifies a separate Supabase OTP, chooses their own email, creates and confirms a strong password, and verifies the chosen email. The acceptance RPC derives phone and email from `auth.users`; it grants CRM admin only when both are confirmed and match the invitation-bound user.
+7. A forwarded bearer link alone cannot grant access because the holder still needs the invited phone's OTP and the chosen email verification. Expired, mismatched, unconfirmed, uncertain, already accepted, and failed invitations remain blocked. An existing phone Auth account is not overwritten; an administrator must review that account instead.
+
 ## Safety behavior
 
 - Only users listed in the private CRM admin allowlist can read or change CRM data.

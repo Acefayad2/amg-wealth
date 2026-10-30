@@ -2,6 +2,15 @@ import { getPool } from "../netlify/functions/_shared/db.mjs";
 import { isOptOutKeyword, outboundContent } from "./message-content.mjs";
 
 type Delivery = { id: string; message_id: string; phone_snapshot: string; body: string; contact_id: string };
+type ImmediateMessage = {
+  messageId?: string | null;
+  body: string;
+  targetType: "individual" | "group";
+  targetId: string;
+  timezone: string;
+  idempotencyKey: string;
+  actorId: string;
+};
 const PROVIDER_TIMEOUT_MS = 8_000;
 const CLAIM_BATCH_SIZE = 10;
 
@@ -149,6 +158,136 @@ async function deliver(item: Delivery, apiKey: string, from: string, phoneNumber
   await markAccepted(item, payload.data.id, noticeRequired, pool);
 }
 
+async function finalizeMessage(messageId: string, pool = getPool()) {
+  const summary = await pool.query(
+    `SELECT count(*) FILTER (WHERE status='sent')::int AS sent,
+      count(*) FILTER (WHERE status='failed')::int AS failed,
+      count(*) FILTER (WHERE status='skipped_opt_out')::int AS skipped,
+      count(*) FILTER (WHERE status='scheduled')::int AS pending,
+      count(*) FILTER (WHERE status='sending')::int AS uncertain
+     FROM amg_private.crm_message_recipients WHERE message_id=$1`, [messageId],
+  );
+  const { sent, failed, skipped, pending, uncertain } = summary.rows[0];
+  if (pending > 0) {
+    await pool.query("UPDATE amg_private.crm_messages SET updated_at=NOW() WHERE id=$1 AND status='sending'", [messageId]);
+    return { messageId, sent, failed, skipped, pending, uncertain, status: "sending" };
+  }
+  const finalStatus = failed > 0 || sent === 0 || uncertain > 0 ? "failed" : "sent";
+  const reason = finalStatus === "failed"
+    ? (uncertain > 0 ? `${uncertain} provider outcome remains uncertain and was not retried.`
+      : sent === 0 && skipped > 0 ? "No recipients remained opted in at dispatch time." : `${failed} recipient delivery failed.`)
+    : null;
+  await pool.query(
+    "UPDATE amg_private.crm_messages SET status=$1,failure_reason=$2,updated_at=NOW() WHERE id=$3 AND status='sending'",
+    [finalStatus, reason, messageId],
+  );
+  return { messageId, sent, failed, skipped, pending, uncertain, status: finalStatus };
+}
+
+export async function sendImmediateMessage(input: ImmediateMessage) {
+  if (!await dispatchEnabled()) {
+    throw Object.assign(new Error("Sending is disabled. Enable the global delivery control before using Send now."), { status: 503 });
+  }
+  const apiKey = Netlify.env.get("QUO_API_KEY");
+  const from = Netlify.env.get("QUO_FROM_NUMBER");
+  const phoneNumberId = Netlify.env.get("QUO_PHONE_NUMBER_ID");
+  if (!apiKey || !from || !phoneNumberId) {
+    throw Object.assign(new Error("The approved AMG Quo sender is not configured."), { status: 503 });
+  }
+
+  const pool = getPool();
+  const client = await pool.connect();
+  let messageId: string;
+  let deliveries: Delivery[] = [];
+  try {
+    await client.query("BEGIN");
+    const admin = await client.query(
+      "SELECT 1 FROM amg_private.crm_admins WHERE user_id=$1",
+      [input.actorId],
+    );
+    if (!admin.rows[0]) throw Object.assign(new Error("AMG CRM admin access required."), { status: 403 });
+
+    const target = input.targetType === "individual"
+      ? await client.query(
+        `SELECT COALESCE(full_name,phone) AS name,
+          ARRAY[id]::uuid[] AS contact_ids
+         FROM amg_private.crm_contacts
+         WHERE id=$1 AND consent_status='opted_in'`, [input.targetId],
+      )
+      : await client.query(
+        `SELECT g.name, array_agg(c.id ORDER BY c.id)::uuid[] AS contact_ids
+         FROM amg_private.crm_groups g
+         JOIN amg_private.crm_group_members gm ON gm.group_id=g.id
+         JOIN amg_private.crm_contacts c ON c.id=gm.contact_id AND c.consent_status='opted_in'
+         WHERE g.id=$1 GROUP BY g.id`, [input.targetId],
+      );
+    const contactIds = target.rows[0]?.contact_ids as string[] | undefined;
+    if (!contactIds?.length) throw new Error("No opted-in recipients are eligible for this message.");
+    if (contactIds.length > 100) throw new Error("An immediate group message is limited to 100 opted-in recipients.");
+
+    if (input.messageId) {
+      const existing = await client.query(
+        `SELECT id,status,created_by FROM amg_private.crm_messages
+         WHERE id=$1 FOR UPDATE`, [input.messageId],
+      );
+      if (!existing.rows[0] || existing.rows[0].created_by !== input.actorId || !["draft", "scheduled"].includes(existing.rows[0].status)) {
+        throw Object.assign(new Error("Only an untouched draft or scheduled message can use Send now."), { status: 409 });
+      }
+      const touched = await client.query(
+        `SELECT 1 FROM amg_private.crm_message_recipients
+         WHERE message_id=$1 AND (quo_message_id IS NOT NULL OR sent_at IS NOT NULL OR status IN ('sending','sent')) LIMIT 1`,
+        [input.messageId],
+      );
+      if (touched.rows[0]) throw Object.assign(new Error("This message already reached delivery and was not sent again."), { status: 409 });
+      await client.query("DELETE FROM amg_private.crm_message_recipients WHERE message_id=$1", [input.messageId]);
+      const updated = await client.query(
+        `UPDATE amg_private.crm_messages
+         SET body=$1,target_type=$2,target_id=$3,target_name=$4,status='sending',scheduled_for=NULL,
+           timezone=$5,failure_reason=NULL,updated_at=NOW()
+         WHERE id=$6 RETURNING id`,
+        [input.body, input.targetType, input.targetId, target.rows[0].name, input.timezone, input.messageId],
+      );
+      messageId = updated.rows[0].id;
+    } else {
+      const inserted = await client.query(
+        `INSERT INTO amg_private.crm_messages
+          (body,target_type,target_id,target_name,status,scheduled_for,timezone,idempotency_key,created_by)
+         VALUES ($1,$2,$3,$4,'sending',NULL,$5,$6,$7)
+         ON CONFLICT (idempotency_key) DO NOTHING RETURNING id`,
+        [input.body, input.targetType, input.targetId, target.rows[0].name, input.timezone, input.idempotencyKey, input.actorId],
+      );
+      if (!inserted.rows[0]) {
+        throw Object.assign(new Error("This Send now request was already submitted and was not repeated."), { status: 409 });
+      }
+      messageId = inserted.rows[0].id;
+    }
+
+    await client.query(
+      `INSERT INTO amg_private.crm_message_recipients
+        (message_id,contact_id,phone_snapshot,status,claimed_at)
+       SELECT $1,c.id,c.phone,'sending',NOW()
+       FROM amg_private.crm_contacts c WHERE c.id=ANY($2::uuid[])`,
+      [messageId, contactIds],
+    );
+    const claimed = await client.query<Delivery>(
+      `SELECT r.id,r.message_id,r.phone_snapshot,r.contact_id,m.body
+       FROM amg_private.crm_message_recipients r
+       JOIN amg_private.crm_messages m ON m.id=r.message_id
+       WHERE r.message_id=$1 AND r.status='sending' ORDER BY r.id`, [messageId],
+    );
+    deliveries = claimed.rows;
+    await client.query("COMMIT");
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
+
+  await Promise.allSettled(deliveries.map((item) => deliver(item, apiKey, from, phoneNumberId)));
+  return finalizeMessage(messageId, pool);
+}
+
 export async function dispatchDueMessages() {
   if (!await dispatchEnabled()) {
     return new Response("Quo dispatch is disabled.", { status: 503 });
@@ -222,29 +361,8 @@ export async function dispatchDueMessages() {
   // text or sacrificing per-contact consent and STOP checks.
   await Promise.allSettled(deliveries.map((item) => deliver(item, apiKey, from, phoneNumberId)));
 
-  const summary = await pool.query(
-    `SELECT count(*) FILTER (WHERE status='sent')::int AS sent,
-      count(*) FILTER (WHERE status='failed')::int AS failed,
-      count(*) FILTER (WHERE status='skipped_opt_out')::int AS skipped,
-      count(*) FILTER (WHERE status='scheduled')::int AS pending,
-      count(*) FILTER (WHERE status='sending')::int AS uncertain
-     FROM amg_private.crm_message_recipients WHERE message_id=$1`, [messageId],
-  );
-  const { sent, failed, skipped, pending, uncertain } = summary.rows[0];
-  if (pending > 0) {
-    await pool.query("UPDATE amg_private.crm_messages SET updated_at=NOW() WHERE id=$1 AND status='sending'", [messageId]);
-    return Response.json({ messageId, sent, failed, skipped, pending, status: "sending" });
-  }
-  const finalStatus = failed > 0 || sent === 0 || uncertain > 0 ? "failed" : "sent";
-  const reason = finalStatus === "failed"
-    ? (uncertain > 0 ? `${uncertain} provider outcome remains uncertain and was not retried.`
-      : sent === 0 && skipped > 0 ? "No recipients remained opted in at dispatch time." : `${failed} recipient delivery failed.`)
-    : null;
-  await pool.query(
-    "UPDATE amg_private.crm_messages SET status=$1,failure_reason=$2,updated_at=NOW() WHERE id=$3 AND status='sending'",
-    [finalStatus, reason, messageId],
-  );
-  return Response.json({ messageId, sent, failed, skipped, uncertain, status: finalStatus });
+  if (!messageId) throw new Error("Claimed message state was unavailable.");
+  return Response.json(await finalizeMessage(messageId, pool));
 }
 
 export async function runScheduledDispatch() {

@@ -68,13 +68,23 @@
 
   <dialog id="composer" class="dialog">
     <form id="composer-form" method="dialog" class="dialog-card">
-      <div class="dialog-heading"><div><p class="eyebrow">Compose</p><h2>Schedule a text</h2></div><button type="button" class="close" data-close="composer" aria-label="Close">×</button></div>
+      <div class="dialog-heading"><div><p class="eyebrow">Compose</p><h2>Send a text</h2></div><button type="button" class="close" data-close="composer" aria-label="Close">×</button></div>
       <div class="recipient-grid"><label>Recipient type<select id="target-type" name="target-type" autocomplete="off"><option value="individual">Individual</option><option value="group">Group</option></select></label><label>Recipient<select id="target-id" name="target-id" autocomplete="off" required></select></label></div>
       <div id="recipient-note" class="recipient-note"></div>
       <label>Message<textarea id="message-body" name="message-body" maxlength="1600" rows="7" autocomplete="off" required placeholder="Write a clear, consent-based message…"></textarea><span class="field-meta"><span>Opt-out requests always override group membership.</span><span id="char-count">0 / 1600</span></span></label>
-      <div class="recipient-grid"><label>Send date and time<input id="scheduled-for" name="scheduled-for" type="datetime-local" autocomplete="off"></label><label>Timezone<input id="message-timezone" name="message-timezone" type="text" autocomplete="off" readonly></label></div>
+      <fieldset class="schedule-fields"><legend>Schedule for later</legend><div class="recipient-grid"><label>Future date and time<input id="scheduled-for" name="scheduled-for" type="datetime-local" autocomplete="off"></label><label>Timezone<input id="message-timezone" name="message-timezone" type="text" autocomplete="off" readonly></label></div><span class="field-meta">Use this only for a future one-time message. Weekly repeats are managed in AMG reminders.</span></fieldset>
       <p id="composer-error" class="form-error" role="alert" tabindex="-1"></p>
-      <div class="dialog-actions"><button id="save-draft" type="button" class="secondary">Save draft</button><button id="schedule-message" type="submit" class="primary">Schedule message</button></div>
+      <div class="dialog-actions"><button id="save-draft" type="button" class="secondary">Save draft</button><button id="send-now" type="button" class="primary">Send now</button><button id="schedule-message" type="submit" class="secondary">Schedule for later</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="send-now-dialog" class="dialog">
+    <form id="send-now-form" method="dialog" class="dialog-card compact">
+      <div class="dialog-heading"><div><p class="eyebrow">Immediate delivery</p><h2>Send this text now?</h2></div><button type="button" class="close" data-close="send-now-dialog" aria-label="Close">×</button></div>
+      <p id="send-now-summary"></p>
+      <p class="recipient-note warning">This sends immediately through the approved AMG Quo number and cannot be recalled. Consent and provider opt-outs are checked again before each recipient.</p>
+      <p id="send-now-error" class="form-error" role="alert" tabindex="-1"></p>
+      <div class="dialog-actions"><button type="button" class="secondary" data-close="send-now-dialog">Cancel</button><button id="confirm-send-now" type="submit" class="primary">Send now</button></div>
     </form>
   </dialog>
 
@@ -97,7 +107,7 @@
   <dialog id="enable-sending-dialog" class="dialog">
     <form id="enable-sending-form" method="dialog" class="dialog-card compact">
       <div class="dialog-heading"><div><p class="eyebrow">Confirm delivery control</p><h2>Enable text sending?</h2></div><button type="button" class="close" data-close="enable-sending-dialog" aria-label="Close">×</button></div>
-      <p>Eligible scheduled messages may send when a dispatcher is running. Opt-outs are checked again before every recipient.</p>
+      <p>Confirmed Send now requests and eligible scheduled messages may send while this control is on. Opt-outs are checked again before every recipient.</p>
       <p class="recipient-note warning">Incomplete reminders remain blocked. AMG Book Club still needs an approved audience and Zoom URL, and every audience must contain verified opted-in contacts.</p>
       <p id="enable-sending-error" class="form-error" role="alert" tabindex="-1"></p>
       <div class="dialog-actions"><button type="button" class="secondary" data-close="enable-sending-dialog">Cancel</button><button id="confirm-enable-sending" type="submit" class="primary">Enable sending</button></div>

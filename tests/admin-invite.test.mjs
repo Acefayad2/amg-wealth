@@ -123,3 +123,13 @@ test("portal invitation action uses only an approved phone and stays separate fr
   assert.match(handler, /client\.functions\.invoke\("amg-admin-invite"/);
   assert.doesNotMatch(handler.match(/input\.action === "create_admin_invitation"[\s\S]*?\n    }/)?.[0] || "", /send_message_now/);
 });
+
+test("private invitation expiry and SMS copy are twelve hours without weakening existing gates", () => {
+  const expiry = fs.readFileSync(new URL("../database/migrations/20261101153014_admin_invitation_twelve_hour_expiry.sql", import.meta.url), "utf8");
+  const previous = migration.match(/CREATE OR REPLACE FUNCTION public\.amg_crm_prepare_phone_admin_invite\([\s\S]*?\n\$\$;/)[0];
+  const replacement = expiry.slice(expiry.indexOf("CREATE OR REPLACE FUNCTION")).trim();
+  assert.equal(replacement, previous.replaceAll("INTERVAL '1 hour'", "INTERVAL '12 hours'"));
+  assert.equal((expiry.match(/INTERVAL '12 hours'/g) || []).length, 2);
+  assert.match(inviteFunction, /This link expires in 12 hours and can be used once/);
+  assert.doesNotMatch(inviteFunction, /expires in 1 hour/);
+});

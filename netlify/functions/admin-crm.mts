@@ -24,6 +24,8 @@ export default async function handler(req: Request, _context: Context) {
       if (dispatchError) rpcError(dispatchError);
       const { data: schedulerEvents, error: schedulerError } = await client.rpc("amg_crm_get_scheduler_events");
       if (schedulerError) rpcError(schedulerError);
+      const { data: adminInvitations, error: invitationError } = await client.rpc("amg_crm_get_admin_invitations");
+      if (invitationError) rpcError(invitationError);
       const emergencyDisabled = Netlify.env.get("AMG_QUO_EMERGENCY_DISABLE") === "true";
       const transport = await verifyQuoTransport({
         apiKey: Netlify.env.get("QUO_API_KEY"),
@@ -32,6 +34,7 @@ export default async function handler(req: Request, _context: Context) {
         enabled: Boolean((dispatchControl as { enabled?: boolean })?.enabled) && !emergencyDisabled,
       });
       return json({ ...(data as Record<string, unknown>), dispatch_control: dispatchControl, scheduler_events: schedulerEvents,
+        admin_invitations: adminInvitations,
         storage_verified: await verifyCrmStorage(),
         transport: { ...transport, emergency_disabled: emergencyDisabled } });
     }
@@ -61,6 +64,15 @@ export default async function handler(req: Request, _context: Context) {
       });
       if (error) rpcError(error);
       return json({ dispatch_control: data });
+    }
+
+    if (input.action === "create_admin_invitation") {
+      const phone = typeof input.phone === "string" ? input.phone.trim() : "";
+      if (!E164.test(phone)) throw new Error("Phone number must use E.164 format, such as +12025550123.");
+      const { data, error } = await client.functions.invoke("amg-admin-invite", { body: { phone } });
+      if (error) throw Object.assign(new Error("The secure invitation service could not be reached."), { status: 503 });
+      if (data?.error) throw Object.assign(new Error(String(data.error)), { status: 409 });
+      return json(data, data?.already_pending ? 200 : 201);
     }
 
     if (input.action === "save_contact") {

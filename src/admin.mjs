@@ -2,7 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { STATUS_LABELS, defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, recurringCalendarEntries, weekCells, weekRangeLabel } from "../admin/core.mjs";
 
 const $ = (selector) => document.querySelector(selector);
-const state = { contacts: [], groups: [], messages: [], recurring_reminders: [], scheduler_events: [], dispatch_control: { enabled: false, version: 1, audit: [] }, storage_verified: false, transport: {}, week: new Date(), search: "", draftId: null, messageRequestKey: null, messageBusy: false, contactBusy: false, recurringDraftId: null, recurringRequestKey: null, recurringBusy: false, recurringStatusBusy: false, dispatchBusy: false };
+const state = { contacts: [], groups: [], messages: [], recurring_reminders: [], scheduler_events: [], admin_invitations: [], dispatch_control: { enabled: false, version: 1, audit: [] }, storage_verified: false, transport: {}, week: new Date(), search: "", draftId: null, messageRequestKey: null, messageBusy: false, contactBusy: false, recurringDraftId: null, recurringRequestKey: null, recurringBusy: false, recurringStatusBusy: false, dispatchBusy: false, adminInviteBusy: false };
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 let authClient = null;
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
@@ -40,6 +40,7 @@ async function load() {
 }
 
 function render() {
+  renderAdminInvitations();
   renderGroups();
   renderContacts();
   renderRecurring();
@@ -59,6 +60,44 @@ function render() {
       ? "Quo is connected to the approved AMG sender, but dispatch is intentionally disabled. Contacts, consent, audience, and each activation still require approval."
       : "Quo dispatch is enabled. Only opted-in contacts can receive immediate or scheduled texts, and opt-outs are checked again before every send.";
   renderDispatchControl();
+}
+
+function renderAdminInvitations() {
+  const invitations = state.admin_invitations || [];
+  $("#admin-invitations").innerHTML = invitations.length ? invitations.map((invitation) => `
+    <article class="message-row">
+      <div class="message-copy"><strong>${escapeHtml(invitation.phone)}</strong><span>${escapeHtml(invitation.status === "accepted" ? `Admin access accepted${invitation.chosen_email ? ` · ${invitation.chosen_email}` : ""}` : invitation.status === "sent" ? "Private setup text accepted by Quo" : invitation.status === "phone_verified" ? "Phone verified · email verification pending" : invitation.status === "uncertain" ? "Provider outcome uncertain — do not retry" : invitation.status === "expired" ? "Expired — a new invitation is required" : invitation.status)}</span></div>
+      <span class="message-meta">${escapeHtml(invitation.accepted_at ? formatDateTime(invitation.accepted_at) : invitation.expires_at ? `Expires ${formatDateTime(invitation.expires_at)}` : formatDateTime(invitation.created_at))}</span>
+    </article>`).join("") : '<p class="empty">No admin invitations have been prepared.</p>';
+}
+
+async function createAdminInvitation(event) {
+  event.preventDefault();
+  if (state.adminInviteBusy) return;
+  const phone = $("#admin-invite-phone").value.trim();
+  const submit = $("#admin-invite-submit");
+  const error = $("#admin-invite-error");
+  error.textContent = "";
+  if (!/^\+[1-9][0-9]{7,14}$/.test(phone)) {
+    error.textContent = "Enter the approved phone in E.164 format, such as +12025550123.";
+    error.focus();
+    return;
+  }
+  if (!window.confirm(`Send one private, single-use AMG admin setup link to ${phone}? The recipient must separately verify this phone and their chosen email before access is granted.`)) return;
+  state.adminInviteBusy = true;
+  submit.disabled = true;
+  try {
+    const result = await api({ action: "create_admin_invitation", phone });
+    $("#admin-invite-form").reset();
+    await load();
+    toast(result.already_pending ? "A valid invitation is already pending for that phone." : "Private setup text accepted by Quo.");
+  } catch (reason) {
+    error.textContent = reason.message;
+    error.focus();
+  } finally {
+    state.adminInviteBusy = false;
+    submit.disabled = false;
+  }
 }
 
 function renderDispatchControl() {
@@ -484,6 +523,7 @@ $("#prev-week").addEventListener("click", () => { state.week = new Date(state.we
 $("#next-week").addEventListener("click", () => { state.week = new Date(state.week.getFullYear(), state.week.getMonth(), state.week.getDate() + 7); renderCalendar(); });
 $("#today").addEventListener("click", () => { state.week = new Date(); renderCalendar(); });
 document.querySelectorAll("[data-close]").forEach((button) => button.addEventListener("click", () => $(`#${button.dataset.close}`).close()));
+$("#admin-invite-form").addEventListener("submit", createAdminInvitation);
 
 $("#contact-form").addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -538,6 +578,7 @@ async function init() {
       transport: { provider: "Quo", configured: true, verified: true, enabled: false, emergency_disabled: false },
       storage_verified: !previewParams.has("storage-off"),
       dispatch_control: { enabled: false, version: 1, changed_at: null, changed_by: null, audit: [] },
+      admin_invitations: [],
     });
     render();
     return;

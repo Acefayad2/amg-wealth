@@ -26,12 +26,14 @@
   .groups{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 .row-actions{display:flex;gap:7px;justify-content:flex-end}.row-actions button:disabled{cursor:not-allowed;opacity:.5}
+.admin-access-card{margin:0 0 18px}.admin-invite-body{padding:18px 22px}.admin-invite-form{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:12px;margin:16px 0 4px}.admin-invite-form .secondary{white-space:nowrap}.compact-list{margin:16px -22px -18px}.compact-list .message-row{grid-template-columns:minmax(0,1fr) auto}.compact-list .message-meta{white-space:nowrap}
 @media(max-width:760px){.row-actions{grid-column:2/-1;justify-content:flex-start}}
 @media(max-width:560px){
   .topbar{flex-wrap:wrap}
   .groups{max-width:100%}
   .group-button{width:auto}
   .transport-control{align-items:flex-start;flex-direction:column}.transport-control #toggle-sending{width:100%}
+  .admin-invite-form{grid-template-columns:1fr}.admin-invite-form .secondary{width:100%}
 }
 
 /* Weekly calendar: one accessible Sunday-to-Saturday view, with a stacked phone layout. */

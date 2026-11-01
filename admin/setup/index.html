@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
+  <meta name="referrer" content="no-referrer">
   <title>Set up AMG dashboard access</title>
   <link rel="icon" href="/assets/logo-mark.webp">
   <link rel="stylesheet" href="/admin/admin.css">
@@ -18,6 +19,23 @@
       <p id="setup-intro" class="muted">Use your approved AMG admin email and current password, then choose a new dashboard password.</p>
 
       <div id="link-error" class="setup-notice warning" role="alert" hidden></div>
+
+      <div id="invitation-guidance" class="setup-notice">
+        <strong>New AMG administrator?</strong>
+        <span>An existing CRM administrator must first send a private setup text to your approved phone. A public or forwarded page link alone cannot grant admin access.</span>
+      </div>
+
+      <section id="phone-verification" class="phone-verification" hidden>
+        <h2>Verify your phone</h2>
+        <p class="muted">Enter the phone that received this private link. We will send a separate one-time code before you can choose an email or password.</p>
+        <label>Invited phone number<input id="invite-phone" name="invite-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+12025550123"></label>
+        <button id="send-phone-code" class="secondary" type="button">Send verification code</button>
+        <div id="phone-code-fields" hidden>
+          <label>6-digit code<input id="phone-code" name="phone-code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6"></label>
+          <button id="verify-phone-code" class="secondary" type="button">Verify phone</button>
+        </div>
+        <p id="phone-status" class="field-meta" role="status" tabindex="-1"></p>
+      </section>
 
       <form id="setup-form" class="stack" novalidate>
         <label>Email
@@ -45,9 +63,14 @@
       </form>
 
       <section id="setup-success" class="setup-success" role="status" tabindex="-1" hidden>
-        <h2>Password saved</h2>
-        <p>Your existing AMG admin account is ready. Sign in with the new password.</p>
+        <h2 id="setup-success-title">Password saved</h2>
+        <p id="setup-success-copy">Your existing AMG admin account is ready. Sign in with the new password.</p>
         <a class="primary button-link" href="/admin/">Go to dashboard sign in</a>
+      </section>
+
+      <section id="email-confirmation" class="setup-success" role="status" tabindex="-1" hidden>
+        <h2>Verify your chosen email</h2>
+        <p>We saved your password request, but admin access is still blocked. Open the verification email, then return through its link to finish setup.</p>
       </section>
 
       <div id="recovery-panel" class="recovery-panel">

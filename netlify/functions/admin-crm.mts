@@ -167,7 +167,7 @@ export default async function handler(req: Request, _context: Context) {
         const parsed = new URL(zoomUrl);
         if (parsed.protocol !== "https:") throw new Error("Zoom URL must use HTTPS.");
       }
-      const { data, error } = await client.rpc("amg_crm_save_recurring_reminder", {
+      const { data, error } = await client.rpc("amg_crm_save_recurring_reminder_versioned", {
         p_id: input.id ? requireUuid(input.id, "Recurring reminder") : null,
         p_name: name,
         p_body: body,
@@ -179,6 +179,7 @@ export default async function handler(req: Request, _context: Context) {
         p_start_date: startDate,
         p_status: "draft",
         p_idempotency_key: requireUuid(input.idempotencyKey, "Request key"),
+        p_expected_updated_at: typeof input.expectedUpdatedAt === "string" ? input.expectedUpdatedAt : null,
       });
       if (error) rpcError(error);
       return json({ id: data }, input.id ? 200 : 201);

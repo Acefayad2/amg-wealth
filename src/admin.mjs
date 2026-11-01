@@ -2,7 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { STATUS_LABELS, defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, recurringCalendarEntries, weekCells, weekRangeLabel } from "../admin/core.mjs";
 
 const $ = (selector) => document.querySelector(selector);
-const state = { contacts: [], groups: [], messages: [], recurring_reminders: [], scheduler_events: [], admin_invitations: [], dispatch_control: { enabled: false, version: 1, audit: [] }, storage_verified: false, transport: {}, week: new Date(), search: "", draftId: null, messageRequestKey: null, messageBusy: false, contactBusy: false, contactEditVersion: null, recurringDraftId: null, recurringRequestKey: null, recurringBusy: false, recurringStatusBusy: false, dispatchBusy: false, adminInviteBusy: false };
+const state = { contacts: [], groups: [], messages: [], recurring_reminders: [], scheduler_events: [], admin_invitations: [], dispatch_control: { enabled: false, version: 1, audit: [] }, storage_verified: false, transport: {}, week: new Date(), search: "", draftId: null, messageRequestKey: null, messageBusy: false, contactBusy: false, contactEditVersion: null, recurringDraftId: null, recurringEditSnapshot: null, recurringRequestKey: null, recurringBusy: false, recurringStatusBusy: false, dispatchBusy: false, adminInviteBusy: false };
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 let authClient = null;
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
@@ -328,6 +328,7 @@ function editRecurring(id) {
   const reminder = (state.recurring_reminders || []).find((item) => item.id === id);
   if (!reminder) return;
   state.recurringDraftId = id;
+  state.recurringEditSnapshot = { ...reminder, weekdays: [...reminder.weekdays] };
   state.recurringRequestKey = reminder.idempotency_key;
   $("#recurring-form").reset();
   $("#recurring-id").value = id;
@@ -351,7 +352,7 @@ function editRecurring(id) {
 async function saveRecurring(event) {
   event.preventDefault();
   if (state.recurringBusy) return;
-  const reminder = (state.recurring_reminders || []).find((item) => item.id === state.recurringDraftId);
+  const reminder = state.recurringEditSnapshot;
   const error = $("#recurring-error");
   const submit = event.submitter;
   error.textContent = "";
@@ -371,6 +372,7 @@ async function saveRecurring(event) {
       startDate: reminder.start_date,
       status: "draft",
       idempotencyKey: state.recurringRequestKey,
+      expectedUpdatedAt: reminder.updated_at,
     });
     $("#recurring-dialog").close();
     await load();

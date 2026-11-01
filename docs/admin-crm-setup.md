@@ -68,3 +68,7 @@ remove the database guard during frontend rollback. Preserve the trigger and
 legacy fail-closed wrapper until every caller uses versioned edits. This change
 does not address recurring-content lost updates or the separately reproduced
 message-draft SQL ambiguity; those remain separate tracked findings.
+
+## CRM database TLS repair
+
+The serverless database pool trusts the public Supabase Root 2021 CA bundled in `netlify/functions/_shared/supabase-ca.mts` (SHA-256 `807025AD50D4ED219D2C9C7D299C004F824EB00CF7F65AFEF607D07B72E6CAFA`, expires April 26, 2031). Certificate-chain and default hostname verification remain enabled. URL-level TLS options are removed before node-postgres parses the connection string, so they cannot override the explicit CA or weaken verification. The pool permits one connection per function instance. No credential or delivery-control change is required by this repair.

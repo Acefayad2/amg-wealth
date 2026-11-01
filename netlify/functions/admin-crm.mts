@@ -86,9 +86,10 @@ export default async function handler(req: Request, _context: Context) {
       if (consentStatus === "opted_in" && !evidence) throw new Error("Consent evidence is required before a contact can receive texts.");
       if (!validTimezone(input.timezone)) throw new Error("Timezone is invalid.");
       const id = input.id ? requireUuid(input.id, "Contact") : null;
-      const { data, error } = await client.rpc("amg_crm_save_contact", {
+      const { data, error } = await client.rpc("amg_crm_save_contact_versioned", {
         p_id: id, p_full_name: fullName || null, p_phone: phone, p_consent_status: consentStatus,
         p_consent_evidence: evidence, p_timezone: input.timezone,
+        p_expected_updated_at: typeof input.expectedUpdatedAt === "string" ? input.expectedUpdatedAt : null,
       });
       if (error) rpcError(error);
       return json({ id: data }, id ? 200 : 201);

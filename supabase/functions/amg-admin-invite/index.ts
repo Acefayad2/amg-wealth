@@ -115,7 +115,7 @@ Deno.serve(async (req) => {
       }
     }
     const privateUrl = `${setupUrl}?invite=${encodeURIComponent(token)}`;
-    const content = `AMG admin invitation: Open this private link to verify your phone, choose your email, and create your dashboard password: ${privateUrl}\n\nThis link expires in 1 hour and can be used once. Reply STOP to opt out.`;
+    const content = `AMG admin invitation: Open this private link to verify your phone, choose your email, and create your dashboard password: ${privateUrl}\n\nThis link expires in 12 hours and can be used once. Reply STOP to opt out.`;
     let providerResponse: Response;
     try {
       providerResponse = await fetch("https://api.quo.com/v1/messages", {

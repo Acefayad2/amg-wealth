@@ -45,3 +45,26 @@ The invitation implementation is intentionally inert until its separate database
 ## Invitation expiry update
 
 Apply `20261101153014_admin_invitation_twelve_hour_expiry.sql` after the invitation foundation. Newly prepared or safely reissued links expire 12 hours after preparation; already issued links keep their original expiry. This does not change OTP validity, the one-minute resend interval, the lifetime five-code limit, or single-use access verification.
+
+### Contact edit conflict safeguard (2026-11-01)
+
+The additive `20261101154000_contact_edit_conflicts.sql` migration introduces a
+versioned contact-save RPC and exposes each contact's precise `updated_at` token.
+The editor captures that token when opened. Stale edits fail with a refresh/retry
+conflict instead of overwriting another admin's changes or a provider opt-out.
+Every contact update advances the token, including multiple writes in one
+transaction. Legacy unversioned creation remains supported; legacy updates fail
+closed and require the refreshed client. Admin grants and consent policy are
+unchanged. Apply this migration before publishing the matching API/UI bundle.
+
+Local-only regression command (no live data or messages):
+`PGLITE_MODULE=/path/to/pglite/dist/index.js node scripts/test-contact-conflicts-sql.mjs`.
+This verifies stale-reader interleavings in isolated SQL, not simultaneous
+production sessions or a multi-user load/capacity guarantee.
+
+Release order: database migration first, then matching function/API and UI bundle.
+Old open tabs receive HTTP 409 on unversioned edits and must refresh; do not
+remove the database guard during frontend rollback. Preserve the trigger and
+legacy fail-closed wrapper until every caller uses versioned edits. This change
+does not address recurring-content lost updates or the separately reproduced
+message-draft SQL ambiguity; those remain separate tracked findings.

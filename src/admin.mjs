@@ -2,7 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { STATUS_LABELS, defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, recurringCalendarEntries, weekCells, weekRangeLabel } from "../admin/core.mjs";
 
 const $ = (selector) => document.querySelector(selector);
-const state = { contacts: [], groups: [], messages: [], recurring_reminders: [], scheduler_events: [], admin_invitations: [], dispatch_control: { enabled: false, version: 1, audit: [] }, storage_verified: false, transport: {}, week: new Date(), search: "", draftId: null, messageRequestKey: null, messageBusy: false, contactBusy: false, recurringDraftId: null, recurringRequestKey: null, recurringBusy: false, recurringStatusBusy: false, dispatchBusy: false, adminInviteBusy: false };
+const state = { contacts: [], groups: [], messages: [], recurring_reminders: [], scheduler_events: [], admin_invitations: [], dispatch_control: { enabled: false, version: 1, audit: [] }, storage_verified: false, transport: {}, week: new Date(), search: "", draftId: null, messageRequestKey: null, messageBusy: false, contactBusy: false, contactEditVersion: null, recurringDraftId: null, recurringRequestKey: null, recurringBusy: false, recurringStatusBusy: false, dispatchBusy: false, adminInviteBusy: false };
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 let authClient = null;
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
@@ -389,6 +389,7 @@ function openContact(id = null) {
   $("#contact-form").reset();
   $("#contact-title").textContent = contact ? "Edit contact" : "Add contact";
   $("#contact-id").value = contact?.id || "";
+  state.contactEditVersion = contact?.updated_at || null;
   $("#contact-name").value = contact?.full_name || "";
   $("#contact-phone").value = contact?.phone || "";
   $("#contact-consent").value = contact?.consent_status || "pending";
@@ -539,6 +540,7 @@ $("#contact-form").addEventListener("submit", async (event) => {
     const previous = state.contacts.find((item) => item.id === $("#contact-id").value);
     const result = await api({
       action: "save_contact", id: $("#contact-id").value || null,
+      expectedUpdatedAt: state.contactEditVersion,
       fullName: $("#contact-name").value, phone: $("#contact-phone").value,
       consentStatus: $("#contact-consent").value,
       consentEvidence: $("#consent-evidence").value, timezone: $("#contact-timezone").value,

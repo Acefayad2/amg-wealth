@@ -35,12 +35,12 @@ class Form extends EventTarget {
   }
 }
 
-function setup({ apiImpl = async () => ({ id: "contact-1" }), loadImpl = async () => {}, groups = [] } = {}) {
+function setup({ apiImpl = async () => ({ id: "contact-1" }), loadImpl = async () => {}, groups = [], editVersion = null } = {}) {
   const form = new Form();
   const button = { disabled: false };
   const error = { textContent: "", focusCount: 0, focus() { this.focusCount += 1; } };
   const dialog = { open: true, closeCount: 0, close() { this.open = false; this.closeCount += 1; } };
-  const state = { contactBusy: false, contacts: [], groups };
+  const state = { contactBusy: false, contactEditVersion: editVersion, contacts: [], groups };
   const calls = [];
   const notices = [];
   let loads = 0;
@@ -175,4 +175,47 @@ test("submission without a submitter still cleans up the stable form", async () 
   await app.submit(null);
   app.assertClean();
   assert.equal(app.loads, 1);
+});
+
+
+test("contact submit keeps dialog-open version even if shared state refreshes", async () => {
+  const version = "2026-11-01T15:00:00.123456+00:00";
+  const app = setup({ editVersion: version });
+  app.state.contacts = [{ id: "contact-1", updated_at: "2026-11-01T15:00:01.654321+00:00" }];
+  await app.submit();
+  assert.equal(app.calls[0].expectedUpdatedAt, version);
+  app.assertClean();
+});
+
+test("opening a contact captures its exact version and creation clears the token", () => {
+  assert.match(source, /state\.contactEditVersion = contact\?\.updated_at \|\| null/);
+});
+
+
+test("reopening after refresh captures new contact version; new contact clears it", () => {
+  const start = source.indexOf("function openContact(id = null) {");
+  const end = source.indexOf("\nasync function saveMessage", start);
+  const state = { contacts: [{ id: "contact-1", updated_at: "2026-11-01T00:00:00.123456+00:00" }], groups: [] };
+  const fields = new Map();
+  const context = { state, timezone: "UTC", escapeHtml: String, $: key => {
+    if (!fields.has(key)) fields.set(key, { reset() {}, showModal() {} });
+    return fields.get(key);
+  } };
+  vm.createContext(context);
+  vm.runInContext(source.slice(start, end) + ';openContact("contact-1");', context);
+  assert.equal(state.contactEditVersion, "2026-11-01T00:00:00.123456+00:00");
+  state.contacts = [{ id: "contact-1", updated_at: "2026-11-01T00:00:01.654321+00:00" }];
+  vm.runInContext('openContact("contact-1")', context);
+  assert.equal(state.contactEditVersion, "2026-11-01T00:00:01.654321+00:00");
+  vm.runInContext('openContact()', context);
+  assert.equal(state.contactEditVersion, null);
+});
+
+test("SQL serialization conflicts map to HTTP 409", () => {
+  const apiSource = fs.readFileSync(new URL("../netlify/functions/admin-crm.mts", import.meta.url), "utf8");
+  const start = apiSource.indexOf("function rpcError(");
+  const end = apiSource.indexOf("\nexport default", start);
+  const fn = apiSource.slice(start, end).replace(/error: \{[^}]+\}/, "error").replace("): never", ")");
+  const context = {}; vm.createContext(context); vm.runInContext(fn, context);
+  assert.throws(() => context.rpcError({ code: "40001" }), e => e.status === 409);
 });

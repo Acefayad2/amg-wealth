@@ -52,6 +52,7 @@ function setup({ apiImpl = async () => ({ id: "contact-1" }), loadImpl = async (
     "#contact-name": { value: "Test Contact" },
     "#contact-phone": { value: "+12025550123" },
     "#contact-consent": { value: "pending" },
+    "#manual-opt-in-confirmed": { checked: false },
     "#consent-evidence": { value: "" },
     "#contact-timezone": { value: "America/New_York" },
   };
@@ -189,6 +190,39 @@ test("contact submit keeps dialog-open version even if shared state refreshes", 
 
 test("opening a contact captures its exact version and creation clears the token", () => {
   assert.match(source, /state\.contactEditVersion = contact\?\.updated_at \|\| null/);
+});
+
+test("new manual contacts default to opted in but require an unchecked admin confirmation", () => {
+  const start = source.indexOf("function openContact(id = null) {");
+  const end = source.indexOf("\nasync function saveMessage", start);
+  const state = { contacts: [], groups: [] };
+  const fields = new Map();
+  const context = { state, timezone: "UTC", escapeHtml: String, $: key => {
+    if (!fields.has(key)) fields.set(key, { reset() {}, showModal() {}, value: "", checked: false, hidden: true, required: false });
+    return fields.get(key);
+  } };
+  vm.createContext(context);
+  vm.runInContext(source.slice(start, end) + ";openContact();", context);
+  assert.equal(fields.get("#contact-consent").value, "opted_in");
+  assert.equal(fields.get("#manual-opt-in-confirmation").hidden, false);
+  assert.equal(fields.get("#manual-opt-in-confirmed").required, true);
+  assert.equal(fields.get("#manual-opt-in-confirmed").checked, false);
+});
+
+test("existing opt-outs stay opted out and never inherit the manual-add confirmation", () => {
+  const start = source.indexOf("function openContact(id = null) {");
+  const end = source.indexOf("\nasync function saveMessage", start);
+  const state = { contacts: [{ id: "contact-1", consent_status: "opted_out", updated_at: "2026-11-03T00:00:00Z", group_ids: [] }], groups: [] };
+  const fields = new Map();
+  const context = { state, timezone: "UTC", escapeHtml: String, $: key => {
+    if (!fields.has(key)) fields.set(key, { reset() {}, showModal() {}, value: "", checked: false, hidden: true, required: false });
+    return fields.get(key);
+  } };
+  vm.createContext(context);
+  vm.runInContext(source.slice(start, end) + ';openContact("contact-1");', context);
+  assert.equal(fields.get("#contact-consent").value, "opted_out");
+  assert.equal(fields.get("#manual-opt-in-confirmation").hidden, true);
+  assert.equal(fields.get("#manual-opt-in-confirmed").required, false);
 });
 
 

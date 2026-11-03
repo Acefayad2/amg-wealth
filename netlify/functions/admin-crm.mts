@@ -1,5 +1,5 @@
 import type { Config, Context } from "@netlify/functions";
-import { cleanText, E164, publicError, requireUuid, validTimezone, verifySameOrigin } from "./_shared/crm.mjs";
+import { cleanText, E164, manualOptInEvidence, publicError, requireUuid, validTimezone, verifySameOrigin } from "./_shared/crm.mjs";
 import { verifyQuoTransport } from "./_shared/quo.mjs";
 import { getAuthenticatedUser } from "./_shared/supabase.mjs";
 import { verifyCrmStorage } from "./_shared/db.mjs";
@@ -85,10 +85,15 @@ export default async function handler(req: Request, _context: Context) {
       if (!E164.test(phone)) throw new Error("Phone number must use E.164 format, such as +12025550123.");
       const consentStatus = String(input.consentStatus);
       if (!["pending", "opted_in", "opted_out"].includes(consentStatus)) throw new Error("Consent status is invalid.");
-      const evidence = typeof input.consentEvidence === "string" ? input.consentEvidence.trim() : "";
+      const id = input.id ? requireUuid(input.id, "Contact") : null;
+      let evidence = typeof input.consentEvidence === "string" ? input.consentEvidence.trim() : "";
+      if (!id && consentStatus === "opted_in") {
+        if (input.consentConfirmed !== true) throw new Error("Consent confirmation is required for a new opted-in contact.");
+        evidence = manualOptInEvidence(evidence);
+      }
+      if (evidence.length > 2200) throw new Error("Consent evidence must be 2200 characters or fewer.");
       if (consentStatus === "opted_in" && !evidence) throw new Error("Consent evidence is required before a contact can receive texts.");
       if (!validTimezone(input.timezone)) throw new Error("Timezone is invalid.");
-      const id = input.id ? requireUuid(input.id, "Contact") : null;
       const { data, error } = await client.rpc("amg_crm_save_contact_versioned", {
         p_id: id, p_full_name: fullName || null, p_phone: phone, p_consent_status: consentStatus,
         p_consent_evidence: evidence, p_timezone: input.timezone,

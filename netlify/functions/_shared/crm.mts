@@ -25,6 +25,14 @@ export function cleanText(value: unknown, max: number, label: string) {
   return cleaned;
 }
 
+export function manualOptInEvidence(value: unknown, recordedAt = new Date()) {
+  const details = typeof value === "string" ? value.trim() : "";
+  if (details.length > 2000) throw new Error("Consent evidence must be 2000 characters or fewer.");
+  if (!Number.isFinite(recordedAt.getTime())) throw new Error("Consent confirmation time is invalid.");
+  const confirmation = `CRM admin confirmed this manually added contact had opted in. Confirmation recorded at ${recordedAt.toISOString()}.`;
+  return details ? `${details}\n${confirmation}` : confirmation;
+}
+
 export function requireUuid(value: unknown, label: string) {
   if (typeof value !== "string" || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value)) {
     throw new Error(`${label} is invalid.`);

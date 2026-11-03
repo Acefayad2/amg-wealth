@@ -546,12 +546,22 @@ function openContact(id = null) {
   state.contactEditVersion = contact?.updated_at || null;
   $("#contact-name").value = contact?.full_name || "";
   $("#contact-phone").value = contact?.phone || "";
-  $("#contact-consent").value = contact?.consent_status || "pending";
+  $("#contact-consent").value = contact?.consent_status || "opted_in";
   $("#consent-evidence").value = contact?.consent_evidence || "";
   $("#contact-timezone").value = contact?.timezone || timezone;
   $("#contact-groups").innerHTML = state.groups.map((group) => `<label><input type="checkbox" value="${group.id}" ${contact?.group_ids?.includes(group.id) ? "checked" : ""}>${escapeHtml(group.name)}</label>`).join("");
   $("#contact-error").textContent = "";
+  updateManualOptInConfirmation();
   $("#contact-dialog").showModal();
+}
+
+function updateManualOptInConfirmation() {
+  const confirmation = $("#manual-opt-in-confirmation");
+  const checkbox = $("#manual-opt-in-confirmed");
+  const required = !$("#contact-id").value && $("#contact-consent").value === "opted_in";
+  confirmation.hidden = !required;
+  checkbox.required = required;
+  if (!required) checkbox.checked = false;
 }
 
 async function saveMessage(status) {
@@ -720,6 +730,7 @@ $("#new-message").addEventListener("click", () => openComposer());
 $("#group-new-message").addEventListener("click", composeSelectedGroup);
 $("#add-contact").addEventListener("click", () => openContact());
 $("#contact-search").addEventListener("input", (event) => { state.search = event.target.value; renderContacts(); });
+$("#contact-consent").addEventListener("change", updateManualOptInConfirmation);
 $("#target-type").addEventListener("change", (event) => {
   $("#personalize-name").checked = false;
   targetOptions(event.target.value);
@@ -767,6 +778,7 @@ $("#contact-form").addEventListener("submit", async (event) => {
       expectedUpdatedAt: state.contactEditVersion,
       fullName: $("#contact-name").value, phone: $("#contact-phone").value,
       consentStatus: $("#contact-consent").value,
+      consentConfirmed: $("#manual-opt-in-confirmed").checked,
       consentEvidence: $("#consent-evidence").value, timezone: $("#contact-timezone").value,
     });
     const contactId = result.id;

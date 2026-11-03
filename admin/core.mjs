@@ -54,6 +54,16 @@ export function eligibleTarget(targetType, target, contacts) {
   );
 }
 
+export function personalizationHint(targetType, target) {
+  if (!target) return "Choose a recipient to preview the automatic greeting.";
+  if (targetType === "group") {
+    return "Each recipient gets a separate automatic greeting: “Hi [first name],” when a name is saved, otherwise “Hello,”. Supported greetings are preserved or personalized instead.";
+  }
+  const firstName = String(target.full_name ?? "").trim().split(/\s+/u)[0];
+  const greeting = firstName ? `Hi ${firstName},` : "Hello,";
+  return `Automatic greeting: “${greeting}” will be added at send time. If the message already starts with a supported greeting, that greeting is preserved or personalized instead.`;
+}
+
 function zonedParts(date, timeZone) {
   return Object.fromEntries(
     new Intl.DateTimeFormat("en-US", {

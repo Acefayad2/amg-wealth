@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, recurringCalendarEntries, weekCells, weekRangeLabel, zonedDateTimeToUtc } from "../admin/core.mjs";
+import { defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, personalizationHint, recurringCalendarEntries, weekCells, weekRangeLabel, zonedDateTimeToUtc } from "../admin/core.mjs";
 import { verifyQuoTransport } from "../netlify/functions/_shared/quo.mjs";
 import { isOptOutKeyword, outboundContent, personalizeOutbound, withFirstContactOptOut } from "../integrations/message-content.mjs";
 import { verifyStorageConnection } from "../netlify/functions/_shared/storage.mjs";
@@ -56,6 +56,20 @@ test("outbound copy personalizes safely and uses a general phone-only greeting",
   assert.equal(personalizeOutbound("Tonight’s call starts at 8.", "   "), "Hello,\n\nTonight’s call starts at 8.");
   assert.equal(personalizeOutbound("Hi Zamilah! Already personal.", "Zamilah Jones"), "Hi Zamilah! Already personal.");
   assert.doesNotMatch(personalizeOutbound("Reminder", undefined), /undefined|null/i);
+});
+
+test("composer explains automatic greetings without exposing group member names", () => {
+  assert.equal(
+    personalizationHint("individual", { full_name: "  Jacob Fayad  " }),
+    "Automatic greeting: “Hi Jacob,” will be added at send time. If the message already starts with a supported greeting, that greeting is preserved or personalized instead.",
+  );
+  assert.match(personalizationHint("individual", { full_name: "   " }), /“Hello,”/u);
+  assert.match(personalizationHint("individual", { full_name: null }), /“Hello,”/u);
+  const groupHint = personalizationHint("group", { name: "Marketing Directors" });
+  assert.match(groupHint, /“Hi \[first name\],”/u);
+  assert.match(groupHint, /“Hello,”/u);
+  assert.doesNotMatch(groupHint, /Jacob|Safinat|Simisola|Zamilah/u);
+  assert.equal(personalizationHint("individual", null), "Choose a recipient to preview the automatic greeting.");
 });
 
 test("first-contact notice is included once in composed content and length is enforced", () => {

@@ -1,6 +1,7 @@
 import type { Config, Context } from "@netlify/functions";
 import { cleanText, E164, manualOptInEvidence, publicError, requireUuid, validTimezone, verifySameOrigin } from "./_shared/crm.mjs";
 import { verifyQuoTransport } from "./_shared/quo.mjs";
+import { listContactMessages } from "./_shared/conversations.mjs";
 import { getAuthenticatedUser } from "./_shared/supabase.mjs";
 import { verifyCrmStorage } from "./_shared/db.mjs";
 import { queueImmediateMessage } from "../../integrations/quo-dispatch.mjs";
@@ -20,6 +21,23 @@ export default async function handler(req: Request, _context: Context) {
     if (req.method === "GET") {
       const { data, error } = await client.rpc("amg_crm_get_state");
       if (error) rpcError(error);
+      const query = new URL(req.url).searchParams;
+      if (query.has("conversationContactId")) {
+        const contactId = requireUuid(query.get("conversationContactId"), "Contact");
+        // This RPC has already verified CRM admin access. Resolve the phone from
+        // its authorized state rather than trusting a phone supplied by a client.
+        const contacts = (data as { contacts?: Array<{ id: string; phone: string }> })?.contacts;
+        const contact = contacts?.find((item) => item.id === contactId);
+        if (!contact) return json({ error: "Contact was not found. Refresh the directory and try again." }, 404);
+        const history = await listContactMessages({
+          apiKey: Netlify.env.get("QUO_API_KEY"),
+          fromNumber: Netlify.env.get("QUO_FROM_NUMBER"),
+          phoneNumberId: Netlify.env.get("QUO_PHONE_NUMBER_ID"),
+          participant: contact.phone,
+          pageToken: query.get("pageToken") || "",
+        });
+        return json({ contact_id: contact.id, contact_phone: contact.phone, ...history });
+      }
       const { data: dispatchControl, error: dispatchError } = await client.rpc("amg_crm_get_dispatch_control");
       if (dispatchError) rpcError(dispatchError);
       const { data: schedulerEvents, error: schedulerError } = await client.rpc("amg_crm_get_scheduler_events");
@@ -145,6 +163,8 @@ export default async function handler(req: Request, _context: Context) {
       const targetType = input.targetType;
       if (targetType !== "individual" && targetType !== "group") throw new Error("Recipient type is invalid.");
       if (!validTimezone(input.timezone)) throw new Error("Timezone is invalid.");
+      const expectedPhone = targetType === "individual" && input.expectedPhone != null ? String(input.expectedPhone) : undefined;
+      if (expectedPhone !== undefined && !E164.test(expectedPhone)) throw new Error("Expected contact phone number is invalid.");
       const personalizeName = targetType === "individual" && input.personalizeName === true;
       const result = await queueImmediateMessage({
         messageId: input.messageId ? requireUuid(input.messageId, "Message") : null,
@@ -155,6 +175,7 @@ export default async function handler(req: Request, _context: Context) {
         idempotencyKey: requireUuid(input.idempotencyKey, "Request key"),
         actorId: user.id,
         personalizeName,
+        expectedPhone,
       });
       const authorization = req.headers.get("authorization");
       const background = await fetch(new URL("/.netlify/functions/admin-crm-immediate-background", req.url), {

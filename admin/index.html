@@ -94,6 +94,22 @@
     </main>
   </div>
 
+  <dialog id="conversation-dialog" class="dialog conversation-dialog" aria-labelledby="conversation-title" aria-describedby="conversation-contact">
+    <section class="dialog-card conversation-card">
+      <div class="dialog-heading"><div><p class="eyebrow">Contact messages</p><h2 id="conversation-title">Conversation</h2><p id="conversation-contact" class="muted"></p></div><button id="conversation-close" type="button" class="close" data-close="conversation-dialog" aria-label="Close conversation">×</button></div>
+      <div class="conversation-toolbar"><p id="conversation-status" class="muted" role="status" aria-live="polite"></p><button id="conversation-refresh" type="button" class="secondary">Refresh</button></div>
+      <div class="conversation-error"><p id="conversation-error" class="form-error" role="alert"></p><button id="conversation-retry" type="button" class="secondary" hidden>Retry loading</button></div>
+      <button id="conversation-older" type="button" class="secondary" hidden>Load more messages</button>
+      <div id="conversation-history" class="conversation-history" tabindex="0" role="region" aria-label="Message history, oldest first" aria-busy="false">
+        <p id="conversation-empty" class="empty" hidden>No messages were returned for this contact.</p>
+        <ol id="conversation-messages" class="conversation-messages" aria-label="Conversation messages"></ol>
+      </div>
+      <p class="field-meta">Messages appear oldest first. Refresh to check for new replies. Times use your device’s timezone. Attachments are not shown.</p>
+      <p id="conversation-reply-note" class="recipient-note"></p>
+      <div class="dialog-actions"><button type="button" class="secondary" data-close="conversation-dialog">Close</button><button id="conversation-reply" type="button" class="primary" disabled>Reply</button></div>
+    </section>
+  </dialog>
+
   <dialog id="composer" class="dialog">
     <form id="composer-form" method="dialog" class="dialog-card">
       <div class="dialog-heading"><div><p class="eyebrow">Compose</p><h2>Send a text</h2></div><button type="button" class="close" data-close="composer" aria-label="Close">×</button></div>
@@ -171,7 +187,7 @@
       <div class="recipient-grid"><label>Text consent<select id="contact-consent" name="contact-consent" autocomplete="off"><option value="pending">Pending / unknown</option><option value="opted_in">Verified opt-in</option><option value="opted_out">Opted out</option></select></label><label>Timezone<input id="contact-timezone" name="contact-timezone" autocomplete="off" required></label></div>
       <label id="manual-opt-in-confirmation" class="consent-confirmation" hidden><span><input id="manual-opt-in-confirmed" name="manual-opt-in-confirmed" type="checkbox"> I confirm this contact gave permission to receive AMG text messages.</span><span class="field-meta">Required for a new manually added opted-in contact. The CRM records when this confirmation was made; do not check this based only on group membership.</span></label>
       <label>Consent evidence<textarea id="consent-evidence" name="consent-evidence" rows="3" maxlength="2000" autocomplete="off" placeholder="Add the consent method or original date only if you know it; do not guess"></textarea><span class="field-meta">Optional for a confirmed new manual opt-in. Required when changing an existing pending contact to verified opt-in.</span></label>
-      <p class="recipient-note">A recipient’s first accepted CRM text includes “Reply STOP to opt out.” Provider opt-out history is checked again before every future recipient.</p>
+      <p class="recipient-note">A recipient’s first accepted CRM text includes: “This is Anointed Money Group's communications number. You can reply here to reach our team. Reply STOP to opt out.” Provider opt-out history is checked again before every future recipient.</p>
       <fieldset><legend>Groups</legend><div id="contact-groups" class="check-grid"></div></fieldset>
       <p id="contact-error" class="form-error" role="alert" tabindex="-1"></p>
       <div class="dialog-actions"><button type="button" class="secondary" data-close="contact-dialog">Cancel</button><button type="submit" class="primary">Save contact</button></div>

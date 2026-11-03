@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import { contactsForGroupContext, defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, personalizationHint, recurringCalendarEntries, scheduleInputValue, weekCells, weekRangeLabel, zonedDateTimeToUtc } from "../admin/core.mjs";
 import { verifyQuoTransport } from "../netlify/functions/_shared/quo.mjs";
-import { isOptOutKeyword, outboundContent, personalizeOutbound, withFirstContactOptOut } from "../integrations/message-content.mjs";
+import { FIRST_CONTACT_IDENTITY, isOptOutKeyword, outboundContent, personalizeOutbound, withFirstContactOptOut } from "../integrations/message-content.mjs";
 import { createQuoRequestGate } from "../integrations/quo-rate-limit.mjs";
 import { verifyStorageConnection } from "../netlify/functions/_shared/storage.mjs";
 import { manualOptInEvidence } from "../netlify/functions/_shared/crm.mts";
@@ -170,8 +170,8 @@ test("outbound content preserves authored text unless individual personalization
 });
 
 test("first-contact notice is included once in composed content and length is enforced", () => {
-  assert.equal(withFirstContactOptOut("Hello,\n\nWelcome.", true), "Hello,\n\nWelcome.\n\nReply STOP to opt out.");
-  assert.equal(withFirstContactOptOut("Welcome. Reply STOP to opt out.", true), "Welcome. Reply STOP to opt out.");
+  assert.equal(withFirstContactOptOut("Hello,\n\nWelcome.", true), `Hello,\n\nWelcome.\n\n${FIRST_CONTACT_IDENTITY}\n\nReply STOP to opt out.`);
+  assert.equal(withFirstContactOptOut("Welcome. Reply STOP to opt out.", true), `Welcome. Reply STOP to opt out.\n\n${FIRST_CONTACT_IDENTITY}`);
   assert.equal(withFirstContactOptOut("Welcome.", false), "Welcome.");
   assert.throws(() => outboundContent("x".repeat(1590), "Safinat", true), /exceeds 1600/);
   for (const keyword of ["STOP", " stop ", "StopAll", "UNSUBSCRIBE", "cancel", "END", "quit"]) {

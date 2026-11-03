@@ -66,3 +66,31 @@
   .calendar .calendar-message.sent{color:#23704b!important}
   .calendar .calendar-message.failed{color:var(--red)!important}
 }
+
+/* Private contact threads: message content is plain text, including long URLs. */
+.contact-row{display:grid;grid-template-columns:minmax(0,1fr);gap:0;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.08)}
+.contact-row .contact-button{min-height:44px}
+.conversation-button{min-height:36px;margin:0 9px 0 53px;padding:5px 9px;border:1px solid rgba(255,255,255,.24);border-radius:8px;background:transparent;color:#fff;text-align:center;font-size:11px;font-weight:700}
+.conversation-button:hover{background:rgba(255,255,255,.1)}
+.conversation-dialog{width:min(760px,calc(100% - 32px))}
+.conversation-card{gap:13px}
+.conversation-card .dialog-heading>div{min-width:0}
+#conversation-contact{overflow-wrap:anywhere;font-size:13px}
+.conversation-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.conversation-toolbar .muted{font-size:12px}
+.conversation-toolbar .secondary{flex:0 0 auto}
+.conversation-error .form-error:empty{display:none}
+.conversation-error .secondary{margin-top:8px}
+.conversation-history{min-height:150px;max-height:44vh;overflow:auto;overscroll-behavior:contain;border:1px solid var(--line);border-radius:12px;padding:16px;background:#f8faf9}
+.conversation-messages{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none}
+.conversation-message{width:min(90%,560px);align-self:flex-start;padding:13px 15px;border:1px solid var(--line);border-radius:13px 13px 13px 3px;background:#fff;overflow-wrap:anywhere}
+.conversation-message.outgoing{align-self:flex-end;border-color:#bed5c9;border-radius:13px 13px 3px 13px;background:#eaf4ee}
+.conversation-message-meta{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px 16px;font-size:10px;color:var(--muted)}
+.conversation-message-meta strong{color:var(--green)}
+.conversation-message-text{margin:9px 0;white-space:pre-wrap;font-size:14px;line-height:1.5}
+.conversation-message-status,.conversation-media-note{display:block;font-size:10px;color:#526359}
+.conversation-media-note{margin-top:6px}
+.conversation-card .recipient-note{margin:0}
+.conversation-card button:disabled{opacity:.5}
+.conversation-history:focus-visible{outline:3px solid rgba(198,162,71,.45);outline-offset:2px}
+@media(max-width:560px){.conversation-dialog{width:calc(100% - 16px)}.conversation-card{padding:17px}.conversation-history{padding:10px;max-height:40vh}.conversation-message{width:95%;padding:11px}.conversation-button{min-height:44px}.conversation-card .dialog-actions .primary{flex:1}}

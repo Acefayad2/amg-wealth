@@ -1,5 +1,6 @@
 const GREETING = /^(Good (?:morning|afternoon|evening)|Hello|Hi),?\s*([^!\n]{1,80})!/iu;
 const OPT_OUT_NOTICE = "Reply STOP to opt out.";
+export const FIRST_CONTACT_IDENTITY = "This is Anointed Money Group’s communications number. You can reply here to reach our team.";
 
 export function isOptOutKeyword(value) {
   return /^(?:STOP|STOPALL|UNSUBSCRIBE|CANCEL|END|QUIT)$/iu.test(String(value ?? "").trim());
@@ -22,8 +23,13 @@ export function personalizeOutbound(body, fullName) {
 
 export function withFirstContactOptOut(body, noticeRequired) {
   const content = String(body ?? "").trim();
-  if (!noticeRequired || /reply\s+stop\s+to\s+opt\s*out\.?/iu.test(content)) return content;
-  return `${content}\n\n${OPT_OUT_NOTICE}`;
+  if (!noticeRequired) return content;
+  const parts = [content];
+  if (!/this is anointed money group[’']s communications number\.?/iu.test(content)) {
+    parts.push(FIRST_CONTACT_IDENTITY);
+  }
+  if (!/reply\s+stop\s+to\s+(?:opt\s*out|unsubscribe)\.?/iu.test(content)) parts.push(OPT_OUT_NOTICE);
+  return parts.join("\n\n");
 }
 
 export function outboundContent(body, fullName, noticeRequired, personalizeName = false, maxCharacters = 1600) {

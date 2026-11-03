@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { createConversationController, conversationDateTime, conversationReplyState, renderConversationMessages } from "../admin/conversation-core.mjs";
 import { STATUS_LABELS, contactsForGroupContext, defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, personalizationHint, recurringCalendarEntries, scheduleInputValue, weekCells, weekRangeLabel } from "../admin/core.mjs";
 
 const $ = (selector) => document.querySelector(selector);
@@ -12,11 +13,13 @@ const contactLabel = (contact) => contact.full_name || contact.phone;
 const formatTime = (value) => new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit" }).format(new Date(value));
 const formatDateTime = (value) => value ? new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value)) : "Not scheduled";
 
-async function api(body) {
+async function api(body, { query, signal } = {}) {
+  if (!authClient) throw new Error("Sign in to load conversation history and use the CRM.");
   const { data: sessionData } = await authClient.auth.getSession();
   const token = sessionData.session?.access_token;
   if (!token) throw new Error("Sign in required.");
-  const response = await fetch("/api/admin/crm", {
+  const response = await fetch(`/api/admin/crm${query ? `?${query}` : ""}`, {
+    signal,
     method: body ? "POST" : "GET",
     headers: { ...(body ? { "content-type": "application/json" } : {}), authorization: `Bearer ${token}` },
     body: body ? JSON.stringify(body) : undefined,
@@ -99,6 +102,7 @@ function render() {
   renderCalendar();
   renderMessages();
   renderStats();
+  renderConversation();
   const { configured, verified, enabled } = state.transport;
   const banner = $("#transport-banner");
   const individualEnabled = Boolean(state.dispatch_control?.individual_enabled && enabled);
@@ -337,12 +341,93 @@ function renderContacts() {
   const contacts = filterContacts(state.contacts, state.search);
   $("#contact-count").textContent = state.contacts.length;
   $("#contacts").innerHTML = contacts.length ? contacts.map((contact) => `
-    <button class="contact-button" data-contact="${contact.id}">
+    <div class="contact-row"><button class="contact-button" data-contact="${escapeHtml(contact.id)}" title="Edit contact" aria-label="Edit ${escapeHtml(contactLabel(contact))}">
       <span class="avatar">${escapeHtml(initials(contact.full_name))}</span>
       <span class="contact-copy"><strong>${escapeHtml(contactLabel(contact))}</strong><small>${contact.full_name ? escapeHtml(contact.phone) : "Phone-only contact"}</small></span>
       <span class="consent-dot ${contact.consent_status}" title="${escapeHtml(contact.consent_status.replace("_", " "))}"></span>
-    </button>`).join("") : `<p class="empty">${state.search ? "No contacts match." : "No contacts yet. Add only verified AMG contacts."}</p>`;
+    </button><button class="conversation-button" type="button" data-conversation="${escapeHtml(contact.id)}" aria-label="Open conversation with ${escapeHtml(contactLabel(contact))}">Conversation</button></div>`).join("") : `<p class="empty">${state.search ? "No contacts match." : "No contacts yet. Add only verified AMG contacts."}</p>`;
   document.querySelectorAll("[data-contact]").forEach((button) => button.addEventListener("click", () => openContact(button.dataset.contact)));
+  document.querySelectorAll("[data-conversation]").forEach((button) => button.addEventListener("click", () => openConversation(button.dataset.conversation)));
+}
+
+
+const conversation = createConversationController({
+  fetchPage: ({ contactId, pageToken, signal }) => {
+    const query = new URLSearchParams({ conversationContactId: contactId });
+    if (pageToken) query.set("pageToken", pageToken);
+    return api(null, { query, signal });
+  },
+  onChange: () => renderConversation(),
+});
+let renderedConversationMessages = null;
+
+function renderConversation() {
+  const view = conversation.view;
+  const contact = state.contacts.find((item) => item.id === view.contactId);
+  const dialog = $("#conversation-dialog");
+  if (view.contactId && (!contact || contact.phone !== view.contactPhone)) {
+    if (dialog.open) dialog.close();
+    conversation.close();
+    return;
+  }
+  $("#conversation-contact").textContent = contact ? `${contactLabel(contact)} · ${contact.phone}` : "";
+  if (renderedConversationMessages !== view.messages) {
+    renderConversationMessages($("#conversation-messages"), view.messages);
+    renderedConversationMessages = view.messages;
+  }
+  $("#conversation-history").setAttribute("aria-busy", String(view.busy));
+  $("#conversation-status").textContent = !view.contactId ? "" : view.busy
+    ? view.lastAttempt === "older" ? "Loading more messages…" : "Loading conversation…"
+    : view.hasLoaded ? `${view.messages.length} message${view.messages.length === 1 ? "" : "s"} loaded${view.loadedAt ? ` · ${conversationDateTime(view.loadedAt)}` : ""}.`
+      : "Conversation history has not loaded.";
+  $("#conversation-empty").hidden = !view.hasLoaded || Boolean(view.messages.length) || view.busy || Boolean(view.error);
+  $("#conversation-error").textContent = view.error
+    ? `${view.error}${view.hasLoaded ? " Previously loaded messages remain below and may be out of date." : ""}` : "";
+  $("#conversation-retry").hidden = !view.error;
+  $("#conversation-retry").disabled = view.busy;
+  $("#conversation-refresh").disabled = view.busy || !view.contactId;
+  $("#conversation-older").hidden = !view.nextPageToken;
+  $("#conversation-older").disabled = view.busy;
+  const reply = conversationReplyState(contact, state);
+  $("#conversation-reply").disabled = !reply.allowed;
+  $("#conversation-reply").title = reply.reason;
+  $("#conversation-reply-note").textContent = contact ? reply.reason : "";
+  $("#conversation-reply-note").classList.toggle("warning", !reply.allowed);
+}
+
+async function openConversation(id) {
+  const contact = state.contacts.find((item) => item.id === id);
+  if (!contact) return;
+  const pending = conversation.open(contact);
+  const dialog = $("#conversation-dialog");
+  if (!dialog.open) dialog.showModal();
+  $("#conversation-close").focus();
+  if (await pending && conversation.view.contactId === id && dialog.open) {
+    const history = $("#conversation-history");
+    history.scrollTop = history.scrollHeight;
+  }
+}
+
+async function loadConversationPage(kind = "latest") {
+  const id = conversation.view.contactId;
+  const history = $("#conversation-history");
+  const oldTop = history.scrollTop;
+  const attempt = kind === "retry" ? conversation.view.lastAttempt : kind;
+  const loaded = await (kind === "older" ? conversation.loadOlder() : kind === "retry" ? conversation.retry() : conversation.refresh());
+  if (!loaded || conversation.view.contactId !== id || !$("#conversation-dialog").open) return;
+  history.scrollTop = attempt === "older" ? oldTop : history.scrollHeight;
+}
+
+function replyToConversation() {
+  const contact = state.contacts.find((item) => item.id === conversation.view.contactId);
+  if (!$("#conversation-dialog").open || !conversationReplyState(contact, state).allowed) return;
+  if (contact.phone !== conversation.view.contactPhone) {
+    toast("This contact’s phone changed. Reopen the conversation before replying.");
+    renderConversation();
+    return;
+  }
+  openComposer("individual", contact.id);
+  $("#message-body").focus();
 }
 
 function renderCalendar() {
@@ -407,6 +492,7 @@ function renderStats() {
 function targetOptions(type, selected) {
   const source = type === "individual" ? contactsForGroupContext(state.contacts, state.composerGroupId) : state.groups;
   $("#target-id").innerHTML = `<option value="">Select ${type === "individual" ? "a contact" : "a group"}</option>` + source.map((item) => `<option value="${item.id}" ${item.id === selected ? "selected" : ""}>${escapeHtml(item.full_name || item.name || item.phone)}</option>`).join("");
+  state.messageTargetPhone = type === "individual" ? source.find((item) => item.id === $("#target-id").value)?.phone || null : null;
   updateRecipientNote();
 }
 
@@ -441,6 +527,7 @@ function updateRecipientNote() {
 }
 
 function openComposer(type = "individual", id = null, day = null, groupContextId = null) {
+  if (state.messageBusy) return;
   state.draftId = null;
   state.messageEditSnapshot = null;
   state.composerGroupId = groupContextId;
@@ -660,6 +747,10 @@ function openSendNowConfirmation() {
     $("#composer-error").textContent = "Send now is unavailable until the verified delivery connection and Individual Texts are on.";
     return;
   }
+  if (type === "individual" && state.messageTargetPhone !== target.phone) {
+    $("#composer-error").textContent = "This contact’s phone changed. Select the recipient again before sending.";
+    return;
+  }
   const count = type === "individual" ? 1 : target.eligible_count;
   const label = target.full_name || target.name || target.phone;
   $("#send-now-summary").textContent = `Send now to ${label} as ${count} separate message${count === 1 ? "" : "s"}?`;
@@ -670,6 +761,7 @@ function openSendNowConfirmation() {
 async function sendMessageNow(event) {
   event.preventDefault();
   if (state.messageBusy) return;
+  const conversationContactId = $("#target-type").value === "individual" ? $("#target-id").value : null;
   state.messageBusy = true;
   const submit = $("#confirm-send-now");
   const error = $("#send-now-error");
@@ -678,6 +770,7 @@ async function sendMessageNow(event) {
   try {
     const result = await api({
       action: "send_message_now",
+      expectedPhone: $("#target-type").value === "individual" ? state.messageTargetPhone : undefined,
       messageId: state.draftId,
       body: $("#message-body").value,
       targetType: $("#target-type").value,
@@ -693,6 +786,9 @@ async function sendMessageNow(event) {
     $("#send-now-dialog").close();
     $("#composer").close();
     toast("Message accepted by Quo.");
+    if (conversationContactId && conversation.view.contactId === conversationContactId && $("#conversation-dialog").open) {
+      await loadConversationPage();
+    }
   } catch (reason) {
     error.textContent = reason.message;
     error.focus();
@@ -701,6 +797,7 @@ async function sendMessageNow(event) {
     state.messageBusy = false;
     submit.disabled = false;
     updateRecipientNote();
+    renderConversation();
   }
 }
 
@@ -720,6 +817,8 @@ $("#login-form").addEventListener("submit", async (event) => {
 });
 $("#sign-out").addEventListener("click", async () => {
   if (startupBusy) return;
+  conversation.close();
+  if ($("#conversation-dialog").open) $("#conversation-dialog").close();
   showStartup("Signing out securely…");
   await authClient.auth.signOut();
   showLogin();
@@ -728,6 +827,14 @@ $("#startup-retry").addEventListener("click", () => authClient ? verifyAdminSess
 $("#startup-sign-in").addEventListener("click", () => showLogin());
 $("#new-message").addEventListener("click", () => openComposer());
 $("#group-new-message").addEventListener("click", composeSelectedGroup);
+$("#conversation-refresh").addEventListener("click", () => loadConversationPage());
+$("#conversation-older").addEventListener("click", () => loadConversationPage("older"));
+$("#conversation-retry").addEventListener("click", () => loadConversationPage("retry"));
+$("#conversation-reply").addEventListener("click", replyToConversation);
+$("#conversation-dialog").addEventListener("cancel", () => conversation.close());
+$("#conversation-dialog").addEventListener("close", () => {
+  if (!$("#conversation-dialog").open) conversation.close();
+});
 $("#add-contact").addEventListener("click", () => openContact());
 $("#contact-search").addEventListener("input", (event) => { state.search = event.target.value; renderContacts(); });
 $("#contact-consent").addEventListener("change", updateManualOptInConfirmation);
@@ -735,7 +842,11 @@ $("#target-type").addEventListener("change", (event) => {
   $("#personalize-name").checked = false;
   targetOptions(event.target.value);
 });
-$("#target-id").addEventListener("change", updateRecipientNote);
+$("#target-id").addEventListener("change", () => {
+  state.messageTargetPhone = $("#target-type").value === "individual"
+    ? state.contacts.find((contact) => contact.id === $("#target-id").value)?.phone || null : null;
+  updateRecipientNote();
+});
 $("#personalize-name").addEventListener("change", updateRecipientNote);
 $("#message-body").addEventListener("input", (event) => { $("#char-count").textContent = `${event.target.value.length} / 1600`; });
 $("#save-draft").addEventListener("click", () => saveMessage("draft"));
@@ -758,7 +869,10 @@ $("#delivery-control-dialog").addEventListener("close", () => {
 $("#prev-week").addEventListener("click", () => { state.week = new Date(state.week.getFullYear(), state.week.getMonth(), state.week.getDate() - 7); renderCalendar(); });
 $("#next-week").addEventListener("click", () => { state.week = new Date(state.week.getFullYear(), state.week.getMonth(), state.week.getDate() + 7); renderCalendar(); });
 $("#today").addEventListener("click", () => { state.week = new Date(); renderCalendar(); });
-document.querySelectorAll("[data-close]").forEach((button) => button.addEventListener("click", () => $(`#${button.dataset.close}`).close()));
+document.querySelectorAll("[data-close]").forEach((button) => button.addEventListener("click", () => {
+  if (button.dataset.close === "conversation-dialog") conversation.close();
+  $(`#${button.dataset.close}`).close();
+}));
 $("#admin-invite-form").addEventListener("submit", createAdminInvitation);
 
 $("#contact-form").addEventListener("submit", async (event) => {

@@ -11,6 +11,7 @@ type ImmediateMessage = {
   idempotencyKey: string;
   actorId: string;
   personalizeName?: boolean;
+  expectedPhone?: string;
 };
 const PROVIDER_TIMEOUT_MS = 8_000;
 const CLAIM_BATCH_SIZE = 10;
@@ -227,7 +228,9 @@ export async function sendImmediateMessage(input: ImmediateMessage) {
         `SELECT COALESCE(full_name,phone) AS name,
           ARRAY[id]::uuid[] AS contact_ids
          FROM amg_private.crm_contacts
-         WHERE id=$1 AND consent_status='opted_in'`, [input.targetId],
+         WHERE id=$1 AND consent_status='opted_in'
+           AND ($2::text IS NULL OR phone=$2)
+         FOR SHARE`, [input.targetId, input.expectedPhone ?? null],
       )
       : await client.query(
         `SELECT g.name, array_agg(c.id ORDER BY c.id)::uuid[] AS contact_ids

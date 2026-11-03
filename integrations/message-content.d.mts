@@ -1,3 +1,4 @@
+export const FIRST_CONTACT_IDENTITY: string;
 export function isOptOutKeyword(value: unknown): boolean;
 export function personalizeOutbound(body: unknown, fullName: unknown): string;
 export function withFirstContactOptOut(body: unknown, noticeRequired: boolean): string;

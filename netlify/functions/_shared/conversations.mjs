@@ -1,9 +1,11 @@
+import { quoRequest } from "../../../integrations/quo-rate-limit.mjs";
+
 const E164 = /^\+[1-9]\d{7,14}$/;
 const unavailable = (message) => Object.assign(new Error(message), { status: 503 });
 
 // The caller resolves participant from an admin-authorized CRM contact. Never
 // accept a browser-supplied phone number or provider URL here.
-export async function listContactMessages({ apiKey, fromNumber, phoneNumberId, participant, pageToken = "", fetchImpl = fetch }) {
+export async function listContactMessages({ apiKey, fromNumber, phoneNumberId, participant, pageToken = "", fetchImpl = quoRequest }) {
   if (!apiKey || !E164.test(fromNumber || "") || !phoneNumberId) {
     throw unavailable("The approved AMG conversation service is not configured.");
   }

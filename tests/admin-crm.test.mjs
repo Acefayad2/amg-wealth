@@ -4,8 +4,55 @@ import fs from "node:fs";
 import { contactsForGroupContext, defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, personalizationHint, recurringCalendarEntries, scheduleInputValue, weekCells, weekRangeLabel, zonedDateTimeToUtc } from "../admin/core.mjs";
 import { verifyQuoTransport } from "../netlify/functions/_shared/quo.mjs";
 import { FIRST_CONTACT_IDENTITY, isOptOutKeyword, outboundContent, personalizeOutbound, withFirstContactOptOut } from "../integrations/message-content.mjs";
+import { createQuoRequestGate } from "../integrations/quo-rate-limit.mjs";
 import { verifyStorageConnection } from "../netlify/functions/_shared/storage.mjs";
 import { manualOptInEvidence } from "../netlify/functions/_shared/crm.mts";
+
+test("Quo requests are paced below the provider limit across concurrent recipients", async () => {
+  let clock = 0;
+  const starts = [];
+  const request = createQuoRequestGate({
+    fetchImpl: async () => {
+      starts.push(clock);
+      return new Response(JSON.stringify({ data: { id: "accepted" } }), { status: 202 });
+    },
+    minIntervalMs: 125,
+    now: () => clock,
+    sleep: async (milliseconds) => { clock += milliseconds; },
+  });
+
+  await Promise.all([request("https://api.quo.com/v1/messages"), request("https://api.quo.com/v1/messages"), request("https://api.quo.com/v1/messages")]);
+  assert.deepEqual(starts, [0, 125, 250]);
+});
+
+test("Quo retries only explicit 429 rejections and honors Retry-After", async () => {
+  let clock = 0;
+  const starts = [];
+  const responses = [
+    new Response("rate limited", { status: 429, headers: { "retry-after": "1" } }),
+    new Response(JSON.stringify({ data: { id: "accepted" } }), { status: 202 }),
+  ];
+  const request = createQuoRequestGate({
+    fetchImpl: async () => {
+      starts.push(clock);
+      return responses.shift();
+    },
+    now: () => clock,
+    sleep: async (milliseconds) => { clock += milliseconds; },
+    random: () => 0,
+  });
+
+  assert.equal((await request("https://api.quo.com/v1/messages", { method: "POST" })).status, 202);
+  assert.deepEqual(starts, [0, 1_000]);
+
+  let attempts = 0;
+  const uncertain = createQuoRequestGate({ fetchImpl: async () => {
+    attempts += 1;
+    throw new Error("network outcome uncertain");
+  } });
+  await assert.rejects(uncertain("https://api.quo.com/v1/messages", { method: "POST" }), /uncertain/);
+  assert.equal(attempts, 1);
+});
 
 test("manual opt-in evidence records confirmation time without inventing method or consent date", () => {
   const recordedAt = new Date("2026-11-03T03:45:00.000Z");
@@ -263,10 +310,11 @@ test("dispatch implementation rechecks the correct channel before every recipien
   assert.match(source, /WHEN 'scheduled' THEN scheduled_enabled/);
   assert.match(source, /deliver\(item, apiKey, from, phoneNumberId, "individual", personalizeName\)/);
   assert.match(source, /deliver\(item, apiKey, from, phoneNumberId, "scheduled", false\)/);
-  assert.match(source, /input\.targetType === "individual" && input\.personalizeName === true/);
+  assert.match(source, /dispatchImmediateMessage\(messageId: string, actorId: string, personalizeName = false\)/);
   assert.ok((source.match(/!await dispatchEnabled/g) || []).length >= 4);
   assert.match(source, /consent_status !== "opted_in"/);
   assert.match(source, /providerOptOut/);
+  assert.ok((source.match(/quoRequest\(/g) || []).length >= 2);
   assert.match(source, /first_outbound_accepted_at=COALESCE/);
   assert.match(source, /Promise\.allSettled\(deliveries\.map/);
   const handler = fs.readFileSync(new URL("../netlify/functions/admin-crm.mts", import.meta.url), "utf8");
@@ -292,7 +340,12 @@ test("dispatch implementation rechecks the correct channel before every recipien
 test("scheduled worker is serialized, bounded, and refuses stale backlogs", () => {
   const source = fs.readFileSync(new URL("../integrations/quo-dispatch.mts", import.meta.url), "utf8");
   const scheduler = fs.readFileSync(new URL("../netlify/functions/admin-crm-scheduler.mts", import.meta.url), "utf8");
+  const background = fs.readFileSync(new URL("../netlify/functions/admin-crm-scheduled-background.mts", import.meta.url), "utf8");
   assert.match(scheduler, /schedule: "\* \* \* \* \*"/);
+  assert.match(scheduler, /admin-crm-scheduled-background/);
+  assert.match(scheduler, /background\.status === 202/);
+  assert.match(background, /background: true/);
+  assert.match(background, /runScheduledDispatch\(\)/);
   assert.match(source, /pg_try_advisory_lock\(730301\)/);
   assert.match(source, /CLAIM_BATCH_SIZE = 10/);
   assert.match(source, /scheduled_for < NOW\(\) - INTERVAL '10 minutes'/);
@@ -303,16 +356,30 @@ test("scheduled worker is serialized, bounded, and refuses stale backlogs", () =
   assert.match(source, /status IN \('scheduled','sending'\) AND scheduled_for < NOW\(\) - INTERVAL '10 minutes'/);
   assert.match(source, /AbortSignal\.timeout\(PROVIDER_TIMEOUT_MS\)/);
   assert.match(source, /Promise\.allSettled\(deliveries\.map/);
+  assert.match(source, /while \(true\)[\s\S]*processedRecipients \+= deliveries\.length/);
+});
+
+test("latest CRM migration removes fixed audience caps without weakening readiness", () => {
+  const sql = fs.readFileSync(new URL("../database/migrations/20261103154000_remove_crm_audience_caps.sql", import.meta.url), "utf8");
+  const admin = fs.readFileSync(new URL("../src/admin.mjs", import.meta.url), "utf8");
+  assert.match(sql, /CREATE OR REPLACE FUNCTION public\.amg_crm_save_message_versioned/);
+  assert.match(sql, /CREATE OR REPLACE FUNCTION public\.amg_crm_set_recurring_status/);
+  assert.match(sql, /CREATE OR REPLACE FUNCTION amg_private\.materialize_due_recurring/);
+  assert.match(sql, /eligible_count < 1/);
+  assert.doesNotMatch(sql, /BETWEEN 1 AND 100|> 100|LIMIT 100/i);
+  assert.doesNotMatch(admin, /audience of 100 or fewer/i);
 });
 
 test("ordinary messages use a distinct immediate-send path with duplicate and consent safeguards", () => {
   const html = fs.readFileSync(new URL("../admin/index.html", import.meta.url), "utf8");
   const admin = fs.readFileSync(new URL("../src/admin.mjs", import.meta.url), "utf8");
   const handler = fs.readFileSync(new URL("../netlify/functions/admin-crm.mts", import.meta.url), "utf8");
+  const background = fs.readFileSync(new URL("../netlify/functions/admin-crm-immediate-background.mts", import.meta.url), "utf8");
   const dispatch = fs.readFileSync(new URL("../integrations/quo-dispatch.mts", import.meta.url), "utf8");
   assert.match(html, /id="send-now"[\s\S]*>Send now</);
   assert.match(html, /Schedule for later[\s\S]*Weekly repeats are managed in AMG reminders/);
-  assert.match(html, /id="send-now-dialog"[\s\S]*cannot be recalled/);
+  assert.match(html, /id="send-now-dialog"[\s\S]*id="send-now-error"/);
+  assert.doesNotMatch(html, /Consent and provider opt-outs are checked again before each recipient/);
   assert.match(html, /Individual Texts OFF/);
   assert.match(admin, /action: "send_message_now"/);
   assert.match(admin, /if \(state\.messageBusy\) return/);
@@ -320,8 +387,17 @@ test("ordinary messages use a distinct immediate-send path with duplicate and co
   assert.match(handler, /input\.action === "send_message_now"/);
   assert.match(handler, /getAuthenticatedUser[\s\S]*actorId: user\.id/);
   assert.match(handler, /if \(!await verifyCrmStorage\(\)\)/);
+  assert.match(handler, /queueImmediateMessage/);
+  assert.match(handler, /admin-crm-immediate-background/);
+  assert.match(handler, /background\.status !== 202/);
+  assert.match(background, /background: true/);
+  assert.match(background, /getAuthenticatedUser\(req\)/);
+  assert.match(background, /dispatchImmediateMessage\(messageId, user\.id/);
   assert.match(dispatch, /SELECT 1 FROM amg_private\.crm_admins WHERE user_id=\$1/);
   assert.match(dispatch, /status='sending',scheduled_for=NULL/);
+  assert.match(dispatch, /SELECT \$1,c\.id,c\.phone,'scheduled',NULL/);
+  assert.match(dispatch, /status='scheduled'[\s\S]*FOR UPDATE SKIP LOCKED LIMIT \$2/);
+  assert.doesNotMatch(dispatch, /immediate group message is limited to 100/i);
   assert.match(dispatch, /ON CONFLICT \(idempotency_key\) DO NOTHING/);
   assert.match(dispatch, /already submitted and was not repeated/);
   assert.match(dispatch, /Only an untouched draft can use Send now\. Scheduled messages remain under Scheduled Texts/);
@@ -334,8 +410,9 @@ test("ordinary messages use a distinct immediate-send path with duplicate and co
   assert.match(admin, /personalizeName: \$\("#target-type"\)\.value === "individual" && \$\("#personalize-name"\)\.checked/);
   const saveBlock = admin.slice(admin.indexOf("async function saveMessage"), admin.indexOf("function openSendNowConfirmation"));
   assert.doesNotMatch(saveBlock, /personalizeName/);
-  assert.match(handler, /personalizeName: targetType === "individual" && input\.personalizeName === true/);
-  assert.match(dispatch, /const personalizeName = input\.targetType === "individual" && input\.personalizeName === true/);
+  assert.match(handler, /const personalizeName = targetType === "individual" && input\.personalizeName === true/);
+  assert.match(admin, /result\.status === "queued"/);
+  assert.match(admin, /queued for delivery/);
 });
 
 test("recurring scheduler migration is DST-aware, idempotent, private, and fail-closed", () => {

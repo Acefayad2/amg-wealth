@@ -109,8 +109,9 @@ test("invalid contact, missing service, and invalid tokens fail before any netwo
 const output = await build({ entryPoints: [new URL("../netlify/functions/admin-crm.mts", import.meta.url).pathname],
   bundle: true, write: false, format: "esm", platform: "node", plugins: [{ name: "synthetic-only", setup(build) {
     build.onLoad({ filter: /[/\\]_shared[/\\]supabase\.mts$/ }, () => ({ contents: `export async function getAuthenticatedUser(req) { return globalThis.__amgConversationAuth(req); }`, loader: "js" }));
-    build.onLoad({ filter: /[/\\]_shared[/\\]db\.mts$/ }, () => ({ contents: `export async function verifyCrmStorage() { throw new Error("Unexpected storage call"); }`, loader: "js" }));
-    build.onLoad({ filter: /[/\\]quo-dispatch\.mts$/ }, () => ({ contents: `export async function sendImmediateMessage() { throw new Error("Unexpected SMS call"); }`, loader: "js" }));
+    build.onLoad({ filter: /[/\\]_shared[/\\]db\.mts$/ }, () => ({ contents: `export async function verifyCrmStorage() { return globalThis.__amgConversationStorage ? globalThis.__amgConversationStorage() : Promise.reject(new Error("Unexpected storage call")); }`, loader: "js" }));
+    build.onLoad({ filter: /[/\\]quo-dispatch\.mts$/ }, () => ({ contents: `export async function queueImmediateMessage(input) { if (!globalThis.__amgConversationQueue) throw new Error("Unexpected SMS call"); return globalThis.__amgConversationQueue(input); }`, loader: "js" }));
+    build.onLoad({ filter: /[/\\]quo-rate-limit\.mjs$/ }, () => ({ contents: `export const quoRequest = (...args) => globalThis.fetch(...args);`, loader: "js" }));
   }}] });
 const { default: handler } = await import(`data:text/javascript;base64,${Buffer.from(output.outputFiles[0].text).toString("base64")}`);
 
@@ -166,4 +167,58 @@ test("replies guard the viewed phone against concurrent contact changes and keep
   assert.match(dispatch, /consent\.rows\[0\]\?\.consent_status !== "opted_in"/);
   assert.match(dispatch, /await providerOptOut\(apiKey, phoneNumberId, item\.phone_snapshot\)/);
   assert.match(dispatch, /idempotency_key/);
+});
+
+test("conversation history uses the shared Quo pacing gate by default", () => {
+  const source = fs.readFileSync(new URL("../netlify/functions/_shared/conversations.mjs", import.meta.url), "utf8");
+  assert.match(source, /import \{ quoRequest \} from "\.\.\/\.\.\/\.\.\/integrations\/quo-rate-limit\.mjs"/);
+  assert.match(source, /fetchImpl = quoRequest/);
+});
+
+test("a confirmed reply carries its viewed phone into the new background queue without sending inline", async () => {
+  const oldFetch = globalThis.fetch;
+  const oldNetlify = globalThis.Netlify;
+  const requests = [];
+  const queued = [];
+  const messageId = "33333333-3333-4333-8333-333333333333";
+  const requestKey = "44444444-4444-4444-8444-444444444444";
+  globalThis.__amgConversationAuth = async () => ({ user: { id: "actor" }, client: { rpc: async () => { throw new Error("Unexpected RPC"); } } });
+  globalThis.__amgConversationStorage = async () => true;
+  globalThis.__amgConversationQueue = async (input) => { queued.push(input); return { messageId, recipientCount: 1, status: "queued" }; };
+  globalThis.Netlify = { env: { get: () => undefined } };
+  globalThis.fetch = async (url, init) => {
+    requests.push(String(url));
+    assert.equal(String(url), "https://amg.example/.netlify/functions/admin-crm-immediate-background");
+    assert.equal(init.method, "POST");
+    assert.equal(init.headers.authorization, "Bearer synthetic-only");
+    assert.deepEqual(JSON.parse(init.body), { messageId, personalizeName: false });
+    return new Response(null, { status: 202 });
+  };
+  const input = { action: "send_message_now", body: "Synthetic reply", targetType: "individual", targetId: contactId,
+    timezone: "America/New_York", idempotencyKey: requestKey, expectedPhone: participant, personalizeName: false };
+  const request = (body) => new Request("https://amg.example/api/admin/crm", { method: "POST",
+    headers: { origin: "https://amg.example", authorization: "Bearer synthetic-only", "content-type": "application/json" }, body: JSON.stringify(body) });
+  try {
+    const response = await handler(request(input), {});
+    assert.equal(response.status, 202);
+    assert.deepEqual(await response.json(), { messageId, recipientCount: 1, status: "queued" });
+    assert.equal(queued.length, 1);
+    assert.equal(queued[0].expectedPhone, participant);
+    assert.equal(queued[0].idempotencyKey, requestKey);
+    assert.equal(queued[0].actorId, "actor");
+    assert.equal(requests.length, 1);
+    const invalid = await handler(request({ ...input, expectedPhone: "not-a-phone" }), {});
+    assert.equal(invalid.status, 400);
+    assert.equal(queued.length, 1, "invalid viewed phone cannot reach the queue");
+    assert.equal(requests.length, 1);
+  } finally {
+    globalThis.fetch = oldFetch; globalThis.Netlify = oldNetlify;
+    delete globalThis.__amgConversationAuth; delete globalThis.__amgConversationStorage; delete globalThis.__amgConversationQueue;
+  }
+});
+
+test("queued replies remain visibly queued rather than being claimed as accepted by Quo", () => {
+  const source = fs.readFileSync(new URL("../src/admin.mjs", import.meta.url), "utf8");
+  assert.match(source, /if \(result\.status === "queued"\) \{[\s\S]*?queued for delivery\.[\s\S]*?return;/);
+  assert.match(source, /expectedPhone: \$\("#target-type"\)\.value === "individual" \? state\.messageTargetPhone : undefined/);
 });

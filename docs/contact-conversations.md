@@ -11,7 +11,7 @@ The notice is part of the same SMS request, not a separate automatic text. Exist
 - Each contact has a **Conversation** button. Incoming and outgoing one-to-one Quo messages appear together, ordered by time with timestamps and provider status.
 - **Refresh** requests current provider history. **Load more messages** follows the provider's opaque pagination token, deduplicating by message ID. The UI reports how many messages are loaded, not an unverified total.
 - Messages render as plain text. Media messages are identified, but attachments and provider media URLs are not loaded.
-- **Reply** opens the existing composer and its separate Send now confirmation. A successful accepted reply refreshes the open thread.
+- **Reply** opens the existing composer and its separate Send now confirmation. Confirmed replies use the current background-delivery queue. The UI says **queued**, never sent or accepted merely because the queue write succeeded. Refresh the thread to check for delivery. A failed dashboard refresh after queue acceptance does not reopen a send confirmation or claim the send failed.
 - Pending or opted-out contacts remain viewable but cannot be replied to. Individual Texts, emergency lock, storage readiness, provider STOP history, duplicate-request and uncertain-outcome safeguards still apply.
 - An incoming opt-out keyword in the loaded thread immediately disables Reply even if the cached CRM consent still says opted in. START does not change consent. The server continues to check the full provider history before any attempted send.
 - The phone shown when an individual recipient is selected is included as `expectedPhone`. The send transaction refuses an updated phone mismatch and holds a shared contact-row lock while preparing the recipient snapshot.
@@ -20,6 +20,8 @@ The notice is part of the same SMS request, not a separate automatic text. Exist
 ## Server and rollout
 
 The existing admin endpoint accepts `GET /api/admin/crm?conversationContactId=<uuid>&pageToken=<optional>`. It authenticates the user and calls the existing admin-only state RPC before resolving the contact's phone server-side. It then makes a read-only request to the configured Quo number's message API. Requests and responses use the existing no-store headers. It does not trust a phone number or provider URL supplied by the browser.
+
+The conversation read uses the existing shared Quo pacing/429 gate. Reconciliation with main `57300809` preserves background immediate and scheduled delivery, explicit-429 retry behavior, audience-cap removal, and all recipient/consent/idempotency checks.
 
 No schema migration, webhook, new credential, consent edit, delivery-control change, or automatic SMS is required. Deploy the frontend bundle, HTML/CSS, conversation helper, and existing CRM function together through the normal reviewed release process. Do not use a partial directory as a whole-site deploy.
 

@@ -271,7 +271,6 @@ function renderRecurring() {
     const missing = [
       !reminder.target_group_id && "recipient group",
       reminder.target_group_id && !(group?.eligible_count > 0) && "opted-in recipients",
-      (group?.eligible_count || 0) > 100 && "an audience of 100 or fewer",
       !reminder.local_time && "send time",
       reminder.meeting_url_required && !reminder.zoom_url && "Zoom URL",
     ].filter(Boolean);
@@ -397,13 +396,17 @@ function renderConversation() {
   const reply = conversationReplyState(contact, state, view.messages);
   $("#conversation-reply").disabled = !reply.allowed;
   $("#conversation-reply").title = reply.reason;
-  $("#conversation-reply-note").textContent = contact ? reply.reason : "";
+  const queuedNotice = state.conversationQueuedNotice;
+  const queuedText = queuedNotice?.contactId === view.contactId && queuedNotice?.phone === view.contactPhone
+    ? queuedNotice.text : "";
+  $("#conversation-reply-note").textContent = contact ? [queuedText, reply.reason].filter(Boolean).join(" ") : "";
   $("#conversation-reply-note").classList.toggle("warning", !reply.allowed);
 }
 
 async function openConversation(id) {
   const contact = state.contacts.find((item) => item.id === id);
   if (!contact) return;
+  state.conversationQueuedNotice = null;
   const pending = conversation.open(contact);
   const dialog = $("#conversation-dialog");
   if (!dialog.open) dialog.showModal();
@@ -421,6 +424,8 @@ async function loadConversationPage(kind = "latest") {
   const attempt = kind === "retry" ? conversation.view.lastAttempt : kind;
   const loaded = await (kind === "older" ? conversation.loadOlder() : kind === "retry" ? conversation.retry() : conversation.refresh());
   if (!loaded || conversation.view.contactId !== id || !$("#conversation-dialog").open) return;
+  state.conversationQueuedNotice = null;
+  renderConversation();
   history.scrollTop = attempt === "older" ? oldTop : history.scrollHeight;
 }
 
@@ -785,6 +790,29 @@ async function sendMessageNow(event) {
       idempotencyKey: state.messageRequestKey,
       personalizeName: $("#target-type").value === "individual" && $("#personalize-name").checked,
     });
+    if (result.status === "queued") {
+      $("#send-now-dialog").close();
+      $("#composer").close();
+      const notice = `${result.recipientCount} message${result.recipientCount === 1 ? "" : "s"} queued for delivery.`;
+      if (conversationContactId && conversation.view.contactId === conversationContactId && $("#conversation-dialog").open) {
+        state.conversationQueuedNotice = { contactId: conversationContactId, phone: state.messageTargetPhone,
+          text: `${notice} Refresh the conversation to check for it.` };
+      }
+      toast(`${notice}${conversationContactId ? " Refresh the conversation to check for it." : ""}`);
+      // The queue write has succeeded. A failed read must not turn that durable
+      // result into an apparent send failure or invite a duplicate submission.
+      try {
+        await load();
+      } catch {
+        const banner = $("#transport-banner");
+        banner.classList.remove("ready");
+        banner.textContent = `${notice} Dashboard refresh failed. Reload to check delivery status before sending again.`;
+        if (state.conversationQueuedNotice?.contactId === conversationContactId) {
+          state.conversationQueuedNotice.text = banner.textContent;
+        }
+      }
+      return;
+    }
     await load();
     if (result.status !== "sent") throw new Error(result.uncertain > 0
       ? "The provider outcome is uncertain. The portal will not retry this message automatically."
@@ -839,7 +867,10 @@ $("#conversation-retry").addEventListener("click", () => loadConversationPage("r
 $("#conversation-reply").addEventListener("click", replyToConversation);
 $("#conversation-dialog").addEventListener("cancel", () => conversation.close());
 $("#conversation-dialog").addEventListener("close", () => {
-  if (!$("#conversation-dialog").open) conversation.close();
+  if (!$("#conversation-dialog").open) {
+    state.conversationQueuedNotice = null;
+    conversation.close();
+  }
 });
 $("#add-contact").addEventListener("click", () => openContact());
 $("#contact-search").addEventListener("input", (event) => { state.search = event.target.value; renderContacts(); });

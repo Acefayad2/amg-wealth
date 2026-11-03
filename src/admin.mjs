@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { STATUS_LABELS, defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, recurringCalendarEntries, weekCells, weekRangeLabel } from "../admin/core.mjs";
+import { STATUS_LABELS, defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, personalizationHint, recurringCalendarEntries, weekCells, weekRangeLabel } from "../admin/core.mjs";
 
 const $ = (selector) => document.querySelector(selector);
 const state = { contacts: [], groups: [], messages: [], recurring_reminders: [], scheduler_events: [], admin_invitations: [], dispatch_control: { individual_enabled: false, scheduled_enabled: false, version: 1, audit: [] }, storage_verified: false, transport: {}, week: new Date(), search: "", draftId: null, messageRequestKey: null, messageBusy: false, contactBusy: false, contactEditVersion: null, recurringDraftId: null, recurringEditSnapshot: null, recurringRequestKey: null, recurringBusy: false, recurringStatusBusy: false, dispatchBusy: false, pendingDispatchChange: null, adminInviteBusy: false };
@@ -391,6 +391,7 @@ function updateRecipientNote() {
     : type === "individual"
       ? eligible ? "Verified opt-in. Consent will be checked again before immediate or scheduled delivery." : `This contact is ${target.consent_status.replace("_", " ")} and cannot receive a text.`
       : eligible ? `${target.eligible_count} opted-in member${target.eligible_count === 1 ? "" : "s"} will receive separate messages.` : "This group has no opted-in members and cannot receive a text.";
+  $("#personalization-note").textContent = personalizationHint(type, target);
   $("#schedule-message").disabled = Boolean(target && !eligible);
   const sendNow = $("#send-now");
   const immediateReady = Boolean(target && eligible && state.dispatch_control?.individual_enabled && state.storage_verified &&

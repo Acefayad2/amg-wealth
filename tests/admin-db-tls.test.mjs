@@ -41,11 +41,11 @@ test('URL options cannot override trusted CA or peer/hostname verification in no
   assert.throws(() => secureDatabaseUrl('invalid-sensitive-value'), { message: 'CRM storage URL is invalid.' });
 });
 
-test('serverless pool stays bounded and verifies TLS with the public CA', async () => {
+test('serverless pool stays bounded at two connections and verifies TLS with the public CA', async () => {
   globalThis.Netlify = { env: { get: key => key === 'AMG_CRM_DATABASE_PASSWORD' ? 'synthetic-only' : undefined } };
   const pool = getPool();
   try {
-    assert.equal(pool.options.max, 1);
+    assert.equal(pool.options.max, 2);
     assert.equal(pool.options.ssl.ca, pem);
     assert.equal(pool.options.ssl.rejectUnauthorized, true);
     assert.equal(pool.options.ssl.checkServerIdentity, undefined);
@@ -54,4 +54,14 @@ test('serverless pool stays bounded and verifies TLS with the public CA', async 
     await pool.end();
     delete globalThis.Netlify;
   }
+});
+
+test('scheduler retains a work slot while its advisory-lock client is checked out', async () => {
+  const schedulerSource = await readFile(new URL('../integrations/quo-dispatch.mts', import.meta.url), 'utf8');
+  const poolSource = await readFile(new URL('../netlify/functions/_shared/db.mts', import.meta.url), 'utf8');
+
+  assert.match(schedulerSource, /const lockClient = await pool\.connect\(\)/);
+  assert.match(schedulerSource, /await dispatchEnabled\(pool\)/);
+  assert.match(schedulerSource, /await pool\.query\("SELECT amg_private\.materialize_due_recurring\(NOW\(\)\)"\)/);
+  assert.match(poolSource, /max:\s*2/);
 });

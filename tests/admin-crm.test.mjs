@@ -340,7 +340,12 @@ test("dispatch implementation rechecks the correct channel before every recipien
 test("scheduled worker is serialized, bounded, and refuses stale backlogs", () => {
   const source = fs.readFileSync(new URL("../integrations/quo-dispatch.mts", import.meta.url), "utf8");
   const scheduler = fs.readFileSync(new URL("../netlify/functions/admin-crm-scheduler.mts", import.meta.url), "utf8");
+  const background = fs.readFileSync(new URL("../netlify/functions/admin-crm-scheduled-background.mts", import.meta.url), "utf8");
   assert.match(scheduler, /schedule: "\* \* \* \* \*"/);
+  assert.match(scheduler, /admin-crm-scheduled-background/);
+  assert.match(scheduler, /background\.status === 202/);
+  assert.match(background, /background: true/);
+  assert.match(background, /runScheduledDispatch\(\)/);
   assert.match(source, /pg_try_advisory_lock\(730301\)/);
   assert.match(source, /CLAIM_BATCH_SIZE = 10/);
   assert.match(source, /scheduled_for < NOW\(\) - INTERVAL '10 minutes'/);
@@ -351,6 +356,18 @@ test("scheduled worker is serialized, bounded, and refuses stale backlogs", () =
   assert.match(source, /status IN \('scheduled','sending'\) AND scheduled_for < NOW\(\) - INTERVAL '10 minutes'/);
   assert.match(source, /AbortSignal\.timeout\(PROVIDER_TIMEOUT_MS\)/);
   assert.match(source, /Promise\.allSettled\(deliveries\.map/);
+  assert.match(source, /while \(true\)[\s\S]*processedRecipients \+= deliveries\.length/);
+});
+
+test("latest CRM migration removes fixed audience caps without weakening readiness", () => {
+  const sql = fs.readFileSync(new URL("../database/migrations/20261103154000_remove_crm_audience_caps.sql", import.meta.url), "utf8");
+  const admin = fs.readFileSync(new URL("../src/admin.mjs", import.meta.url), "utf8");
+  assert.match(sql, /CREATE OR REPLACE FUNCTION public\.amg_crm_save_message_versioned/);
+  assert.match(sql, /CREATE OR REPLACE FUNCTION public\.amg_crm_set_recurring_status/);
+  assert.match(sql, /CREATE OR REPLACE FUNCTION amg_private\.materialize_due_recurring/);
+  assert.match(sql, /eligible_count < 1/);
+  assert.doesNotMatch(sql, /BETWEEN 1 AND 100|> 100|LIMIT 100/i);
+  assert.doesNotMatch(admin, /audience of 100 or fewer/i);
 });
 
 test("ordinary messages use a distinct immediate-send path with duplicate and consent safeguards", () => {

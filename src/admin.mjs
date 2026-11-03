@@ -261,7 +261,6 @@ function renderRecurring() {
     const missing = [
       !reminder.target_group_id && "recipient group",
       reminder.target_group_id && !(group?.eligible_count > 0) && "opted-in recipients",
-      (group?.eligible_count || 0) > 100 && "an audience of 100 or fewer",
       !reminder.local_time && "send time",
       reminder.meeting_url_required && !reminder.zoom_url && "Zoom URL",
     ].filter(Boolean);

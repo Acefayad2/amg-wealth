@@ -4,8 +4,55 @@ import fs from "node:fs";
 import { contactsForGroupContext, defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, personalizationHint, recurringCalendarEntries, scheduleInputValue, weekCells, weekRangeLabel, zonedDateTimeToUtc } from "../admin/core.mjs";
 import { verifyQuoTransport } from "../netlify/functions/_shared/quo.mjs";
 import { isOptOutKeyword, outboundContent, personalizeOutbound, withFirstContactOptOut } from "../integrations/message-content.mjs";
+import { createQuoRequestGate } from "../integrations/quo-rate-limit.mjs";
 import { verifyStorageConnection } from "../netlify/functions/_shared/storage.mjs";
 import { manualOptInEvidence } from "../netlify/functions/_shared/crm.mts";
+
+test("Quo requests are paced below the provider limit across concurrent recipients", async () => {
+  let clock = 0;
+  const starts = [];
+  const request = createQuoRequestGate({
+    fetchImpl: async () => {
+      starts.push(clock);
+      return new Response(JSON.stringify({ data: { id: "accepted" } }), { status: 202 });
+    },
+    minIntervalMs: 125,
+    now: () => clock,
+    sleep: async (milliseconds) => { clock += milliseconds; },
+  });
+
+  await Promise.all([request("https://api.quo.com/v1/messages"), request("https://api.quo.com/v1/messages"), request("https://api.quo.com/v1/messages")]);
+  assert.deepEqual(starts, [0, 125, 250]);
+});
+
+test("Quo retries only explicit 429 rejections and honors Retry-After", async () => {
+  let clock = 0;
+  const starts = [];
+  const responses = [
+    new Response("rate limited", { status: 429, headers: { "retry-after": "1" } }),
+    new Response(JSON.stringify({ data: { id: "accepted" } }), { status: 202 }),
+  ];
+  const request = createQuoRequestGate({
+    fetchImpl: async () => {
+      starts.push(clock);
+      return responses.shift();
+    },
+    now: () => clock,
+    sleep: async (milliseconds) => { clock += milliseconds; },
+    random: () => 0,
+  });
+
+  assert.equal((await request("https://api.quo.com/v1/messages", { method: "POST" })).status, 202);
+  assert.deepEqual(starts, [0, 1_000]);
+
+  let attempts = 0;
+  const uncertain = createQuoRequestGate({ fetchImpl: async () => {
+    attempts += 1;
+    throw new Error("network outcome uncertain");
+  } });
+  await assert.rejects(uncertain("https://api.quo.com/v1/messages", { method: "POST" }), /uncertain/);
+  assert.equal(attempts, 1);
+});
 
 test("manual opt-in evidence records confirmation time without inventing method or consent date", () => {
   const recordedAt = new Date("2026-11-03T03:45:00.000Z");
@@ -267,6 +314,7 @@ test("dispatch implementation rechecks the correct channel before every recipien
   assert.ok((source.match(/!await dispatchEnabled/g) || []).length >= 4);
   assert.match(source, /consent_status !== "opted_in"/);
   assert.match(source, /providerOptOut/);
+  assert.ok((source.match(/quoRequest\(/g) || []).length >= 2);
   assert.match(source, /first_outbound_accepted_at=COALESCE/);
   assert.match(source, /Promise\.allSettled\(deliveries\.map/);
   const handler = fs.readFileSync(new URL("../netlify/functions/admin-crm.mts", import.meta.url), "utf8");
@@ -312,7 +360,8 @@ test("ordinary messages use a distinct immediate-send path with duplicate and co
   const dispatch = fs.readFileSync(new URL("../integrations/quo-dispatch.mts", import.meta.url), "utf8");
   assert.match(html, /id="send-now"[\s\S]*>Send now</);
   assert.match(html, /Schedule for later[\s\S]*Weekly repeats are managed in AMG reminders/);
-  assert.match(html, /id="send-now-dialog"[\s\S]*cannot be recalled/);
+  assert.match(html, /id="send-now-dialog"[\s\S]*id="send-now-error"/);
+  assert.doesNotMatch(html, /Consent and provider opt-outs are checked again before each recipient/);
   assert.match(html, /Individual Texts OFF/);
   assert.match(admin, /action: "send_message_now"/);
   assert.match(admin, /if \(state\.messageBusy\) return/);

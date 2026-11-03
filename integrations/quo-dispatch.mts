@@ -1,5 +1,6 @@
 import { getPool } from "../netlify/functions/_shared/db.mjs";
 import { isOptOutKeyword, outboundContent } from "./message-content.mjs";
+import { quoRequest } from "./quo-rate-limit.mjs";
 
 type Delivery = { id: string; message_id: string; phone_snapshot: string; body: string; contact_id: string };
 type ImmediateMessage = {
@@ -49,7 +50,7 @@ async function providerOptOut(apiKey: string, phoneNumberId: string, participant
     url.searchParams.append("participants", participant);
     url.searchParams.set("maxResults", "100");
     if (pageToken) url.searchParams.set("pageToken", pageToken);
-    const response = await fetch(url, {
+    const response = await quoRequest(url, {
       headers: { authorization: apiKey, accept: "application/json" },
       signal: AbortSignal.timeout(Math.max(1, deadline - Date.now())),
     });
@@ -159,7 +160,7 @@ async function deliver(
 
   // A network error has an uncertain provider outcome. Leave the recipient in
   // `sending` so it cannot be retried automatically or duplicate a text.
-  const response = await fetch("https://api.quo.com/v1/messages", {
+  const response = await quoRequest("https://api.quo.com/v1/messages", {
     method: "POST",
     headers: { Authorization: apiKey, "content-type": "application/json" },
     body: JSON.stringify({ content, from, to: [item.phone_snapshot] }),

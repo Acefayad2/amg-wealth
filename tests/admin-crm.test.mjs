@@ -5,6 +5,33 @@ import { contactsForGroupContext, defaultScheduleValue, eligibleTarget, filterCo
 import { verifyQuoTransport } from "../netlify/functions/_shared/quo.mjs";
 import { isOptOutKeyword, outboundContent, personalizeOutbound, withFirstContactOptOut } from "../integrations/message-content.mjs";
 import { verifyStorageConnection } from "../netlify/functions/_shared/storage.mjs";
+import { manualOptInEvidence } from "../netlify/functions/_shared/crm.mts";
+
+test("manual opt-in evidence records confirmation time without inventing method or consent date", () => {
+  const recordedAt = new Date("2026-11-03T03:45:00.000Z");
+  assert.equal(
+    manualOptInEvidence("", recordedAt),
+    "CRM admin confirmed this manually added contact had opted in. Confirmation recorded at 2026-11-03T03:45:00.000Z.",
+  );
+  assert.equal(
+    manualOptInEvidence("Consent method supplied by admin", recordedAt),
+    "Consent method supplied by admin\nCRM admin confirmed this manually added contact had opted in. Confirmation recorded at 2026-11-03T03:45:00.000Z.",
+  );
+  assert.throws(() => manualOptInEvidence("x".repeat(2001), recordedAt), /2000 characters/);
+});
+
+test("new manual opted-in contacts require server-side confirmation while edits preserve prior status", () => {
+  const handler = fs.readFileSync(new URL("../netlify/functions/admin-crm.mts", import.meta.url), "utf8");
+  const html = fs.readFileSync(new URL("../admin/index.html", import.meta.url), "utf8");
+  const admin = fs.readFileSync(new URL("../src/admin.mjs", import.meta.url), "utf8");
+  assert.match(handler, /!id && consentStatus === "opted_in"/);
+  assert.match(handler, /input\.consentConfirmed !== true/);
+  assert.match(handler, /manualOptInEvidence\(evidence\)/);
+  assert.match(html, /id="manual-opt-in-confirmed"[\s\S]*I confirm this contact gave permission/);
+  assert.match(html, /do not check this based only on group membership/);
+  assert.match(admin, /contact\?\.consent_status \|\| "opted_in"/);
+  assert.match(admin, /consentConfirmed: \$\("#manual-opt-in-confirmed"\)\.checked/);
+});
 
 test("storage readiness succeeds, fails closed, and times out without leaking details", async () => {
   assert.equal(await verifyStorageConnection(async () => ({ rows: [{ one: 1 }] }), 20), true);

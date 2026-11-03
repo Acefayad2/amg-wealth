@@ -1,3 +1,5 @@
+import { isOptOutKeyword } from "../integrations/message-content.mjs";
+
 // Read-only conversation state. Every navigation invalidates older requests,
 // including transports that ignore AbortSignal after a response has started.
 export function createConversationController({ fetchPage, onChange = () => {} }) {
@@ -59,7 +61,7 @@ export function createConversationController({ fetchPage, onChange = () => {} })
   };
 }
 
-export function conversationReplyState(contact, state) {
+export function conversationReplyState(contact, state, messages = []) {
   if (!contact) return { allowed: false, reason: "This contact is no longer available." };
   if (contact.consent_status !== "opted_in") return {
     allowed: false,
@@ -67,6 +69,9 @@ export function conversationReplyState(contact, state) {
       ? "This contact has opted out. You can view the conversation, but replies are blocked."
       : "Verified opt-in is required to reply. You can still view this conversation.",
   };
+  if (messages.some((message) => message.direction === "incoming" && isOptOutKeyword(message.text))) {
+    return { allowed: false, reason: "This conversation includes a recipient opt-out reply. Replies are blocked; the contact’s saved consent status may not have updated yet." };
+  }
   if (state.messageBusy) return { allowed: false, reason: "Wait for the current message request to finish before replying." };
   if (!state.dispatch_control?.individual_enabled) return { allowed: false, reason: "Individual Texts are off. Turn them on before replying." };
   if (!state.storage_verified || !state.transport?.verified || !state.transport?.enabled || state.transport?.emergency_disabled) {

@@ -19,6 +19,10 @@ test("first accepted text identifies AMG, allows replies, and supplies STOP with
   const composed = withFirstContactOptOut(body, true);
   assert.equal(composed, `${body}\n\n${FIRST_CONTACT_IDENTITY}\n\nReply STOP to opt out.`);
   assert.equal(withFirstContactOptOut(composed, true), composed);
+  const identityOnly = withFirstContactOptOut("This is Anointed Money Group's communications number.", true);
+  assert.match(identityOnly, /You can reply here to reach our team/);
+  assert.equal((identityOnly.match(/Anointed Money Group/g) || []).length, 1);
+  assert.equal(/[^\x00-\x7F]/u.test(FIRST_CONTACT_IDENTITY), false, "the notice alone must not force Unicode SMS encoding");
   assert.equal(withFirstContactOptOut(body, false), body);
   const alreadyHasStop = withFirstContactOptOut("Welcome. Reply STOP to unsubscribe.", true);
   assert.equal((alreadyHasStop.match(/Reply STOP/g) || []).length, 1);

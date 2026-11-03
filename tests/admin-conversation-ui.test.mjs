@@ -268,6 +268,42 @@ test("dialog provides accessible history, explicit retry, manual refresh, close/
   assert.match(html, /id="conversation-refresh"/);
   assert.match(source, /addEventListener\("cancel", \(\) => conversation\.close\(\)\)/);
   assert.match(source, /button\.dataset\.close === "conversation-dialog"\) conversation\.close\(\)/);
-  assert.match(html, /This is Anointed Money Group’s communications number\. You can reply here to reach our team\. Reply STOP to opt out\./);
+  assert.match(html, /This is Anointed Money Group[’']s communications number\. You can reply here to reach our team\. Reply STOP to opt out\./);
   assert.doesNotMatch(source, /setInterval\([^)]*conversation/);
+});
+
+
+test("incoming exact opt-out keywords block replies even while CRM consent is still opted in", () => {
+  for (const keyword of ["STOP", "STOPALL", "UNSUBSCRIBE", "CANCEL", "END", "QUIT"]) {
+    const messages = [message("opt-out", 1, { text: `  ${keyword.toLowerCase()}\n` })];
+    const result = conversationReplyState(alice, ready, messages);
+    assert.equal(result.allowed, false);
+    assert.match(result.reason, /recipient opt-out reply/);
+  }
+  for (const messages of [
+    [message("outgoing", 1, { text: "STOP", direction: "outgoing" })],
+    [message("ordinary", 1, { text: "Please stop by tomorrow" })],
+    [message("notice", 1, { text: "Reply STOP to opt out." })],
+  ]) assert.equal(conversationReplyState(alice, ready, messages).allowed, true);
+  const afterStart = [message("stop", 1, { text: "STOP" }), message("start", 2, { text: "START" })];
+  assert.equal(conversationReplyState(alice, ready, afterStart).allowed, false);
+  assert.equal(conversationReplyState({ ...alice, consent_status: "opted_out" }, ready, [message("start", 2, { text: "START" })]).allowed, false);
+  assert.equal(alice.consent_status, "opted_in", "history checks never mutate saved contact consent");
+});
+
+test("production rendering and reply action both apply the loaded-history opt-out lock", () => {
+  assert.match(source, /const reply = conversationReplyState\(contact, state, view\.messages\)/);
+  assert.match(source, /!conversationReplyState\(contact, state, conversation\.view\.messages\)\.allowed/);
+  const start = source.indexOf("function replyToConversation() {");
+  const end = source.indexOf("\nfunction renderCalendar()", start);
+  let composed = false;
+  const context = {
+    state: { ...ready, contacts: [alice] },
+    conversation: { view: { contactId: alice.id, contactPhone: alice.phone, messages: [message("stop", 1, { text: "STOP" })] } },
+    conversationReplyState,
+    $: () => ({ open: true }),
+    openComposer: () => { composed = true; },
+  };
+  vm.runInNewContext(source.slice(start, end) + "\nreplyToConversation();", context);
+  assert.equal(composed, false);
 });

@@ -394,7 +394,7 @@ function renderConversation() {
   $("#conversation-refresh").disabled = view.busy || !view.contactId;
   $("#conversation-older").hidden = !view.nextPageToken;
   $("#conversation-older").disabled = view.busy;
-  const reply = conversationReplyState(contact, state);
+  const reply = conversationReplyState(contact, state, view.messages);
   $("#conversation-reply").disabled = !reply.allowed;
   $("#conversation-reply").title = reply.reason;
   $("#conversation-reply-note").textContent = contact ? reply.reason : "";
@@ -426,7 +426,7 @@ async function loadConversationPage(kind = "latest") {
 
 function replyToConversation() {
   const contact = state.contacts.find((item) => item.id === conversation.view.contactId);
-  if (!$("#conversation-dialog").open || !conversationReplyState(contact, state).allowed) return;
+  if (!$("#conversation-dialog").open || !conversationReplyState(contact, state, conversation.view.messages).allowed) return;
   if (contact.phone !== conversation.view.contactPhone) {
     toast("This contact’s phone changed. Reopen the conversation before replying.");
     renderConversation();

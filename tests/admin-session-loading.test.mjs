@@ -11,17 +11,21 @@ assert.ok(start >= 0 && end > start, "session-loading production functions must 
 const production = `let authClient=this.authClient;let startupBusy=false;const $=this.lookup;const load=this.load;${source.slice(start, end)}\nthis.verifyAdminSession=verifyAdminSession;`;
 
 function setup({ user = { id: "admin" }, authError = null, loadImpl = async () => {} } = {}) {
+  let signOutCalls = 0;
   const fields = Object.fromEntries([
     "#startup-view", "#auth-view", "#app", "#startup-title", "#startup-status",
     "#startup-error-actions", "#login-error",
   ].map((selector) => [selector, { hidden: selector !== "#startup-view", textContent: "" }]));
   const context = {
-    authClient: { auth: { getUser: async () => ({ data: { user }, error: authError }) } },
+    authClient: { auth: {
+      getUser: async () => ({ data: { user }, error: authError }),
+      signOut: async () => { signOutCalls += 1; return { error: null }; },
+    } },
     lookup: (selector) => fields[selector],
     load: loadImpl,
   };
   vm.runInNewContext(production, context, { filename: "src/admin.mjs:session-loading" });
-  return { ...context, fields };
+  return { ...context, fields, get signOutCalls() { return signOutCalls; } };
 }
 
 test("HTML starts on the branded AMG verification page without flashing login or dashboard", () => {
@@ -65,4 +69,17 @@ test("verification failure stays on branded retry state and never reveals dashbo
   assert.equal(app.fields["#startup-title"].textContent, "Verification paused");
   assert.equal(app.fields["#startup-status"].textContent, "Network verification failed");
   assert.equal(app.fields["#startup-error-actions"].hidden, false);
+});
+
+test("invalid stored refresh token is cleared and returns to sign in", async () => {
+  const authError = Object.assign(new Error("Invalid Refresh Token: Refresh Token Not Found"), {
+    code: "refresh_token_not_found",
+  });
+  const app = setup({ authError });
+  await app.verifyAdminSession();
+  assert.equal(app.signOutCalls, 1);
+  assert.equal(app.fields["#startup-view"].hidden, true);
+  assert.equal(app.fields["#auth-view"].hidden, false);
+  assert.equal(app.fields["#app"].hidden, true);
+  assert.equal(app.fields["#login-error"].textContent, "Your saved session expired. Sign in again.");
 });

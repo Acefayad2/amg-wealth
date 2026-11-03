@@ -687,6 +687,12 @@ async function sendMessageNow(event) {
       personalizeName: $("#target-type").value === "individual" && $("#personalize-name").checked,
     });
     await load();
+    if (result.status === "queued") {
+      $("#send-now-dialog").close();
+      $("#composer").close();
+      toast(`${result.recipientCount} message${result.recipientCount === 1 ? "" : "s"} queued for delivery.`);
+      return;
+    }
     if (result.status !== "sent") throw new Error(result.uncertain > 0
       ? "The provider outcome is uncertain. The portal will not retry this message automatically."
       : "The message was not accepted. Review its status before trying anything else.");

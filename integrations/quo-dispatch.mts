@@ -200,7 +200,7 @@ async function finalizeMessage(messageId: string, pool = getPool()) {
   return { messageId, sent, failed, skipped, pending, uncertain, status: finalStatus };
 }
 
-export async function sendImmediateMessage(input: ImmediateMessage) {
+export async function queueImmediateMessage(input: ImmediateMessage) {
   if (!await dispatchEnabled("individual")) {
     throw Object.assign(new Error("Individual texts are disabled. Enable Individual Texts before using Send now."), { status: 503 });
   }
@@ -214,7 +214,6 @@ export async function sendImmediateMessage(input: ImmediateMessage) {
   const pool = getPool();
   const client = await pool.connect();
   let messageId: string;
-  let deliveries: Delivery[] = [];
   try {
     await client.query("BEGIN");
     const admin = await client.query(
@@ -239,7 +238,6 @@ export async function sendImmediateMessage(input: ImmediateMessage) {
       );
     const contactIds = target.rows[0]?.contact_ids as string[] | undefined;
     if (!contactIds?.length) throw new Error("No opted-in recipients are eligible for this message.");
-    if (contactIds.length > 100) throw new Error("An immediate group message is limited to 100 opted-in recipients.");
 
     if (input.messageId) {
       const existing = await client.query(
@@ -281,30 +279,68 @@ export async function sendImmediateMessage(input: ImmediateMessage) {
     await client.query(
       `INSERT INTO amg_private.crm_message_recipients
         (message_id,contact_id,phone_snapshot,status,claimed_at)
-       SELECT $1,c.id,c.phone,'sending',NOW()
+       SELECT $1,c.id,c.phone,'scheduled',NULL
        FROM amg_private.crm_contacts c WHERE c.id=ANY($2::uuid[])`,
       [messageId, contactIds],
     );
-    const claimed = await client.query<Delivery>(
-      `SELECT r.id,r.message_id,r.phone_snapshot,r.contact_id,m.body
-       FROM amg_private.crm_message_recipients r
-       JOIN amg_private.crm_messages m ON m.id=r.message_id
-       WHERE r.message_id=$1 AND r.status='sending' ORDER BY r.id`, [messageId],
-    );
-    deliveries = claimed.rows;
     await client.query("COMMIT");
+    return { messageId, recipientCount: contactIds.length, status: "queued" as const };
   } catch (error) {
     await client.query("ROLLBACK");
     throw error;
   } finally {
     client.release();
   }
+}
 
-  const personalizeName = input.targetType === "individual" && input.personalizeName === true;
-  await Promise.allSettled(deliveries.map((item) =>
-    deliver(item, apiKey, from, phoneNumberId, "individual", personalizeName)
-  ));
-  return finalizeMessage(messageId, pool);
+export async function dispatchImmediateMessage(messageId: string, actorId: string, personalizeName = false) {
+  const apiKey = Netlify.env.get("QUO_API_KEY");
+  const from = Netlify.env.get("QUO_FROM_NUMBER");
+  const phoneNumberId = Netlify.env.get("QUO_PHONE_NUMBER_ID");
+  if (!apiKey || !from || !phoneNumberId) {
+    throw Object.assign(new Error("The approved AMG Quo sender is not configured."), { status: 503 });
+  }
+
+  const pool = getPool();
+  const lockClient = await pool.connect();
+  let locked = false;
+  try {
+    const lock = await lockClient.query("SELECT pg_try_advisory_lock(hashtext($1)) AS locked", [`immediate:${messageId}`]);
+    locked = lock.rows[0]?.locked === true;
+    if (!locked) return { messageId, status: "sending" as const };
+
+    const allowed = await pool.query(
+      `SELECT m.status FROM amg_private.crm_messages m
+       JOIN amg_private.crm_admins a ON a.user_id=$2
+       WHERE m.id=$1 AND m.created_by=$2`,
+      [messageId, actorId],
+    );
+    if (!allowed.rows[0]) throw Object.assign(new Error("Queued message access was not verified."), { status: 403 });
+    if (allowed.rows[0].status !== "sending") return { messageId, status: allowed.rows[0].status as string };
+
+    while (true) {
+      const claimed = await pool.query<Delivery>(
+        `UPDATE amg_private.crm_message_recipients r SET status='sending',claimed_at=NOW()
+         FROM amg_private.crm_messages m
+         WHERE r.id IN (
+           SELECT id FROM amg_private.crm_message_recipients
+           WHERE message_id=$1 AND status='scheduled' ORDER BY id FOR UPDATE SKIP LOCKED LIMIT $2
+         ) AND r.message_id=m.id
+         RETURNING r.id,r.message_id,r.phone_snapshot,r.contact_id,m.body`,
+        [messageId, CLAIM_BATCH_SIZE],
+      );
+      if (!claimed.rows.length) break;
+      await Promise.allSettled(claimed.rows.map((item) =>
+        deliver(item, apiKey, from, phoneNumberId, "individual", personalizeName)
+      ));
+      await finalizeMessage(messageId, pool);
+    }
+
+    return finalizeMessage(messageId, pool);
+  } finally {
+    if (locked) await lockClient.query("SELECT pg_advisory_unlock(hashtext($1))", [`immediate:${messageId}`]);
+    lockClient.release();
+  }
 }
 
 export async function dispatchDueMessages() {

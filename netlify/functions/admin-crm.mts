@@ -3,7 +3,7 @@ import { cleanText, E164, manualOptInEvidence, publicError, requireUuid, validTi
 import { verifyQuoTransport } from "./_shared/quo.mjs";
 import { getAuthenticatedUser } from "./_shared/supabase.mjs";
 import { verifyCrmStorage } from "./_shared/db.mjs";
-import { sendImmediateMessage } from "../../integrations/quo-dispatch.mjs";
+import { queueImmediateMessage } from "../../integrations/quo-dispatch.mjs";
 
 const headers = { "cache-control": "no-store", "content-type": "application/json; charset=utf-8" };
 const json = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status, headers });
@@ -145,7 +145,8 @@ export default async function handler(req: Request, _context: Context) {
       const targetType = input.targetType;
       if (targetType !== "individual" && targetType !== "group") throw new Error("Recipient type is invalid.");
       if (!validTimezone(input.timezone)) throw new Error("Timezone is invalid.");
-      const result = await sendImmediateMessage({
+      const personalizeName = targetType === "individual" && input.personalizeName === true;
+      const result = await queueImmediateMessage({
         messageId: input.messageId ? requireUuid(input.messageId, "Message") : null,
         body,
         targetType,
@@ -153,9 +154,18 @@ export default async function handler(req: Request, _context: Context) {
         timezone: String(input.timezone),
         idempotencyKey: requireUuid(input.idempotencyKey, "Request key"),
         actorId: user.id,
-        personalizeName: targetType === "individual" && input.personalizeName === true,
+        personalizeName,
       });
-      return json(result, 200);
+      const authorization = req.headers.get("authorization");
+      const background = await fetch(new URL("/.netlify/functions/admin-crm-immediate-background", req.url), {
+        method: "POST",
+        headers: { "content-type": "application/json", ...(authorization ? { authorization } : {}) },
+        body: JSON.stringify({ messageId: result.messageId, personalizeName }),
+      });
+      if (background.status !== 202) {
+        throw Object.assign(new Error("The message was queued, but background delivery could not be started."), { status: 503 });
+      }
+      return json(result, 202);
     }
 
     if (input.action === "save_recurring_reminder") {

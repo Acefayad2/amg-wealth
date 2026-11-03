@@ -310,7 +310,7 @@ test("dispatch implementation rechecks the correct channel before every recipien
   assert.match(source, /WHEN 'scheduled' THEN scheduled_enabled/);
   assert.match(source, /deliver\(item, apiKey, from, phoneNumberId, "individual", personalizeName\)/);
   assert.match(source, /deliver\(item, apiKey, from, phoneNumberId, "scheduled", false\)/);
-  assert.match(source, /input\.targetType === "individual" && input\.personalizeName === true/);
+  assert.match(source, /dispatchImmediateMessage\(messageId: string, actorId: string, personalizeName = false\)/);
   assert.ok((source.match(/!await dispatchEnabled/g) || []).length >= 4);
   assert.match(source, /consent_status !== "opted_in"/);
   assert.match(source, /providerOptOut/);
@@ -357,6 +357,7 @@ test("ordinary messages use a distinct immediate-send path with duplicate and co
   const html = fs.readFileSync(new URL("../admin/index.html", import.meta.url), "utf8");
   const admin = fs.readFileSync(new URL("../src/admin.mjs", import.meta.url), "utf8");
   const handler = fs.readFileSync(new URL("../netlify/functions/admin-crm.mts", import.meta.url), "utf8");
+  const background = fs.readFileSync(new URL("../netlify/functions/admin-crm-immediate-background.mts", import.meta.url), "utf8");
   const dispatch = fs.readFileSync(new URL("../integrations/quo-dispatch.mts", import.meta.url), "utf8");
   assert.match(html, /id="send-now"[\s\S]*>Send now</);
   assert.match(html, /Schedule for later[\s\S]*Weekly repeats are managed in AMG reminders/);
@@ -369,8 +370,17 @@ test("ordinary messages use a distinct immediate-send path with duplicate and co
   assert.match(handler, /input\.action === "send_message_now"/);
   assert.match(handler, /getAuthenticatedUser[\s\S]*actorId: user\.id/);
   assert.match(handler, /if \(!await verifyCrmStorage\(\)\)/);
+  assert.match(handler, /queueImmediateMessage/);
+  assert.match(handler, /admin-crm-immediate-background/);
+  assert.match(handler, /background\.status !== 202/);
+  assert.match(background, /background: true/);
+  assert.match(background, /getAuthenticatedUser\(req\)/);
+  assert.match(background, /dispatchImmediateMessage\(messageId, user\.id/);
   assert.match(dispatch, /SELECT 1 FROM amg_private\.crm_admins WHERE user_id=\$1/);
   assert.match(dispatch, /status='sending',scheduled_for=NULL/);
+  assert.match(dispatch, /SELECT \$1,c\.id,c\.phone,'scheduled',NULL/);
+  assert.match(dispatch, /status='scheduled'[\s\S]*FOR UPDATE SKIP LOCKED LIMIT \$2/);
+  assert.doesNotMatch(dispatch, /immediate group message is limited to 100/i);
   assert.match(dispatch, /ON CONFLICT \(idempotency_key\) DO NOTHING/);
   assert.match(dispatch, /already submitted and was not repeated/);
   assert.match(dispatch, /Only an untouched draft can use Send now\. Scheduled messages remain under Scheduled Texts/);
@@ -383,8 +393,9 @@ test("ordinary messages use a distinct immediate-send path with duplicate and co
   assert.match(admin, /personalizeName: \$\("#target-type"\)\.value === "individual" && \$\("#personalize-name"\)\.checked/);
   const saveBlock = admin.slice(admin.indexOf("async function saveMessage"), admin.indexOf("function openSendNowConfirmation"));
   assert.doesNotMatch(saveBlock, /personalizeName/);
-  assert.match(handler, /personalizeName: targetType === "individual" && input\.personalizeName === true/);
-  assert.match(dispatch, /const personalizeName = input\.targetType === "individual" && input\.personalizeName === true/);
+  assert.match(handler, /const personalizeName = targetType === "individual" && input\.personalizeName === true/);
+  assert.match(admin, /result\.status === "queued"/);
+  assert.match(admin, /queued for delivery/);
 });
 
 test("recurring scheduler migration is DST-aware, idempotent, private, and fail-closed", () => {

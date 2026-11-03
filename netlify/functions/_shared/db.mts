@@ -34,7 +34,11 @@ export function getPool() {
   }
   pool ||= new pg.Pool({
     ...(connectionString ? { connectionString: secureDatabaseUrl(connectionString) } : { ...AMG_PORTAL_POOLER, password }),
-    max: 1,
+    // The scheduler keeps one client checked out for its session-level
+    // advisory lock while issuing work queries through the pool. Reserve one
+    // additional, still-bounded slot so that lock ownership cannot deadlock
+    // those queries.
+    max: 2,
     connectionTimeoutMillis: 3000,
     idleTimeoutMillis: 10000,
     ssl: { ca: SUPABASE_ROOT_CA, rejectUnauthorized: true },

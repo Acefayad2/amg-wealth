@@ -61,7 +61,7 @@ test('scheduler retains a work slot while its advisory-lock client is checked ou
   const poolSource = await readFile(new URL('../netlify/functions/_shared/db.mts', import.meta.url), 'utf8');
 
   assert.match(schedulerSource, /const lockClient = await pool\.connect\(\)/);
-  assert.match(schedulerSource, /await dispatchEnabled\(pool\)/);
+  assert.match(schedulerSource, /await dispatchEnabled\("scheduled", pool\)/);
   assert.match(schedulerSource, /await pool\.query\("SELECT amg_private\.materialize_due_recurring\(NOW\(\)\)"\)/);
   assert.match(poolSource, /max:\s*2/);
 });

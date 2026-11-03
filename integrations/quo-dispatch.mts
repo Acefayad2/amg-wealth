@@ -13,11 +13,18 @@ type ImmediateMessage = {
 };
 const PROVIDER_TIMEOUT_MS = 8_000;
 const CLAIM_BATCH_SIZE = 10;
+type DispatchChannel = "individual" | "scheduled";
 
-async function dispatchEnabled(pool = getPool()) {
+async function dispatchEnabled(channel: DispatchChannel, pool = getPool()) {
   if (Netlify.env.get("AMG_QUO_EMERGENCY_DISABLE") === "true") return false;
   const result = await pool.query(
-    "SELECT enabled FROM amg_private.crm_dispatch_control WHERE singleton=TRUE",
+    `SELECT CASE $1
+       WHEN 'individual' THEN individual_enabled
+       WHEN 'scheduled' THEN scheduled_enabled
+       ELSE FALSE
+     END AS enabled
+     FROM amg_private.crm_dispatch_control WHERE singleton=TRUE`,
+    [channel],
   );
   return result.rows[0]?.enabled === true;
 }
@@ -89,9 +96,9 @@ async function markAccepted(item: Delivery, quoId: string, noticeRequired: boole
   }
 }
 
-async function deliver(item: Delivery, apiKey: string, from: string, phoneNumberId: string) {
+async function deliver(item: Delivery, apiKey: string, from: string, phoneNumberId: string, channel: DispatchChannel) {
   const pool = getPool();
-  if (!await dispatchEnabled(pool)) {
+  if (!await dispatchEnabled(channel, pool)) {
     await markDelivery(item.id, "failed", { error: "Dispatch was disabled before this recipient." }, pool);
     return;
   }
@@ -137,7 +144,7 @@ async function deliver(item: Delivery, apiKey: string, from: string, phoneNumber
 
   // Recheck immediately before the external side effect. Disabling from the
   // portal or emergency lock therefore stops recipients still in preflight.
-  if (!await dispatchEnabled(pool)) {
+  if (!await dispatchEnabled(channel, pool)) {
     await markDelivery(item.id, "failed", { error: "Dispatch was disabled immediately before send." }, pool);
     return;
   }
@@ -185,8 +192,8 @@ async function finalizeMessage(messageId: string, pool = getPool()) {
 }
 
 export async function sendImmediateMessage(input: ImmediateMessage) {
-  if (!await dispatchEnabled()) {
-    throw Object.assign(new Error("Sending is disabled. Enable the global delivery control before using Send now."), { status: 503 });
+  if (!await dispatchEnabled("individual")) {
+    throw Object.assign(new Error("Individual texts are disabled. Enable Individual Texts before using Send now."), { status: 503 });
   }
   const apiKey = Netlify.env.get("QUO_API_KEY");
   const from = Netlify.env.get("QUO_FROM_NUMBER");
@@ -230,8 +237,8 @@ export async function sendImmediateMessage(input: ImmediateMessage) {
         `SELECT id,status,created_by FROM amg_private.crm_messages
          WHERE id=$1 FOR UPDATE`, [input.messageId],
       );
-      if (!existing.rows[0] || existing.rows[0].created_by !== input.actorId || !["draft", "scheduled"].includes(existing.rows[0].status)) {
-        throw Object.assign(new Error("Only an untouched draft or scheduled message can use Send now."), { status: 409 });
+      if (!existing.rows[0] || existing.rows[0].created_by !== input.actorId || existing.rows[0].status !== "draft") {
+        throw Object.assign(new Error("Only an untouched draft can use Send now. Scheduled messages remain under Scheduled Texts."), { status: 409 });
       }
       const touched = await client.query(
         `SELECT 1 FROM amg_private.crm_message_recipients
@@ -284,13 +291,13 @@ export async function sendImmediateMessage(input: ImmediateMessage) {
     client.release();
   }
 
-  await Promise.allSettled(deliveries.map((item) => deliver(item, apiKey, from, phoneNumberId)));
+  await Promise.allSettled(deliveries.map((item) => deliver(item, apiKey, from, phoneNumberId, "individual")));
   return finalizeMessage(messageId, pool);
 }
 
 export async function dispatchDueMessages() {
-  if (!await dispatchEnabled()) {
-    return new Response("Quo dispatch is disabled.", { status: 503 });
+  if (!await dispatchEnabled("scheduled")) {
+    return new Response("Scheduled text delivery is disabled.", { status: 503 });
   }
   const apiKey = Netlify.env.get("QUO_API_KEY");
   const from = Netlify.env.get("QUO_FROM_NUMBER");
@@ -359,7 +366,7 @@ export async function dispatchDueMessages() {
   // Each recipient remains an individual Quo conversation. A small parallel
   // batch stays within the scheduled-function budget without creating a group
   // text or sacrificing per-contact consent and STOP checks.
-  await Promise.allSettled(deliveries.map((item) => deliver(item, apiKey, from, phoneNumberId)));
+  await Promise.allSettled(deliveries.map((item) => deliver(item, apiKey, from, phoneNumberId, "scheduled")));
 
   if (!messageId) throw new Error("Claimed message state was unavailable.");
   return Response.json(await finalizeMessage(messageId, pool));
@@ -373,7 +380,7 @@ export async function runScheduledDispatch() {
     const lock = await lockClient.query("SELECT pg_try_advisory_lock(730301) AS locked");
     locked = lock.rows[0]?.locked === true;
     if (!locked) return new Response("Another scheduler invocation owns the dispatch lock.", { status: 202 });
-    if (!await dispatchEnabled(pool)) return new Response("CRM sending is off; no reminders were materialized.");
+    if (!await dispatchEnabled("scheduled", pool)) return new Response("Scheduled text delivery is off; no reminders were materialized.");
     await pool.query("SELECT amg_private.materialize_due_recurring(NOW())");
     return await dispatchDueMessages();
   } finally {

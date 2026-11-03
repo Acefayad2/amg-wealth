@@ -2,9 +2,10 @@ import { createClient } from "@supabase/supabase-js";
 import { STATUS_LABELS, defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, recurringCalendarEntries, weekCells, weekRangeLabel } from "../admin/core.mjs";
 
 const $ = (selector) => document.querySelector(selector);
-const state = { contacts: [], groups: [], messages: [], recurring_reminders: [], scheduler_events: [], admin_invitations: [], dispatch_control: { enabled: false, version: 1, audit: [] }, storage_verified: false, transport: {}, week: new Date(), search: "", draftId: null, messageRequestKey: null, messageBusy: false, contactBusy: false, contactEditVersion: null, recurringDraftId: null, recurringEditSnapshot: null, recurringRequestKey: null, recurringBusy: false, recurringStatusBusy: false, dispatchBusy: false, adminInviteBusy: false };
+const state = { contacts: [], groups: [], messages: [], recurring_reminders: [], scheduler_events: [], admin_invitations: [], dispatch_control: { individual_enabled: false, scheduled_enabled: false, version: 1, audit: [] }, storage_verified: false, transport: {}, week: new Date(), search: "", draftId: null, messageRequestKey: null, messageBusy: false, contactBusy: false, contactEditVersion: null, recurringDraftId: null, recurringEditSnapshot: null, recurringRequestKey: null, recurringBusy: false, recurringStatusBusy: false, dispatchBusy: false, pendingDispatchChange: null, adminInviteBusy: false };
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 let authClient = null;
+let startupBusy = false;
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
 const initials = (name) => String(name || "?").split(/\s+/).map((part) => part[0]).join("").slice(0, 2).toUpperCase();
 const contactLabel = (contact) => contact.full_name || contact.phone;
@@ -39,6 +40,57 @@ async function load() {
   render();
 }
 
+function showStartup(message = "Restoring your secure AMG session and checking CRM admin access…") {
+  $("#startup-view").hidden = false;
+  $("#auth-view").hidden = true;
+  $("#app").hidden = true;
+  $("#startup-title").textContent = "Verifying access";
+  $("#startup-status").textContent = message;
+  $("#startup-error-actions").hidden = true;
+}
+
+function showStartupError(message) {
+  $("#startup-view").hidden = false;
+  $("#auth-view").hidden = true;
+  $("#app").hidden = true;
+  $("#startup-title").textContent = "Verification paused";
+  $("#startup-status").textContent = message;
+  $("#startup-error-actions").hidden = false;
+}
+
+function showLogin(message = "") {
+  $("#startup-view").hidden = true;
+  $("#app").hidden = true;
+  $("#auth-view").hidden = false;
+  $("#login-error").textContent = message;
+}
+
+async function verifyAdminSession() {
+  if (startupBusy) return;
+  startupBusy = true;
+  showStartup();
+  try {
+    const { data, error } = await authClient.auth.getUser();
+    if (error) throw error;
+    if (!data.user) {
+      showLogin();
+      return;
+    }
+    await load();
+    $("#startup-view").hidden = true;
+    $("#auth-view").hidden = true;
+    $("#app").hidden = false;
+  } catch (error) {
+    if (error.message === "AMG CRM admin access required.") {
+      showLogin("This account does not have AMG CRM admin access.");
+    } else {
+      showStartupError(error.message || "AMG could not verify this session. Retry when your connection is ready.");
+    }
+  } finally {
+    startupBusy = false;
+  }
+}
+
 function render() {
   renderAdminInvitations();
   renderGroups();
@@ -49,16 +101,16 @@ function render() {
   renderStats();
   const { configured, verified, enabled } = state.transport;
   const banner = $("#transport-banner");
-  banner.classList.toggle("ready", configured && state.storage_verified && enabled);
+  const individualEnabled = Boolean(state.dispatch_control?.individual_enabled && enabled);
+  const scheduledEnabled = Boolean(state.dispatch_control?.scheduled_enabled && enabled);
+  banner.classList.toggle("ready", configured && verified && state.storage_verified);
   banner.textContent = !configured
     ? "Quo sending is locked: add the approved API key and AMG sender number before enabling dispatch. Drafts and schedules remain visible, but no texts will send."
     : !verified
       ? "Quo credentials are stored, but the approved AMG sender could not be verified. Dispatch remains disabled."
     : !state.storage_verified
       ? "Quo is connected, but scheduler storage is unavailable. Sending is locked until the server-only database connection is verified."
-    : !enabled
-      ? "Quo is connected to the approved AMG sender, but dispatch is intentionally disabled. Contacts, consent, audience, and each activation still require approval."
-      : "Quo dispatch is enabled. Only opted-in contacts can receive immediate or scheduled texts, and opt-outs are checked again before every send.";
+    : `Quo is connected to the approved AMG sender. Individual Texts are ${individualEnabled ? "ON" : "OFF"}; Scheduled Texts are ${scheduledEnabled ? "ON" : "OFF"}. Opt-outs are checked again before every recipient.`;
   renderDispatchControl();
 }
 
@@ -101,46 +153,94 @@ async function createAdminInvitation(event) {
 }
 
 function renderDispatchControl() {
-  const control = state.dispatch_control || { enabled: false, version: 1, audit: [] };
-  const card = $(".transport-control");
-  const effectiveEnabled = Boolean(control.enabled && state.transport?.enabled);
-  card.classList.toggle("enabled", effectiveEnabled);
-  $("#sending-control-title").textContent = effectiveEnabled ? "Sending enabled" : "Sending disabled";
-  $("#sending-control-detail").textContent = control.enabled && state.transport?.emergency_disabled
-    ? "The portal switch is on, but the emergency lock is blocking delivery."
-    : control.enabled && !state.storage_verified
-      ? "The portal switch is on, but scheduler storage is unavailable. Delivery remains blocked."
-    : control.enabled && !state.transport?.verified
-      ? "The portal switch is on, but the approved Quo sender is not verified. Delivery remains blocked."
+  const control = state.dispatch_control || { individual_enabled: false, scheduled_enabled: false, version: 1, audit: [] };
+  for (const channel of ["individual", "scheduled"]) {
+    const label = channel === "individual" ? "Individual Texts" : "Scheduled Texts";
+    const enabled = Boolean(control[`${channel}_enabled`]);
+    const effectiveEnabled = Boolean(enabled && state.transport?.enabled);
+    const card = document.querySelector(`[data-delivery-card="${channel}"]`);
+    card.classList.toggle("enabled", effectiveEnabled);
+    $(`#${channel}-control-title`).textContent = `${label} ${effectiveEnabled ? "ON" : "OFF"}`;
+    $(`#${channel}-control-detail`).textContent = enabled && state.transport?.emergency_disabled
+      ? "The portal control is on, but the emergency lock is blocking delivery."
+      : enabled && !state.storage_verified
+        ? "The portal control is on, but delivery storage is unavailable. Delivery remains blocked."
+      : enabled && !state.transport?.verified
+        ? "The portal control is on, but the approved Quo sender is not verified. Delivery remains blocked."
       : effectiveEnabled
-        ? "Send now and eligible scheduled messages may dispatch. Opt-outs are checked again before every recipient."
-        : "The global CRM delivery switch is off. Immediate and scheduled messages cannot dispatch.";
-  const latest = control.audit?.[0];
-  $("#sending-control-audit").textContent = latest
-    ? `Last ${latest.new_enabled ? "enabled" : "disabled"} by ${latest.changed_by || "an AMG CRM admin"} · ${formatDateTime(latest.changed_at)}`
-    : "No sending-control changes have been recorded.";
-  const button = $("#toggle-sending");
-  button.textContent = control.enabled ? "Disable sending" : "Enable sending";
-  button.disabled = state.dispatchBusy || (!control.enabled && (!state.storage_verified || !state.transport?.verified || state.transport?.emergency_disabled));
+        ? channel === "individual"
+          ? "Confirmed Send now requests to one contact or a group may dispatch. Scheduled delivery is controlled separately."
+          : "Eligible future and active recurring messages may dispatch when due. Individual delivery is controlled separately."
+        : channel === "individual"
+          ? "Send now is blocked. Drafts and scheduled delivery are unchanged."
+          : "Future and recurring delivery is blocked. Send now is unchanged.";
+    const latest = control.audit?.find((item) => item.channel === channel);
+    $(`#${channel}-control-audit`).textContent = latest
+      ? `Last turned ${latest.new_enabled ? "on" : "off"} by ${latest.changed_by || "an AMG CRM admin"} · ${formatDateTime(latest.changed_at)}`
+      : `No ${label.toLowerCase()} control changes have been recorded.`;
+    const button = document.querySelector(`[data-toggle-channel="${channel}"]`);
+    button.textContent = `Turn ${label} ${enabled ? "OFF" : "ON"}`;
+    button.disabled = Boolean(state.dispatchBusy) || (!enabled && (!state.storage_verified || !state.transport?.verified || state.transport?.emergency_disabled));
+  }
 }
 
-async function setDispatchEnabled(enabled) {
+function openDispatchConfirmation(channel) {
   if (state.dispatchBusy) return;
-  state.dispatchBusy = true;
+  const label = channel === "individual" ? "Individual Texts" : "Scheduled Texts";
+  const enabled = Boolean(state.dispatch_control?.[`${channel}_enabled`]);
+  const nextEnabled = !enabled;
+  state.pendingDispatchChange = { channel, enabled: nextEnabled };
+  $("#delivery-control-confirm-title").textContent = `Turn ${label} ${nextEnabled ? "ON" : "OFF"}?`;
+  $("#delivery-control-confirm-copy").textContent = channel === "individual"
+    ? nextEnabled
+      ? "Confirmed Send now requests to one contact or a group may deliver immediately through the approved AMG number. Scheduled delivery stays unchanged."
+      : "New Send now requests will be blocked immediately. Scheduled delivery stays unchanged."
+    : nextEnabled
+      ? "Eligible future one-time messages and active weekly reminders may deliver when due. Individual delivery stays unchanged."
+      : "Future and recurring delivery will stop immediately. Individual delivery stays unchanged.";
+  $("#delivery-control-confirm-warning").textContent = nextEnabled
+    ? channel === "individual"
+      ? "This control does not send anything by itself. Each direct or group message still requires its own final Send now confirmation."
+      : "This control does not activate draft reminders. Incomplete audiences, missing links, consent and opt-outs remain enforced."
+    : "A provider request already accepted cannot be recalled. No failed or uncertain message is retried automatically.";
+  $("#confirm-delivery-control").textContent = `Turn ${label} ${nextEnabled ? "ON" : "OFF"}`;
+  $("#delivery-control-error").textContent = "";
+  $("#delivery-control-dialog").showModal();
+}
+
+async function setDispatchChannel(channel, enabled) {
+  if (state.dispatchBusy) return;
+  state.dispatchBusy = channel;
   renderDispatchControl();
-  const error = $("#enable-sending-error");
+  const error = $("#delivery-control-error");
   error.textContent = "";
+  $("#delivery-loading").hidden = false;
+  $("#app").setAttribute("aria-busy", "true");
   try {
-    await api({ action: "set_dispatch_enabled", enabled, expectedVersion: state.dispatch_control.version });
-    if ($("#enable-sending-dialog").open) $("#enable-sending-dialog").close();
-    await load();
-    toast(enabled ? "Sending enabled." : "Sending disabled immediately.");
-  } catch (reason) {
-    error.textContent = reason.message;
-    if (enabled) error.focus(); else toast(reason.message);
-    await load().catch(() => {});
+    let result;
+    try {
+      result = await api({ action: "set_dispatch_channel", channel, enabled, expectedVersion: state.dispatch_control.version });
+    } catch (reason) {
+      error.textContent = reason.message;
+      error.focus();
+      await load().catch(() => {});
+      return;
+    }
+    if (result.dispatch_control) state.dispatch_control = result.dispatch_control;
+    if ($("#delivery-control-dialog").open) $("#delivery-control-dialog").close();
+    state.pendingDispatchChange = null;
+    const label = channel === "individual" ? "Individual Texts" : "Scheduled Texts";
+    try {
+      await load();
+      toast(`${label} turned ${enabled ? "on" : "off"}.`);
+    } catch {
+      renderDispatchControl();
+      toast(`${label} changed, but the page could not refresh. Reload before making another change.`);
+    }
   } finally {
     state.dispatchBusy = false;
+    $("#delivery-loading").hidden = true;
+    $("#app").removeAttribute("aria-busy");
     renderDispatchControl();
   }
 }
@@ -189,7 +289,7 @@ async function setRecurringStatus(id, status) {
   if (!reminder) return;
   const activating = status === "active";
   if (!window.confirm(activating
-    ? `Activate ${reminder.name}? Occurrences can send only when the separate global sending switch is also on.`
+    ? `Activate ${reminder.name}? Occurrences can send only when Scheduled Texts are also on.`
     : `Pause ${reminder.name}? Future occurrences will not be created.`)) return;
   state.recurringStatusBusy = true;
   try {
@@ -293,11 +393,11 @@ function updateRecipientNote() {
       : eligible ? `${target.eligible_count} opted-in member${target.eligible_count === 1 ? "" : "s"} will receive separate messages.` : "This group has no opted-in members and cannot receive a text.";
   $("#schedule-message").disabled = Boolean(target && !eligible);
   const sendNow = $("#send-now");
-  const immediateReady = Boolean(target && eligible && state.dispatch_control?.enabled && state.storage_verified &&
+  const immediateReady = Boolean(target && eligible && state.dispatch_control?.individual_enabled && state.storage_verified &&
     state.transport?.verified && state.transport?.enabled && !state.transport?.emergency_disabled && !state.messageBusy);
   sendNow.disabled = !immediateReady;
   sendNow.title = immediateReady ? "Send immediately through the approved AMG Quo number."
-    : !state.dispatch_control?.enabled ? "Enable the global sending control before using Send now."
+    : !state.dispatch_control?.individual_enabled ? "Turn Individual Texts on before using Send now."
       : "Choose an eligible opted-in recipient and verify the delivery connection.";
 }
 
@@ -446,9 +546,9 @@ function openSendNowConfirmation() {
     $("#composer-error").textContent = "Choose an eligible opted-in recipient before sending.";
     return;
   }
-  if (!state.dispatch_control?.enabled || !state.storage_verified || !state.transport?.verified ||
+  if (!state.dispatch_control?.individual_enabled || !state.storage_verified || !state.transport?.verified ||
     !state.transport?.enabled || state.transport?.emergency_disabled) {
-    $("#composer-error").textContent = "Send now is unavailable until the verified delivery connection and global sending control are on.";
+    $("#composer-error").textContent = "Send now is unavailable until the verified delivery connection and Individual Texts are on.";
     return;
   }
   const count = type === "individual" ? 1 : target.eligible_count;
@@ -496,16 +596,26 @@ async function sendMessageNow(event) {
 
 $("#login-form").addEventListener("submit", async (event) => {
   event.preventDefault();
+  if (startupBusy) return;
   $("#login-error").textContent = "";
+  $("#login-submit").disabled = true;
   try {
     if (!authClient) throw new Error("Sign-in service is still loading. Try again in a moment.");
     const { error } = await authClient.auth.signInWithPassword({ email: $("#login-email").value, password: $("#login-password").value });
     if (error) throw error;
-    location.reload();
+    await verifyAdminSession();
   }
   catch (error) { $("#login-error").textContent = error.message || "Sign in failed."; }
+  finally { $("#login-submit").disabled = !authClient; }
 });
-$("#sign-out").addEventListener("click", async () => { await authClient.auth.signOut(); location.reload(); });
+$("#sign-out").addEventListener("click", async () => {
+  if (startupBusy) return;
+  showStartup("Signing out securely…");
+  await authClient.auth.signOut();
+  showLogin();
+});
+$("#startup-retry").addEventListener("click", () => authClient ? verifyAdminSession() : init());
+$("#startup-sign-in").addEventListener("click", () => showLogin());
 $("#new-message").addEventListener("click", () => openComposer());
 $("#add-contact").addEventListener("click", () => openContact());
 $("#contact-search").addEventListener("input", (event) => { state.search = event.target.value; renderContacts(); });
@@ -517,11 +627,16 @@ $("#send-now").addEventListener("click", openSendNowConfirmation);
 $("#composer-form").addEventListener("submit", (event) => { event.preventDefault(); saveMessage("scheduled"); });
 $("#send-now-form").addEventListener("submit", sendMessageNow);
 $("#recurring-form").addEventListener("submit", saveRecurring);
-$("#toggle-sending").addEventListener("click", () => {
-  if (state.dispatch_control.enabled) setDispatchEnabled(false);
-  else { $("#enable-sending-error").textContent = ""; $("#enable-sending-dialog").showModal(); }
+document.querySelectorAll("[data-toggle-channel]").forEach((button) =>
+  button.addEventListener("click", () => openDispatchConfirmation(button.dataset.toggleChannel)));
+$("#delivery-control-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const change = state.pendingDispatchChange;
+  if (change) setDispatchChannel(change.channel, change.enabled);
 });
-$("#enable-sending-form").addEventListener("submit", (event) => { event.preventDefault(); setDispatchEnabled(true); });
+$("#delivery-control-dialog").addEventListener("close", () => {
+  if (!state.dispatchBusy) state.pendingDispatchChange = null;
+});
 $("#prev-week").addEventListener("click", () => { state.week = new Date(state.week.getFullYear(), state.week.getMonth(), state.week.getDate() - 7); renderCalendar(); });
 $("#next-week").addEventListener("click", () => { state.week = new Date(state.week.getFullYear(), state.week.getMonth(), state.week.getDate() + 7); renderCalendar(); });
 $("#today").addEventListener("click", () => { state.week = new Date(); renderCalendar(); });
@@ -570,6 +685,11 @@ async function init() {
   const previewParams = new URLSearchParams(location.search);
   const localPreview = ["127.0.0.1", "localhost"].includes(location.hostname) && previewParams.has("preview");
   if (localPreview) {
+    const previewMode = previewParams.get("preview");
+    if (previewMode === "loading") { showStartup(); return; }
+    if (previewMode === "verification-error") { showStartupError("The secure session could not be verified. Retry verification or return to sign in."); return; }
+    if (previewMode === "login") { showLogin("Your session expired. Sign in again."); return; }
+    $("#startup-view").hidden = true;
     $("#auth-view").hidden = true;
     $("#app").hidden = false;
     Object.assign(state, {
@@ -579,15 +699,21 @@ async function init() {
         { id: "preview-thursday", name: "BOM Thursday Reminder", body: "Good morning, AMG! Tonight’s BOM starts at 7 PM.", target_group_id: null, target_group_name: null, zoom_url: null, meeting_url_required: false, timezone: "America/New_York", local_time: "11:00:00", weekdays: [4], start_date: "2026-10-01", status: "draft", idempotency_key: "00000000-0000-4000-8000-000000000011" },
         { id: "preview-friday", name: "BOM Saturday Reminder", body: "Good evening, AMG! Tomorrow’s BOM starts at 9 AM.", target_group_id: null, target_group_name: null, zoom_url: null, meeting_url_required: false, timezone: "America/New_York", local_time: "21:00:00", weekdays: [5], start_date: "2026-10-01", status: "draft", idempotency_key: "00000000-0000-4000-8000-000000000012" },
       ],
-      transport: { provider: "Quo", configured: true, verified: true, enabled: false, emergency_disabled: false },
+      transport: { provider: "Quo", configured: true, verified: true,
+        enabled: previewParams.has("individual-on") || previewParams.has("scheduled-on"), emergency_disabled: false },
       storage_verified: !previewParams.has("storage-off"),
-      dispatch_control: { enabled: false, version: 1, changed_at: null, changed_by: null, audit: [] },
+      dispatch_control: {
+        individual_enabled: previewParams.has("individual-on"),
+        scheduled_enabled: previewParams.has("scheduled-on"),
+        version: 1, changed_at: null, changed_by: null, audit: [],
+      },
       admin_invitations: [],
     });
     render();
     return;
   }
   try {
+    showStartup();
     const response = await fetch("/api/admin/config", { headers: { accept: "application/json" } });
     const config = await response.json();
     if (!response.ok) throw new Error(config.error || "CRM backend is not configured.");
@@ -595,15 +721,9 @@ async function init() {
       auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
     });
     $("#login-submit").disabled = false;
-    const { data } = await authClient.auth.getUser();
-    if (!data.user) return;
-    await load();
-    $("#auth-view").hidden = true;
-    $("#app").hidden = false;
+    await verifyAdminSession();
   } catch (error) {
-    $("#login-error").textContent = error.message === "AMG CRM admin access required."
-      ? "This account does not have AMG CRM admin access."
-      : error.message;
+    showStartupError(error.message || "AMG could not start secure verification. Retry when your connection is ready.");
   }
 }
 

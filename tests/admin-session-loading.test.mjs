@@ -11,17 +11,22 @@ assert.ok(start >= 0 && end > start, "session-loading production functions must 
 const production = `let authClient=this.authClient;let startupBusy=false;const $=this.lookup;const load=this.load;${source.slice(start, end)}\nthis.verifyAdminSession=verifyAdminSession;`;
 
 function setup({ user = { id: "admin" }, authError = null, loadImpl = async () => {} } = {}) {
+  let signOutCalls = 0;
+  const signOutOptions = [];
   const fields = Object.fromEntries([
     "#startup-view", "#auth-view", "#app", "#startup-title", "#startup-status",
     "#startup-error-actions", "#login-error",
   ].map((selector) => [selector, { hidden: selector !== "#startup-view", textContent: "" }]));
   const context = {
-    authClient: { auth: { getUser: async () => ({ data: { user }, error: authError }) } },
+    authClient: { auth: {
+      getUser: async () => ({ data: { user }, error: authError }),
+      signOut: async (options) => { signOutCalls += 1; signOutOptions.push(options); return { error: null }; },
+    } },
     lookup: (selector) => fields[selector],
     load: loadImpl,
   };
   vm.runInNewContext(production, context, { filename: "src/admin.mjs:session-loading" });
-  return { ...context, fields };
+  return { ...context, fields, signOutOptions, get signOutCalls() { return signOutCalls; } };
 }
 
 test("HTML starts on the branded AMG verification page without flashing login or dashboard", () => {
@@ -73,6 +78,7 @@ test("a fresh in-app browser without a Supabase session shows sign-in instead of
   const app = setup({ user: null, authError: missing, loadImpl: async () => { loads += 1; } });
   await app.verifyAdminSession();
   assert.equal(loads, 0);
+  assert.equal(app.signOutCalls, 0);
   assert.equal(app.fields["#startup-view"].hidden, true);
   assert.equal(app.fields["#auth-view"].hidden, false);
   assert.equal(app.fields["#app"].hidden, true);
@@ -87,4 +93,65 @@ test("similarly worded invalid-token errors are not classified as a missing sess
   assert.equal(app.fields["#auth-view"].hidden, true);
   assert.equal(app.fields["#app"].hidden, true);
   assert.equal(app.fields["#startup-title"].textContent, "Verification paused");
+  assert.equal(app.signOutCalls, 0);
+});
+
+test("invalid stored refresh token is cleared and returns to sign in", async () => {
+  const authError = Object.assign(new Error("Invalid Refresh Token: Refresh Token Not Found"), {
+    code: "refresh_token_not_found",
+  });
+  const app = setup({ authError });
+  await app.verifyAdminSession();
+  assert.equal(app.signOutCalls, 1);
+  assert.equal(app.signOutOptions[0].scope, "local");
+  assert.equal(app.fields["#startup-view"].hidden, true);
+  assert.equal(app.fields["#auth-view"].hidden, false);
+  assert.equal(app.fields["#app"].hidden, true);
+  assert.equal(app.fields["#login-error"].textContent, "Your saved session expired. Sign in again.");
+});
+
+test("expired session discovered during initial CRM load also clears only local state", async () => {
+  const app = setup({ loadImpl: async () => { throw Object.assign(new Error("Stored token is invalid"), { code: "refresh_token_invalid" }); } });
+  await app.verifyAdminSession();
+  assert.equal(app.signOutCalls, 1);
+  assert.equal(app.signOutOptions[0].scope, "local");
+  assert.equal(app.fields["#app"].hidden, true);
+  assert.equal(app.fields["#auth-view"].hidden, false);
+  assert.equal(app.fields["#login-error"].textContent, "Your saved session expired. Sign in again.");
+});
+
+const apiStart = source.indexOf("async function api(");
+const apiEnd = source.indexOf("\nfunction toast(", apiStart);
+assert.ok(apiStart >= 0 && apiEnd > apiStart);
+function apiHarness(session, fetchImpl) {
+  const context = { authClient: { auth: { getSession: async () => session } }, fetch: fetchImpl };
+  vm.runInNewContext(`${source.slice(apiStart, apiEnd)}\nthis.request=api;`, context);
+  return context.request;
+}
+
+test("CRM requests surface session retrieval errors before reading history or submitting a write", async () => {
+  const error = Object.assign(new Error("Refresh token is invalid"), { code: "refresh_token_invalid" });
+  let fetched = 0;
+  const request = apiHarness({ data: { session: { access_token: "synthetic-stale" } }, error }, async () => { fetched += 1; });
+  for (const body of [null, { action: "send_message_now" }]) {
+    await assert.rejects(request(body, { query: new URLSearchParams({ conversationContactId: "synthetic-contact" }) }), (actual) => actual === error);
+  }
+  assert.equal(fetched, 0);
+});
+
+test("valid restored sessions preserve authenticated conversation query and cancellation signal", async () => {
+  const signal = new AbortController().signal;
+  const query = new URLSearchParams({ conversationContactId: "synthetic-contact", pageToken: "opaque/+&" });
+  let calls = 0;
+  const request = apiHarness({ data: { session: { access_token: "synthetic-only" } }, error: null }, async (url, init) => {
+    calls += 1;
+    assert.equal(url, `/api/admin/crm?${query}`);
+    assert.equal(init.signal, signal);
+    assert.equal(init.method, "GET");
+    assert.equal(init.headers.authorization, "Bearer synthetic-only");
+    assert.equal(init.body, undefined);
+    return { ok: true, json: async () => ({ messages: [] }) };
+  });
+  assert.deepEqual(await request(null, { query, signal }), { messages: [] });
+  assert.equal(calls, 1);
 });

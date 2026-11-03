@@ -15,7 +15,8 @@ const formatDateTime = (value) => value ? new Intl.DateTimeFormat("en-US", { dat
 
 async function api(body, { query, signal } = {}) {
   if (!authClient) throw new Error("Sign in to load conversation history and use the CRM.");
-  const { data: sessionData } = await authClient.auth.getSession();
+  const { data: sessionData, error: sessionError } = await authClient.auth.getSession();
+  if (sessionError) throw sessionError;
   const token = sessionData.session?.access_token;
   if (!token) throw new Error("Sign in required.");
   const response = await fetch(`/api/admin/crm${query ? `?${query}` : ""}`, {
@@ -68,6 +69,13 @@ function showLogin(message = "") {
   $("#login-error").textContent = message;
 }
 
+function isExpiredSessionError(error) {
+  const code = String(error?.code || "").toLowerCase();
+  const message = String(error?.message || "").toLowerCase();
+  return ["refresh_token_not_found", "refresh_token_already_used", "refresh_token_invalid"].includes(code)
+    || /invalid refresh token|refresh token.*not found|auth session missing|session.*expired|sign in required/.test(message);
+}
+
 async function verifyAdminSession() {
   if (startupBusy) return;
   startupBusy = true;
@@ -92,6 +100,9 @@ async function verifyAdminSession() {
   } catch (error) {
     if (error.message === "AMG CRM admin access required.") {
       showLogin("This account does not have AMG CRM admin access.");
+    } else if (isExpiredSessionError(error)) {
+      await authClient.auth.signOut({ scope: "local" }).catch(() => {});
+      showLogin("Your saved session expired. Sign in again.");
     } else {
       showStartupError(error.message || "AMG could not verify this session. Retry when your connection is ready.");
     }

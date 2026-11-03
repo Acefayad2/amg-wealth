@@ -31,7 +31,8 @@ export default async function handler(req: Request, _context: Context) {
         apiKey: Netlify.env.get("QUO_API_KEY"),
         fromNumber: Netlify.env.get("QUO_FROM_NUMBER"),
         phoneNumberId: Netlify.env.get("QUO_PHONE_NUMBER_ID"),
-        enabled: Boolean((dispatchControl as { enabled?: boolean })?.enabled) && !emergencyDisabled,
+        enabled: Boolean((dispatchControl as { individual_enabled?: boolean; scheduled_enabled?: boolean })?.individual_enabled
+          || (dispatchControl as { individual_enabled?: boolean; scheduled_enabled?: boolean })?.scheduled_enabled) && !emergencyDisabled,
       });
       return json({ ...(data as Record<string, unknown>), dispatch_control: dispatchControl, scheduler_events: schedulerEvents,
         admin_invitations: adminInvitations,
@@ -42,7 +43,9 @@ export default async function handler(req: Request, _context: Context) {
     verifySameOrigin(req);
     const input = await req.json() as Record<string, unknown>;
 
-    if (input.action === "set_dispatch_enabled") {
+    if (input.action === "set_dispatch_channel") {
+      const channel = input.channel;
+      if (channel !== "individual" && channel !== "scheduled") throw new Error("Sending channel is invalid.");
       if (typeof input.enabled !== "boolean") throw new Error("Sending state is invalid.");
       const expectedVersion = Number(input.expectedVersion);
       if (!Number.isSafeInteger(expectedVersion) || expectedVersion < 1) throw new Error("Sending state version is invalid.");
@@ -59,8 +62,8 @@ export default async function handler(req: Request, _context: Context) {
         });
         if (!verified.verified) throw Object.assign(new Error("The approved AMG Quo sender is not verified."), { status: 503 });
       }
-      const { data, error } = await client.rpc("amg_crm_set_dispatch_enabled", {
-        p_enabled: input.enabled, p_expected_version: expectedVersion,
+      const { data, error } = await client.rpc("amg_crm_set_dispatch_channel", {
+        p_channel: channel, p_enabled: input.enabled, p_expected_version: expectedVersion,
       });
       if (error) rpcError(error);
       return json({ dispatch_control: data });

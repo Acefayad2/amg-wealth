@@ -10,7 +10,16 @@
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
-  <div id="auth-view" class="auth-view">
+  <div id="startup-view" class="auth-view" role="status" aria-live="polite" aria-atomic="true">
+    <div class="auth-card startup-card">
+      <a href="/" class="brand"><img class="startup-logo" src="/assets/logo-mark.webp" alt="" width="64" height="64"><span>ANOINTED MONEY GROUP</span></a>
+      <p class="eyebrow">Secure admin portal</p>
+      <h1 id="startup-title">Verifying access</h1>
+      <p id="startup-status" class="muted">Restoring your secure AMG session and checking CRM admin access…</p>
+      <div id="startup-error-actions" class="startup-actions" hidden><button id="startup-retry" class="primary" type="button">Retry verification</button><button id="startup-sign-in" class="secondary" type="button">Return to sign in</button></div>
+    </div>
+  </div>
+  <div id="auth-view" class="auth-view" hidden>
     <div class="auth-card">
       <a href="/" class="brand"><img src="/assets/logo-mark.webp" alt="" width="34" height="34"><span>ANOINTED MONEY GROUP</span></a>
       <p class="eyebrow">Restricted workspace</p>
@@ -43,9 +52,15 @@
         <button id="new-message" class="primary">New message</button>
       </header>
       <section id="transport-banner" class="transport-banner" aria-live="polite"></section>
-      <section class="transport-control" aria-labelledby="sending-control-title">
-        <div><p class="eyebrow">Delivery control</p><h2 id="sending-control-title">Sending disabled</h2><p id="sending-control-detail" class="muted"></p><p id="sending-control-audit" class="audit-note"></p></div>
-        <button id="toggle-sending" class="secondary" type="button">Enable sending</button>
+      <section class="transport-controls" aria-label="Text delivery controls">
+        <article class="transport-control" data-delivery-card="individual" aria-labelledby="individual-control-title">
+          <div><p class="eyebrow">Immediate delivery</p><h2 id="individual-control-title">Individual Texts OFF</h2><p id="individual-control-detail" class="muted"></p><p id="individual-control-audit" class="audit-note"></p></div>
+          <button class="secondary" type="button" data-toggle-channel="individual">Turn Individual Texts ON</button>
+        </article>
+        <article class="transport-control" data-delivery-card="scheduled" aria-labelledby="scheduled-control-title">
+          <div><p class="eyebrow">Automated delivery</p><h2 id="scheduled-control-title">Scheduled Texts OFF</h2><p id="scheduled-control-detail" class="muted"></p><p id="scheduled-control-audit" class="audit-note"></p></div>
+          <button class="secondary" type="button" data-toggle-channel="scheduled">Turn Scheduled Texts ON</button>
+        </article>
       </section>
       <section class="queue-card admin-access-card" aria-labelledby="admin-access-title">
         <div class="section-heading"><div><p class="eyebrow">Access</p><h2 id="admin-access-title">Admin invitations</h2></div></div>
@@ -111,19 +126,19 @@
       <label>Message<textarea id="recurring-body" name="recurring-body" maxlength="1600" rows="7" autocomplete="off" required></textarea></label>
       <div class="recipient-grid"><label>Send time<input id="recurring-time" name="recurring-time" type="time" autocomplete="off"><span class="field-meta">Leave blank while the time is undecided.</span></label><label>Timezone<input id="recurring-timezone" name="recurring-timezone" value="America/New_York" autocomplete="off" readonly></label></div>
       <p id="recurring-days" class="recipient-note"></p>
-      <p class="recipient-note warning">This remains an inactive draft until its audience, any required meeting URL, and explicit activation are complete. The global sending control does not activate this reminder.</p>
+      <p class="recipient-note warning">This remains an inactive draft until its audience, any required meeting URL, and explicit activation are complete. The Scheduled Texts control does not activate this reminder.</p>
       <p id="recurring-error" class="form-error" role="alert" tabindex="-1"></p>
       <div class="dialog-actions"><button type="button" class="secondary" data-close="recurring-dialog">Cancel</button><button type="submit" class="primary">Save inactive draft</button></div>
     </form>
   </dialog>
 
-  <dialog id="enable-sending-dialog" class="dialog">
-    <form id="enable-sending-form" method="dialog" class="dialog-card compact">
-      <div class="dialog-heading"><div><p class="eyebrow">Confirm delivery control</p><h2>Enable text sending?</h2></div><button type="button" class="close" data-close="enable-sending-dialog" aria-label="Close">×</button></div>
-      <p>Confirmed Send now requests and eligible scheduled messages may send while this control is on. Opt-outs are checked again before every recipient.</p>
-      <p class="recipient-note warning">Incomplete reminders remain blocked. AMG Book Club still needs an approved audience and Zoom URL, and every audience must contain verified opted-in contacts.</p>
-      <p id="enable-sending-error" class="form-error" role="alert" tabindex="-1"></p>
-      <div class="dialog-actions"><button type="button" class="secondary" data-close="enable-sending-dialog">Cancel</button><button id="confirm-enable-sending" type="submit" class="primary">Enable sending</button></div>
+  <dialog id="delivery-control-dialog" class="dialog">
+    <form id="delivery-control-form" method="dialog" class="dialog-card compact">
+      <div class="dialog-heading"><div><p class="eyebrow">Confirm delivery control</p><h2 id="delivery-control-confirm-title">Change delivery?</h2></div><button type="button" class="close" data-close="delivery-control-dialog" aria-label="Close">×</button></div>
+      <p id="delivery-control-confirm-copy"></p>
+      <p id="delivery-control-confirm-warning" class="recipient-note warning"></p>
+      <p id="delivery-control-error" class="form-error" role="alert" tabindex="-1"></p>
+      <div class="dialog-actions"><button type="button" class="secondary" data-close="delivery-control-dialog">Cancel</button><button id="confirm-delivery-control" type="submit" class="primary">Confirm change</button></div>
     </form>
   </dialog>
 
@@ -143,6 +158,9 @@
   </dialog>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="delivery-loading" class="delivery-loading" role="status" aria-live="assertive" aria-atomic="true" hidden>
+    <div class="delivery-loading-card"><img src="/assets/logo-mark.webp" alt="" width="58" height="58"><strong>Updating AMG delivery controls…</strong><span>Please keep this page open.</span></div>
+  </div>
   <script type="module" src="/admin/admin.js"></script>
 </body>
 </html>

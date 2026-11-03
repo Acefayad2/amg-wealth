@@ -178,17 +178,35 @@ test("dispatch control is fail-closed, admin-only, audited, and concurrency-safe
   assert.doesNotMatch(sql, /amg_private\.(?:notification|cft_|push_|role_|ai_)/);
 });
 
-test("dispatch implementation rechecks the global switch before every recipient", () => {
+test("separate delivery controls are admin-only, audited, versioned, and fail old clients closed", () => {
+  const sql = fs.readFileSync(new URL("../database/migrations/20261103012000_separate_delivery_controls.sql", import.meta.url), "utf8");
+  assert.match(sql, /individual_enabled BOOLEAN NOT NULL DEFAULT FALSE/);
+  assert.match(sql, /scheduled_enabled BOOLEAN NOT NULL DEFAULT FALSE/);
+  assert.match(sql, /p_channel NOT IN \('individual', 'scheduled'\)/);
+  assert.match(sql, /current_version <> p_expected_version/);
+  assert.match(sql, /WHERE singleton = TRUE AND version = current_version/);
+  assert.match(sql, /INSERT INTO amg_private\.crm_dispatch_audit[\s\S]*channel/);
+  assert.match(sql, /PERFORM amg_private\.require_crm_admin\(\)/);
+  assert.match(sql, /Refresh the dashboard to manage individual and scheduled delivery separately/);
+  assert.match(sql, /GRANT EXECUTE ON FUNCTION public\.amg_crm_set_dispatch_channel\(TEXT,BOOLEAN,BIGINT\) TO authenticated/);
+  assert.doesNotMatch(sql, /ALTER\s+.*auth\.|UPDATE\s+auth\./i);
+});
+
+test("dispatch implementation rechecks the correct channel before every recipient", () => {
   const source = fs.readFileSync(new URL("../integrations/quo-dispatch.mts", import.meta.url), "utf8");
   assert.match(source, /AMG_QUO_EMERGENCY_DISABLE/);
-  assert.match(source, /SELECT enabled FROM amg_private\.crm_dispatch_control/);
-  assert.ok((source.match(/!await dispatchEnabled/g) || []).length >= 2);
+  assert.match(source, /WHEN 'individual' THEN individual_enabled/);
+  assert.match(source, /WHEN 'scheduled' THEN scheduled_enabled/);
+  assert.match(source, /deliver\(item, apiKey, from, phoneNumberId, "individual"\)/);
+  assert.match(source, /deliver\(item, apiKey, from, phoneNumberId, "scheduled"\)/);
+  assert.ok((source.match(/!await dispatchEnabled/g) || []).length >= 4);
   assert.match(source, /consent_status !== "opted_in"/);
   assert.match(source, /providerOptOut/);
   assert.match(source, /first_outbound_accepted_at=COALESCE/);
   assert.match(source, /Promise\.allSettled\(deliveries\.map/);
   const handler = fs.readFileSync(new URL("../netlify/functions/admin-crm.mts", import.meta.url), "utf8");
-  assert.match(handler, /input\.action === "set_dispatch_enabled"/);
+  assert.match(handler, /input\.action === "set_dispatch_channel"/);
+  assert.match(handler, /channel !== "individual" && channel !== "scheduled"/);
   assert.match(handler, /if \(!verified\.verified\)/);
   assert.match(handler, /if \(!await verifyCrmStorage\(\)\)/);
   assert.match(handler, /storage_verified: await verifyCrmStorage\(\)/);
@@ -196,11 +214,14 @@ test("dispatch implementation rechecks the global switch before every recipient"
   assert.match(handler, /error\.code === "40001"[\s\S]*status: 409/);
   assert.match(handler, /\[401, 403, 409, 503\]/);
   const html = fs.readFileSync(new URL("../admin/index.html", import.meta.url), "utf8");
-  assert.match(html, /Confirmed Send now requests and eligible scheduled messages may send/);
-  assert.match(html, /Incomplete reminders remain blocked/);
+  assert.match(html, /Individual Texts OFF/);
+  assert.match(html, /Scheduled Texts OFF/);
+  assert.match(html, /id="delivery-loading"[\s\S]*logo-mark\.webp/);
   const adminSource = fs.readFileSync(new URL("../src/admin.mjs", import.meta.url), "utf8");
   assert.match(adminSource, /!state\.storage_verified/);
-  assert.match(adminSource, /scheduler storage is unavailable/i);
+  assert.match(adminSource, /delivery storage is unavailable/i);
+  assert.match(adminSource, /pendingDispatchChange/);
+  assert.match(adminSource, /await load\(\)/);
 });
 
 test("scheduled worker is serialized, bounded, and refuses stale backlogs", () => {
@@ -212,7 +233,7 @@ test("scheduled worker is serialized, bounded, and refuses stale backlogs", () =
   assert.match(source, /scheduled_for < NOW\(\) - INTERVAL '10 minutes'/);
   assert.match(source, /updated_at < NOW\(\) - INTERVAL '15 minutes'/);
   assert.match(source, /provider outcome remains uncertain and was not retried/);
-  assert.match(source, /CRM sending is off; no reminders were materialized/);
+  assert.match(source, /Scheduled text delivery is off; no reminders were materialized/);
   assert.ok((source.match(/!await dispatchEnabled/g) || []).length >= 3);
   assert.match(source, /status IN \('scheduled','sending'\) AND scheduled_for < NOW\(\) - INTERVAL '10 minutes'/);
   assert.match(source, /AbortSignal\.timeout\(PROVIDER_TIMEOUT_MS\)/);
@@ -227,10 +248,10 @@ test("ordinary messages use a distinct immediate-send path with duplicate and co
   assert.match(html, /id="send-now"[\s\S]*>Send now</);
   assert.match(html, /Schedule for later[\s\S]*Weekly repeats are managed in AMG reminders/);
   assert.match(html, /id="send-now-dialog"[\s\S]*cannot be recalled/);
-  assert.match(html, /Confirmed Send now requests and eligible scheduled messages/);
+  assert.match(html, /Individual Texts OFF/);
   assert.match(admin, /action: "send_message_now"/);
   assert.match(admin, /if \(state\.messageBusy\) return/);
-  assert.match(admin, /state\.dispatch_control\?\.enabled[\s\S]*state\.storage_verified[\s\S]*state\.transport\?\.verified/);
+  assert.match(admin, /state\.dispatch_control\?\.individual_enabled[\s\S]*state\.storage_verified[\s\S]*state\.transport\?\.verified/);
   assert.match(handler, /input\.action === "send_message_now"/);
   assert.match(handler, /getAuthenticatedUser[\s\S]*actorId: user\.id/);
   assert.match(handler, /if \(!await verifyCrmStorage\(\)\)/);
@@ -238,7 +259,8 @@ test("ordinary messages use a distinct immediate-send path with duplicate and co
   assert.match(dispatch, /status='sending',scheduled_for=NULL/);
   assert.match(dispatch, /ON CONFLICT \(idempotency_key\) DO NOTHING/);
   assert.match(dispatch, /already submitted and was not repeated/);
-  assert.match(dispatch, /Only an untouched draft or scheduled message can use Send now/);
+  assert.match(dispatch, /Only an untouched draft can use Send now\. Scheduled messages remain under Scheduled Texts/);
+  assert.match(dispatch, /existing\.rows\[0\]\.status !== "draft"/);
   assert.match(dispatch, /quo_message_id IS NOT NULL OR sent_at IS NOT NULL/);
   assert.ok((dispatch.match(/!await dispatchEnabled/g) || []).length >= 4);
   assert.match(admin, /state\.messages\.filter\(\(message\) => message\.scheduled_for\)/);
@@ -260,10 +282,10 @@ test("recurring scheduler migration is DST-aware, idempotent, private, and fail-
   assert.doesNotMatch(sql, /UPDATE\s+amg_private\.crm_dispatch_control\s+SET\s+enabled\s*=\s*TRUE/i);
 });
 
-test("admin readiness controls keep activation separate from global sending", () => {
+test("admin readiness controls keep activation separate from scheduled sending", () => {
   const source = fs.readFileSync(new URL("../src/admin.mjs", import.meta.url), "utf8");
   const handler = fs.readFileSync(new URL("../netlify/functions/admin-crm.mts", import.meta.url), "utf8");
-  assert.match(source, /Occurrences can send only when the separate global sending switch is also on/);
+  assert.match(source, /Occurrences can send only when Scheduled Texts are also on/);
   assert.match(source, /Complete the missing readiness items first/);
   assert.match(source, /state\.recurringStatusBusy/);
   assert.match(handler, /input\.action === "set_recurring_status"/);

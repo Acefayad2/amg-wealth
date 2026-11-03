@@ -130,6 +130,15 @@ test("private invitation expiry and SMS copy are twelve hours without weakening 
   const replacement = expiry.slice(expiry.indexOf("CREATE OR REPLACE FUNCTION")).trim();
   assert.equal(replacement, previous.replaceAll("INTERVAL '1 hour'", "INTERVAL '12 hours'"));
   assert.equal((expiry.match(/INTERVAL '12 hours'/g) || []).length, 2);
-  assert.match(inviteFunction, /This link expires in 12 hours and can be used once/);
-  assert.doesNotMatch(inviteFunction, /expires in 1 hour/);
+});
+
+test("new private invitations expire in twenty-four hours and SMS copy matches", () => {
+  const previous = fs.readFileSync(new URL("../database/migrations/20261101153014_admin_invitation_twelve_hour_expiry.sql", import.meta.url), "utf8");
+  const expiry = fs.readFileSync(new URL("../database/migrations/20261103033000_admin_invitation_twenty_four_hour_expiry.sql", import.meta.url), "utf8");
+  const previousFunction = previous.slice(previous.indexOf("CREATE OR REPLACE FUNCTION")).trim();
+  const replacement = expiry.slice(expiry.indexOf("CREATE OR REPLACE FUNCTION")).trim();
+  assert.equal(replacement, previousFunction.replaceAll("INTERVAL '12 hours'", "INTERVAL '24 hours'"));
+  assert.equal((expiry.match(/INTERVAL '24 hours'/g) || []).length, 2);
+  assert.match(inviteFunction, /This link expires in 24 hours and can be used once/);
+  assert.doesNotMatch(inviteFunction, /expires in (?:1|12) hours/);
 });

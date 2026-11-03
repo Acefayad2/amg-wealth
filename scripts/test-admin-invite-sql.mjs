@@ -17,6 +17,7 @@ IF NOT EXISTS(SELECT 1 FROM amg_private.crm_admins WHERE user_id=auth.uid()) THE
 `);
 await db.exec(await fs.readFile(new URL('../database/migrations/20261030163547_admin_invitation_onboarding.sql', import.meta.url), 'utf8'));
 await db.exec(await fs.readFile(new URL('../database/migrations/20261101153014_admin_invitation_twelve_hour_expiry.sql', import.meta.url), 'utf8'));
+await db.exec(await fs.readFile(new URL('../database/migrations/20261103033000_admin_invitation_twenty_four_hour_expiry.sql', import.meta.url), 'utf8'));
 const admin = '11111111-1111-4111-8111-111111111111';
 const user = '22222222-2222-4222-8222-222222222222';
 const token = 'synthetic-invitation-token-for-tests-only';
@@ -26,11 +27,11 @@ await db.exec(`SET test.uid='${admin}'`);
 const one = async (sql, args=[]) => (await db.query(sql,args)).rows[0];
 const prepared = (await one(`SELECT public.amg_crm_prepare_phone_admin_invite('+12025550123',encode(extensions.digest($1,'sha256'),'hex')) AS result`,[token])).result;
 assert.equal(prepared.should_send,true);
-const assertTwelveHours = async (id) => {
+const assertTwentyFourHours = async (id) => {
   const { remaining } = await one(`SELECT extract(epoch from expires_at-now())::float8 AS remaining FROM amg_private.crm_admin_invitations WHERE id=$1`,[id]);
-  assert.ok(remaining > 43190 && remaining <= 43200, `Expected 12-hour expiry, got ${remaining}s`);
+  assert.ok(remaining > 86390 && remaining <= 86400, `Expected 24-hour expiry, got ${remaining}s`);
 };
-await assertTwelveHours(prepared.id);
+await assertTwentyFourHours(prepared.id);
 // A safely failed invitation can be reissued; the old token cannot request codes.
 const reissuedToken = 'synthetic-reissued-invitation-token-only';
 await db.query(`SELECT public.amg_crm_record_phone_admin_invite_result($1,'failed',NULL)`,[prepared.id]);
@@ -85,5 +86,5 @@ await assert.rejects(db.query(`SELECT public.amg_crm_accept_phone_admin_invite($
 assert.equal((await one(`SELECT has_function_privilege('anon','public.amg_crm_claim_admin_otp_delivery(text,uuid,text)','EXECUTE') AS allowed`)).allowed,false);
 assert.equal((await one(`SELECT has_function_privilege('anon','public.amg_crm_prepare_phone_admin_invite(text,text)','EXECUTE') AS allowed`)).allowed,false);
 assert.equal((await one(`SELECT has_function_privilege('authenticated','public.amg_crm_prepare_phone_admin_invite(text,text)','EXECUTE') AS allowed`)).allowed,true);
-console.log('SQL integration: both migrations parse; initial/reissued twelve-hour expiry, expired and replaced token denial, preserved prepare grants; digit-normalized provisioning, binding and verified-email grant; expired/prepared/uncertain resend guard; request quotas; direct-auth denial; durable repeated-hook claims and anonymous-denial checks all passed.');
+console.log('SQL integration: invitation migrations parse; initial/reissued twenty-four-hour expiry, expired and replaced token denial, preserved prepare grants; digit-normalized provisioning, binding and verified-email grant; expired/prepared/uncertain resend guard; request quotas; direct-auth denial; durable repeated-hook claims and anonymous-denial checks all passed.');
 await db.close();

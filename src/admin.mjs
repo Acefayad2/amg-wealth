@@ -74,6 +74,12 @@ async function verifyAdminSession() {
   showStartup();
   try {
     const { data, error } = await authClient.auth.getUser();
+    // A fresh browser has no session to restore. This is the normal sign-in
+    // path, not a transient verification failure. Other failures stay closed.
+    if (error?.name === "AuthSessionMissingError") {
+      showLogin();
+      return;
+    }
     if (error) throw error;
     if (!data.user) {
       showLogin();

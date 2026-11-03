@@ -66,3 +66,25 @@ test("verification failure stays on branded retry state and never reveals dashbo
   assert.equal(app.fields["#startup-status"].textContent, "Network verification failed");
   assert.equal(app.fields["#startup-error-actions"].hidden, false);
 });
+
+test("a fresh in-app browser without a Supabase session shows sign-in instead of verification paused", async () => {
+  let loads = 0;
+  const missing = Object.assign(new Error("Auth session missing!"), { name: "AuthSessionMissingError", status: 400 });
+  const app = setup({ user: null, authError: missing, loadImpl: async () => { loads += 1; } });
+  await app.verifyAdminSession();
+  assert.equal(loads, 0);
+  assert.equal(app.fields["#startup-view"].hidden, true);
+  assert.equal(app.fields["#auth-view"].hidden, false);
+  assert.equal(app.fields["#app"].hidden, true);
+  assert.equal(app.fields["#login-error"].textContent, "");
+});
+
+test("similarly worded invalid-token errors are not classified as a missing session", async () => {
+  const invalid = Object.assign(new Error("Auth session or user missing"), { name: "AuthInvalidTokenResponseError", status: 500 });
+  const app = setup({ user: null, authError: invalid });
+  await app.verifyAdminSession();
+  assert.equal(app.fields["#startup-view"].hidden, false);
+  assert.equal(app.fields["#auth-view"].hidden, true);
+  assert.equal(app.fields["#app"].hidden, true);
+  assert.equal(app.fields["#startup-title"].textContent, "Verification paused");
+});

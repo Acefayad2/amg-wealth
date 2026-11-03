@@ -118,11 +118,12 @@ export default async function handler(req: Request, _context: Context) {
       if (scheduledFor && (!Number.isFinite(scheduledFor.getTime()) || scheduledFor.getTime() <= Date.now())) {
         throw new Error("Scheduled time must be in the future.");
       }
-      const { data, error } = await client.rpc("amg_crm_save_message", {
+      const { data, error } = await client.rpc("amg_crm_save_message_versioned", {
         p_message_id: input.messageId ? requireUuid(input.messageId, "Message") : null,
         p_body: body, p_target_type: targetType, p_target_id: requireUuid(input.targetId, "Recipient"),
         p_status: status, p_scheduled_for: scheduledFor?.toISOString() ?? null,
         p_timezone: input.timezone, p_idempotency_key: requireUuid(input.idempotencyKey, "Request key"),
+        p_expected_updated_at: typeof input.expectedUpdatedAt === "string" ? input.expectedUpdatedAt : null,
       });
       if (error) rpcError(error);
       return json({ id: data }, input.messageId ? 200 : 201);
@@ -147,6 +148,7 @@ export default async function handler(req: Request, _context: Context) {
         timezone: String(input.timezone),
         idempotencyKey: requireUuid(input.idempotencyKey, "Request key"),
         actorId: user.id,
+        personalizeName: targetType === "individual" && input.personalizeName === true,
       });
       return json(result, 200);
     }

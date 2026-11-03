@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, personalizationHint, recurringCalendarEntries, weekCells, weekRangeLabel, zonedDateTimeToUtc } from "../admin/core.mjs";
+import { contactsForGroupContext, defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, personalizationHint, recurringCalendarEntries, scheduleInputValue, weekCells, weekRangeLabel, zonedDateTimeToUtc } from "../admin/core.mjs";
 import { verifyQuoTransport } from "../netlify/functions/_shared/quo.mjs";
 import { isOptOutKeyword, outboundContent, personalizeOutbound, withFirstContactOptOut } from "../integrations/message-content.mjs";
 import { verifyStorageConnection } from "../netlify/functions/_shared/storage.mjs";
@@ -36,6 +36,11 @@ test("schedule defaults one hour ahead on a quarter hour", () => {
   assert.equal(value, "2026-10-27T11:15");
 });
 
+test("scheduled editor formats the saved instant in its configured timezone", () => {
+  assert.equal(scheduleInputValue("2026-11-03T14:30:00.000Z", "America/New_York"), "2026-11-03T09:30");
+  assert.equal(scheduleInputValue("not-a-date", "America/New_York"), "");
+});
+
 test("contact filtering checks names and phone numbers", () => {
   const contacts = [
     { full_name: "Ada Carter", phone: "+12025550123" },
@@ -45,6 +50,17 @@ test("contact filtering checks names and phone numbers", () => {
   assert.deepEqual(filterContacts(contacts, "410"), [contacts[1]]);
   const phoneOnly = { full_name: null, phone: "+13015550111" };
   assert.deepEqual(filterContacts([phoneOnly], "301"), [phoneOnly]);
+});
+
+test("group-context individual choices include only that group's members", () => {
+  const contacts = [
+    { id: "a", group_ids: ["one"] },
+    { id: "b", group_ids: ["two"] },
+    { id: "c", group_ids: ["one", "two"] },
+  ];
+  assert.deepEqual(contactsForGroupContext(contacts, null), contacts);
+  assert.deepEqual(contactsForGroupContext(contacts, "one"), [contacts[0], contacts[2]]);
+  assert.deepEqual(contactsForGroupContext(contacts, "missing"), []);
 });
 
 test("outbound copy personalizes safely and uses a general phone-only greeting", () => {
@@ -58,18 +74,25 @@ test("outbound copy personalizes safely and uses a general phone-only greeting",
   assert.doesNotMatch(personalizeOutbound("Reminder", undefined), /undefined|null/i);
 });
 
-test("composer explains automatic greetings without exposing group member names", () => {
+test("composer keeps name greetings opt-in for individual Send now only", () => {
   assert.equal(
-    personalizationHint("individual", { full_name: "  Jacob Fayad  " }),
-    "Automatic greeting: “Hi Jacob,” will be added at send time. If the message already starts with a supported greeting, that greeting is preserved or personalized instead.",
+    personalizationHint("individual", { full_name: "  Jacob Fayad  " }, false),
+    "No automatic greeting will be added. Your message will be sent exactly as written.",
   );
-  assert.match(personalizationHint("individual", { full_name: "   " }), /“Hello,”/u);
-  assert.match(personalizationHint("individual", { full_name: null }), /“Hello,”/u);
-  const groupHint = personalizationHint("group", { name: "Marketing Directors" });
-  assert.match(groupHint, /“Hi \[first name\],”/u);
-  assert.match(groupHint, /“Hello,”/u);
+  assert.match(personalizationHint("individual", { full_name: "Jacob Fayad" }, true), /“Hi Jacob,”/u);
+  assert.match(personalizationHint("individual", { full_name: "   " }, true), /“Hello,”/u);
+  const groupHint = personalizationHint("group", { name: "Marketing Directors" }, true);
+  assert.match(groupHint, /not added automatically/u);
   assert.doesNotMatch(groupHint, /Jacob|Safinat|Simisola|Zamilah/u);
-  assert.equal(personalizationHint("individual", null), "Choose a recipient to preview the automatic greeting.");
+  assert.match(personalizationHint("individual", null), /optional and off by default/u);
+});
+
+test("outbound content preserves authored text unless individual personalization is explicitly enabled", () => {
+  assert.equal(outboundContent("Call starts at 8.", "Jacob Fayad", false), "Call starts at 8.");
+  assert.equal(outboundContent("Call starts at 8.", "Jacob Fayad", false, true), "Hi Jacob,\n\nCall starts at 8.");
+  assert.equal(outboundContent("Hi Team, this is authored.", "Jacob Fayad", false), "Hi Team, this is authored.");
+  assert.equal(outboundContent("Hi Zamilah! Already personal.", "Jacob Fayad", false, true), "Hi Zamilah! Already personal.");
+  assert.equal(outboundContent("Good morning, AMG! Update.", "Jacob Fayad", false, false), "Good morning, AMG! Update.");
 });
 
 test("first-contact notice is included once in composed content and length is enforced", () => {
@@ -211,8 +234,9 @@ test("dispatch implementation rechecks the correct channel before every recipien
   assert.match(source, /AMG_QUO_EMERGENCY_DISABLE/);
   assert.match(source, /WHEN 'individual' THEN individual_enabled/);
   assert.match(source, /WHEN 'scheduled' THEN scheduled_enabled/);
-  assert.match(source, /deliver\(item, apiKey, from, phoneNumberId, "individual"\)/);
-  assert.match(source, /deliver\(item, apiKey, from, phoneNumberId, "scheduled"\)/);
+  assert.match(source, /deliver\(item, apiKey, from, phoneNumberId, "individual", personalizeName\)/);
+  assert.match(source, /deliver\(item, apiKey, from, phoneNumberId, "scheduled", false\)/);
+  assert.match(source, /input\.targetType === "individual" && input\.personalizeName === true/);
   assert.ok((source.match(/!await dispatchEnabled/g) || []).length >= 4);
   assert.match(source, /consent_status !== "opted_in"/);
   assert.match(source, /providerOptOut/);
@@ -279,6 +303,12 @@ test("ordinary messages use a distinct immediate-send path with duplicate and co
   assert.ok((dispatch.match(/!await dispatchEnabled/g) || []).length >= 4);
   assert.match(admin, /state\.messages\.filter\(\(message\) => message\.scheduled_for\)/);
   assert.match(dispatch, /scheduled_for=NULL/);
+  assert.match(html, /id="personalize-name"[\s\S]*Add a name greeting for this individual Send now message/);
+  assert.match(admin, /personalizeName: \$\("#target-type"\)\.value === "individual" && \$\("#personalize-name"\)\.checked/);
+  const saveBlock = admin.slice(admin.indexOf("async function saveMessage"), admin.indexOf("function openSendNowConfirmation"));
+  assert.doesNotMatch(saveBlock, /personalizeName/);
+  assert.match(handler, /personalizeName: targetType === "individual" && input\.personalizeName === true/);
+  assert.match(dispatch, /const personalizeName = input\.targetType === "individual" && input\.personalizeName === true/);
 });
 
 test("recurring scheduler migration is DST-aware, idempotent, private, and fail-closed", () => {

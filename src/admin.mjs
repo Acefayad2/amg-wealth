@@ -1,8 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
-import { STATUS_LABELS, defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, personalizationHint, recurringCalendarEntries, weekCells, weekRangeLabel } from "../admin/core.mjs";
+import { STATUS_LABELS, contactsForGroupContext, defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, personalizationHint, recurringCalendarEntries, scheduleInputValue, weekCells, weekRangeLabel } from "../admin/core.mjs";
 
 const $ = (selector) => document.querySelector(selector);
-const state = { contacts: [], groups: [], messages: [], recurring_reminders: [], scheduler_events: [], admin_invitations: [], dispatch_control: { individual_enabled: false, scheduled_enabled: false, version: 1, audit: [] }, storage_verified: false, transport: {}, week: new Date(), search: "", draftId: null, messageRequestKey: null, messageBusy: false, contactBusy: false, contactEditVersion: null, recurringDraftId: null, recurringEditSnapshot: null, recurringRequestKey: null, recurringBusy: false, recurringStatusBusy: false, dispatchBusy: false, pendingDispatchChange: null, adminInviteBusy: false };
+const state = { contacts: [], groups: [], messages: [], recurring_reminders: [], scheduler_events: [], admin_invitations: [], dispatch_control: { individual_enabled: false, scheduled_enabled: false, version: 1, audit: [] }, storage_verified: false, transport: {}, week: new Date(), search: "", selectedGroupId: null, composerGroupId: null, draftId: null, messageEditSnapshot: null, messageRequestKey: null, messageBusy: false, pendingScheduleSave: null, contactBusy: false, contactEditVersion: null, recurringDraftId: null, recurringEditSnapshot: null, recurringRequestKey: null, recurringBusy: false, recurringStatusBusy: false, dispatchBusy: false, pendingDispatchChange: null, adminInviteBusy: false };
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 let authClient = null;
 let startupBusy = false;
@@ -305,10 +305,32 @@ async function setRecurringStatus(id, status) {
 
 function renderGroups() {
   $("#groups").innerHTML = state.groups.map((group) => `
-    <button class="group-button" data-compose-group="${group.id}">
+    <button class="group-button" data-view-group="${group.id}">
       <span>${escapeHtml(group.name)}</span><small>${group.eligible_count}/${group.member_count}</small>
     </button>`).join("");
-  document.querySelectorAll("[data-compose-group]").forEach((button) => button.addEventListener("click", () => openComposer("group", button.dataset.composeGroup)));
+  document.querySelectorAll("[data-view-group]").forEach((button) => button.addEventListener("click", () => openGroupMembers(button.dataset.viewGroup)));
+}
+
+function openGroupMembers(id) {
+  const group = state.groups.find((item) => item.id === id);
+  if (!group) return;
+  state.selectedGroupId = id;
+  const members = state.contacts.filter((contact) => contact.group_ids?.includes(id));
+  $("#group-members-title").textContent = group.name;
+  $("#group-members-summary").textContent = `${members.length} member${members.length === 1 ? "" : "s"}; ${group.eligible_count} currently opted in.`;
+  $("#group-members-list").innerHTML = members.length ? members.map((contact) => `
+    <div class="group-member"><div><strong>${escapeHtml(contactLabel(contact))}</strong><span>${escapeHtml(contact.phone)}</span></div><span class="status ${escapeHtml(contact.consent_status)}">${escapeHtml(contact.consent_status.replace("_", " "))}</span></div>`).join("")
+    : '<p class="empty">No contacts are assigned to this group.</p>';
+  $("#group-new-message").disabled = group.eligible_count < 1;
+  $("#group-new-message").title = group.eligible_count < 1 ? "This group has no opted-in recipients." : "Compose a message to this group.";
+  $("#group-members-dialog").showModal();
+}
+
+function composeSelectedGroup() {
+  const id = state.selectedGroupId;
+  if (!id) return;
+  $("#group-members-dialog").close();
+  openComposer("group", id, null, id);
 }
 
 function renderContacts() {
@@ -335,6 +357,7 @@ function renderCalendar() {
   for (const reminder of state.recurring_reminders || []) {
     for (const occurrence of recurringCalendarEntries(reminder, cells)) {
       (grouped[occurrence.dateKey] ||= []).push({
+        recurring_id: reminder.id,
         body: occurrence.body,
         status: "draft",
         target_name: occurrence.name,
@@ -348,12 +371,19 @@ function renderCalendar() {
     const messages = grouped[key] || [];
     const dayName = weekdayNames[date.getDay()];
     const dateLabel = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(date);
-    return `<button class="day${key === today ? " today" : ""}" data-day="${key}">
-      <span class="day-number"><span class="day-weekday">${dayName}</span><span class="day-date">${escapeHtml(dateLabel)}</span></span>
-      ${messages.map((message) => `<span class="calendar-message ${message.status}" title="${escapeHtml(message.body)}">${message.inactive_recurring ? '<strong>Inactive</strong> · ' : ''}${escapeHtml(message.display_time || formatTime(message.scheduled_for))} · ${escapeHtml(message.target_name)}</span>`).join("")}
-    </button>`;
+    return `<div class="day${key === today ? " today" : ""}">
+      <button class="day-number" type="button" data-day="${key}" aria-label="Compose a message for ${escapeHtml(dateLabel)}"><span class="day-weekday">${dayName}</span><span class="day-date">${escapeHtml(dateLabel)}</span></button>
+      ${messages.map((message) => {
+        const content = `${message.inactive_recurring ? '<strong>Inactive series</strong> · ' : ''}${escapeHtml(message.display_time || formatTime(message.scheduled_for))} · ${escapeHtml(message.target_name)}`;
+        if (message.inactive_recurring) return `<button type="button" class="calendar-message ${message.status}" title="${escapeHtml(message.body)}" data-edit-recurring-occurrence="${message.recurring_id}">${content}</button>`;
+        if (["draft", "scheduled"].includes(message.status)) return `<button type="button" class="calendar-message ${message.status}" title="${escapeHtml(message.body)}" data-edit-scheduled-message="${message.id}">${content}</button>`;
+        return `<span class="calendar-message ${message.status}" title="${escapeHtml(message.body)}">${content}</span>`;
+      }).join("")}
+    </div>`;
   }).join("");
   document.querySelectorAll("[data-day]").forEach((button) => button.addEventListener("click", () => openComposer("individual", null, button.dataset.day)));
+  document.querySelectorAll("[data-edit-scheduled-message]").forEach((button) => button.addEventListener("click", () => editMessage(button.dataset.editScheduledMessage)));
+  document.querySelectorAll("[data-edit-recurring-occurrence]").forEach((button) => button.addEventListener("click", () => editRecurring(button.dataset.editRecurringOccurrence)));
 }
 
 function renderMessages() {
@@ -363,7 +393,7 @@ function renderMessages() {
       <span class="status ${message.status}">${escapeHtml(STATUS_LABELS[message.status] || message.status)}</span>
       <div class="message-copy"><strong>${escapeHtml(message.body)}</strong><span>${escapeHtml(message.target_name)} · ${message.recipient_count} recipient${message.recipient_count === 1 ? "" : "s"}</span>${message.failure_reason ? `<span class="needs-input">${escapeHtml(message.failure_reason)}</span>` : ""}</div>
       <span class="message-meta">${escapeHtml(formatDateTime(message.scheduled_for || message.created_at))}</span>
-      ${message.status === "draft" ? `<button class="secondary" data-edit-message="${message.id}">Edit</button>` : ""}
+      ${["draft", "scheduled"].includes(message.status) ? `<button class="secondary" data-edit-message="${message.id}">Edit</button>` : ""}
     </article>`).join("") : `<p class="empty">No messages yet. Draft, send now, or schedule the first communication.</p>`;
   document.querySelectorAll("[data-edit-message]").forEach((button) => button.addEventListener("click", () => editMessage(button.dataset.editMessage)));
 }
@@ -375,7 +405,7 @@ function renderStats() {
 }
 
 function targetOptions(type, selected) {
-  const source = type === "individual" ? state.contacts : state.groups;
+  const source = type === "individual" ? contactsForGroupContext(state.contacts, state.composerGroupId) : state.groups;
   $("#target-id").innerHTML = `<option value="">Select ${type === "individual" ? "a contact" : "a group"}</option>` + source.map((item) => `<option value="${item.id}" ${item.id === selected ? "selected" : ""}>${escapeHtml(item.full_name || item.name || item.phone)}</option>`).join("");
   updateRecipientNote();
 }
@@ -387,11 +417,19 @@ function updateRecipientNote() {
   const eligible = eligibleTarget(type, target, state.contacts);
   const note = $("#recipient-note");
   note.classList.toggle("warning", target && !eligible);
-  note.textContent = !target ? "Choose a recipient. Drafts can be saved before consent is verified."
+  const contextGroup = state.groups.find((group) => group.id === state.composerGroupId);
+  note.textContent = !target ? (type === "individual" && contextGroup
+    ? `Choose an individual member of ${contextGroup.name}.`
+    : "Choose a recipient. Drafts can be saved before consent is verified.")
     : type === "individual"
       ? eligible ? "Verified opt-in. Consent will be checked again before immediate or scheduled delivery." : `This contact is ${target.consent_status.replace("_", " ")} and cannot receive a text.`
       : eligible ? `${target.eligible_count} opted-in member${target.eligible_count === 1 ? "" : "s"} will receive separate messages.` : "This group has no opted-in members and cannot receive a text.";
-  $("#personalization-note").textContent = personalizationHint(type, target);
+  const personalization = $("#personalize-name");
+  const individual = type === "individual";
+  $("#personalize-name-choice").hidden = !individual;
+  personalization.disabled = !individual;
+  if (!individual) personalization.checked = false;
+  $("#personalization-note").textContent = personalizationHint(type, target, individual && personalization.checked);
   $("#schedule-message").disabled = Boolean(target && !eligible);
   const sendNow = $("#send-now");
   const immediateReady = Boolean(target && eligible && state.dispatch_control?.individual_enabled && state.storage_verified &&
@@ -402,8 +440,10 @@ function updateRecipientNote() {
       : "Choose an eligible opted-in recipient and verify the delivery connection.";
 }
 
-function openComposer(type = "individual", id = null, day = null) {
+function openComposer(type = "individual", id = null, day = null, groupContextId = null) {
   state.draftId = null;
+  state.messageEditSnapshot = null;
+  state.composerGroupId = groupContextId;
   state.messageRequestKey = crypto.randomUUID();
   $("#composer-form").reset();
   $("#target-type").value = type;
@@ -411,17 +451,21 @@ function openComposer(type = "individual", id = null, day = null) {
   $("#scheduled-for").value = day ? `${day}T09:00` : defaultScheduleValue();
   $("#char-count").textContent = "0 / 1600";
   $("#composer-error").textContent = "";
+  $("#save-draft").hidden = false;
   targetOptions(type, id);
   $("#composer").showModal();
 }
 
 function editMessage(id) {
   const message = state.messages.find((item) => item.id === id);
-  if (!message) return;
+  if (!message || !["draft", "scheduled"].includes(message.status)) return;
   openComposer(message.target_type, message.target_id);
   state.draftId = id;
+  state.messageEditSnapshot = { id: message.id, updated_at: message.updated_at, status: message.status };
+  $("#save-draft").hidden = message.status === "scheduled";
   $("#message-body").value = message.body;
   $("#message-timezone").value = message.timezone;
+  if (message.scheduled_for) $("#scheduled-for").value = scheduleInputValue(message.scheduled_for, message.timezone);
   $("#char-count").textContent = `${message.body.length} / 1600`;
 }
 
@@ -459,6 +503,7 @@ async function saveRecurring(event) {
   error.textContent = "";
   state.recurringBusy = true;
   submit.disabled = true;
+  let saved = false;
   try {
     await api({
       action: "save_recurring_reminder",
@@ -476,8 +521,13 @@ async function saveRecurring(event) {
       expectedUpdatedAt: reminder.updated_at,
     });
     $("#recurring-dialog").close();
-    await load();
-    toast("Inactive recurring draft saved.");
+    saved = true;
+    try {
+      await load();
+      toast("Inactive recurring draft saved.");
+    } catch {
+      toast("Reminder saved, but the dashboard could not refresh. Reload before editing again.");
+    }
   } catch (reason) {
     error.textContent = reason.message;
     error.focus();
@@ -485,6 +535,7 @@ async function saveRecurring(event) {
     state.recurringBusy = false;
     submit.disabled = false;
   }
+  return saved;
 }
 
 function openContact(id = null) {
@@ -513,6 +564,7 @@ async function saveMessage(status) {
   $("#save-draft").disabled = true;
   $("#send-now").disabled = true;
   $("#schedule-message").disabled = true;
+  let saved = false;
   try {
     const payload = {
       action: "save_message", messageId: state.draftId,
@@ -521,11 +573,17 @@ async function saveMessage(status) {
       scheduledFor: status === "scheduled" ? new Date($("#scheduled-for").value).toISOString() : null,
       timezone: $("#message-timezone").value,
       idempotencyKey: state.messageRequestKey,
+      expectedUpdatedAt: state.messageEditSnapshot?.updated_at || null,
     };
     await api(payload);
     $("#composer").close();
-    await load();
-    toast(status === "draft" ? "Draft saved." : "Message scheduled.");
+    saved = true;
+    try {
+      await load();
+      toast(status === "draft" ? "Draft saved." : "Message scheduled.");
+    } catch {
+      toast("Message saved, but the dashboard could not refresh. Reload before editing again.");
+    }
   } catch (reason) {
     error.textContent = reason.message;
     error.focus();
@@ -534,6 +592,46 @@ async function saveMessage(status) {
     form.removeAttribute("aria-busy");
     $("#save-draft").disabled = false;
     updateRecipientNote();
+  }
+  return saved;
+}
+
+function openScheduleSaveConfirmation(kind) {
+  const form = kind === "message" ? $("#composer-form") : $("#recurring-form");
+  if (!form.reportValidity()) return;
+  state.pendingScheduleSave = kind;
+  $("#schedule-save-summary").textContent = kind === "message"
+    ? `${state.messageEditSnapshot?.status === "scheduled" ? "Update" : "Save"} this one-time scheduled message? Contact names will not be added automatically.`
+    : "Update this recurring series draft? Future calendar occurrences will reflect the saved series content.";
+  $("#schedule-save-error").textContent = "";
+  $("#schedule-save-dialog").showModal();
+}
+
+async function confirmScheduleSave(event) {
+  event.preventDefault();
+  const kind = state.pendingScheduleSave;
+  if (!kind || state.messageBusy || state.recurringBusy) return;
+  const submitter = $("#confirm-schedule-save");
+  const submitLabel = submitter.textContent;
+  submitter.disabled = true;
+  submitter.textContent = "Saving…";
+  try {
+    const saved = kind === "message"
+      ? await saveMessage("scheduled")
+      : await saveRecurring({ preventDefault() {}, submitter });
+    if (saved) $("#schedule-save-dialog").close();
+    else {
+      $("#schedule-save-error").textContent = kind === "message"
+        ? $("#composer-error").textContent
+        : $("#recurring-error").textContent;
+      $("#schedule-save-error").focus();
+    }
+  } catch (reason) {
+    $("#schedule-save-error").textContent = reason.message;
+    $("#schedule-save-error").focus();
+  } finally {
+    submitter.disabled = false;
+    submitter.textContent = submitLabel;
   }
 }
 
@@ -576,6 +674,7 @@ async function sendMessageNow(event) {
       targetId: $("#target-id").value,
       timezone: $("#message-timezone").value,
       idempotencyKey: state.messageRequestKey,
+      personalizeName: $("#target-type").value === "individual" && $("#personalize-name").checked,
     });
     await load();
     if (result.status !== "sent") throw new Error(result.uncertain > 0
@@ -618,16 +717,23 @@ $("#sign-out").addEventListener("click", async () => {
 $("#startup-retry").addEventListener("click", () => authClient ? verifyAdminSession() : init());
 $("#startup-sign-in").addEventListener("click", () => showLogin());
 $("#new-message").addEventListener("click", () => openComposer());
+$("#group-new-message").addEventListener("click", composeSelectedGroup);
 $("#add-contact").addEventListener("click", () => openContact());
 $("#contact-search").addEventListener("input", (event) => { state.search = event.target.value; renderContacts(); });
-$("#target-type").addEventListener("change", (event) => targetOptions(event.target.value));
+$("#target-type").addEventListener("change", (event) => {
+  $("#personalize-name").checked = false;
+  targetOptions(event.target.value);
+});
 $("#target-id").addEventListener("change", updateRecipientNote);
+$("#personalize-name").addEventListener("change", updateRecipientNote);
 $("#message-body").addEventListener("input", (event) => { $("#char-count").textContent = `${event.target.value.length} / 1600`; });
 $("#save-draft").addEventListener("click", () => saveMessage("draft"));
 $("#send-now").addEventListener("click", openSendNowConfirmation);
-$("#composer-form").addEventListener("submit", (event) => { event.preventDefault(); saveMessage("scheduled"); });
+$("#composer-form").addEventListener("submit", (event) => { event.preventDefault(); openScheduleSaveConfirmation("message"); });
 $("#send-now-form").addEventListener("submit", sendMessageNow);
-$("#recurring-form").addEventListener("submit", saveRecurring);
+$("#recurring-form").addEventListener("submit", (event) => { event.preventDefault(); openScheduleSaveConfirmation("recurring"); });
+$("#schedule-save-form").addEventListener("submit", confirmScheduleSave);
+$("#schedule-save-dialog").addEventListener("close", () => { state.pendingScheduleSave = null; });
 document.querySelectorAll("[data-toggle-channel]").forEach((button) =>
   button.addEventListener("click", () => openDispatchConfirmation(button.dataset.toggleChannel)));
 $("#delivery-control-form").addEventListener("submit", (event) => {
@@ -694,7 +800,9 @@ async function init() {
     $("#auth-view").hidden = true;
     $("#app").hidden = false;
     Object.assign(state, {
-      groups: ["Marketing Directors", "AMG Hierarchy", "AMG Baseshop"].map((name, index) => ({ id: `00000000-0000-4000-8000-00000000000${index}`, name, member_count: 0, eligible_count: 0 })),
+      contacts: [{ id: "preview-contact", full_name: "Test Contact", phone: "+12025550123", consent_status: "opted_in", timezone, group_ids: ["00000000-0000-4000-8000-000000000000"] }],
+      groups: ["Marketing Directors", "AMG Hierarchy", "AMG Baseshop"].map((name, index) => ({ id: `00000000-0000-4000-8000-00000000000${index}`, name, member_count: index === 0 ? 1 : 0, eligible_count: index === 0 ? 1 : 0 })),
+      messages: [{ id: "preview-scheduled", body: "Synthetic scheduled preview.", target_type: "individual", target_id: "preview-contact", target_name: "Test Contact", status: "scheduled", scheduled_for: "2026-11-03T14:30:00.000Z", timezone: "America/New_York", updated_at: "2026-11-03T12:00:00.000Z", recipient_count: 1, created_at: "2026-11-03T12:00:00.000Z" }],
       recurring_reminders: [
         { id: "preview-book", name: "AMG Book Club", body: "Good morning, AMG! It’s time for AMG Book Club.", target_group_id: null, target_group_name: null, zoom_url: null, meeting_url_required: true, timezone: "America/New_York", local_time: "09:00:00", weekdays: [2, 3, 4, 5], start_date: "2026-10-01", status: "draft", idempotency_key: "00000000-0000-4000-8000-000000000010" },
         { id: "preview-thursday", name: "BOM Thursday Reminder", body: "Good morning, AMG! Tonight’s BOM starts at 7 PM.", target_group_id: null, target_group_name: null, zoom_url: null, meeting_url_required: false, timezone: "America/New_York", local_time: "11:00:00", weekdays: [4], start_date: "2026-10-01", status: "draft", idempotency_key: "00000000-0000-4000-8000-000000000011" },

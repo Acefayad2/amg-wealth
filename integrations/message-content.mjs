@@ -26,10 +26,11 @@ export function withFirstContactOptOut(body, noticeRequired) {
   return `${content}\n\n${OPT_OUT_NOTICE}`;
 }
 
-export function outboundContent(body, fullName, noticeRequired, maxCharacters = 1600) {
-  const content = withFirstContactOptOut(personalizeOutbound(body, fullName), noticeRequired);
+export function outboundContent(body, fullName, noticeRequired, personalizeName = false, maxCharacters = 1600) {
+  const base = personalizeName ? personalizeOutbound(body, fullName) : String(body ?? "").trim();
+  const content = withFirstContactOptOut(base, noticeRequired);
   if ([...content].length > maxCharacters) {
-    throw new Error(`Personalized message exceeds ${maxCharacters} characters.`);
+    throw new Error(`Message exceeds ${maxCharacters} characters.`);
   }
   return content;
 }

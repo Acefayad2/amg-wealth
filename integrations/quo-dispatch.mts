@@ -10,6 +10,7 @@ type ImmediateMessage = {
   timezone: string;
   idempotencyKey: string;
   actorId: string;
+  personalizeName?: boolean;
 };
 const PROVIDER_TIMEOUT_MS = 8_000;
 const CLAIM_BATCH_SIZE = 10;
@@ -96,7 +97,14 @@ async function markAccepted(item: Delivery, quoId: string, noticeRequired: boole
   }
 }
 
-async function deliver(item: Delivery, apiKey: string, from: string, phoneNumberId: string, channel: DispatchChannel) {
+async function deliver(
+  item: Delivery,
+  apiKey: string,
+  from: string,
+  phoneNumberId: string,
+  channel: DispatchChannel,
+  personalizeName = false,
+) {
   const pool = getPool();
   if (!await dispatchEnabled(channel, pool)) {
     await markDelivery(item.id, "failed", { error: "Dispatch was disabled before this recipient." }, pool);
@@ -134,10 +142,10 @@ async function deliver(item: Delivery, apiKey: string, from: string, phoneNumber
   const noticeRequired = !consent.rows[0].first_outbound_accepted_at;
   let content: string;
   try {
-    content = outboundContent(item.body, consent.rows[0].full_name, noticeRequired);
+    content = outboundContent(item.body, consent.rows[0].full_name, noticeRequired, personalizeName);
   } catch (error) {
     await markDelivery(item.id, "failed", {
-      error: error instanceof Error ? error.message : "Personalized message is invalid.",
+      error: error instanceof Error ? error.message : "Message content is invalid.",
     }, pool);
     return;
   }
@@ -291,7 +299,10 @@ export async function sendImmediateMessage(input: ImmediateMessage) {
     client.release();
   }
 
-  await Promise.allSettled(deliveries.map((item) => deliver(item, apiKey, from, phoneNumberId, "individual")));
+  const personalizeName = input.targetType === "individual" && input.personalizeName === true;
+  await Promise.allSettled(deliveries.map((item) =>
+    deliver(item, apiKey, from, phoneNumberId, "individual", personalizeName)
+  ));
   return finalizeMessage(messageId, pool);
 }
 
@@ -366,7 +377,7 @@ export async function dispatchDueMessages() {
   // Each recipient remains an individual Quo conversation. A small parallel
   // batch stays within the scheduled-function budget without creating a group
   // text or sacrificing per-contact consent and STOP checks.
-  await Promise.allSettled(deliveries.map((item) => deliver(item, apiKey, from, phoneNumberId, "scheduled")));
+  await Promise.allSettled(deliveries.map((item) => deliver(item, apiKey, from, phoneNumberId, "scheduled", false)));
 
   if (!messageId) throw new Error("Claimed message state was unavailable.");
   return Response.json(await finalizeMessage(messageId, pool));

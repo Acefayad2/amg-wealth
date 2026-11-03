@@ -38,12 +38,28 @@ export function defaultScheduleValue(now = new Date()) {
   return `${localDayKey(date)}T${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
 }
 
+export function scheduleInputValue(value, timeZone) {
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return "";
+  const parts = Object.fromEntries(new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", hourCycle: "h23",
+  }).formatToParts(date).filter((part) => part.type !== "literal").map((part) => [part.type, part.value]));
+  return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
+}
+
 export function filterContacts(contacts, query) {
   const term = query.trim().toLowerCase();
   if (!term) return contacts;
   return contacts.filter((contact) =>
     [contact.full_name, contact.phone].some((value) => String(value).toLowerCase().includes(term)),
   );
+}
+
+export function contactsForGroupContext(contacts, groupId) {
+  if (!groupId) return contacts;
+  return contacts.filter((contact) => contact.group_ids?.includes(groupId));
 }
 
 export function eligibleTarget(targetType, target, contacts) {
@@ -54,14 +70,13 @@ export function eligibleTarget(targetType, target, contacts) {
   );
 }
 
-export function personalizationHint(targetType, target) {
-  if (!target) return "Choose a recipient to preview the automatic greeting.";
-  if (targetType === "group") {
-    return "Each recipient gets a separate automatic greeting: “Hi [first name],” when a name is saved, otherwise “Hello,”. Supported greetings are preserved or personalized instead.";
-  }
+export function personalizationHint(targetType, target, enabled = false) {
+  if (targetType !== "individual") return "Group and scheduled messages use your message exactly as written; contact names are not added automatically.";
+  if (!target) return "Choose an individual recipient. Name personalization is optional and off by default.";
+  if (!enabled) return "No automatic greeting will be added. Your message will be sent exactly as written.";
   const firstName = String(target.full_name ?? "").trim().split(/\s+/u)[0];
   const greeting = firstName ? `Hi ${firstName},` : "Hello,";
-  return `Automatic greeting: “${greeting}” will be added at send time. If the message already starts with a supported greeting, that greeting is preserved or personalized instead.`;
+  return `Send now will add “${greeting}” unless your message already starts with a supported greeting. Scheduled delivery never adds contact names.`;
 }
 
 function zonedParts(date, timeZone) {

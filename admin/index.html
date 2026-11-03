@@ -99,12 +99,22 @@
       <div class="dialog-heading"><div><p class="eyebrow">Compose</p><h2>Send a text</h2></div><button type="button" class="close" data-close="composer" aria-label="Close">×</button></div>
       <div class="recipient-grid"><label>Recipient type<select id="target-type" name="target-type" autocomplete="off"><option value="individual">Individual</option><option value="group">Group</option></select></label><label>Recipient<select id="target-id" name="target-id" autocomplete="off" required></select></label></div>
       <div id="recipient-note" class="recipient-note"></div>
+      <label id="personalize-name-choice" class="personalize-choice"><input id="personalize-name" name="personalize-name" type="checkbox"> Add a name greeting for this individual Send now message</label>
       <p id="personalization-note" class="recipient-note" aria-live="polite"></p>
       <label>Message<textarea id="message-body" name="message-body" maxlength="1600" rows="7" autocomplete="off" required placeholder="Write a clear, consent-based message…"></textarea><span class="field-meta"><span>Opt-out requests always override group membership.</span><span id="char-count">0 / 1600</span></span></label>
-      <fieldset class="schedule-fields"><legend>Schedule for later</legend><div class="recipient-grid"><label>Future date and time<input id="scheduled-for" name="scheduled-for" type="datetime-local" autocomplete="off"></label><label>Timezone<input id="message-timezone" name="message-timezone" type="text" autocomplete="off" readonly></label></div><span class="field-meta">Use this only for a future one-time message. Weekly repeats are managed in AMG reminders.</span></fieldset>
+      <fieldset class="schedule-fields"><legend>Schedule for later</legend><div class="recipient-grid"><label>Future date and time<input id="scheduled-for" name="scheduled-for" type="datetime-local" autocomplete="off"></label><label>Timezone<input id="message-timezone" name="message-timezone" type="text" autocomplete="off" readonly></label></div><span class="field-meta">Scheduled and weekly messages use your text exactly as written; contact names are not added. Weekly repeats are managed in AMG reminders.</span></fieldset>
       <p id="composer-error" class="form-error" role="alert" tabindex="-1"></p>
       <div class="dialog-actions"><button id="save-draft" type="button" class="secondary">Save draft</button><button id="send-now" type="button" class="primary">Send now</button><button id="schedule-message" type="submit" class="secondary">Schedule for later</button></div>
     </form>
+  </dialog>
+
+  <dialog id="group-members-dialog" class="dialog">
+    <section class="dialog-card compact" aria-labelledby="group-members-title">
+      <div class="dialog-heading"><div><p class="eyebrow">Contact group</p><h2 id="group-members-title">Group members</h2></div><button type="button" class="close" data-close="group-members-dialog" aria-label="Close">×</button></div>
+      <p id="group-members-summary" class="recipient-note"></p>
+      <div id="group-members-list" class="group-member-list"></div>
+      <div class="dialog-actions"><button type="button" class="secondary" data-close="group-members-dialog">Close</button><button id="group-new-message" type="button" class="primary">New Message</button></div>
+    </section>
   </dialog>
 
   <dialog id="send-now-dialog" class="dialog">
@@ -114,6 +124,16 @@
       <p class="recipient-note warning">This sends immediately through the approved AMG Quo number and cannot be recalled. Consent and provider opt-outs are checked again before each recipient.</p>
       <p id="send-now-error" class="form-error" role="alert" tabindex="-1"></p>
       <div class="dialog-actions"><button type="button" class="secondary" data-close="send-now-dialog">Cancel</button><button id="confirm-send-now" type="submit" class="primary">Send now</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="schedule-save-dialog" class="dialog">
+    <form id="schedule-save-form" method="dialog" class="dialog-card compact">
+      <div class="dialog-heading"><div><p class="eyebrow">Confirm changes</p><h2>Save this schedule?</h2></div><button type="button" class="close" data-close="schedule-save-dialog" aria-label="Close">×</button></div>
+      <p id="schedule-save-summary" class="recipient-note"></p>
+      <p class="recipient-note warning">Saving changes does not send a text or turn Scheduled Texts on.</p>
+      <p id="schedule-save-error" class="form-error" role="alert" tabindex="-1"></p>
+      <div class="dialog-actions"><button type="button" class="secondary" data-close="schedule-save-dialog">Cancel</button><button id="confirm-schedule-save" type="submit" class="primary">Confirm save</button></div>
     </form>
   </dialog>
 
@@ -147,7 +167,7 @@
     <form id="contact-form" method="dialog" class="dialog-card compact">
       <div class="dialog-heading"><div><p class="eyebrow">Directory</p><h2 id="contact-title">Add contact</h2></div><button type="button" class="close" data-close="contact-dialog" aria-label="Close">×</button></div>
       <input id="contact-id" name="contact-id" type="hidden">
-      <label>Full name <span class="optional">(optional)</span><input id="contact-name" name="contact-name" maxlength="160" autocomplete="off"><span class="field-meta">When present, supported greetings are personalized at send time.</span></label>
+      <label>Full name <span class="optional">(optional)</span><input id="contact-name" name="contact-name" maxlength="160" autocomplete="off"><span class="field-meta">For individual Send now messages, the sender may choose to add a first-name greeting.</span></label>
       <label>Phone number<input id="contact-phone" name="contact-phone" type="tel" placeholder="+12025550123" autocomplete="off" required><span class="field-meta">Use E.164 format with country code.</span></label>
       <div class="recipient-grid"><label>Text consent<select id="contact-consent" name="contact-consent" autocomplete="off"><option value="pending">Pending / unknown</option><option value="opted_in">Verified opt-in</option><option value="opted_out">Opted out</option></select></label><label>Timezone<input id="contact-timezone" name="contact-timezone" autocomplete="off" required></label></div>
       <label>Consent evidence<textarea id="consent-evidence" name="consent-evidence" rows="3" autocomplete="off" placeholder="Required for verified opt-in: how and when consent was recorded"></textarea></label>

@@ -11,6 +11,8 @@
 @media(max-width:900px){.app{grid-template-columns:1fr}.sidebar{position:relative;height:auto;min-height:0;padding:18px}.sidebar .brand,.side-heading,.search,.contacts,.list-heading,.sidebar-footer{display:none}.groups{grid-template-columns:repeat(3,1fr)}.group-button{font-size:11px}.main{padding:24px 16px 48px}.stats{grid-template-columns:repeat(2,1fr)}.day{min-height:90px;padding:7px}.message-row{grid-template-columns:auto minmax(0,1fr);gap:8px 12px}.message-meta{grid-column:2}.message-row .secondary{grid-column:2;justify-self:start}.weekdays span{font-size:9px}}
 @media(max-width:560px){.topbar{align-items:flex-start}.topbar .primary{padding:9px 12px}.topbar h1{font-size:28px}.muted{font-size:12px}.groups{display:flex;overflow:auto}.group-button{min-width:150px}.calendar-card{overflow:hidden}.calendar-toolbar{align-items:flex-start;padding:16px}.toolbar-actions .secondary{display:none}.day{min-height:72px;padding:5px}.day-number{font-size:10px}.calendar-message{height:7px;padding:0;border-left:0;border-radius:4px;color:transparent!important}.recipient-grid{grid-template-columns:1fr}.dialog-card{padding:20px}.stats article{padding:12px}.stats strong{font-size:18px}}
 .dialog-actions{flex-wrap:wrap}
+.personalize-choice{display:flex;align-items:center;gap:9px}.personalize-choice input{width:16px;flex:0 0 16px}
+.group-member-list{display:grid;max-height:360px;overflow:auto;border:1px solid var(--line);border-radius:11px}.group-member{content-visibility:auto;contain-intrinsic-size:auto 58px;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:11px 13px;border-bottom:1px solid var(--line)}.group-member>div{min-width:0}.group-member:last-child{border-bottom:0}.group-member strong,.group-member span{display:block;overflow-wrap:anywhere}.group-member span{color:var(--muted);font-size:11px}.group-member .status{flex:0 0 auto}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
 
 /* Keep dense calendar and contact navigation inside narrow phone viewports. */
@@ -44,9 +46,11 @@
 .calendar .day.today{background:#f6fbf8}
 .calendar .day.today .day-number{display:flex;width:auto;height:auto;border-radius:0;background:transparent;color:var(--green)}
 .calendar .day-number{display:flex;justify-content:space-between;gap:6px;margin-bottom:9px;font-size:11px}
+.calendar button.day-number{width:100%;padding:0;border:0;background:transparent;color:inherit;text-align:left}
 .calendar .day-weekday{display:none}
 .calendar .day-date{white-space:nowrap}
 .calendar .calendar-message{margin:6px 0;padding:7px;line-height:1.35;overflow-wrap:anywhere;white-space:normal}
+.calendar button.calendar-message{width:100%;border-top:0;border-right:0;border-bottom:0;text-align:left}
 .calendar .calendar-message strong{font-size:9px;text-transform:uppercase}
 @media(max-width:560px){
   .calendar-toolbar{gap:10px}

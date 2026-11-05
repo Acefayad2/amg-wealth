@@ -1,0 +1,77 @@
+/* ─────────────────────────────────────────────────────────────
+   Animated dropdown that replaces a native <select data-fancy>.
+   The real <select> stays in the form (hidden) and holds the value.
+   ───────────────────────────────────────────────────────────── */
+.fs{position:relative}
+.fs-btn{
+  width:100%;display:flex;align-items:center;gap:.75rem;min-height:52px;
+  padding:.5rem .9rem .5rem .5rem;border:1px solid rgba(11,46,36,.2);border-radius:var(--r-sm,12px);
+  background:#fff;color:var(--text,#14231D);font:inherit;font-size:1rem;text-align:left;cursor:pointer;
+  transition:border-color .25s ease,box-shadow .25s ease,background .25s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.fs-btn:hover{border-color:var(--emerald,#12483A)}
+.fs-btn:focus-visible,.fs.open .fs-btn{outline:none;border-color:var(--gold,#C9A227);box-shadow:0 0 0 3px rgba(201,162,39,.22)}
+.fs-btn:active{background:#FBFAF6}
+
+.fs-ico{
+  position:relative;flex:none;width:36px;height:36px;border-radius:10px;display:grid;place-items:center;
+  background:linear-gradient(145deg,#0F3D30,#0A281F);overflow:hidden;
+}
+.fs-ico svg{width:18px;height:18px;fill:none;stroke:var(--gold-bright,#E8C766);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.fs-btn .fs-ico.swap{animation:fsIcoPop .5s cubic-bezier(.22,1,.36,1)}
+@keyframes fsIcoPop{0%{scale:.6;rotate:-25deg}60%{scale:1.12;rotate:6deg}100%{scale:1;rotate:0deg}}
+
+.fs-val{position:relative;flex:1;min-width:0;height:1.5em;overflow:hidden;font-weight:500;color:var(--emerald-deep,#0B2E24)}
+.fs-val span{position:absolute;inset:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.5em}
+.fs-val .in{animation:fsValIn .45s cubic-bezier(.22,1,.36,1) both}
+.fs-val .out{animation:fsValOut .45s cubic-bezier(.22,1,.36,1) both}
+@keyframes fsValIn{from{translate:0 110%;opacity:0}to{translate:0 0;opacity:1}}
+@keyframes fsValOut{from{translate:0 0;opacity:1}to{translate:0 -110%;opacity:0}}
+
+.fs-chev{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#F0EEE6;transition:rotate .4s cubic-bezier(.22,1,.36,1),background .25s}
+.fs-chev svg{width:12px;height:12px;fill:none;stroke:var(--emerald-deep,#0B2E24);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.fs.open .fs-chev{rotate:180deg;background:var(--gold-bright,#E8C766)}
+
+/* popup */
+.fs-pop{
+  position:absolute;left:auto;right:0;width:max(100%,340px);max-width:calc(100vw - 2rem);top:calc(100% + 8px);z-index:40;
+  max-height:min(380px,62vh);overflow:auto;overscroll-behavior:contain;
+  padding:.4rem;border-radius:18px;background:#fff;border:1px solid rgba(11,46,36,.12);
+  box-shadow:0 34px 70px -28px rgba(11,46,36,.55),0 4px 14px -6px rgba(11,46,36,.18);
+  transform-origin:50% 0;opacity:0;scale:.94;translate:0 -8px;visibility:hidden;
+  transition:opacity .2s ease,scale .35s cubic-bezier(.22,1,.36,1),translate .35s cubic-bezier(.22,1,.36,1),visibility 0s linear .35s;
+}
+.fs.up .fs-pop{top:auto;bottom:calc(100% + 8px);transform-origin:50% 100%;translate:0 8px}
+.fs.open .fs-pop{opacity:1;scale:1;translate:0 0;visibility:visible;transition-delay:0s}
+.fs-pop:focus{outline:none}
+
+/* gliding highlight behind the active option */
+.fs-hl{position:absolute;left:.4rem;right:.4rem;top:0;height:var(--h,56px);border-radius:12px;background:#F4F1E6;box-shadow:inset 0 0 0 1.5px rgba(201,162,39,.45);transform:translateY(var(--y,0));transition:transform .28s cubic-bezier(.22,1,.36,1),opacity .2s;opacity:0;pointer-events:none}
+.fs-pop.has-active .fs-hl{opacity:1}
+
+.fs-opt{
+  position:relative;z-index:1;display:flex;align-items:center;gap:.8rem;
+  padding:.6rem .7rem;border-radius:12px;cursor:pointer;user-select:none;
+  opacity:0;translate:0 8px;
+}
+.fs.open .fs-opt{animation:fsOptIn .4s cubic-bezier(.22,1,.36,1) both;animation-delay:calc(40ms + var(--i) * 40ms)}
+@keyframes fsOptIn{from{opacity:0;translate:0 8px}to{opacity:1;translate:0 0}}
+.fs-opt .fs-ico{width:34px;height:34px;transition:background .3s ease,rotate .45s cubic-bezier(.22,1,.36,1),scale .45s cubic-bezier(.22,1,.36,1)}
+.fs-opt .fs-ico svg{transition:stroke .3s ease}
+.fs-opt.active .fs-ico{background:linear-gradient(145deg,#EBCB6A,#B8901F);rotate:-8deg;scale:1.06}
+.fs-opt.active .fs-ico svg{stroke:#0B2E24}
+.fs-txt{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.25}
+.fs-txt b{font-weight:600;font-size:.98rem;color:var(--emerald-deep,#0B2E24)}
+.fs-txt small{font-size:.8rem;color:var(--muted,#52605A);margin-top:.15rem}
+.fs-check{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;border:1.5px solid rgba(11,46,36,.18);transition:background .25s,border-color .25s}
+.fs-check svg{width:13px;height:13px;fill:none;stroke:#fff;stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:20;stroke-dashoffset:20}
+.fs-opt[aria-selected="true"] .fs-check{background:var(--emerald-deep,#0B2E24);border-color:var(--emerald-deep,#0B2E24)}
+.fs-opt[aria-selected="true"] .fs-check svg{animation:fsDraw .45s ease-out .1s forwards}
+@keyframes fsDraw{to{stroke-dashoffset:0}}
+
+@media(prefers-reduced-motion:reduce){
+  .fs-pop,.fs-hl,.fs-chev{transition:none}
+  .fs.open .fs-opt,.fs-val .in,.fs-val .out,.fs-btn .fs-ico.swap{animation:none;opacity:1;translate:none}
+  .fs-opt[aria-selected="true"] .fs-check svg{animation:none;stroke-dashoffset:0}
+}

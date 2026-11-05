@@ -1,0 +1,23 @@
+.agent-portal-link:any-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: .5rem .9rem;
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  color: var(--gold-bright);
+  background: rgba(201, 162, 39, .07);
+  font-size: .82rem;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.agent-portal-link:hover {
+  background: rgba(201, 162, 39, .16);
+}
+.agent-portal-link:focus-visible {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 3px;
+}

@@ -8,7 +8,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,400;1,6..96,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="icon" type="image/webp" href="assets/logo-mark.webp">
+<link rel="icon" type="image/png" sizes="480x480" href="/favicon.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="assets/agent-portal-link.css">
+<link rel="stylesheet" href="assets/site-topbar.css">
+<script src="assets/site-topbar.js" defer></script>
 <style>
 :root{
   --ink:#060A08;
@@ -147,23 +150,33 @@ footer a{color:var(--gold-bright);text-decoration:none}
 </head>
 <body>
 <div class="grain"></div>
-<nav>
+<!-- ══ TOP BAR (shared: assets/site-topbar.css + .js, matches the homepage) ══ -->
+<nav class="amg-topbar" aria-label="Main navigation">
   <div class="nav-pill">
-    <a class="brand" href="index.html#top">
-      <span class="monogram"><img src="assets/logo-mark.webp" alt="AMG monogram logo"></span>
+    <a class="brand" href="/" aria-label="AMG home">
+      <span class="monogram"><img src="assets/logo-mark.webp" alt="" width="38" height="38"></span>
       <span class="brand-name">AMG<small>Anointed Money Group</small></span>
     </a>
     <ul class="nav-links">
-      <li><a href="index.html#services">Services</a></li>
-      <li><a class="active" href="licensing.html">Licensing</a></li>
-      <li><a href="index.html#philosophy">Leadership</a></li>
-      <li><a href="index.html#contact">Contact</a></li>
+      <li><a href="/#services">Services</a></li>
+      <li><a href="/resources">Resources</a></li>
+      <li><a href="/licensing" aria-current="page">Licensing</a></li>
+      <li><a href="/#contact">Contact</a></li>
     </ul>
-    <a href="#practice-tests" class="btn btn-gold">Practice Tests
+    <a class="agent-portal-link" href="/agent-portal">Agent Portal</a>
+    <a href="/#contact" class="btn">Book a Consultation
       <span class="orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
     </a>
   </div>
+  <button class="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="amg-menu"><span></span><span></span></button>
 </nav>
+<div class="amg-menu" id="amg-menu">
+  <a href="/#services">Services</a>
+  <a href="/resources">Resources</a>
+  <a href="/licensing" aria-current="page">Licensing</a>
+  <a href="/#contact">Contact</a>
+  <a href="/#contact" class="menu-cta">Book a Consultation ↗</a>
+</div>
 
 <main class="page">
   <div class="hero-grid">
@@ -240,7 +253,7 @@ footer a{color:var(--gold-bright);text-decoration:none}
 
 <footer>
   <span>© 2026 Anointed Money Group. Licensing support and exam preparation resources.</span>
-  <a href="index.html">Return to AMG Home</a>
+  <a href='/'>Return to AMG Home</a>
 </footer>
 
 </body>

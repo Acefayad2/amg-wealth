@@ -1,0 +1,82 @@
+/* ─────────────────────────────────────────────────────────────
+   Animated AMG buttons (no arrows). The top-bar CTA (.nav-cta)
+   is intentionally excluded so the header stays unchanged.
+   - hover: color fill sweeps in from the left, button lifts
+   - fine pointers: button leans toward the cursor (magnetic)
+   - press: quick scale-down; tap/click: ripple from the touch point
+   - in view: primary gold buttons pulse a soft ring twice
+   ───────────────────────────────────────────────────────────── */
+.btn:not(.nav-cta){
+  --mx:0px;--my:0px;--lift:0px;--press:1;
+  position:relative;isolation:isolate;overflow:hidden;
+  justify-content:center;gap:0;
+  padding:.9rem 2rem;min-height:52px;
+  font-weight:600;letter-spacing:.01em;
+  transform:translate(var(--mx),calc(var(--my) + var(--lift))) scale(var(--press));
+  transition:
+    transform .45s cubic-bezier(.22,1,.36,1),
+    box-shadow .4s ease,
+    color .35s ease,
+    background-color .35s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn:not(.nav-cta):active{--press:.96;transition-duration:.12s}
+.btn:not(.nav-cta):focus-visible{outline:3px solid var(--gold-bright);outline-offset:3px}
+
+/* sweep layer */
+.btn:not(.nav-cta)::before{
+  content:'';position:absolute;inset:0;z-index:-1;border-radius:inherit;
+  transform:scaleX(0);transform-origin:left center;
+  transition:transform .5s cubic-bezier(.65,0,.35,1);
+}
+
+/* gold → brighter gold */
+.btn-gold:not(.nav-cta)::before{background:linear-gradient(120deg,#E7C661,#F3DA8C 60%,#E2BE52)}
+
+/* ghost (on dark) → solid cream with emerald text */
+.btn-ghost:not(.nav-cta)::before{background:#F4F1E6}
+
+/* dark (on light) → gold with dark text */
+.btn-dark:not(.nav-cta)::before{background:linear-gradient(120deg,#C9A227,#E8C766)}
+
+/* hover effects only where a real mouse exists (avoids sticky hover on touch) */
+@media(hover:hover){
+  .btn:not(.nav-cta):hover::before{transform:scaleX(1)}
+  .btn:not(.nav-cta):hover{--lift:-3px}
+  .btn-gold:not(.nav-cta):hover{box-shadow:0 22px 40px -16px rgba(4,8,6,.6),0 0 0 1px rgba(243,218,140,.6),inset 0 1px 1px rgba(255,255,255,.5)}
+  .btn-ghost:not(.nav-cta):hover{background:rgba(7,26,20,.6);color:var(--emerald-deep);box-shadow:inset 0 0 0 1px #F4F1E6,0 22px 40px -18px rgba(0,0,0,.55)}
+  .btn-dark:not(.nav-cta):hover{background:var(--emerald-deep);color:#1A1405;box-shadow:0 22px 40px -18px rgba(11,46,36,.6)}
+}
+.btn:not(.nav-cta):focus-visible::before{transform:scaleX(1)}
+.btn-ghost:not(.nav-cta):focus-visible{background:rgba(7,26,20,.6);color:var(--emerald-deep);box-shadow:inset 0 0 0 1px #F4F1E6,0 22px 40px -18px rgba(0,0,0,.55)}
+.btn-dark:not(.nav-cta):focus-visible{background:var(--emerald-deep);color:#1A1405;box-shadow:0 22px 40px -18px rgba(11,46,36,.6)}
+/* touch: sweep plays while pressed */
+@media(hover:none){
+  .btn:not(.nav-cta):active::before{transform:scaleX(1);transition-duration:.22s}
+  .btn-ghost:not(.nav-cta):active{color:var(--emerald-deep)}
+  .btn-dark:not(.nav-cta):active{color:#1A1405}
+}
+
+/* ripple */
+.btn-ripple{
+  position:absolute;z-index:-1;width:var(--d);height:var(--d);left:var(--rx);top:var(--ry);
+  margin:calc(var(--d) / -2) 0 0 calc(var(--d) / -2);border-radius:50%;
+  background:rgba(255,255,255,.45);pointer-events:none;
+  transform:scale(0);opacity:1;animation:btnripple .6s ease-out forwards;
+}
+.btn-dark .btn-ripple{background:rgba(232,199,102,.45)}
+@keyframes btnripple{to{transform:scale(1);opacity:0}}
+
+/* attention ring when a primary button scrolls into view (box-shadow, so overflow:hidden doesn't clip it) */
+.btn-gold.btn-pulse:not(.nav-cta){animation:btnpulsebox 1.4s ease-out 2}
+@keyframes btnpulsebox{0%{box-shadow:0 12px 28px -14px rgba(4,8,6,.55),0 0 0 0 rgba(232,199,102,.65)}100%{box-shadow:0 12px 28px -14px rgba(4,8,6,.55),0 0 0 14px rgba(232,199,102,0)}}
+
+@media(max-width:768px){
+  .meet .btn,.hero-ctas .btn{justify-content:center}
+}
+@media(prefers-reduced-motion:reduce){
+  .btn:not(.nav-cta),.btn:not(.nav-cta)::before{transition:none!important}
+  .btn:not(.nav-cta){--mx:0px!important;--my:0px!important;--lift:0px!important}
+  .btn-ripple,.btn-gold.btn-pulse:not(.nav-cta){animation:none!important}
+  .btn-ripple{display:none}
+}

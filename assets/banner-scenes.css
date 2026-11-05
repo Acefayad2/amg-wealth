@@ -1,0 +1,193 @@
+/* ─────────────────────────────────────────────────────────────
+   Live-text banner scenes for the spotlight slideshow.
+   Everything scales with the banner width (container query units).
+   Entrance animations replay each time a slide is shown.
+   Looping motion uses .lp and pauses with the Pause button.
+   ───────────────────────────────────────────────────────────── */
+.spot .spotlight-media{container:banner / inline-size;aspect-ratio:16/9;cursor:zoom-in}
+@media(max-width:700px){.spot .spotlight-media{aspect-ratio:3/4}}
+.scene{position:absolute;inset:0;overflow:hidden;color:#fff;font-family:'Jost',sans-serif}
+.scene p{margin:0}
+.spot.is-user-paused .scene .lp:not(.wk-day),
+.spot.is-user-paused .petals i,
+.spot.is-user-paused .scene .lp::before{animation-play-state:paused!important}
+/* elements with an entrance + a loop: let the entrance finish, pause only the loop */
+.spot.is-user-paused .wk-day.is-today{animation-play-state:running,paused!important}
+.spot.is-paused .scene .kb{animation-play-state:paused}
+.spot-zoom{pointer-events:auto;border:0;cursor:pointer;font:inherit}
+.spot-zoom:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px;opacity:1;transform:none}
+.spot .spotlight-media:focus-visible{outline:3px solid var(--gold-bright);outline-offset:-3px}
+@keyframes kb{from{scale:1}to{scale:1.05}}
+@keyframes rise{from{opacity:0;translate:0 .55em;filter:blur(6px)}to{opacity:1;translate:0 0;filter:blur(0)}}
+@keyframes fadeUp{from{opacity:0;translate:0 14px}to{opacity:1;translate:0 0}}
+@keyframes pop{0%{opacity:0;scale:.6}70%{opacity:1;scale:1.06}100%{opacity:1;scale:1}}
+@keyframes wipe{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes floaty{0%,100%{translate:0 0}50%{translate:0 -.12em}}
+
+/* ══ WEEKLY SCHEDULE ═══════════════════════════════ */
+.scene-week{
+  background:radial-gradient(120% 90% at 15% 0%,#155141 0%,#0B2E24 45%,#051510 100%);
+  display:grid;grid-template-rows:auto 1fr auto;gap:2.2cqw;padding:6.2cqw 2.4cqw 2.4cqw;
+}
+.wk-lines{position:absolute;inset:-5%;width:110%;height:110%;opacity:.55;pointer-events:none}
+.wk-lines path{fill:none;stroke:url(#wkgold);stroke-width:1.2}
+.wk-lines.lp{animation:wkdrift 14s ease-in-out infinite alternate}
+@keyframes wkdrift{from{transform:translate3d(-1.5%,0,0)}to{transform:translate3d(1.5%,-1%,0)}}
+.wk-head{position:relative;display:flex;align-items:center;gap:1.8cqw;min-width:0}
+.wk-logo{width:7.6cqw;height:7.6cqw;flex:none;border-radius:50%;padding:.35cqw;background:linear-gradient(135deg,#8f6d1d,#f1d27a,#a8841f);animation:pop .7s cubic-bezier(.22,1,.36,1) .05s both}
+.wk-logo img{display:block;width:100%;height:100%;border-radius:50%;object-fit:cover;background:#000}
+.wk-brand{display:flex;flex-direction:column;line-height:1;padding-right:1.8cqw;border-right:1px solid rgba(232,199,102,.45);animation:fadeUp .6s ease-out .15s both}
+.wk-brand b{font-family:'Bodoni Moda',serif;font-size:4cqw;font-weight:600;letter-spacing:.02em;background:linear-gradient(180deg,#fff1c4,#d9ae3d);-webkit-background-clip:text;background-clip:text;color:transparent}
+.wk-brand small{font-size:.9cqw;letter-spacing:.26em;white-space:nowrap;text-transform:uppercase;color:#f1e4bd;margin-top:.5cqw}
+.wk-title{display:flex;gap:1.2cqw;flex:none;font-family:'Bodoni Moda',serif;font-weight:600;font-size:4.1cqw;line-height:1;text-transform:uppercase;letter-spacing:.01em}
+.wk-title .w{display:inline-block;background:linear-gradient(180deg,#fff6d8 0%,#ecc964 55%,#b38a22 100%);-webkit-background-clip:text;background-clip:text;color:transparent;animation:rise .8s cubic-bezier(.22,1,.36,1) both}
+.wk-title .w:nth-child(1){animation-delay:.25s}.wk-title .w:nth-child(2){animation-delay:.4s}
+.wk-next{margin-left:auto!important;display:flex;align-items:center;gap:.9cqw;padding:.7cqw 1.2cqw;border-radius:999px;background:rgba(5,21,16,.55);border:1px solid rgba(232,199,102,.45);font-size:1.15cqw;white-space:nowrap;animation:fadeUp .6s ease-out .7s both;flex:0 1 auto;min-width:0;overflow:hidden}
+.wk-next-label{display:inline-flex;align-items:center;gap:.5cqw;color:var(--gold-bright);font-weight:600;letter-spacing:.14em;text-transform:uppercase;font-size:.95cqw}
+.wk-next-label::before{content:'';width:.7cqw;height:.7cqw;border-radius:50%;background:#43d18d;box-shadow:0 0 0 .3cqw rgba(67,209,141,.25)}
+.wk-next-label.lp::before{animation:livedot 1.6s ease-in-out infinite}
+@keyframes livedot{0%,100%{opacity:1}50%{opacity:.35}}
+.wk-next-track{display:block;overflow:hidden;height:1.5em;line-height:1.5em;min-width:0;flex:1}
+.wk-next-item{display:block;overflow:hidden;text-overflow:ellipsis;color:#fff}
+.wk-next-item.in{animation:tickIn .5s cubic-bezier(.22,1,.36,1) both}
+@keyframes tickIn{from{opacity:0;translate:0 100%}to{opacity:1;translate:0 0}}
+.wk-chips{display:none}
+.wk-days{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(6,1fr);gap:1cqw;min-height:0}
+.wk-day{position:relative;display:flex;flex-direction:column;min-width:0;border-radius:1cqw;overflow:hidden;background:linear-gradient(180deg,rgba(18,72,58,.85),rgba(6,26,19,.9));border:1px solid rgba(232,199,102,.6);box-shadow:0 1cqw 2cqw -1cqw rgba(0,0,0,.6);animation:fadeUp .6s cubic-bezier(.22,1,.36,1) both;animation-delay:calc(.55s + var(--i) * .09s)}
+.wk-dname{padding:.75cqw .4cqw;text-align:center;font-weight:600;font-size:1.45cqw;letter-spacing:.04em;text-transform:uppercase;color:#1A1405;background:linear-gradient(180deg,#f3d887,#c99b2c)}
+.wk-day.is-today{border-color:#fff3c4;box-shadow:0 0 0 .25cqw rgba(243,216,135,.55),0 1.4cqw 3cqw -1cqw rgba(0,0,0,.7)}
+.wk-day.is-today.lp{animation:fadeUp .6s cubic-bezier(.22,1,.36,1) both,todayglow 2.6s ease-in-out 1.6s infinite;animation-delay:calc(.55s + var(--i) * .09s),1.6s}
+@keyframes todayglow{0%,100%{box-shadow:0 0 0 .25cqw rgba(243,216,135,.55),0 1.4cqw 3cqw -1cqw rgba(0,0,0,.7)}50%{box-shadow:0 0 0 .55cqw rgba(243,216,135,.25),0 1.4cqw 3cqw -1cqw rgba(0,0,0,.7)}}
+.wk-day.is-today .wk-dname{background:linear-gradient(180deg,#fff7da,#f0cf72)}
+.wk-day.is-today .wk-dname::before{content:'';display:inline-block;width:.8cqw;height:.8cqw;margin-right:.6cqw;border-radius:50%;background:#1f9d5c;vertical-align:.12em}
+.wk-today{display:none;position:absolute;top:.75cqw;right:.5cqw;z-index:1;padding:.2cqw .6cqw;border-radius:999px;background:#43d18d;color:#05220f;font-size:.85cqw;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.wk-evs{list-style:none;margin:0;padding:.4cqw .9cqw;display:flex;flex-direction:column;flex:1}
+.wk-ev{display:grid;grid-template-columns:2.4cqw 1fr;gap:0 .8cqw;align-items:start;padding:.9cqw 0;border-bottom:1px solid rgba(232,199,102,.35);animation:fadeUp .5s ease-out both;animation-delay:calc(.8s + var(--i) * .09s + var(--j) * .12s)}
+.wk-ev:last-child{border-bottom:0}
+.wk-ev svg{width:2.4cqw;height:2.4cqw;fill:none;stroke:#e8c766;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;margin-top:.3cqw}
+.wk-ev .t{display:block;font-weight:600;font-size:1.75cqw;line-height:1.1;color:#f3d887}
+.wk-ev .n{display:block;font-weight:600;font-size:1.25cqw;line-height:1.2;text-transform:uppercase;color:#fff;margin-top:.2cqw}
+.wk-ev .n abbr{text-decoration:none;cursor:help}
+.wk-ev .p{display:block;font-size:1.1cqw;letter-spacing:.05em;text-transform:uppercase;color:#e8c766;margin-top:.15cqw}
+.wk-ev.is-next{margin:0 -.5cqw;padding-inline:.5cqw;border-radius:.6cqw;background:rgba(232,199,102,.16)}
+.wk-ev.is-next .p::after{content:'Next';display:inline-block;margin-left:.6cqw;padding:.1cqw .5cqw;border-radius:999px;background:var(--gold-bright);color:#1A1405;font-size:.8cqw;font-weight:700;letter-spacing:.08em;vertical-align:.1em}
+.wk-none{margin:auto;color:rgba(255,255,255,.45);font-size:1.15cqw;letter-spacing:.08em;text-transform:uppercase;text-align:center;padding:1cqw}
+.wk-foot{position:relative;display:flex;align-items:center;justify-content:center;gap:1.6cqw;padding:1.1cqw 2cqw;border:1px solid rgba(232,199,102,.75);border-radius:1cqw;background:linear-gradient(90deg,rgba(6,26,19,.9),rgba(18,72,58,.85),rgba(6,26,19,.9));font-size:1.6cqw;font-weight:600;text-transform:uppercase;color:#f3d887;white-space:nowrap;animation:wipe .9s cubic-bezier(.65,0,.35,1) 1.3s both}
+.wk-foot svg{width:2.6cqw;height:2.6cqw;fill:none;stroke:#e8c766;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.wk-foot .sep{width:1px;height:2.2cqw;background:rgba(232,199,102,.6)}
+.wk-foot b{font-size:1.9cqw;color:#fff}
+.wk-foot .z{color:#e8c766;font-weight:500}
+.wk-foot-next{padding:.25cqw .8cqw;border-radius:999px;background:rgba(232,199,102,.16);color:#fff;font-size:1.05cqw;font-weight:500;letter-spacing:.06em}
+
+/* compact schedule (phones / narrow banners): pick a day */
+@container banner (max-width:640px){
+  .scene-week{padding:12cqw 4cqw 3.5cqw;gap:2.4cqw;grid-template-rows:auto auto minmax(0,1fr) auto}
+  .wk-head{flex-wrap:wrap;gap:2cqw 2.5cqw}
+  .wk-logo{width:10cqw;height:10cqw}
+  .wk-brand{display:none}
+  .wk-title{font-size:7.2cqw;gap:1.6cqw}
+  .wk-next{order:3;margin-left:0!important;width:100%;max-width:none;font-size:3.2cqw;padding:1.3cqw 3cqw;gap:2cqw}
+  .wk-next-label{font-size:2.6cqw;gap:1.2cqw}
+  .wk-next-label::before{width:2cqw;height:2cqw}
+  .wk-chips{display:flex;gap:1.6cqw;animation:fadeUp .5s ease-out .5s both}
+  .wk-chip{flex:1;min-height:8.6cqw;border:1px solid rgba(232,199,102,.55);border-radius:999px;background:rgba(5,21,16,.5);color:#f3d887;font:600 3cqw/1 'Jost',sans-serif;text-transform:uppercase;cursor:pointer;position:relative}
+  .wk-chip[aria-pressed="true"]{background:linear-gradient(180deg,#f3d887,#c99b2c);color:#1A1405;border-color:transparent}
+  .wk-chip.is-today::after{content:'';position:absolute;top:-.6cqw;right:-.6cqw;width:2.4cqw;height:2.4cqw;border-radius:50%;background:#43d18d;border:.5cqw solid #0B2E24}
+  .wk-days{display:block}
+  .wk-day{display:none;height:100%;border-radius:3cqw}
+  .wk-day.on{display:flex;animation:fadeUp .4s cubic-bezier(.22,1,.36,1) both}
+  .wk-dname{font-size:3.6cqw;padding:1.6cqw}
+  .wk-today{display:block;top:2.4cqw;right:2.4cqw;font-size:2.6cqw;padding:.6cqw 1.8cqw}
+  .wk-day.is-today .wk-dname::before{width:2cqw;height:2cqw;margin-right:1.6cqw}
+  .wk-evs{padding:.4cqw 4cqw;overflow:auto}
+  .wk-ev{grid-template-columns:6cqw 1fr;gap:0 3cqw;padding:1.8cqw 0;animation-delay:calc(.1s + var(--j) * .1s)}
+  .wk-ev svg{width:6cqw;height:6cqw}
+  .wk-ev .t{font-size:4.4cqw}
+  .wk-ev .n{font-size:3.3cqw}
+  .wk-ev .p{font-size:2.8cqw}
+  .wk-ev.is-next .p::after{font-size:2.4cqw;padding:.4cqw 1.6cqw;margin-left:2cqw}
+  .wk-ev.is-next{margin:0 -2cqw;padding-inline:2cqw;border-radius:2cqw}
+  .wk-none{font-size:3.6cqw}
+  .wk-foot{flex-wrap:wrap;white-space:normal;gap:.6cqw 2.2cqw;padding:1.8cqw 3cqw;font-size:2.8cqw;border-radius:3cqw}
+  .wk-foot svg{width:4.4cqw;height:4.4cqw}
+  .wk-foot .sep{display:none}
+  .wk-foot b{font-size:3.2cqw}
+  .wk-foot-next{font-size:2.6cqw;padding:.6cqw 2cqw}
+  #ss-weekly .spot-zoom{display:none} /* the View full schedule button sits right below */
+}
+
+/* ══ ORIGINAL FLYERS, ANIMATED (Tokyo, Las Vegas) ══
+   The flyer is stacked as identical, perfectly aligned layers.
+   The base starts blurred; clipped copies of each word region fly
+   into place, then the base snaps into focus (so nothing doubles up).
+   Afterwards: slow zoom, mouse tilt, glow pulses, petals / sparkles. */
+.scene-flyer{background:transparent}
+.fl{
+  position:absolute;left:0;right:0;top:50%;width:100%;aspect-ratio:var(--ar);
+  translate:0 -50%;transform-origin:50% 50%;
+  transform:perspective(1400px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+  transition:transform .5s cubic-bezier(.22,1,.36,1);
+  box-shadow:0 2cqw 5cqw -2cqw rgba(0,0,0,.6);
+}
+.fl.kb{animation:kb var(--slide-ms,8000ms) linear both}
+.fl>span{position:absolute;inset:0;background:var(--img) center / 100% 100% no-repeat}
+.fl-base{animation:focusIn 2.9s cubic-bezier(.4,0,.2,1) both}
+@keyframes focusIn{0%{filter:blur(1.3cqw) brightness(.72) saturate(.85)}62%{filter:blur(1.1cqw) brightness(.78) saturate(.9)}100%{filter:blur(0) brightness(1) saturate(1)}}
+
+.fx{
+  /* feathered edges so the flying word strips never look like boxes */
+  -webkit-mask-image:linear-gradient(90deg,transparent var(--l),#000 calc(var(--l) + 1.4%),#000 calc(100% - var(--r) - 1.4%),transparent calc(100% - var(--r))),linear-gradient(180deg,transparent var(--t),#000 calc(var(--t) + 2.2%),#000 calc(100% - var(--b) - 2.2%),transparent calc(100% - var(--b)));
+  -webkit-mask-composite:source-in;
+  mask-image:linear-gradient(90deg,transparent var(--l),#000 calc(var(--l) + 1.4%),#000 calc(100% - var(--r) - 1.4%),transparent calc(100% - var(--r))),linear-gradient(180deg,transparent var(--t),#000 calc(var(--t) + 2.2%),#000 calc(100% - var(--b) - 2.2%),transparent calc(100% - var(--b)));
+  mask-composite:intersect;
+  clip-path:inset(var(--t) var(--r) var(--b) var(--l));animation:.85s cubic-bezier(.22,1,.36,1) var(--d) both;transform-origin:var(--ox,50%) var(--oy,50%)}
+.fx-rise{animation-name:fxRise}
+.fx-left{animation-name:fxLeft}
+.fx-right{animation-name:fxRight}
+.fx-down{animation-name:fxDown}
+.fx-pop{animation-name:fxPop;animation-duration:.75s}
+.fx-wipe{animation-name:fxWipe;animation-duration:1.5s;animation-timing-function:cubic-bezier(.65,0,.35,1)}
+.fx-grow{animation-name:fxGrow;animation-duration:.9s}
+@keyframes fxRise{from{opacity:0;translate:0 7%;filter:blur(.4cqw)}to{opacity:1;translate:0 0;filter:blur(0)}}
+@keyframes fxLeft{from{opacity:0;translate:-12% 0;filter:blur(.4cqw)}to{opacity:1;translate:0 0;filter:blur(0)}}
+@keyframes fxRight{from{opacity:0;translate:12% 0;filter:blur(.4cqw)}to{opacity:1;translate:0 0;filter:blur(0)}}
+@keyframes fxDown{from{opacity:0;translate:0 -9%}to{opacity:1;translate:0 0}}
+@keyframes fxPop{0%{opacity:0;scale:.55}70%{opacity:1;scale:1.05}100%{opacity:1;scale:1}}
+@keyframes fxWipe{from{clip-path:inset(var(--t) calc(100% - var(--l)) var(--b) var(--l))}to{clip-path:inset(var(--t) var(--r) var(--b) var(--l))}}
+@keyframes fxGrow{from{opacity:0;clip-path:inset(var(--t) 50% var(--b) 50%)}to{opacity:1;clip-path:inset(var(--t) var(--r) var(--b) var(--l))}}
+
+/* glow: a brightened, softly masked copy that fades in and out (aligned, so no ghosting) */
+.gl{
+  opacity:0;filter:brightness(1.55) saturate(1.25);
+  -webkit-mask-image:radial-gradient(ellipse var(--mw) var(--mh) at var(--cx) var(--cy),#000 30%,transparent 72%);
+          mask-image:radial-gradient(ellipse var(--mw) var(--mh) at var(--cx) var(--cy),#000 30%,transparent 72%);
+}
+.gl.lp{animation:glowPulse var(--dur,3.2s) ease-in-out var(--d) infinite}
+.gl.chase.lp{animation-name:glowChase}
+@keyframes glowPulse{0%,100%{opacity:0}50%{opacity:.85}}
+@keyframes glowChase{0%,28%,100%{opacity:0}10%{opacity:1}}
+
+/* petals (Tokyo) */
+.petals{position:absolute;inset:0;pointer-events:none;z-index:2}
+.petals i{position:absolute;top:-6%;left:var(--x);width:calc(1.1cqw * var(--s));height:calc(.75cqw * var(--s));border-radius:100% 0 100% 0;background:linear-gradient(135deg,#ffe3ee,#ff9fc0);opacity:.9;box-shadow:0 0 .4cqw rgba(255,180,210,.6);animation:petal var(--t) linear var(--d) infinite}
+@keyframes petal{0%{transform:translate3d(0,0,0) rotate(0)}25%{transform:translate3d(4cqw,30cqh,0) rotate(120deg)}50%{transform:translate3d(-2cqw,60cqh,0) rotate(220deg)}100%{transform:translate3d(6cqw,120cqh,0) rotate(400deg)}}
+/* sparkles (Las Vegas) */
+.sparkles{position:absolute;inset:0;pointer-events:none;z-index:2}
+.spk{position:absolute;left:var(--x);top:var(--y);width:calc(1.6cqw * var(--s));height:calc(1.6cqw * var(--s));background:radial-gradient(circle,#fff 0 18%,rgba(255,236,180,.9) 30%,transparent 62%);clip-path:polygon(50% 0,58% 42%,100% 50%,58% 58%,50% 100%,42% 58%,0 50%,42% 42%);opacity:0;scale:.3}
+.spk.lp{animation:spark var(--t) ease-in-out var(--d) infinite}
+@keyframes spark{0%,100%{opacity:0;scale:.3;rotate:0deg}45%{opacity:1;scale:1;rotate:45deg}60%{opacity:.8;scale:.85}}
+.bokeh{position:absolute;bottom:-4%;left:var(--x);width:calc(2.4cqw * var(--s));height:calc(2.4cqw * var(--s));border-radius:50%;background:radial-gradient(circle,rgba(255,214,234,.75),rgba(255,214,234,0) 70%);opacity:0}
+.bokeh.lp{animation:bokehUp var(--t) linear var(--d) infinite}
+@keyframes bokehUp{0%{opacity:0;translate:0 0}15%{opacity:.8}85%{opacity:.5}100%{opacity:0;translate:2cqw -60cqh}}
+@container banner (max-width:640px){
+  .petals i{width:calc(2.2cqw * var(--s));height:calc(1.5cqw * var(--s))}
+  .spk{width:calc(3cqw * var(--s));height:calc(3cqw * var(--s))}
+}
+
+/* reduced motion: show everything in its final state */
+@media(prefers-reduced-motion:reduce){
+  .scene,.scene *{animation:none!important}
+  .petals,.sparkles{display:none}
+  .fx,.gl{display:none}
+  .fl{transform:none!important}
+}

@@ -4,11 +4,34 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AMG — Anointed Money Group | Private Wealth &amp; Legacy Planning</title>
-<meta name="description" content="Anointed Money Group builds generational wealth through asset protection, retirement planning, and financial education. Your legacy, by design.">
+<meta name="description" content="Anointed Money Group builds generational wealth through life insurance, asset protection, retirement planning, and financial education. Estimate your coverage and book a consultation.">
+<link rel="canonical" href="https://anointedmoneygroup.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Anointed Money Group">
+<meta property="og:title" content="AMG — Anointed Money Group">
+<meta property="og:description" content="Private wealth and legacy planning designed to build and protect generational wealth.">
+<meta property="og:url" content="https://anointedmoneygroup.com/">
+<meta property="og:image" content="https://anointedmoneygroup.com/assets/amg-social-preview.jpg?v=20261104">
+<meta property="og:image:secure_url" content="https://anointedmoneygroup.com/assets/amg-social-preview.jpg?v=20261104">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Anointed Money Group gold AMG logo on a black background">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AMG — Anointed Money Group">
+<meta name="twitter:description" content="Private wealth and legacy planning designed to build and protect generational wealth.">
+<meta name="twitter:image" content="https://anointedmoneygroup.com/assets/amg-social-preview.jpg?v=20261104">
+<meta name="twitter:image:alt" content="Anointed Money Group gold AMG logo on a black background">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,400;1,6..96,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="icon" type="image/webp" href="assets/logo-mark.webp">
+<link rel="icon" type="image/png" sizes="480x480" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="assets/amg-intro.css">
+<link rel="stylesheet" href="assets/agent-portal-link.css">
+<script src="assets/amg-intro.js" defer></script>
+<script src="assets/amg-spotlight.js" defer></script>
+<script src="assets/inquiry-form.js" defer></script>
 <style>
 :root{
   --ink:#060A08;
@@ -18,457 +41,561 @@
   --gold:#C9A227;
   --gold-bright:#E8C766;
   --gold-pale:#F4E7C3;
+  --gold-ink:#8A6D14;
   --cream:#F1F0EC;
   --cream-deep:#E6E5E0;
+  --paper:#F7F6F2;
   --white:#FFFFFF;
+  --text:#14231D;
+  --muted:#52605A;
+  --line:rgba(11,46,36,.12);
+  --r-lg:22px;--r-md:16px;--r-sm:12px;
   --ease-glide:cubic-bezier(0.32,0.72,0,1);
   --ease-out-soft:cubic-bezier(0.22,1,0.36,1);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-padding-top:6rem}
 body{
-  font-family:'Jost',sans-serif;
-  font-weight:400;
-  background:var(--ink);
-  color:var(--cream);
-  line-height:1.6;
-  -webkit-font-smoothing:antialiased;
-  overflow-x:hidden;
+  font-family:'Jost',sans-serif;font-weight:400;
+  background:var(--paper);color:var(--text);
+  line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:clip;
 }
 ::selection{background:var(--gold);color:var(--ink)}
-
-/* ── film grain overlay ─────────────────────────── */
-.grain{
-  position:fixed;inset:0;z-index:60;pointer-events:none;opacity:.035;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
-}
+img{max-width:100%}
+:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.skip{position:absolute;left:1rem;top:-4rem;z-index:200;background:var(--gold);color:var(--ink);padding:.7rem 1rem;border-radius:10px;font-weight:600;text-decoration:none}
+.skip:focus{top:1rem}
 
 /* ── typography ─────────────────────────────────── */
-.serif{font-family:'Bodoni Moda',serif;font-weight:600;line-height:1.06;letter-spacing:-0.01em}
-.serif i{font-style:normal;font-weight:600}
-.gold-text{
-  background:linear-gradient(105deg,#9C7A1C 0%,#D9B44A 45%,#EED9A0 55%,#B8901F 100%);
-  -webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;color:transparent;
-}
-.eyebrow{
-  display:inline-flex;align-items:center;gap:.6rem;
-  border:1px solid rgba(212,175,55,.35);border-radius:8px;
-  padding:.42rem 1.1rem;font-size:10px;font-weight:500;
-  letter-spacing:.24em;text-transform:uppercase;color:var(--gold-bright);
-  background:rgba(212,175,55,.06);
-}
-.eyebrow::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--gold)}
-.light .eyebrow{color:#8A6D14;border-color:rgba(154,122,28,.3);background:rgba(201,162,39,.07)}
-.svp-eyebrow{
-  padding:.68rem 1.45rem;
-  border-color:rgba(232,199,102,.58);
-  background:
-    linear-gradient(135deg,rgba(232,199,102,.16),rgba(201,162,39,.045)),
-    rgba(8,14,11,.42);
-  color:var(--gold-bright);
-  font-size:.72rem;
-  letter-spacing:.34em;
-  box-shadow:0 18px 45px -28px rgba(232,199,102,.75),inset 0 1px 0 rgba(255,255,255,.09);
-}
+.serif{font-family:'Bodoni Moda',serif;font-weight:600;line-height:1.08;letter-spacing:-0.01em}
+.gold-text{color:#f3d36f}
+.kicker{display:inline-flex;align-items:center;gap:.6rem;font-size:.72rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-ink)}
+.kicker::before{content:'';width:28px;height:1px;background:currentColor}
+.on-dark .kicker,.kicker.on-dark{color:var(--gold-bright)}
 
 /* ── scroll reveal ──────────────────────────────── */
-.reveal{opacity:0;transform:translateY(56px);filter:blur(10px);transition:opacity 1s var(--ease-out-soft),transform 1s var(--ease-out-soft),filter 1s var(--ease-out-soft)}
-.reveal.in{opacity:1;transform:translateY(0);filter:blur(0)}
-.reveal[data-d="1"]{transition-delay:.1s}.reveal[data-d="2"]{transition-delay:.2s}
-.reveal[data-d="3"]{transition-delay:.3s}.reveal[data-d="4"]{transition-delay:.4s}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .9s var(--ease-out-soft),transform .9s var(--ease-out-soft)}
+.reveal.in{opacity:1;transform:none}
+.reveal[data-d="1"]{transition-delay:.08s}.reveal[data-d="2"]{transition-delay:.16s}.reveal[data-d="3"]{transition-delay:.24s}
 
 /* ── buttons ────────────────────────────────────── */
 .btn{
   display:inline-flex;align-items:center;gap:.85rem;
-  border-radius:12px;padding:.55rem .6rem .55rem 1.7rem;
-  font-family:'Jost',sans-serif;font-size:.92rem;font-weight:500;
+  border-radius:12px;padding:.55rem .6rem .55rem 1.6rem;min-height:48px;
+  font-family:'Jost',sans-serif;font-size:.95rem;font-weight:500;
   text-decoration:none;cursor:pointer;border:none;
   transition:transform .5s var(--ease-glide),box-shadow .5s var(--ease-glide),background .5s var(--ease-glide);
 }
 .btn:active{transform:scale(.98)}
-.btn .orb{
-  width:38px;height:38px;border-radius:8px;flex:none;
-  display:flex;align-items:center;justify-content:center;
-  transition:transform .5s var(--ease-glide);
-}
+.btn .orb{width:38px;height:38px;border-radius:8px;flex:none;display:flex;align-items:center;justify-content:center;transition:transform .5s var(--ease-glide)}
 .btn:hover .orb{transform:translate(3px,-1px) scale(1.06)}
 .btn svg{width:15px;height:15px}
-.btn-gold{
-  background:linear-gradient(120deg,#B8901F,#E0BC55 55%,#C9A227);
-  color:#1A1405;box-shadow:0 12px 28px -14px rgba(4,8,6,.55),inset 0 1px 1px rgba(255,255,255,.4);
-}
+.btn-gold{background:linear-gradient(120deg,#B8901F,#E0BC55 55%,#C9A227);color:#1A1405;box-shadow:0 12px 28px -14px rgba(4,8,6,.55),inset 0 1px 1px rgba(255,255,255,.4)}
 .btn-gold:hover{box-shadow:0 18px 36px -14px rgba(4,8,6,.6),inset 0 1px 1px rgba(255,255,255,.4)}
 .btn-gold .orb{background:rgba(10,8,2,.14)}
-.btn-ghost{background:rgba(255,255,255,.05);color:var(--cream);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
-.btn-ghost:hover{background:rgba(255,255,255,.09)}
-.btn-ghost .orb{background:rgba(255,255,255,.08)}
+.btn-ghost{background:rgba(7,26,20,.6);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.4)}
+.btn-ghost:hover{background:#204537}
+.btn-ghost .orb{background:rgba(255,255,255,.1)}
 .btn-dark{background:var(--emerald-deep);color:var(--gold-pale);box-shadow:inset 0 1px 1px rgba(255,255,255,.12),0 12px 30px -12px rgba(11,46,36,.55)}
+.btn-dark:hover{background:var(--emerald)}
 .btn-dark .orb{background:rgba(212,175,55,.16)}
+.btn-line{background:transparent;color:var(--emerald-deep);box-shadow:inset 0 0 0 1.5px var(--emerald-deep);padding:.55rem 1.6rem}
+.btn-line:hover{background:rgba(11,46,36,.06)}
+.text-link{display:inline-flex;align-items:center;gap:.4rem;font-weight:600;color:var(--gold-ink);text-decoration:none;font-size:.92rem}
+.text-link:hover{text-decoration:underline;text-underline-offset:4px}
 
-/* ── nav ────────────────────────────────────────── */
-nav{
-  position:fixed;top:0;left:0;right:0;z-index:100;
-  display:flex;justify-content:center;padding-top:1.4rem;
-  pointer-events:none;
-}
+/* ── nav (unchanged from live site) ─────────────── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:center;padding-top:1.4rem;pointer-events:none}
 .nav-pill{
   pointer-events:auto;
   display:flex;align-items:center;gap:2.2rem;
-  background:rgba(8,14,11,.55);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  background:rgba(8,14,11,.8);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
   border:1px solid rgba(255,255,255,.08);border-radius:16px;
   padding:.55rem .6rem .55rem 1.5rem;
   box-shadow:0 20px 50px -20px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.07);
   transition:transform .6s var(--ease-glide),background .6s var(--ease-glide);
 }
 .brand{display:flex;align-items:center;gap:.7rem;text-decoration:none}
-.monogram{
-  width:38px;height:38px;border-radius:50%;flex:none;overflow:hidden;
-  background:#000;display:flex;align-items:center;justify-content:center;
-}
+.monogram{width:38px;height:38px;border-radius:50%;flex:none;overflow:hidden;background:#000;display:flex;align-items:center;justify-content:center}
 .monogram img{width:100%;height:100%;object-fit:cover;transform:scale(1.12)}
 .brand-name{font-size:.82rem;font-weight:600;letter-spacing:.18em;color:var(--cream)}
 .brand-name small{display:block;font-size:8px;font-weight:400;letter-spacing:.3em;color:var(--gold);text-transform:uppercase}
 .nav-links{display:flex;gap:1.8rem;list-style:none}
-.nav-links a{
-  font-size:.82rem;font-weight:500;color:rgba(248,245,238,.72);text-decoration:none;
-  transition:color .4s var(--ease-glide);
-}
+.nav-links a{font-size:.82rem;font-weight:500;color:rgba(248,245,238,.72);text-decoration:none;transition:color .4s var(--ease-glide)}
 .nav-links a:hover{color:var(--gold-bright)}
-.nav-cta{font-size:.8rem;padding:.45rem .5rem .45rem 1.2rem}
+.nav-cta{font-size:.8rem;padding:.45rem .5rem .45rem 1.2rem;min-height:0}
 .nav-cta .orb{width:30px;height:30px}
-.burger{
-  display:none;pointer-events:auto;width:44px;height:44px;border-radius:12px;border:none;cursor:pointer;
-  background:rgba(8,14,11,.6);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);
-  position:relative;
-}
-.burger span{
-  position:absolute;left:13px;right:13px;height:1.5px;background:var(--gold-pale);border-radius:2px;
-  transition:transform .55s var(--ease-glide),top .55s var(--ease-glide);
-}
+.burger{display:none;pointer-events:auto;width:44px;height:44px;border-radius:12px;border:none;cursor:pointer;background:rgba(8,14,11,.8);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);position:relative}
+.burger span{position:absolute;left:13px;right:13px;height:1.5px;background:var(--gold-pale);border-radius:2px;transition:transform .55s var(--ease-glide),top .55s var(--ease-glide)}
 .burger span:nth-child(1){top:18px}
 .burger span:nth-child(2){top:25px}
 .burger.open span:nth-child(1){top:21px;transform:rotate(45deg)}
 .burger.open span:nth-child(2){top:21px;transform:rotate(-45deg)}
-.menu-overlay{
-  position:fixed;inset:0;z-index:90;background:rgba(5,9,7,.88);
-  backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);
-  display:flex;flex-direction:column;justify-content:center;padding:0 8vw;
-  opacity:0;visibility:hidden;transition:opacity .6s var(--ease-glide),visibility .6s;
-}
+.menu-overlay{position:fixed;inset:0;z-index:90;background:rgba(5,9,7,.88);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);display:flex;flex-direction:column;justify-content:center;padding:0 8vw;opacity:0;visibility:hidden;transition:opacity .6s var(--ease-glide),visibility .6s}
 .menu-overlay.open{opacity:1;visibility:visible}
-.menu-overlay a{
-  font-family:'Bodoni Moda',serif;font-size:clamp(2.2rem,7vw,3.6rem);color:var(--cream);
-  text-decoration:none;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.07);
-  opacity:0;transform:translateY(48px);
-  transition:opacity .7s var(--ease-out-soft),transform .7s var(--ease-out-soft),color .4s;
-}
+.menu-overlay a{font-family:'Bodoni Moda',serif;font-size:clamp(2.2rem,7vw,3.6rem);color:var(--cream);text-decoration:none;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.07);opacity:0;transform:translateY(48px);transition:opacity .7s var(--ease-out-soft),transform .7s var(--ease-out-soft),color .4s}
 .menu-overlay a:hover{color:var(--gold-bright)}
 .menu-overlay.open a{opacity:1;transform:translateY(0)}
-.menu-overlay.open a:nth-child(1){transition-delay:.1s}
-.menu-overlay.open a:nth-child(2){transition-delay:.16s}
-.menu-overlay.open a:nth-child(3){transition-delay:.22s}
-.menu-overlay.open a:nth-child(4){transition-delay:.28s}
-.menu-overlay.open a:nth-child(5){transition-delay:.34s}
+@media(max-width:1120px){
+  nav{justify-content:space-between;padding:1.2rem 1.2rem 0;gap:.8rem}
+  .nav-links,.nav-cta{display:none}
+  .nav-pill{flex:1;min-width:0;gap:.65rem;justify-content:space-between}
+  .burger{display:block;flex:none}
+}
+@media(max-width:440px){
+  .nav-pill{padding-inline:.65rem}
+  .nav-pill .brand-name small{display:none}
+}
 
-/* ── shells (double-bezel) ──────────────────────── */
-.shell{
-  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);
-  border-radius:1.1rem;padding:.45rem;
-  box-shadow:0 40px 80px -40px rgba(0,0,0,.6);
-}
-.shell>.core{
-  border-radius:calc(1.1rem - .45rem);overflow:hidden;position:relative;
-  box-shadow:inset 0 1px 1px rgba(255,255,255,.12);
-}
-.light .shell{background:rgba(11,46,36,.05);border-color:rgba(11,46,36,.1);box-shadow:0 40px 80px -50px rgba(11,46,36,.35)}
+/* ── layout ─────────────────────────────────────── */
+section{padding:7rem 6vw}
+.wrap{max-width:1200px;margin:0 auto}
+.sec-head{max-width:46rem;margin-bottom:3.5rem}
+.sec-head.center{text-align:center;margin-inline:auto}
+.sec-head h2{font-size:clamp(2.2rem,4vw,3.4rem);margin:1rem 0 1rem;color:var(--emerald-deep)}
+.sec-head p{color:var(--muted);font-size:1.08rem;max-width:38rem}
+.sec-head.center p{margin-inline:auto}
+.on-dark .sec-head h2{color:#fff}
+.on-dark .sec-head p{color:rgba(248,245,238,.72)}
+.bg-white{background:var(--white)}
+.bg-paper{background:var(--paper)}
+.bg-dark{background:radial-gradient(900px 520px at 85% 0%,rgba(30,107,82,.3),transparent 60%),linear-gradient(180deg,#07130E,#0B2E24);color:var(--cream)}
 
 /* ── hero ───────────────────────────────────────── */
 .hero{
-  position:relative;min-height:100dvh;display:flex;align-items:center;
-  padding:9rem 6vw 6rem;overflow:hidden;
-  background:
-    radial-gradient(1100px 700px at 82% 8%,rgba(30,107,82,.34),transparent 60%),
-    radial-gradient(900px 600px at 8% 95%,rgba(201,162,39,.13),transparent 55%),
-    linear-gradient(175deg,#07120D 0%,#060A08 55%,#0A1F18 100%);
+  position:relative;overflow:hidden;color:#fff;
+  padding:10.5rem 6vw 0;
+  background:linear-gradient(90deg,rgba(5,21,16,.9),rgba(5,21,16,.74) 45%,rgba(5,21,16,.34)),url("assets/hero-office.webp") center / cover no-repeat,#102b20;
 }
-.hero::after{
-  content:'';position:absolute;inset:0;pointer-events:none;
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='800' viewBox='0 0 1200 800'%3E%3Cg fill='none' stroke='%23D4AF37' stroke-opacity='.05'%3E%3Cpath d='M0 620 C 250 480 420 700 640 540 S 1000 640 1200 460'/%3E%3Cpath d='M0 690 C 280 560 460 760 700 610 S 1040 700 1200 540'/%3E%3C/g%3E%3C/svg%3E") center/cover no-repeat;
-}
-.hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:1.15fr .85fr;gap:5rem;align-items:center;max-width:1340px;margin:0 auto;width:100%}
-.hero h1{font-size:clamp(3rem,6.4vw,5.6rem);margin:1.6rem 0 1.8rem;color:var(--white)}
-.hero p.lede{font-size:1.08rem;font-weight:300;color:rgba(248,245,238,.72);max-width:33rem;margin-bottom:2.6rem}
-.hero-ctas{display:flex;gap:1rem;flex-wrap:wrap;align-items:center}
-.hero-media{position:relative}
-.hero-media img{display:block;width:100%;height:560px;object-fit:cover}
-.hero-media img.hero-portrait{object-position:50% 22%}
-.hero-card{
-  position:absolute;left:-3.4rem;bottom:2.6rem;z-index:3;max-width:19rem;
-  background:rgba(10,18,14,.78);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
-  border:1px solid rgba(212,175,55,.28);border-radius:.9rem;padding:1.3rem 1.6rem;
-  box-shadow:0 30px 60px -25px rgba(0,0,0,.7),inset 0 1px 1px rgba(255,255,255,.1);
-}
-.hero-card .hc-eyebrow{font-size:.6rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem}
-.hero-card .hc-title{font-family:'Bodoni Moda',serif;font-weight:600;font-size:1.35rem;line-height:1.1;color:var(--gold-bright);margin-bottom:.6rem}
-.hero-card .lbl{font-size:.72rem;line-height:1.5;color:rgba(248,245,238,.62)}
-.scroll-hint{
-  position:absolute;bottom:2.2rem;left:50%;transform:translateX(-50%);z-index:2;
-  font-size:.62rem;letter-spacing:.32em;text-transform:uppercase;color:rgba(248,245,238,.4);
-  display:flex;flex-direction:column;align-items:center;gap:.7rem;
-}
-.scroll-hint::after{content:'';width:1px;height:44px;background:linear-gradient(to bottom,var(--gold),transparent);animation:drip 2.4s var(--ease-glide) infinite}
-@keyframes drip{0%{transform:scaleY(0);transform-origin:top}55%{transform:scaleY(1);transform-origin:top}56%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+.hero-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:clamp(1.5rem,4vw,4rem);min-height:min(760px,calc(100svh - 10.5rem));align-items:center}
+.hero-media{position:relative;align-self:end;display:flex;justify-content:center;min-width:0}
+.hero-media img{display:block;width:auto;max-width:100%;height:clamp(460px,64vh,660px);object-fit:contain;object-position:center bottom;filter:drop-shadow(0 28px 36px rgba(0,0,0,.45))}
+.hero-copy{max-width:44rem;padding-bottom:5.5rem}
+.partner-tag{display:inline-flex;align-items:center;gap:.65rem;padding:.45rem .9rem .45rem .5rem;border-radius:999px;background:rgba(7,26,20,.62);border:1px solid rgba(242,213,128,.45);font-size:.78rem;color:#f5dc96}
+.partner-tag b{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--gold);color:var(--ink);font-size:.7rem}
+.hero h1{font-size:clamp(3rem,6vw,5.6rem);line-height:.98;letter-spacing:-.04em;margin:1.4rem 0 1.4rem;max-width:10em}
+.hero .lede{font-size:1.15rem;line-height:1.7;color:#f2f1eb;max-width:31rem;margin-bottom:2.2rem}
+.hero-ctas{display:flex;gap:.9rem;flex-wrap:wrap}
+.hero-fine{font-size:.74rem;line-height:1.6;color:rgba(242,241,235,.62);max-width:30rem;margin-top:1.1rem}
+.trust-row{display:flex;flex-wrap:wrap;gap:.7rem 1.6rem;margin-top:2.4rem;padding-top:1.4rem;border-top:1px solid rgba(255,255,255,.22);list-style:none}
+.trust-row li{display:flex;align-items:center;gap:.55rem;font-size:.88rem;color:#f6e7bc}
+.trust-row svg{width:18px;height:18px;stroke:var(--gold-bright);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
 
-/* ── brokerage marquee ──────────────────────────── */
-.marquee{
-  position:relative;overflow:hidden;padding:1.65rem 0;
-  background:linear-gradient(180deg,#060A08,#081711);
-  border-top:1px solid rgba(212,175,55,.14);border-bottom:1px solid rgba(212,175,55,.14);
-}
-.marquee-label{
-  text-align:center;font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;
-  color:rgba(248,245,238,.42);margin-bottom:1.05rem;
-}
-.marquee-viewport{position:relative;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
-.marquee-track{display:flex;width:max-content;gap:3.25rem;animation:marquee 38s linear infinite}
-.marquee:hover .marquee-track{animation-play-state:paused}
+/* ── carrier strip ──────────────────────────────── */
+.carriers{background:var(--white);padding:2.4rem 0;border-bottom:1px solid var(--line)}
+.strip-label{text-align:center;font-size:.72rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:1.3rem}
+.marquee-viewport{overflow-x:auto;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.marquee-viewport::-webkit-scrollbar{display:none}
+.marquee-track{display:flex;width:max-content;animation:marquee 54s linear infinite}
+.marquee-viewport:hover .marquee-track,.marquee-viewport:focus-within .marquee-track{animation-play-state:paused}
 @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.brand-logo{
-  display:flex;align-items:center;justify-content:center;flex:none;height:38px;
-  color:rgba(248,245,238,.68);
-  font-family:'Bodoni Moda',serif;font-size:1.22rem;font-weight:600;letter-spacing:.02em;
-  white-space:nowrap;opacity:.82;transition:opacity .4s var(--ease-glide),color .4s var(--ease-glide);
-}
-.brand-logo:hover{opacity:1;color:var(--gold-bright)}
-.brand-logo img{height:52px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:.6;transition:opacity .4s var(--ease-glide)}
-.brand-logo img:hover{opacity:1}
-@media(prefers-reduced-motion:reduce){.marquee-track{animation:none}}
+.logo-group{display:flex;flex:none;align-items:center;gap:1rem;padding-right:1rem}
+.carrier-logo{display:flex;align-items:center;justify-content:center;flex:none;width:168px;height:80px;padding:14px 18px;background:#fff;border:1px solid var(--line);border-radius:var(--r-sm)}
+.carrier-logo img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain}
 
-.brokerage-logos{
-  background:linear-gradient(180deg,#0A2119 0%,#07120D 100%);
-  padding:2.15rem 0 2.45rem;
-  border-bottom:1px solid rgba(212,175,55,.14);
+/* ── benefit cards (icon-led, interactive) ────── */
+.benefits{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem}
+.benefit-wrap{perspective:1100px}
+.icon-tile{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#0F3D30,#0A281F);margin-bottom:1.4rem;flex:none}
+.icon-tile svg{width:26px;height:26px;stroke:var(--gold-bright);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.benefit{
+  --mx:50%;--my:0%;--rx:0deg;--ry:0deg;--ty:0px;
+  position:relative;isolation:isolate;overflow:hidden;height:100%;
+  display:flex;flex-direction:column;
+  background:linear-gradient(180deg,#FFFFFF 0%,#FCFBF7 100%);
+  border:1px solid var(--line);border-radius:var(--r-lg);padding:1.8rem 1.6rem 1.5rem;
+  transform:rotateX(var(--rx)) rotateY(var(--ry)) translateY(var(--ty));
+  transition:transform .6s var(--ease-glide),box-shadow .6s var(--ease-glide);
+  will-change:transform;-webkit-tap-highlight-color:transparent;
 }
-.brokerage-logos .marquee-label{color:rgba(244,231,195,.48)}
-.brokerage-logos .marquee-track{gap:.85rem;animation-duration:46s}
-.network-logo{
-  flex:none;width:152px;height:82px;
-  display:flex;align-items:center;justify-content:center;
-  border-radius:10px;padding:.38rem;
-  background:rgba(255,255,255,.055);
-  border:1px solid rgba(212,175,55,.18);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 18px 40px -28px rgba(0,0,0,.75);
-  transition:transform .45s var(--ease-glide),border-color .45s var(--ease-glide),background .45s var(--ease-glide);
-}
-.network-logo:hover{transform:translateY(-3px);border-color:rgba(232,199,102,.42);background:rgba(255,255,255,.085)}
-.network-logo img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;display:block}
+.benefit.tilting{transition:transform .12s linear,box-shadow .6s var(--ease-glide)}
+/* cursor spotlight + gold edge that follows the pointer */
+.benefit::before,.benefit::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .45s var(--ease-glide)}
+.benefit::before{z-index:-1;background:radial-gradient(380px circle at var(--mx) var(--my),rgba(232,199,102,.2),transparent 48%)}
+.benefit::after{padding:1.5px;background:radial-gradient(240px circle at var(--mx) var(--my),rgba(201,162,39,.95),rgba(201,162,39,0) 65%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+.benefit:hover{--ty:-6px;box-shadow:0 34px 60px -38px rgba(11,46,36,.55)}
+.benefit:hover::before,.benefit:hover::after{opacity:1}
+.benefit:active{--ty:-2px}
+.b-num{position:absolute;top:1.55rem;right:1.6rem;font-family:'Bodoni Moda',serif;font-size:.95rem;font-weight:500;letter-spacing:.08em;color:rgba(11,46,36,.28);transition:color .45s}
+.benefit:hover .b-num{color:var(--gold-ink)}
+.benefit .icon-tile{position:relative;overflow:hidden;transition:transform .55s var(--ease-glide)}
+.benefit .icon-tile::before{content:'';position:absolute;inset:0;background:linear-gradient(145deg,#EBCB6A,#B8901F);opacity:0;transition:opacity .45s var(--ease-glide)}
+.benefit .icon-tile svg{position:relative;transition:stroke .45s,transform .55s var(--ease-glide)}
+.benefit:hover .icon-tile{transform:translateY(-3px) rotate(-6deg)}
+.benefit:hover .icon-tile::before{opacity:1}
+.benefit:hover .icon-tile svg{stroke:#0B2E24;transform:scale(1.08)}
+.benefit h3{font-family:'Bodoni Moda',serif;font-size:1.3rem;font-weight:600;color:var(--emerald-deep);margin-bottom:.5rem;line-height:1.2;padding-right:1.6rem}
+.benefit p{font-size:.95rem;color:var(--muted);margin-bottom:1.4rem}
 
-/* ── stats strip ────────────────────────────────── */
-.stats{background:linear-gradient(120deg,#0B2E24,#0D3A2C);border-top:1px solid rgba(212,175,55,.2);border-bottom:1px solid rgba(212,175,55,.2);padding:4.5rem 6vw}
-.stats-grid{max-width:1340px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:3rem}
-.stat{text-align:center;position:relative}
-.stat+.stat::before{content:'';position:absolute;left:-1.5rem;top:12%;bottom:12%;width:1px;background:rgba(212,175,55,.18)}
-.stat .num{font-family:'Bodoni Moda',serif;font-size:clamp(2.4rem,4vw,3.4rem);color:var(--gold-bright)}
-.stat .lbl{font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(248,245,238,.55);margin-top:.4rem}
+/* mini visuals */
+.b-viz{margin-top:auto;padding-top:1.1rem;border-top:1px dashed rgba(11,46,36,.16)}
+.viz-label{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem;font-size:.68rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem}
+.viz-label b{font-family:'Bodoni Moda',serif;font-size:1.05rem;letter-spacing:0;text-transform:none;color:var(--emerald-deep);white-space:nowrap}
+.viz-foot{font-size:.78rem;color:var(--muted);margin-top:.65rem;opacity:0;transform:translateY(4px);transition:opacity .4s .7s,transform .4s .7s}
+.benefit.active .viz-foot{opacity:1;transform:none}
+.viz-foot b{color:var(--gold-ink);font-weight:600}
+/* 1 · carriers compared */
+.dots{display:grid;grid-template-columns:repeat(12,1fr);gap:5px;align-items:center}
+.dots i{display:block;aspect-ratio:1;border-radius:50%;background:#E5E3DB;transform:scale(.55);transition:transform .35s var(--ease-out-soft),background .35s;transition-delay:calc(var(--i) * 45ms)}
+.benefit.active .dots i{transform:scale(1);background:rgba(11,46,36,.3)}
+.benefit.active .dots i.best{transform:scale(1.55);background:var(--gold);box-shadow:0 0 0 3px rgba(201,162,39,.22);transition-delay:.62s}
+/* 2 · plan order */
+.seg-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.seg-bar span{position:relative;overflow:hidden;isolation:isolate;display:flex;align-items:center;justify-content:center;height:30px;border-radius:8px;background:#EEECE5;font-size:.62rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:#7D8681;transition:color .3s}
+.seg-bar span::before{content:'';position:absolute;inset:0;z-index:-1;transform:scaleX(0);transform-origin:left;transition:transform .55s var(--ease-out-soft)}
+.seg-bar .s1::before{background:linear-gradient(120deg,#C9A227,#E8C766)}
+.seg-bar .s2::before{background:var(--emerald)}
+.seg-bar .s3::before{background:var(--emerald-soft)}
+.benefit.active .seg-bar span::before{transform:scaleX(1)}
+.benefit.active .seg-bar .s1{color:#1A1405;transition-delay:.25s}
+.benefit.active .seg-bar .s2{color:#fff;transition-delay:.6s}.benefit.active .seg-bar .s2::before{transition-delay:.35s}
+.benefit.active .seg-bar .s3{color:#fff;transition-delay:.95s}.benefit.active .seg-bar .s3::before{transition-delay:.7s}
+/* 3 · checklist */
+.viz-checks{list-style:none;display:grid;gap:.45rem}
+.viz-checks li{display:flex;align-items:center;gap:.6rem;font-size:.84rem;color:#8E9590;transition:color .3s;transition-delay:calc(var(--i) * 220ms + 150ms)}
+.viz-checks .box{width:20px;height:20px;flex:none;border-radius:6px;border:1.5px solid #D9D7CF;display:grid;place-items:center;transition:background .3s,border-color .3s;transition-delay:inherit}
+.viz-checks svg{width:13px;height:13px;fill:none;stroke:var(--gold-bright);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:22;stroke-dashoffset:22;transition:stroke-dashoffset .35s var(--ease-out-soft);transition-delay:inherit}
+.benefit.active .viz-checks li{color:var(--text)}
+.benefit.active .viz-checks .box{background:var(--emerald-deep);border-color:var(--emerald-deep)}
+.benefit.active .viz-checks svg{stroke-dashoffset:0}
+/* 4 · 100-year timeline */
+.tl{position:relative;height:46px}
+.tl-line{position:absolute;left:6px;right:6px;top:6px;height:2px;border-radius:2px;background:#E5E3DB;overflow:hidden}
+.tl-line::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,var(--gold),var(--gold-bright));transform:scaleX(0);transform-origin:left;transition:transform 1.1s var(--ease-out-soft) .1s}
+.benefit.active .tl-line::after{transform:scaleX(1)}
+.tl .m{position:absolute;left:var(--x);top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.35rem;font-size:.7rem;color:var(--muted);white-space:nowrap}
+.tl .m::before{content:'';width:14px;height:14px;border-radius:50%;background:#fff;border:2px solid #D9D7CF;transform:scale(.6);transition:transform .35s var(--ease-out-soft),border-color .35s,background .35s;transition-delay:calc(var(--i) * 300ms + 150ms)}
+.tl .m:first-of-type{transform:none;align-items:flex-start}
+.tl .m:last-of-type{transform:translateX(-100%);align-items:flex-end}
+.benefit.active .tl .m::before{transform:scale(1);border-color:var(--gold);background:var(--gold-pale)}
+.benefit.active .tl .m:last-of-type::before{background:var(--gold)}
 
-/* ── sections ───────────────────────────────────── */
-section{padding:8.5rem 6vw}
-.wrap{max-width:1340px;margin:0 auto}
-.sec-head{max-width:52rem;margin-bottom:4.5rem}
-.sec-head h2{font-size:clamp(2.4rem,4.6vw,4rem);margin:1.4rem 0 1.2rem}
-.sec-head p{font-weight:300;color:rgba(248,245,238,.66);font-size:1.05rem;max-width:38rem}
+/* benefit cards on the dark-green section */
+.on-dark .benefit{background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.025));border-color:rgba(232,199,102,.2);box-shadow:none}
+.on-dark .benefit:hover{box-shadow:0 34px 60px -36px rgba(0,0,0,.85);border-color:rgba(232,199,102,.35)}
+.on-dark .benefit::before{background:radial-gradient(380px circle at var(--mx) var(--my),rgba(232,199,102,.12),transparent 50%)}
+.on-dark .benefit h3{color:#fff}
+.on-dark .benefit p{color:rgba(248,245,238,.72)}
+.on-dark .b-num{color:rgba(232,199,102,.45)}
+.on-dark .benefit:hover .b-num{color:var(--gold-bright)}
+.on-dark .benefit .icon-tile{background:rgba(232,199,102,.1);box-shadow:inset 0 0 0 1px rgba(232,199,102,.35)}
+.on-dark .b-viz{border-top-color:rgba(232,199,102,.22)}
+.on-dark .viz-label{color:rgba(248,245,238,.6)}
+.on-dark .viz-label b{color:#fff}
+.on-dark .viz-foot{color:rgba(248,245,238,.65)}
+.on-dark .viz-foot b{color:var(--gold-bright)}
+.on-dark .dots i{background:rgba(255,255,255,.12)}
+.on-dark .benefit.active .dots i{background:rgba(248,245,238,.42)}
+.on-dark .benefit.active .dots i.best{background:var(--gold-bright);box-shadow:0 0 0 3px rgba(232,199,102,.25)}
+.on-dark .seg-bar span{background:rgba(255,255,255,.08);color:rgba(248,245,238,.55)}
+.on-dark .seg-bar .s2::before{background:var(--gold-pale)}
+.on-dark .seg-bar .s3::before{background:#7FB89E}
+.on-dark .benefit.active .seg-bar .s2,.on-dark .benefit.active .seg-bar .s3{color:#0B2E24}
+.on-dark .viz-checks li{color:rgba(248,245,238,.4)}
+.on-dark .benefit.active .viz-checks li{color:#F4F1E8}
+.on-dark .viz-checks .box{border-color:rgba(255,255,255,.25)}
+.on-dark .benefit.active .viz-checks .box{background:rgba(232,199,102,.16);border-color:var(--gold)}
+.on-dark .tl-line{background:rgba(255,255,255,.14)}
+.on-dark .tl .m{color:rgba(248,245,238,.65)}
+.on-dark .tl .m::before{background:#0B2E24;border-color:rgba(255,255,255,.3)}
+.on-dark .benefit.active .tl .m::before{border-color:var(--gold-bright);background:#3A4A2A}
+.on-dark .benefit.active .tl .m:last-of-type::before{background:var(--gold-bright)}
 
-/* light (cream/marble) sections */
-.light{
-  background:
-    radial-gradient(900px 500px at 90% 0%,rgba(201,162,39,.06),transparent 55%),
-    linear-gradient(160deg,#F4F3EF,#E9E8E3);
-  color:var(--emerald-deep);
-  position:relative;
+/* ── services (monogram layout, from live site) ─ */
+#services .sec-head{margin:0 auto clamp(2.5rem,6vw,5rem);text-align:center}
+#services .sec-head h2{font-size:clamp(2.4rem,4.6vw,4rem)}
+#services .sec-head p{margin-inline:auto}
+.eyebrow-pill{display:inline-flex;align-items:center;gap:.6rem;border:1px solid rgba(154,122,28,.3);border-radius:8px;padding:.42rem 1.1rem;font-size:10px;font-weight:500;letter-spacing:.24em;text-transform:uppercase;color:var(--gold-ink);background:rgba(201,162,39,.07)}
+.eyebrow-pill::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--gold)}
+.service-layout{
+  display:grid;grid-template-columns:1fr minmax(12rem,.85fr) 1fr;
+  grid-template-areas:"wealth mark protect" "retire mark educate" "legacy legacy legacy";
+  gap:0 clamp(1.25rem,3vw,3.5rem);align-items:stretch
 }
-.light::before{ /* marble veins */
-  content:'';position:absolute;inset:0;pointer-events:none;opacity:.5;
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1400' height='900' viewBox='0 0 1400 900'%3E%3Cg fill='none' stroke-linecap='round'%3E%3Cpath d='M-50 180 C 300 120 480 320 820 240 S 1250 140 1500 260' stroke='%230B2E24' stroke-opacity='.035' stroke-width='1.4'/%3E%3Cpath d='M-50 520 C 260 440 560 640 900 540 S 1300 460 1500 580' stroke='%23C9A227' stroke-opacity='.06' stroke-width='1'/%3E%3Cpath d='M-50 780 C 340 700 540 880 880 790 S 1280 720 1500 830' stroke='%230B2E24' stroke-opacity='.028' stroke-width='1.2'/%3E%3C/g%3E%3C/svg%3E") center/cover no-repeat;
+.service-monogram{
+  grid-area:mark;align-self:center;aspect-ratio:1;background:linear-gradient(135deg,#95763d,#c5a45c);
+  -webkit-mask:url("assets/logo.webp") center / 205% auto no-repeat;mask:url("assets/logo.webp") center / 205% auto no-repeat;
+  -webkit-mask-mode:luminance;mask-mode:luminance
 }
-.light .sec-head p{color:rgba(11,46,36,.62)}
-.light h2,.light h3{color:var(--emerald-deep)}
+.service-item{padding:2rem 0;align-self:stretch}
+.service-item h3{font:500 clamp(1.5rem,2.2vw,2.25rem)/1.15 'Bodoni Moda',serif;color:var(--emerald-deep);margin:0 0 .65rem}
+.service-item p{color:#465750;font-size:1rem;line-height:1.65;margin:0}
+.service-item a{display:inline-flex;align-items:center;gap:.6rem;min-height:44px;margin-top:.4rem;color:#183d2e;font-weight:600;text-transform:uppercase;letter-spacing:.07em;font-size:.8rem;text-decoration:none}
+.service-item a span{display:grid;place-items:center;width:1.55rem;height:1.55rem;border-radius:50%;background:#173f30;color:#fff;transition:transform .4s var(--ease-glide)}
+.service-item a:hover span{transform:translateX(3px)}
+.service-item a:hover,.service-item a:focus-visible{text-decoration:underline;text-underline-offset:4px}
+.service-wealth{grid-area:wealth}.service-protect{grid-area:protect}
+.service-retire{grid-area:retire}.service-educate{grid-area:educate}
+.service-wealth,.service-retire{text-align:right}
+.service-retire,.service-educate,.service-legacy{border-top:1px solid #dbdfd9}
+.service-legacy{grid-area:legacy;text-align:center}.service-legacy p{max-width:35rem;margin:auto}
+@media(max-width:760px){
+  .service-layout{display:flex;flex-direction:column}
+  .service-monogram{width:8rem;margin-bottom:1.5rem}
+  .service-item{text-align:left;padding:1.35rem 0;border-top:1px solid #dbdfd9}
+  .service-wealth,.service-retire,.service-legacy{text-align:left}
+  .service-legacy p{max-width:none}
+}
 
-/* ── bento (services) ───────────────────────────── */
-.bento{display:grid;grid-template-columns:repeat(12,1fr);gap:1.4rem}
-.bcard{
-  position:relative;border-radius:1rem;padding:.4rem;
-  background:rgba(255,255,255,.55);border:1px solid rgba(11,46,36,.09);
-  box-shadow:0 30px 60px -45px rgba(11,46,36,.4);
-  transition:transform .7s var(--ease-glide),box-shadow .7s var(--ease-glide);
-}
-.bcard:hover{transform:translateY(-6px);box-shadow:0 42px 70px -42px rgba(11,46,36,.5)}
-.bcard .core{
-  height:100%;border-radius:calc(1rem - .4rem);padding:2.2rem;
-  background:linear-gradient(165deg,#FFFFFF,#F0EFEA);
-  box-shadow:inset 0 1px 1px rgba(255,255,255,.9);
-  display:flex;flex-direction:column;position:relative;overflow:hidden;
-}
-.bcard.dark .core{background:linear-gradient(155deg,#0F3D30,#0A281F);box-shadow:inset 0 1px 1px rgba(255,255,255,.1)}
-.bcard.dark{background:rgba(11,46,36,.35);border-color:rgba(212,175,55,.25)}
-.bcard.dark h3,.bcard.dark p{color:var(--cream)}
-.bcard.dark p{color:rgba(248,245,238,.66)}
-.b-icon{
-  width:52px;height:52px;border-radius:10px;margin-bottom:1.6rem;flex:none;
-  background:linear-gradient(140deg,rgba(201,162,39,.16),rgba(201,162,39,.05));
-  border:1px solid rgba(201,162,39,.35);
-  display:flex;align-items:center;justify-content:center;
-}
-.b-icon svg{width:22px;height:22px;stroke:var(--gold);stroke-width:1.1;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.bcard h3{font-family:'Bodoni Moda',serif;font-size:1.5rem;font-weight:500;margin-bottom:.7rem}
-.bcard p{font-size:.92rem;font-weight:300;color:rgba(11,46,36,.62);flex:1}
-.b-link{
-  margin-top:1.8rem;display:inline-flex;align-items:center;gap:.5rem;
-  font-size:.78rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--gold);text-decoration:none;
-}
-.b-link svg{width:13px;height:13px;transition:transform .5s var(--ease-glide)}
-.bcard:hover .b-link svg{transform:translate(4px,-2px)}
-.b-6{grid-column:span 6}.b-4{grid-column:span 4}.b-8{grid-column:span 8}
-.b-tall .core{min-height:420px}
-.bcard img.bimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.92}
-.bcard .img-scrim{position:absolute;inset:0;background:linear-gradient(to top,rgba(6,12,9,.88) 18%,rgba(6,12,9,.15) 60%)}
-.bcard .over{position:relative;z-index:2;margin-top:auto}
-.spark{width:100%;height:64px;margin-top:1.2rem}
+/* ── how it works ───────────────────────────────── */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;list-style:none;counter-reset:s;position:relative}
+.steps::before{content:'';position:absolute;top:27px;left:12%;right:12%;height:2px;background:repeating-linear-gradient(90deg,rgba(232,199,102,.5) 0 8px,transparent 8px 16px)}
+.step{position:relative;text-align:center;padding:0 .6rem}
+.step-num{position:relative;z-index:1;width:56px;height:56px;margin:0 auto 1.3rem;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--gold);color:var(--ink);font-family:'Bodoni Moda',serif;font-weight:600;font-size:1.3rem;box-shadow:0 0 0 8px #0B2E24}
+.step h3{font-family:'Bodoni Moda',serif;font-size:1.35rem;color:#fff;margin-bottom:.45rem}
+.step p{font-size:.93rem;color:rgba(248,245,238,.7);max-width:16rem;margin:0 auto}
+.center-cta{display:flex;justify-content:center;margin-top:3.5rem}
 
-/* ── philosophy split ───────────────────────────── */
-.split{display:grid;grid-template-columns:1fr 1fr;gap:5.5rem;align-items:center}
-.split .shell img{display:block;width:100%;height:620px;object-fit:cover}
-.founders-core{background:radial-gradient(600px 400px at 50% 0%,rgba(30,107,82,.25),transparent 65%),#020403}
-.founders-core img{object-position:top}
-.founders-plate{
-  position:absolute;left:1.1rem;right:1.1rem;bottom:1.1rem;z-index:2;
-  background:rgba(8,14,11,.62);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  border:1px solid rgba(212,175,55,.3);border-radius:.7rem;padding:1rem 1.4rem;
-  box-shadow:inset 0 1px 1px rgba(255,255,255,.1),0 20px 40px -20px rgba(0,0,0,.7);
-}
-.founders-plate strong{display:block;font-family:'Bodoni Moda',serif;font-weight:500;font-size:1.15rem;color:var(--gold-bright)}
-.founders-plate span{font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(248,245,238,.65)}
-.split blockquote{
-  font-family:'Bodoni Moda',serif;font-style:italic;font-size:1.35rem;line-height:1.5;
-  color:var(--gold-bright);border-left:2px solid var(--gold);padding-left:1.6rem;margin:2.4rem 0;
-}
-.pillars{display:flex;flex-direction:column;gap:1.1rem;margin-top:2.6rem}
-.pillar{display:flex;gap:1.1rem;align-items:flex-start}
-.pillar .tick{
-  width:26px;height:26px;border-radius:50%;flex:none;margin-top:.15rem;
-  background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.4);
-  display:flex;align-items:center;justify-content:center;
-}
-.pillar .tick svg{width:11px;height:11px;stroke:var(--gold-bright);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.pillar strong{display:block;font-size:.95rem;font-weight:600;color:var(--white)}
-.pillar span{font-size:.88rem;font-weight:300;color:rgba(248,245,238,.6)}
+/* ── explainer + estimator ──────────────────────── */
+.est-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(2rem,5vw,5rem);align-items:start}
+.est-copy h2{font-size:clamp(2.2rem,4vw,3.2rem);color:var(--emerald-deep);margin:1rem 0}
+.est-copy>p{color:var(--muted);font-size:1.05rem;margin-bottom:1.6rem}
+.check-list{list-style:none;display:grid;gap:.85rem}
+.check-list li{display:flex;gap:.8rem;align-items:flex-start;font-size:.98rem}
+.check-list svg{width:22px;height:22px;flex:none;stroke:var(--gold-ink);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin-top:.1rem}
+.calc{background:var(--white);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:0 40px 80px -50px rgba(11,46,36,.45);overflow:hidden}
+.calc-head{padding:1.5rem 1.8rem;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:1rem}
+.calc-head h3{font-family:'Bodoni Moda',serif;font-size:1.4rem;color:var(--emerald-deep)}
+.calc-head span{font-size:.75rem;color:var(--muted)}
+.calc-body{padding:1.6rem 1.8rem;display:grid;gap:1.35rem}
+.slider-row label{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;font-size:.92rem;font-weight:500;color:var(--text);margin-bottom:.55rem}
+.slider-row output{font-family:'Bodoni Moda',serif;font-weight:600;font-size:1.1rem;color:var(--emerald-deep);white-space:nowrap}
+.slider-row small{display:block;font-size:.78rem;color:var(--muted);font-weight:400;margin-top:.1rem}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:28px;background:transparent;cursor:pointer;--p:50%}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:6px;background:linear-gradient(90deg,var(--gold) var(--p),#E3E1D9 var(--p))}
+input[type=range]::-moz-range-track{height:6px;border-radius:6px;background:linear-gradient(90deg,var(--gold) var(--p),#E3E1D9 var(--p))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:#fff;border:2px solid var(--emerald-deep);margin-top:-9px;box-shadow:0 4px 10px rgba(11,46,36,.25)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid var(--emerald-deep)}
+input[type=range]:focus-visible{outline:none}
+input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 4px rgba(201,162,39,.45)}
+.calc-result{background:linear-gradient(150deg,#0F3D30,#082018);color:#fff;padding:1.7rem 1.8rem}
+.calc-result .lbl{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-bright)}
+.calc-result .big{font-family:'Bodoni Moda',serif;font-size:clamp(2.4rem,5vw,3.4rem);font-weight:600;line-height:1.1;margin:.3rem 0 1rem}
+.bar{display:flex;height:12px;border-radius:12px;overflow:hidden;background:rgba(255,255,255,.12)}
+.bar span{display:block;height:100%}
+.legend{display:grid;grid-template-columns:repeat(2,1fr);gap:.45rem 1.2rem;margin-top:1rem;list-style:none;font-size:.84rem;color:rgba(248,245,238,.8)}
+.legend li{display:flex;align-items:center;gap:.5rem}
+.legend i{width:10px;height:10px;border-radius:3px;flex:none}
+.legend b{margin-left:auto;font-weight:500;color:#fff}
+.calc-foot{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;justify-content:space-between;margin-top:1.4rem}
+.calc-foot p{font-size:.74rem;color:rgba(248,245,238,.55);max-width:22rem}
 
-/* ── process ────────────────────────────────────── */
-.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1.4rem;counter-reset:step}
-.step{
-  border-radius:1rem;padding:.4rem;background:rgba(255,255,255,.5);
-  border:1px solid rgba(11,46,36,.09);
-  transition:transform .7s var(--ease-glide);
-}
-.step:hover{transform:translateY(-6px)}
-.step .core{border-radius:calc(1rem - .4rem);background:linear-gradient(170deg,#fff,#EFEEE9);padding:2rem 1.7rem;height:100%;box-shadow:inset 0 1px 1px rgba(255,255,255,.9)}
-.step .n{font-family:'Bodoni Moda',serif;font-size:2.6rem;color:transparent;-webkit-text-stroke:1px var(--gold);display:block;margin-bottom:1.2rem}
-.step h4{font-family:'Bodoni Moda',serif;font-size:1.2rem;font-weight:500;color:var(--emerald-deep);margin-bottom:.6rem}
-.step p{font-size:.86rem;font-weight:300;color:rgba(11,46,36,.6)}
+/* ── tabbed comparison ──────────────────────────── */
+.tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.tab{font:inherit;font-size:.92rem;font-weight:500;padding:.7rem 1.2rem;min-height:44px;border-radius:999px;border:1px solid var(--line);background:var(--white);color:var(--text);cursor:pointer;transition:background .3s,color .3s,border-color .3s}
+.tab:hover{border-color:var(--gold)}
+.tab[aria-selected="true"]{background:var(--emerald-deep);border-color:var(--emerald-deep);color:var(--gold-pale)}
+.panel{background:var(--white);border:1px solid var(--line);border-radius:var(--r-lg);padding:clamp(1.6rem,3vw,2.6rem);display:grid;grid-template-columns:1.2fr .8fr;gap:clamp(1.5rem,4vw,3.5rem)}
+.panel[hidden]{display:none}
+.panel h3{font-family:'Bodoni Moda',serif;font-size:1.8rem;color:var(--emerald-deep);margin-bottom:.8rem}
+.panel p{color:var(--muted);font-size:1rem;margin-bottom:1rem}
+.facts{list-style:none;display:grid;gap:0;border-radius:var(--r-md);background:var(--paper);border:1px solid var(--line);padding:.4rem 1.2rem;align-self:start}
+.facts li{display:flex;justify-content:space-between;gap:1rem;padding:.8rem 0;font-size:.9rem;border-bottom:1px solid var(--line)}
+.facts li:last-child{border-bottom:0}
+.facts span{color:var(--muted)}
+.facts b{font-weight:600;color:var(--emerald-deep);text-align:right}
 
-/* ── quote ──────────────────────────────────────── */
-.quote-sec{
-  text-align:center;position:relative;overflow:hidden;
-  background:
-    radial-gradient(800px 500px at 50% 120%,rgba(30,107,82,.3),transparent 60%),
-    linear-gradient(180deg,#060A08,#0A1F18);
-}
-.quote-sec .mark{font-family:'Bodoni Moda',serif;font-size:7rem;line-height:.4;color:var(--gold);opacity:.5;display:block;margin-bottom:2rem}
-.quote-sec blockquote{font-family:'Bodoni Moda',serif;font-size:clamp(1.7rem,3.6vw,3rem);font-weight:400;font-style:italic;line-height:1.35;max-width:56rem;margin:0 auto;color:var(--cream)}
-.quote-sec cite{display:block;margin-top:2.6rem;font-style:normal;font-size:.78rem;letter-spacing:.26em;text-transform:uppercase;color:var(--gold-bright)}
+/* ── stats band ─────────────────────────────────── */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem}
+.stat{border-radius:var(--r-lg);padding:2rem 1.6rem;background:rgba(255,255,255,.05);border:1px solid rgba(232,199,102,.22)}
+.stat .num{font-family:'Bodoni Moda',serif;font-size:clamp(2.4rem,4vw,3.2rem);font-weight:600;color:var(--gold-bright);line-height:1}
+.stat .lbl{font-size:.95rem;color:rgba(248,245,238,.78);margin-top:.6rem}
 
-/* ── legacy CTA ─────────────────────────────────── */
-.legacy{padding:0 6vw 8.5rem}
-.legacy .shell{max-width:1340px;margin:0 auto}
-.legacy .core{
-  padding:6.5rem 5rem;text-align:center;
-  background:
-    radial-gradient(700px 420px at 50% -10%,rgba(212,175,55,.16),transparent 60%),
-    linear-gradient(160deg,#0F3D30,#082018);
-}
-.legacy h2{font-size:clamp(2.6rem,5vw,4.4rem);color:var(--white);margin:1.5rem 0 1.2rem}
-.legacy p{font-weight:300;color:rgba(248,245,238,.68);max-width:34rem;margin:0 auto 2.8rem}
+/* ── leadership ─────────────────────────────────── */
+.lead-card{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(2rem,5vw,4.5rem);align-items:center;background:var(--white);border:1px solid var(--line);border-radius:28px;padding:clamp(1.4rem,3vw,2.6rem)}
+.speaker-pair{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.speaker-pair figure{margin:0;min-width:0}
+.speaker-pair figure+figure{padding-top:3rem}
+.speaker-pair img{display:block;width:100%;aspect-ratio:2/3;object-fit:cover;border-radius:var(--r-md)}
+.speaker-pair figcaption{padding:.7rem .2rem 0;font-family:'Bodoni Moda',serif;color:var(--emerald-deep);font-size:1rem}
+.lead-card h2{font-size:clamp(2rem,3.6vw,3rem);color:var(--emerald-deep);margin:1rem 0}
+.lead-card>div>p{color:var(--muted);margin-bottom:1.4rem}
+.lead-card blockquote{font-family:'Bodoni Moda',serif;font-size:1.25rem;line-height:1.5;color:var(--emerald-deep);margin:0 0 1.6rem;padding:1.3rem 1.4rem;border-radius:var(--r-md);background:linear-gradient(150deg,rgba(201,162,39,.12),rgba(201,162,39,.04))}
+.lead-card blockquote footer{font-family:'Jost',sans-serif;font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:.7rem}
+.pillars{display:grid;gap:.8rem}
+.pillar{display:flex;gap:.9rem;align-items:flex-start;padding:.9rem 1rem;border-radius:var(--r-sm);background:var(--paper)}
+.pillar svg{width:22px;height:22px;flex:none;stroke:var(--gold-ink);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin-top:.1rem}
+.pillar strong{display:block;font-size:.97rem;color:var(--emerald-deep)}
+.pillar span{font-size:.88rem;color:var(--muted)}
+
+/* ── promo banner (opportunity) ─────────────────── */
+.promo{display:grid;grid-template-columns:1fr 1fr;border-radius:28px;overflow:hidden;background:linear-gradient(150deg,#0F3D30,#07170F);color:#fff}
+.promo-copy{padding:clamp(2rem,4vw,3.5rem)}
+.promo-copy h2{font-size:clamp(2.2rem,4vw,3.4rem);margin:1rem 0}
+.promo-copy>p{color:rgba(248,245,238,.75);margin-bottom:1.6rem;max-width:30rem}
+.meet{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1.1rem 1.2rem;border-radius:var(--r-md);background:rgba(255,255,255,.06);border:1px solid rgba(232,199,102,.25)}
+.meet+.meet{margin-top:.75rem}
+.meet .ml{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-bright)}
+.meet h3{font-family:'Bodoni Moda',serif;font-size:1.35rem;line-height:1.2}
+.meet p{font-size:.9rem;color:rgba(248,245,238,.75)}
+.meet .btn{flex:none;padding-left:1.1rem;font-size:.85rem}
+.promo-fine{font-size:.76rem;color:rgba(248,245,238,.55);margin-top:1rem}
+.promo-media{position:relative;min-height:320px}
+.promo-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.promo-media figcaption{position:absolute;left:1rem;right:1rem;bottom:1rem;background:rgba(6,12,9,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:var(--r-sm);padding:.7rem .9rem;font-size:.82rem;color:#f2f1eb}
+
+/* ── spotlight ──────────────────────────────────── */
+.spotlight-heading{display:flex;align-items:end;justify-content:space-between;gap:1.5rem;margin-bottom:1.5rem}
+.spotlight-heading h2{font-size:clamp(1.9rem,3vw,2.6rem);color:var(--emerald-deep);margin-top:.8rem}
+.spotlight-card{border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;background:var(--white);box-shadow:0 30px 60px -45px rgba(11,46,36,.5)}
+.spotlight-slide[hidden],.spotlight-controls[hidden]{display:none}
+.spotlight-slide:not([hidden]){animation:fadein .25s ease-out}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.spotlight-media{display:block;background:#07120c}
+.spotlight-media img{display:block;width:100%;height:auto;aspect-ratio:1609/977;object-fit:contain}
+.spotlight-caption{display:flex;align-items:center;justify-content:space-between;gap:2rem;padding:1.4rem 1.8rem}
+.spotlight-caption h3{font-family:'Bodoni Moda',serif;font-size:1.35rem;color:var(--emerald-deep);margin-bottom:.2rem}
+.spotlight-caption p{font-size:.95rem;color:var(--muted)}
+.spotlight-caption .btn{flex-shrink:0}
+.spotlight-controls{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;padding:1rem 1.8rem;border-top:1px solid var(--line)}
+.spotlight-controls button{min-width:44px;min-height:44px;padding:.5rem .85rem;font:inherit;font-size:.9rem;color:var(--emerald-deep);background:var(--paper);border:1px solid var(--line);border-radius:10px;cursor:pointer}
+.spotlight-controls button:hover{border-color:var(--gold)}
+.spotlight-controls [data-slide-toggle]{margin-right:auto}
+.spotlight-status{font-size:.85rem;color:var(--muted);margin-inline:.25rem}
+
+/* ── testimonial ────────────────────────────────── */
+.testimonial{max-width:52rem;margin:0 auto;text-align:center}
+.stars{display:flex;justify-content:center;gap:.25rem;margin-bottom:1.4rem}
+.stars svg{width:22px;height:22px;fill:var(--gold-bright)}
+.testimonial blockquote{font-family:'Bodoni Moda',serif;font-size:clamp(1.5rem,3vw,2.3rem);line-height:1.4;color:#fff}
+.testimonial cite{display:block;margin-top:1.6rem;font-style:normal;font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-bright)}
+.brokers{margin-top:5rem;padding-top:3rem;border-top:1px solid rgba(232,199,102,.18)}
+.brokers .strip-label{color:rgba(244,231,195,.6)}
+.network-logo{flex:none;width:150px;height:80px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);padding:.4rem;background:rgba(255,255,255,.06);border:1px solid rgba(212,175,55,.2)}
+.network-logo img{max-width:100%;max-height:100%;object-fit:contain;display:block}
+
+/* ── FAQ ────────────────────────────────────────── */
+.faq-grid{display:grid;grid-template-columns:.7fr 1.3fr;gap:clamp(2rem,5vw,5rem);align-items:start}
+.faq-grid .sec-head{position:sticky;top:7rem;margin-bottom:0}
+.faq{border-top:1px solid var(--line)}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:1.5rem;padding:1.35rem .2rem;cursor:pointer;font-size:1.08rem;font-weight:500;color:var(--emerald-deep)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary .pm{position:relative;width:32px;height:32px;flex:none;border-radius:50%;border:1px solid var(--line);transition:background .3s,border-color .3s}
+.faq summary .pm::before,.faq summary .pm::after{content:'';position:absolute;left:50%;top:50%;width:12px;height:1.5px;background:var(--emerald-deep);transform:translate(-50%,-50%);transition:transform .35s var(--ease-glide)}
+.faq summary .pm::after{transform:translate(-50%,-50%) rotate(90deg)}
+.faq details[open] summary .pm{background:var(--emerald-deep);border-color:var(--emerald-deep)}
+.faq details[open] summary .pm::before,.faq details[open] summary .pm::after{background:var(--gold-bright)}
+.faq details[open] summary .pm::after{transform:translate(-50%,-50%) rotate(0)}
+.faq summary:hover{color:var(--gold-ink)}
+.faq .ans{padding:0 3.5rem 1.4rem .2rem;color:var(--muted);font-size:.98rem}
 
 /* ── contact ────────────────────────────────────── */
-.contact-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:5rem;align-items:start}
-.contact-info h2{font-size:clamp(2.2rem,4vw,3.4rem);margin:1.4rem 0 1.2rem}
-.contact-info p{font-weight:300;color:rgba(11,46,36,.62);max-width:26rem;margin-bottom:2.4rem}
-.c-line{display:flex;align-items:center;gap:1rem;padding:1rem 0;border-bottom:1px solid rgba(11,46,36,.1);font-size:.94rem;color:var(--emerald-deep);text-decoration:none;transition:color .4s var(--ease-glide)}
-a.c-line:hover{color:var(--gold)}
-.c-line svg{width:18px;height:18px;stroke:var(--gold);stroke-width:1.2;fill:none;stroke-linecap:round;stroke-linejoin:round;flex:none}
-form.core{background:linear-gradient(165deg,#fff,#F0EFEA);padding:2.8rem;box-shadow:inset 0 1px 1px rgba(255,255,255,.9)}
-.f-row{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
-.field{margin-bottom:1.1rem}
-.field label{display:block;font-size:.68rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:rgba(11,46,36,.55);margin-bottom:.5rem}
-.field input,.field select,.field textarea{
-  width:100%;border:1px solid rgba(11,46,36,.14);border-radius:.5rem;
-  background:rgba(255,255,255,.7);padding:.85rem 1.1rem;
-  font-family:'Jost',sans-serif;font-size:.92rem;color:var(--emerald-deep);
-  outline:none;transition:border-color .4s var(--ease-glide),box-shadow .4s var(--ease-glide);
-}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,162,39,.15)}
+.contact-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(2rem,5vw,5rem);align-items:start}
+.contact-info h2{font-size:clamp(2.2rem,4vw,3.2rem);color:var(--emerald-deep);margin:1rem 0}
+.contact-info>p{color:var(--muted);max-width:26rem;margin-bottom:1.8rem}
+.c-cards{display:grid;gap:.7rem}
+.c-line{display:flex;align-items:center;gap:1rem;padding:.95rem 1.1rem;border-radius:var(--r-md);background:var(--white);border:1px solid var(--line);font-size:.95rem;color:var(--emerald-deep);text-decoration:none;transition:border-color .3s}
+a.c-line:hover{border-color:var(--gold)}
+.c-line .icon-tile{width:40px;height:40px;border-radius:11px;margin:0}
+.c-line .icon-tile svg{width:18px;height:18px}
+.c-line small{display:block;font-size:.75rem;color:var(--muted)}
+form.form-card{background:var(--white);border:1px solid var(--line);border-radius:var(--r-lg);padding:clamp(1.5rem,3vw,2.6rem);box-shadow:0 40px 80px -55px rgba(11,46,36,.5)}
+form.form-card h3{font-family:'Bodoni Moda',serif;font-size:1.5rem;color:var(--emerald-deep);margin-bottom:1.3rem}
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:.85rem;font-weight:500;color:var(--text);margin-bottom:.4rem}
+.field input,.field select,.field textarea{width:100%;border:1px solid rgba(11,46,36,.2);border-radius:var(--r-sm);background:#fff;padding:.85rem 1rem;min-height:48px;font-family:'Jost',sans-serif;font-size:1rem;color:var(--text);outline:none;transition:border-color .3s,box-shadow .3s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,162,39,.2)}
 .field textarea{resize:vertical;min-height:110px}
-.form-note{font-size:.75rem;color:rgba(11,46,36,.45);margin-top:1.2rem}
+.form-note{font-size:.8rem;color:var(--muted);margin-top:1rem}
+.inquiry-error{font-size:.9rem;color:#8c2323;background:#fff0ec;border:1px solid #e2b3ab;padding:.8rem 1rem;margin-bottom:1rem;border-radius:8px}
 
-/* ── footer ─────────────────────────────────────── */
-body>footer{background:#050807;border-top:1px solid rgba(212,175,55,.15);padding:5rem 6vw 2.5rem}
-.foot-grid{max-width:1340px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;padding-bottom:3.5rem;border-bottom:1px solid rgba(255,255,255,.06)}
-.foot-grid h5{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem;font-weight:600}
-.foot-grid a{display:block;font-size:.88rem;font-weight:300;color:rgba(248,245,238,.6);text-decoration:none;padding:.3rem 0;transition:color .4s}
+/* ── final CTA ──────────────────────────────────── */
+.final{padding:0 6vw 6rem;background:var(--paper)}
+.final-card{max-width:1200px;margin:0 auto;border-radius:28px;padding:clamp(2.5rem,6vw,4.5rem);text-align:center;color:#fff;background:radial-gradient(700px 400px at 50% -10%,rgba(212,175,55,.2),transparent 60%),linear-gradient(160deg,#0F3D30,#082018)}
+.final-card h2{font-size:clamp(2.2rem,4.5vw,3.6rem);margin-bottom:.8rem}
+.final-card p{color:rgba(248,245,238,.75);max-width:32rem;margin:0 auto 2rem}
+.final-card .hero-ctas{justify-content:center}
+
+/* ── footer + disclosures ───────────────────────── */
+body>footer{background:#050807;color:var(--cream);padding:4.5rem 6vw 2.5rem}
+.foot-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;padding-bottom:3rem;border-bottom:1px solid rgba(255,255,255,.08)}
+.foot-grid h2{font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1.1rem;font-weight:600}
+.foot-grid a{display:block;font-size:.9rem;color:rgba(248,245,238,.68);text-decoration:none;padding:.3rem 0}
 .foot-grid a:hover{color:var(--gold-bright)}
-.foot-brand p{font-size:.88rem;font-weight:300;color:rgba(248,245,238,.5);max-width:20rem;margin-top:1.2rem}
-.foot-bottom{max-width:1340px;margin:0 auto;padding-top:2.2rem;display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;font-size:.72rem;color:rgba(248,245,238,.35)}
+.foot-brand p{font-size:.9rem;color:rgba(248,245,238,.55);max-width:20rem;margin-top:1.1rem}
+.disclosures{max-width:1200px;margin:0 auto;padding-top:2.2rem;display:grid;gap:.75rem;font-size:.76rem;line-height:1.65;color:rgba(248,245,238,.5)}
+.disclosures h2{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(248,245,238,.7);font-weight:600}
+.disclosures sup{color:var(--gold)}
+.foot-bottom{max-width:1200px;margin:2rem auto 0;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;font-size:.76rem;color:rgba(248,245,238,.45)}
+.foot-bottom a{color:inherit}
 
 /* ── responsive ─────────────────────────────────── */
+@media(max-width:1100px){
+  .benefits{grid-template-columns:repeat(2,1fr)}
+}
 @media(max-width:1024px){
-  .hero-grid{grid-template-columns:1fr;gap:3.5rem}
-  .hero-media img{height:420px}
-  .b-6,.b-4,.b-8{grid-column:span 12}
-  .split{grid-template-columns:1fr;gap:3rem}
-  .split .shell img{height:420px}
-  .steps{grid-template-columns:repeat(2,1fr)}
-  .contact-grid{grid-template-columns:1fr;gap:3rem}
-  .stats-grid{grid-template-columns:repeat(2,1fr);gap:2.5rem}
-  .stat+.stat::before{display:none}
+  .hero{background-image:linear-gradient(180deg,rgba(5,21,16,.86),rgba(5,21,16,.74) 55%,rgba(5,21,16,.66)),url("assets/hero-office.webp")}
+  .hero-grid{grid-template-columns:1fr;min-height:0}
+  .hero-copy{padding-bottom:1rem}
+  .hero-media img{height:clamp(360px,52vh,460px)}
+  .est-grid,.contact-grid,.faq-grid,.lead-card,.promo{grid-template-columns:1fr}
+  .faq-grid .sec-head{position:static}
+  .panel{grid-template-columns:1fr}
+  .stats{grid-template-columns:repeat(2,1fr)}
   .foot-grid{grid-template-columns:1fr 1fr}
 }
 @media(max-width:768px){
-  section{padding:6rem 1.2rem}
-  .hero{padding:7.5rem 1.2rem 5rem}
-  .nav-links,.nav-cta{display:none}
-  .nav-pill{gap:1rem;width:calc(100vw - 5.6rem);justify-content:flex-start}
-  nav{justify-content:space-between;padding:1.2rem 1.2rem 0;gap:.8rem}
-  .burger{display:block;flex:none}
-  .hero-card{left:.8rem;bottom:1.2rem;transform:rotate(0)}
-  .hero-media .shell{transform:none}
-  .steps{grid-template-columns:1fr}
+  section{padding:4.5rem 1.2rem}
+  .hero{padding:8.2rem 1.2rem 0}
+  .hero h1{font-size:clamp(2.8rem,12vw,4.2rem)}
+  .steps{grid-template-columns:1fr;gap:2rem;text-align:left}
+  .steps::before{top:28px;bottom:28px;left:27px;right:auto;width:2px;height:auto;background:repeating-linear-gradient(180deg,rgba(232,199,102,.5) 0 8px,transparent 8px 16px)}
+  .step{display:grid;grid-template-columns:56px 1fr;gap:0 1.1rem;text-align:left;padding:0}
+  .step-num{grid-row:span 2;margin:0}
+  .step p{margin:0;max-width:none}
+  .tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-inline:-1.2rem;padding-inline:1.2rem}
+  .tab{flex:none}
   .f-row{grid-template-columns:1fr}
-  .legacy{padding:0 1.2rem 6rem}
-  .legacy .core{padding:3.5rem 1.6rem}
-  .stats{padding:3.5rem 1.2rem}
+  .meet{flex-direction:column;align-items:stretch}
+  .meet .btn{justify-content:space-between}
+  .spotlight-heading{flex-direction:column;align-items:flex-start}
+  .spotlight-caption{flex-direction:column;align-items:flex-start;gap:1rem;padding:1.2rem}
+  .final{padding:0 1.2rem 4rem}
+  .faq .ans{padding-right:.2rem}
+  .carrier-logo{width:148px;height:72px}
+}
+@media(max-width:560px){
+  .benefits,.stats{grid-template-columns:1fr}
+  .legend{grid-template-columns:1fr}
+  .calc-head{flex-direction:column;align-items:flex-start}
   .foot-grid{grid-template-columns:1fr}
+  .hero-ctas .btn{width:100%;justify-content:space-between}
 }
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
-  .reveal{opacity:1;transform:none;filter:none}
+  .reveal{opacity:1;transform:none}
+  .marquee-track{animation:none}
+  .logo-group[aria-hidden="true"]{display:none}
 }
 </style>
+<noscript><style>.reveal{opacity:1;transform:none}</style></noscript>
+<link rel="stylesheet" href="assets/sofi-controls.css">
+<link rel="stylesheet" href="assets/spotlight-banner.css">
+<link rel="stylesheet" href="assets/banner-scenes.css">
+<link rel="stylesheet" href="assets/fancy-select.css">
+<link rel="stylesheet" href="assets/steps-motion.css">
+<script src="assets/fancy-select.js" defer></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+<script src="assets/banner-scenes.js" defer></script>
+<link rel="stylesheet" href="assets/btn-motion.css">
+<script src="assets/btn-motion.js" defer></script>
 </head>
 <body>
-<div class="grain"></div>
+<a class="skip" href="#main">Skip to content</a>
+<dialog id="amg-intro" class="amg-intro" aria-label="Welcome to Anointed Money Group">
+  <div class="amg-intro__stage">
+    <video class="amg-intro__video" data-src="assets/amg-intro-short.mp4" muted playsinline preload="none" disablepictureinpicture aria-hidden="true"></video>
+    <p class="amg-intro__name" aria-hidden="true">Anointed Money Group</p>
+  </div>
+</dialog>
 
-<!-- ══ NAV ══ -->
+<!-- ══ NAV (kept exactly as live) ══ -->
 <nav>
   <div class="nav-pill">
     <a class="brand" href="#top">
@@ -477,24 +604,21 @@ body>footer{background:#050807;border-top:1px solid rgba(212,175,55,.15);padding
     </a>
     <ul class="nav-links">
       <li><a href="#services">Services</a></li>
-      <li><a href="#philosophy">Philosophy</a></li>
-      <li><a href="#approach">Approach</a></li>
-      <li><a href="resources.html">Resources</a></li>
-      <li><a href="licensing.html">Licensing</a></li>
+      <li><a href='/resources'>Resources</a></li>
+      <li><a href='/licensing'>Licensing</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
+    <a class='agent-portal-link' href='/agent-portal'>Agent Portal</a>
     <a href="#contact" class="btn btn-gold nav-cta">Book a Consultation
       <span class="orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
     </a>
   </div>
-  <button class="burger" id="burger" aria-label="Menu"><span></span><span></span></button>
+  <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="menu"><span></span><span></span></button>
 </nav>
 <div class="menu-overlay" id="menu">
   <a href="#services">Services</a>
-  <a href="#philosophy">Philosophy</a>
-  <a href="#approach">Approach</a>
-  <a href="resources.html">Resources</a>
-  <a href="licensing.html">Licensing</a>
+  <a href='/resources'>Resources</a>
+  <a href='/licensing'>Licensing</a>
   <a href="#contact">Contact</a>
   <a href="#contact" style="color:var(--gold-bright)">Book a Consultation ↗</a>
 </div>
@@ -502,277 +626,548 @@ body>footer{background:#050807;border-top:1px solid rgba(212,175,55,.15);padding
 <!-- ══ HERO ══ -->
 <header class="hero" id="top">
   <div class="hero-grid">
-    <div>
-      <span class="eyebrow reveal">Private Wealth &amp; Legacy Planning</span>
-      <h1 class="serif reveal" data-d="1">Wealth, by design.<br><i class="gold-text">Legacy</i>, by intention.</h1>
-      <p class="lede reveal" data-d="2">Anointed Money Group partners with families and professionals to create wealth, protect assets, and architect retirement, so that prosperity outlives the moment and becomes generational.</p>
+    <div class="hero-copy">
+      <span class="partner-tag reveal"><b aria-hidden="true">✦</b>Proud partner of Integrity Marketing Group</span>
+      <h1 class="serif reveal" data-d="1">Build wealth.<br><span class="gold-text">Leave a legacy.</span></h1>
+      <p class="lede reveal" data-d="2">Life insurance, retirement, and wealth strategies built around your family, explained in plain language by licensed AMG professionals.</p>
       <div class="hero-ctas reveal" data-d="3">
-        <a href="#contact" class="btn btn-gold">Begin Your Legacy
-          <span class="orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+        <a href="#contact" class="btn btn-gold">Book a consultation
         </a>
-        <a href="#services" class="btn btn-ghost">Explore Services
-          <span class="orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14m-6-6l6 6 6-6"/></svg></span>
+        <a href="#estimator" class="btn btn-ghost">Estimate my coverage
         </a>
       </div>
+      <p class="hero-fine reveal" data-d="3">One conversation, no obligation. Product availability, pricing, and underwriting vary by carrier and state.<sup>1</sup></p>
+      <ul class="trust-row reveal" data-d="3" aria-label="Why families trust AMG">
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg>273+ licensed agents</li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6-5.2-6-10a6 6 0 1112 0c0 4.8-6 10-6 10z"/><circle cx="12" cy="11" r="2.2"/></svg>Licensed in 38 states</li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>12 top-rated carriers</li>
+      </ul>
     </div>
     <div class="hero-media reveal" data-d="2">
-      <div class="shell"><div class="core">
-        <img class="hero-portrait" src="assets/hero-simi-zamilah.webp" alt="Simi and Zamilah Ajimatanrareje, AMG Executive Vice Presidents" loading="eager">
-      </div></div>
-      <div class="hero-card">
-        <div class="hc-eyebrow">Proud Partner</div>
-        <div class="hc-title">Integrity Marketing Group</div>
-        <div class="lbl">Backed by the nation's largest independent distributor of life &amp; supplemental health insurance</div>
-      </div>
+      <img src="assets/hero-leadership-portrait.webp" alt="Simi and Zamilah Ajimatanrareje, AMG Executive Vice Presidents" width="1012" height="1242" loading="eager" fetchpriority="high">
     </div>
   </div>
-  <div class="scroll-hint">Scroll</div>
 </header>
 
-<!-- ══ CARRIER MARQUEE ══ -->
-<div class="marquee">
-  <div class="marquee-label">Carrier Partners</div>
-  <div class="marquee-viewport">
-    <div class="marquee-track" id="brokerTrack">
-      <span class="brand-logo">AuguStar Financial</span>
-      <span class="brand-logo">Athene</span>
-      <span class="brand-logo">North American</span>
-      <span class="brand-logo">Fidelity &amp; Guaranty Life</span>
-      <span class="brand-logo">Pacific Life</span>
-      <span class="brand-logo">The Standard</span>
-      <span class="brand-logo">Nationwide</span>
-      <span class="brand-logo">Mutual of Omaha</span>
-      <span class="brand-logo">Foresters Financial</span>
-      <span class="brand-logo">National Life Group</span>
-      <span class="brand-logo">American National (ANICO)</span>
-      <span class="brand-logo">SILAC</span>
-      <span class="brand-logo">AIG</span>
-      <span class="brand-logo" aria-hidden="true">AuguStar Financial</span>
-      <span class="brand-logo" aria-hidden="true">Athene</span>
-      <span class="brand-logo" aria-hidden="true">North American</span>
-      <span class="brand-logo" aria-hidden="true">Fidelity &amp; Guaranty Life</span>
-      <span class="brand-logo" aria-hidden="true">Pacific Life</span>
-      <span class="brand-logo" aria-hidden="true">The Standard</span>
-      <span class="brand-logo" aria-hidden="true">Nationwide</span>
-      <span class="brand-logo" aria-hidden="true">Mutual of Omaha</span>
-      <span class="brand-logo" aria-hidden="true">Foresters Financial</span>
-      <span class="brand-logo" aria-hidden="true">National Life Group</span>
-      <span class="brand-logo" aria-hidden="true">American National (ANICO)</span>
-      <span class="brand-logo" aria-hidden="true">SILAC</span>
-      <span class="brand-logo" aria-hidden="true">AIG</span>
-    </div>
-  </div>
-</div>
-
-<!-- ══ STATS ══ -->
-<div class="stats">
-  <div class="stats-grid">
-    <div class="stat reveal"><div class="num" data-count="273" data-suffix="+">0</div><div class="lbl">Licensed Agents</div></div>
-    <div class="stat reveal" data-d="1"><div class="num" data-count="2200" data-suffix="+">0</div><div class="lbl">Submitted Applications</div></div>
-    <div class="stat reveal" data-d="2"><div class="num" data-count="38">0</div><div class="lbl">States Licensed</div></div>
-    <div class="stat reveal" data-d="3"><div class="num" data-count="98" data-suffix="%">0</div><div class="lbl">Client Retention</div></div>
-  </div>
-</div>
-
-<!-- ══ BROKER LOGO MARQUEE ══ -->
-<div class="marquee brokerage-logos">
-  <div class="marquee-label">Brokerage Network</div>
-  <div class="marquee-viewport">
+<main id="main">
+<!-- ══ CARRIERS ══ -->
+<div class="carriers" role="region" aria-labelledby="carriers-label">
+  <p class="strip-label" id="carriers-label">Shopping your coverage across our carrier partners</p>
+  <div class="marquee-viewport" tabindex="0" aria-label="Carrier partner logos">
     <div class="marquee-track">
-      <div class="network-logo"><img src="assets/brokers/amg-mark.webp" alt="AMG"></div>
-      <div class="network-logo"><img src="assets/brokers/cfc.webp" alt="CFC"></div>
-      <div class="network-logo"><img src="assets/brokers/lww-financial-services.webp" alt="LWW Financial Services"></div>
-      <div class="network-logo"><img src="assets/brokers/built-for-redemption.webp" alt="Built for Redemption"></div>
-      <div class="network-logo"><img src="assets/brokers/standard-financial-group.webp" alt="Standard Financial Group"></div>
-      <div class="network-logo"><img src="assets/brokers/crowned-wealth-group.webp" alt="Crowned Wealth Group"></div>
-      <div class="network-logo"><img src="assets/brokers/wealth-by-serving.webp" alt="Wealth by Serving"></div>
-      <div class="network-logo"><img src="assets/brokers/summit-financial-solutions.webp" alt="Summit Financial Solutions"></div>
-      <div class="network-logo"><img src="assets/brokers/agape-financial-group.webp" alt="Agape Financial Group"></div>
-      <div class="network-logo"><img src="assets/brokers/valor.webp" alt="Valor"></div>
-      <div class="network-logo"><img src="assets/brokers/made-to-shine.webp" alt="Made To Shine"></div>
-      <div class="network-logo" aria-hidden="true"><img src="assets/brokers/amg-mark.webp" alt=""></div>
-      <div class="network-logo" aria-hidden="true"><img src="assets/brokers/cfc.webp" alt=""></div>
-      <div class="network-logo" aria-hidden="true"><img src="assets/brokers/lww-financial-services.webp" alt=""></div>
-      <div class="network-logo" aria-hidden="true"><img src="assets/brokers/built-for-redemption.webp" alt=""></div>
-      <div class="network-logo" aria-hidden="true"><img src="assets/brokers/standard-financial-group.webp" alt=""></div>
-      <div class="network-logo" aria-hidden="true"><img src="assets/brokers/crowned-wealth-group.webp" alt=""></div>
-      <div class="network-logo" aria-hidden="true"><img src="assets/brokers/wealth-by-serving.webp" alt=""></div>
-      <div class="network-logo" aria-hidden="true"><img src="assets/brokers/summit-financial-solutions.webp" alt=""></div>
-      <div class="network-logo" aria-hidden="true"><img src="assets/brokers/agape-financial-group.webp" alt=""></div>
-      <div class="network-logo" aria-hidden="true"><img src="assets/brokers/valor.webp" alt=""></div>
-      <div class="network-logo" aria-hidden="true"><img src="assets/brokers/made-to-shine.webp" alt=""></div>
+      <div class="logo-group" role="list" aria-label="Our carriers">
+        <span class="carrier-logo" role="listitem"><img src="assets/carriers/augustar.png" alt="AuguStar Financial" width="225" height="92"></span>
+        <span class="carrier-logo" role="listitem"><img src="assets/carriers/athene.png" alt="Athene" width="600" height="105"></span>
+        <span class="carrier-logo" role="listitem"><img src="assets/carriers/north-american.png" alt="North American" width="230" height="88"></span>
+        <span class="carrier-logo" role="listitem"><img src="assets/carriers/fg.svg" alt="F&amp;G Annuities &amp; Life" width="206" height="174"></span>
+        <span class="carrier-logo" role="listitem"><img src="assets/carriers/pacific-life.svg" alt="Pacific Life" width="229" height="113"></span>
+        <span class="carrier-logo" role="listitem"><img src="assets/carriers/standard.png" alt="The Standard" width="496" height="340"></span>
+        <span class="carrier-logo" role="listitem"><img src="https://media.nationwide.com/bolt/versions/7.11.0/bolt-logo-nw-horizontal-full.svg" alt="Nationwide" width="430" height="126"></span>
+        <span class="carrier-logo" role="listitem"><img src="assets/carriers/mutual-of-omaha.svg" alt="Mutual of Omaha" width="222" height="48"></span>
+        <span class="carrier-logo" role="listitem"><img src="assets/carriers/foresters.svg" alt="Foresters Financial" width="144" height="55"></span>
+        <span class="carrier-logo" role="listitem"><img src="assets/carriers/american-national.svg" alt="American National" width="234" height="40"></span>
+        <span class="carrier-logo" role="listitem"><img src="assets/carriers/silac.png" alt="SILAC Insurance Company" width="500" height="200"></span>
+        <span class="carrier-logo" role="listitem"><img src="assets/carriers/aig.png" alt="AIG" width="120" height="64"></span>
+      </div>
+      <div class="logo-group" aria-hidden="true"></div>
     </div>
   </div>
 </div>
+
+<!-- ══ WHY AMG (icon-led benefits) ══ -->
+<section class="bg-dark on-dark" id="why">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="kicker">Why AMG</span>
+      <h2 class="serif">Protection that's clear, personal, and built to last.</h2>
+      <p>We bring the strategies wealthy families have always used to every family ready to build, without the jargon or the pressure.</p>
+    </div>
+    <div class="benefits">
+      <div class="benefit-wrap reveal">
+        <article class="benefit">
+          <span class="b-num" aria-hidden="true">01</span>
+          <div class="icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/><circle cx="18" cy="17" r="2"/></svg></div>
+          <h3>Many carriers, one advisor</h3>
+          <p>We compare options across a dozen top-rated carriers, so the policy fits you instead of a single company's catalog.</p>
+          <div class="b-viz" aria-hidden="true">
+            <div class="viz-label"><span>Carriers compared</span><b class="viz-count" data-to="12">12</b></div>
+            <div class="dots"><i style="--i:0"></i><i style="--i:1"></i><i style="--i:2"></i><i style="--i:3"></i><i style="--i:4"></i><i style="--i:5"></i><i style="--i:6"></i><i style="--i:7" class="best"></i><i style="--i:8"></i><i style="--i:9"></i><i style="--i:10"></i><i style="--i:11"></i></div>
+            <div class="viz-foot">→ <b>1 best-fit</b> recommendation for you</div>
+          </div>
+        </article>
+      </div>
+      <div class="benefit-wrap reveal" data-d="1">
+        <article class="benefit">
+          <span class="b-num" aria-hidden="true">02</span>
+          <div class="icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg></div>
+          <h3>Protection first</h3>
+          <p>Coverage and living benefits come before growth, so what you build is guarded before the storm, not after it.</p>
+          <div class="b-viz" aria-hidden="true">
+            <div class="viz-label"><span>Plan order</span><b>Protect → Grow</b></div>
+            <div class="seg-bar"><span class="s1">Protect</span><span class="s2">Grow</span><span class="s3">Transfer</span></div>
+            <div class="viz-foot">Built in the order that <b>keeps it safe</b></div>
+          </div>
+        </article>
+      </div>
+      <div class="benefit-wrap reveal" data-d="2">
+        <article class="benefit">
+          <span class="b-num" aria-hidden="true">03</span>
+          <div class="icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V6a2 2 0 012-2h13v13H6a2 2 0 00-2 2zm0 0a2 2 0 002 2h13"/><path d="M9 8h6M9 12h4"/></svg></div>
+          <h3>Education before transaction</h3>
+          <p>You'll understand every vehicle in plain language before a single dollar moves.</p>
+          <div class="b-viz" aria-hidden="true">
+            <ul class="viz-checks">
+              <li style="--i:0"><span class="box"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>How the policy works</li>
+              <li style="--i:1"><span class="box"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>What it costs, and why</li>
+              <li style="--i:2"><span class="box"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>Your options if life changes</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+      <div class="benefit-wrap reveal" data-d="3">
+        <article class="benefit">
+          <span class="b-num" aria-hidden="true">04</span>
+          <div class="icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-4.6-9.5-9A5.5 5.5 0 0112 6a5.5 5.5 0 019.5 6c-2.5 4.4-9.5 9-9.5 9z"/></svg></div>
+          <h3>A generational horizon</h3>
+          <p>Every plan is stress-tested against a 100-year family timeline, with annual reviews as life changes.</p>
+          <div class="b-viz" aria-hidden="true">
+            <div class="viz-label"><span>Planning horizon</span><b><span class="viz-count" data-to="100">100</span> yrs</b></div>
+            <div class="tl"><div class="tl-line"></div><span class="m" style="--x:0%;--i:0">You</span><span class="m" style="--x:50%;--i:1">Children</span><span class="m" style="--x:100%;--i:2">Grandchildren</span></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- ══ SERVICES ══ -->
-<section class="light" id="services">
+<section class="bg-white" id="services">
   <div class="wrap">
     <div class="sec-head reveal">
-      <span class="eyebrow">The AMG Portfolio of Services</span>
-      <h2 class="serif">Five disciplines.<br>One <i>enduring</i> outcome.</h2>
+      <span class="eyebrow-pill">The AMG Portfolio of Services</span>
+      <h2 class="serif">Five disciplines.<br>One enduring outcome.</h2>
       <p>Every engagement is built around a single question: what will your money mean a generation from now?</p>
     </div>
-    <div class="bento">
-      <div class="bcard b-8 b-tall dark reveal">
-        <div class="core">
-          <img class="bimg" src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=1400&auto=format&fit=crop" alt="Financial planning documents and calculator" loading="lazy">
-          <div class="img-scrim"></div>
-          <div class="over">
-            <div class="b-icon"><svg viewBox="0 0 24 24"><path d="M3 17l5-5 4 4 8-8M15 8h5v5"/></svg></div>
-            <h3>Wealth Creation</h3>
-            <p>Strategic accumulation frameworks: indexed strategies, tax-advantaged vehicles, and disciplined cash-flow design that compound quietly while you live loudly.</p>
-            <a class="b-link" href="#contact">Build Wealth <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
-          </div>
-        </div>
-      </div>
-      <div class="bcard b-4 b-tall reveal" data-d="1">
-        <div class="core">
-          <div class="b-icon"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg></div>
-          <h3>Asset Protection</h3>
-          <p>Life insurance architecture, living benefits, and risk transfer strategies that place a vault around everything you've built, before the storm rather than after it.</p>
-          <svg class="spark" viewBox="0 0 260 64" fill="none" preserveAspectRatio="none"><path d="M0 54 C 30 50 44 34 70 38 S 118 20 146 24 208 8 260 6" stroke="#C9A227" stroke-opacity=".55" stroke-width="1.6"/><path d="M0 54 C 30 50 44 34 70 38 S 118 20 146 24 208 8 260 6 L 260 64 L 0 64 Z" fill="url(#fade)"/><defs><linearGradient id="fade" x1="0" y1="0" x2="0" y2="64" gradientUnits="userSpaceOnUse"><stop stop-color="#C9A227" stop-opacity=".18"/><stop offset="1" stop-color="#C9A227" stop-opacity="0"/></linearGradient></defs></svg>
-          <a class="b-link" href="#contact">Protect Assets <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
-        </div>
-      </div>
-      <div class="bcard b-4 reveal">
-        <div class="core">
-          <div class="b-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></div>
-          <h3>Retirement Planning</h3>
-          <p>Tax-efficient income you cannot outlive. We design retirements measured in freedom, not fear: 401(k) rollovers, IRAs, and annuity strategies aligned to your horizon.</p>
-          <a class="b-link" href="#contact">Plan Retirement <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
-        </div>
-      </div>
-      <div class="bcard b-4 reveal" data-d="1">
-        <div class="core">
-          <div class="b-icon"><svg viewBox="0 0 24 24"><path d="M4 19V6a2 2 0 012-2h13v13H6a2 2 0 00-2 2zm0 0a2 2 0 002 2h13"/><path d="M9 8h6M9 12h4"/></svg></div>
-          <h3>Financial Education</h3>
-          <p>Wealth literacy is the first inheritance. Workshops, one-on-one coaching, and family financial councils that make every generation fluent in money.</p>
-          <a class="b-link" href="#contact">Get Educated <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
-        </div>
-      </div>
-      <div class="bcard b-4 dark reveal" data-d="2">
-        <div class="core">
-          <img class="bimg" src="https://images.unsplash.com/photo-1511895426328-dc8714191300?q=80&w=1200&auto=format&fit=crop" alt="Multi-generational family together" loading="lazy">
-          <div class="img-scrim"></div>
-          <div class="over">
-            <div class="b-icon"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.5-9A5.5 5.5 0 0112 6a5.5 5.5 0 019.5 6c-2.5 4.4-9.5 9-9.5 9z"/></svg></div>
-            <h3>Generational Legacy</h3>
-            <p>Estate strategies, beneficiary design, and wealth-transfer planning that turn one lifetime of work into a family's centuries of options.</p>
-            <a class="b-link" href="#contact">Design Legacy <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
-          </div>
-        </div>
-      </div>
+    <div class="service-layout">
+      <div class="service-monogram reveal" aria-hidden="true"></div>
+      <article class="service-item service-wealth reveal">
+        <h3>Wealth Creation</h3>
+        <p>Strategic accumulation frameworks: indexed strategies, tax-advantaged vehicles, and disciplined cash-flow design that compound quietly while you live loudly.</p>
+        <a href="#contact"><span aria-hidden="true">→</span>Build Wealth</a>
+      </article>
+      <article class="service-item service-protect reveal" data-d="1">
+        <h3>Asset Protection</h3>
+        <p>Life insurance architecture, living benefits, and risk transfer strategies that place a vault around everything you've built, before the storm rather than after it.</p>
+        <a href="#contact"><span aria-hidden="true">→</span>Protect Assets</a>
+      </article>
+      <article class="service-item service-retire reveal">
+        <h3>Retirement Planning</h3>
+        <p>Tax-efficient income you cannot outlive. We design retirements measured in freedom, not fear: 401(k) rollovers, IRAs, and annuity strategies aligned to your horizon.</p>
+        <a href="#contact"><span aria-hidden="true">→</span>Plan Retirement</a>
+      </article>
+      <article class="service-item service-educate reveal" data-d="1">
+        <h3>Financial Education</h3>
+        <p>Wealth literacy is the first inheritance. Workshops, one-on-one coaching, and family financial councils that make every generation fluent in money.</p>
+        <a href="#contact"><span aria-hidden="true">→</span>Get Educated</a>
+      </article>
+      <article class="service-item service-legacy reveal">
+        <h3>Generational Legacy</h3>
+        <p>Estate strategies, beneficiary design, and wealth-transfer planning that turn one lifetime of work into a family's centuries of options.</p>
+        <a href="#contact"><span aria-hidden="true">→</span>Design Legacy</a>
+      </article>
     </div>
   </div>
 </section>
 
-<!-- ══ PHILOSOPHY ══ -->
-<section id="philosophy" style="background:linear-gradient(180deg,#060A08,#081711)">
-  <div class="wrap split">
-    <div class="reveal">
-      <div class="shell"><div class="core founders-core">
-        <img src="assets/founders.webp" alt="Simi and Zamilah Ajimatanrareje, Executive Vice Presidents of Anointed Money Group" loading="lazy">
-        <div class="founders-plate">
-          <strong>Simi &amp; Zamilah Ajimatanrareje</strong>
-          <span>Executive Vice Presidents · Anointed Money Group</span>
-        </div>
-      </div></div>
+<!-- ══ HOW IT WORKS ══ -->
+<section class="bg-dark on-dark" id="approach">
+  <div class="st-aurora" aria-hidden="true"><i></i><i></i></div>
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="kicker">How it works</span>
+      <h2 class="serif">Four steps from first call to lasting plan.</h2>
+      <p>Your dedicated AMG strategist handles every step end to end.</p>
     </div>
-    <div>
-      <span class="eyebrow svp-eyebrow reveal">EXECUTIVE VICE PRESIDENTS</span>
-      <h2 class="serif reveal" data-d="1" style="font-size:clamp(2.3rem,4.2vw,3.6rem);margin:1.4rem 0;color:#fff">Anointed to build.<br>Appointed to <i class="gold-text">protect</i>.</h2>
-      <p class="reveal" data-d="2" style="font-weight:300;color:rgba(248,245,238,.66);max-width:32rem;margin-bottom:.5rem">Simi and Zamilah Ajimatanrareje stand at the front of AMG as Executive Vice Presidents, building with conviction, discipline, and a standard of excellence worthy of the families they serve. Their mandate is simple: bring the strategies the wealthy have always used into rooms where legacy is ready to be built.</p>
-      <blockquote class="reveal" data-d="2">"Money is not the mission. Money is the instrument. The mission is a family that never has to start over."<footer style="font-size:.75rem;font-style:normal;letter-spacing:.2em;text-transform:uppercase;color:rgba(248,245,238,.5);margin-top:1rem">— Simi &amp; Zamilah Ajimatanrareje</footer></blockquote>
-      <div class="pillars">
-        <div class="pillar reveal" data-d="1"><span class="tick"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span><div><strong>Stewardship over speculation</strong><span>Proven, protected strategies. Never trends, never gambles.</span></div></div>
-        <div class="pillar reveal" data-d="2"><span class="tick"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span><div><strong>Education before transaction</strong><span>You will understand every vehicle before a single dollar moves.</span></div></div>
-        <div class="pillar reveal" data-d="3"><span class="tick"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span><div><strong>Generational horizon</strong><span>Every plan is stress-tested against a 100-year family timeline.</span></div></div>
-      </div>
+    <div class="st-wrap reveal">
+      <div class="st-track" aria-hidden="true"><span class="st-line"></span><span class="st-comet"></span></div>
+      <ol class="steps st">
+      <li class="step st-step" style="--i:0">
+        <span class="st-node" aria-hidden="true"><span class="st-num">1</span></span>
+        <div class="st-card">
+          <span class="st-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></span>
+          <span class="st-label">Step 01</span>
+          <h3>Discovery</h3>
+          <p>A private consultation to map your assets, goals, obligations, and the legacy you intend to leave.</p>
+          <span class="st-chip">Private consultation</span>
+        </div>
+      </li>
+      <li class="step st-step" style="--i:1">
+        <span class="st-node" aria-hidden="true"><span class="st-num">2</span></span>
+        <div class="st-card">
+          <span class="st-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h11l5 5v9H4z"/><path d="M15 5v5h5M8 13h8M8 16.5h5"/></svg></span>
+          <span class="st-label">Step 02</span>
+          <h3>Architecture</h3>
+          <p>A custom blueprint: protection first, growth second, transfer always, modeled to your horizon.</p>
+          <span class="st-chip">Custom blueprint</span>
+        </div>
+      </li>
+      <li class="step st-step" style="--i:2">
+        <span class="st-node" aria-hidden="true"><span class="st-num">3</span></span>
+        <div class="st-card">
+          <span class="st-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg></span>
+          <span class="st-label">Step 03</span>
+          <h3>Execution</h3>
+          <p>We shop carriers, handle applications, and put every vehicle in place for you.</p>
+          <span class="st-chip">We shop the carriers</span>
+        </div>
+      </li>
+      <li class="step st-step" style="--i:3">
+        <span class="st-node" aria-hidden="true"><span class="st-num">4</span></span>
+        <div class="st-card">
+          <span class="st-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4M9 15l2 2 4-4"/></svg></span>
+          <span class="st-label">Step 04</span>
+          <h3>Stewardship</h3>
+          <p>Annual legacy reviews that adapt the plan as your family, the law, and the markets change.</p>
+          <span class="st-chip">Annual reviews</span>
+        </div>
+      </li>
+      </ol>
+    </div>
+    <div class="center-cta reveal">
+      <a href="#contact" class="btn btn-gold">Start with Discovery
+      </a>
     </div>
   </div>
 </section>
 
-<!-- ══ APPROACH ══ -->
-<section class="light" id="approach">
+<!-- ══ ESTIMATOR ══ -->
+<section class="bg-paper" id="estimator">
+  <div class="wrap est-grid">
+    <div class="est-copy reveal">
+      <span class="kicker">Coverage estimator</span>
+      <h2 class="serif">How much protection does your family need?</h2>
+      <p>Life insurance gives the people you love time and options. Move the sliders to see a starting estimate, then let an AMG professional refine it with you.</p>
+      <ul class="check-list">
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>Replace income so daily life keeps going</li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>Pay off the mortgage and outstanding debt</li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>Fund your children's education</li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>Cover final expenses without burdening family</li>
+      </ul>
+    </div>
+    <form class="calc reveal" data-d="1" id="calc" aria-labelledby="calc-title" onsubmit="return false">
+      <div class="calc-head">
+        <h3 id="calc-title">Your coverage estimate</h3>
+        <span>Illustrative only · not a quote<sup>2</sup></span>
+      </div>
+      <div class="calc-body">
+        <div class="slider-row">
+          <label for="c-income"><span>Annual income<small>Income your family relies on</small></span><output for="c-income" id="o-income"></output></label>
+          <input type="range" id="c-income" min="20000" max="400000" step="5000" value="75000">
+        </div>
+        <div class="slider-row">
+          <label for="c-years"><span>Years of income to replace<small>Often until the youngest is independent</small></span><output for="c-years" id="o-years"></output></label>
+          <input type="range" id="c-years" min="1" max="30" step="1" value="10">
+        </div>
+        <div class="slider-row">
+          <label for="c-debt"><span>Mortgage &amp; debts</span><output for="c-debt" id="o-debt"></output></label>
+          <input type="range" id="c-debt" min="0" max="1000000" step="10000" value="250000">
+        </div>
+        <div class="slider-row">
+          <label for="c-kids"><span>Children's education fund<small>About $50K per child as a starting point</small></span><output for="c-kids" id="o-kids"></output></label>
+          <input type="range" id="c-kids" min="0" max="6" step="1" value="2">
+        </div>
+        <div class="slider-row">
+          <label for="c-have"><span>Existing coverage &amp; savings</span><output for="c-have" id="o-have"></output></label>
+          <input type="range" id="c-have" min="0" max="1000000" step="10000" value="50000">
+        </div>
+      </div>
+      <div class="calc-result" aria-live="polite">
+        <div class="lbl">Estimated coverage need</div>
+        <div class="big" id="o-total">$0</div>
+        <div class="bar" aria-hidden="true"><span id="b-inc" style="background:#E8C766"></span><span id="b-debt" style="background:#C9A227"></span><span id="b-edu" style="background:#7FB89E"></span><span id="b-fin" style="background:#F4E7C3"></span></div>
+        <ul class="legend">
+          <li><i style="background:#E8C766"></i>Income<b id="l-inc"></b></li>
+          <li><i style="background:#C9A227"></i>Debts<b id="l-debt"></b></li>
+          <li><i style="background:#7FB89E"></i>Education<b id="l-edu"></b></li>
+          <li><i style="background:#F4E7C3"></i>Final expenses<b>$15K</b></li>
+        </ul>
+        <div class="calc-foot">
+          <p>Minus <span id="l-have"></span> in existing coverage and savings.</p>
+          <a href="#contact" class="btn btn-gold" id="calc-cta">Review this with AMG
+          </a>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- ══ COMPARISON (tabs) ══ -->
+<section class="bg-white" id="compare">
   <div class="wrap">
     <div class="sec-head reveal">
-      <span class="eyebrow">The Private Client Process</span>
-      <h2 class="serif">Four movements,<br>orchestrated with <i>precision</i>.</h2>
+      <span class="kicker">Compare your options</span>
+      <h2 class="serif">Which strategy fits where you are?</h2>
+      <p>The right mix depends on your age, goals, and budget. Here's a plain-language look at the tools we use most.</p>
     </div>
-    <div class="steps">
-      <div class="step reveal"><div class="core"><span class="n">01</span><h4>Discovery</h4><p>A private consultation to map your assets, ambitions, obligations, and the legacy you intend to leave.</p></div></div>
-      <div class="step reveal" data-d="1"><div class="core"><span class="n">02</span><h4>Architecture</h4><p>A bespoke wealth blueprint (protection first, growth second, transfer always) modeled to your horizon.</p></div></div>
-      <div class="step reveal" data-d="2"><div class="core"><span class="n">03</span><h4>Execution</h4><p>White-glove implementation of every vehicle, handled end-to-end by your dedicated AMG strategist.</p></div></div>
-      <div class="step reveal" data-d="3"><div class="core"><span class="n">04</span><h4>Stewardship</h4><p>Annual legacy reviews that adapt the plan as your family, the law, and the markets evolve.</p></div></div>
+    <div class="compare-grid reveal">
+    <div class="tabs" role="tablist" aria-label="Coverage types" aria-orientation="vertical">
+      <button class="opt tab" role="tab" id="t-term" aria-controls="p-term" aria-selected="true"><span class="opt-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span>Term life</span></button>
+      <button class="opt tab" role="tab" id="t-whole" aria-controls="p-whole" aria-selected="false" tabindex="-1"><span class="opt-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span>Whole life</span></button>
+      <button class="opt tab" role="tab" id="t-iul" aria-controls="p-iul" aria-selected="false" tabindex="-1"><span class="opt-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span>Indexed universal life</span></button>
+      <button class="opt tab" role="tab" id="t-ann" aria-controls="p-ann" aria-selected="false" tabindex="-1"><span class="opt-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span>Annuities</span></button>
+      <button class="opt tab" role="tab" id="t-live" aria-controls="p-live" aria-selected="false" tabindex="-1"><span class="opt-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span>Living benefits</span></button>
+    </div>
+    <div class="compare-panels">
+    <div class="panel" role="tabpanel" id="p-term" aria-labelledby="t-term" tabindex="0">
+      <div><h3>Term life insurance</h3><p>Coverage for a set number of years, often 10, 20, or 30. It's usually the most affordable way to protect a young family through the years when they depend on your income most.</p><p>Many term policies can later be converted to permanent coverage, depending on the carrier.</p><a class="text-link" href="#contact">Ask about term coverage →</a></div>
+      <ul class="facts"><li><span>Length</span><b>Fixed term</b></li><li><span>Cost</span><b>Lowest to start</b></li><li><span>Cash value</span><b>None</b></li><li><span>Best for</span><b>Income replacement</b></li></ul>
+    </div>
+    <div class="panel" role="tabpanel" id="p-whole" aria-labelledby="t-whole" tabindex="0" hidden>
+      <div><h3>Whole life insurance</h3><p>Permanent coverage with level premiums and a guaranteed cash value that grows over time. It's a foundation for families who want protection that never expires.</p><p>Cash value can typically be borrowed against for opportunities or emergencies.</p><a class="text-link" href="#contact">Ask about whole life →</a></div>
+      <ul class="facts"><li><span>Length</span><b>Lifetime</b></li><li><span>Cost</span><b>Higher, level premiums</b></li><li><span>Cash value</span><b>Guaranteed growth</b></li><li><span>Best for</span><b>Lifelong protection</b></li></ul>
+    </div>
+    <div class="panel" role="tabpanel" id="p-iul" aria-labelledby="t-iul" tabindex="0" hidden>
+      <div><h3>Indexed universal life (IUL)</h3><p>Permanent coverage whose cash value is credited based on a market index, with a floor that helps protect against losses. Premiums can flex as life changes.</p><p>Often used as part of a tax-advantaged wealth and retirement strategy.</p><a class="text-link" href="#contact">Ask about IUL →</a></div>
+      <ul class="facts"><li><span>Length</span><b>Lifetime</b></li><li><span>Cost</span><b>Flexible premiums</b></li><li><span>Cash value</span><b>Index-linked, with a floor</b></li><li><span>Best for</span><b>Protection plus growth</b></li></ul>
+    </div>
+    <div class="panel" role="tabpanel" id="p-ann" aria-labelledby="t-ann" tabindex="0" hidden>
+      <div><h3>Annuities</h3><p>Contracts that turn savings into dependable income, now or later. Fixed and indexed annuities can help protect principal while you plan for retirement.</p><p>Common for 401(k) rollovers and anyone who wants income they can't outlive.</p><a class="text-link" href="#contact">Ask about annuities →</a></div>
+      <ul class="facts"><li><span>Purpose</span><b>Retirement income</b></li><li><span>Funding</span><b>Lump sum or over time</b></li><li><span>Growth</span><b>Fixed or index-linked</b></li><li><span>Best for</span><b>Pre-retirees &amp; retirees</b></li></ul>
+    </div>
+    <div class="panel" role="tabpanel" id="p-live" aria-labelledby="t-live" tabindex="0" hidden>
+      <div><h3>Living benefits</h3><p>Riders that let you access part of your death benefit early if you face a qualifying chronic, critical, or terminal illness, so a policy can help you while you're still here.</p><p>Availability and terms vary by carrier and policy.</p><a class="text-link" href="#contact">Ask about living benefits →</a></div>
+      <ul class="facts"><li><span>Type</span><b>Policy rider</b></li><li><span>Triggers</span><b>Qualifying illness</b></li><li><span>Payout</span><b>Part of death benefit</b></li><li><span>Best for</span><b>Protecting your own future</b></li></ul>
+    </div>
+    </div>
     </div>
   </div>
 </section>
 
-<!-- ══ QUOTE ══ -->
-<section class="quote-sec">
+<!-- ══ STATS ══ -->
+<section class="bg-dark on-dark" aria-labelledby="stats-title">
   <div class="wrap">
-    <span class="mark reveal">"</span>
-    <blockquote class="reveal" data-d="1">AMG didn't just organize our finances. They changed the trajectory of our family. Our children will inherit a plan, not a problem.</blockquote>
-    <cite class="reveal" data-d="2">— The Okafor Family · Clients Since 2019</cite>
+    <div class="sec-head reveal">
+      <span class="kicker">AMG by the numbers</span>
+      <h2 class="serif" id="stats-title">A growing family of professionals.</h2>
+    </div>
+    <div class="stats">
+      <div class="stat reveal"><div class="num" data-count="273" data-suffix="+">273+</div><div class="lbl">Licensed agents</div></div>
+      <div class="stat reveal" data-d="1"><div class="num" data-count="2200" data-suffix="+">2,200+</div><div class="lbl">Submitted applications</div></div>
+      <div class="stat reveal" data-d="2"><div class="num" data-count="38">38</div><div class="lbl">States licensed</div></div>
+      <div class="stat reveal" data-d="3"><div class="num" data-count="98" data-suffix="%">98%</div><div class="lbl">Client retention</div></div>
+    </div>
   </div>
 </section>
 
-<!-- ══ LEGACY CTA ══ -->
-<div class="legacy">
-  <div class="shell reveal"><div class="core">
-    <span class="eyebrow">Your Move</span>
-    <h2 class="serif">The best time to build a legacy<br>was a generation ago. <i class="gold-text">The second best is today.</i></h2>
-    <p>One conversation. No obligation. A complete picture of where you stand, and a blueprint for where your family is going.</p>
-    <a href="#contact" class="btn btn-gold" style="font-size:1rem">Schedule Your Private Consultation
-      <span class="orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
-    </a>
-  </div></div>
-</div>
-
-<!-- ══ CONTACT ══ -->
-<section class="light" id="contact" style="padding-top:7rem">
-  <div class="wrap contact-grid">
-    <div class="contact-info">
-      <span class="eyebrow reveal">Begin the Conversation</span>
-      <h2 class="serif reveal" data-d="1">Your legacy has a <i>first step</i>.</h2>
-      <p class="reveal" data-d="2">Tell us where you are. We'll show you what's possible, with discretion, clarity, and zero pressure.</p>
-      <div class="reveal" data-d="3">
-        <a class="c-line" href="mailto:simiaji@amgfinancialagency.com"><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>Simi · simiaji@amgfinancialagency.com</a>
-        <a class="c-line" href="mailto:Zamilah1@gmail.com"><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>Zamilah · Zamilah1@gmail.com</a>
-        <a class="c-line" href="tel:+13018755812"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg>Simi · (301) 875-5812</a>
-        <a class="c-line" href="tel:+14437833180"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg>Zamilah · (443) 783-3180</a>
-        <a class="c-line" href="https://www.instagram.com/anointedmg" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>Follow us on Instagram · @anointedmg</a>
-        <div class="c-line"><svg viewBox="0 0 24 24"><path d="M12 21s-6-5.2-6-10a6 6 0 1112 0c0 4.8-6 10-6 10z"/><circle cx="12" cy="11" r="2.2"/></svg>Serving families nationwide · By appointment</div>
+<!-- ══ LEADERSHIP ══ -->
+<section class="bg-paper" id="philosophy">
+  <div class="wrap">
+    <div class="lead-card reveal">
+      <div class="speaker-pair">
+        <figure><img src="assets/simi-headshot.webp" alt="Portrait of Simi Ajimatanrareje" loading="lazy"><figcaption>Simi Ajimatanrareje</figcaption></figure>
+        <figure><img src="assets/zamilah-headshot.webp" alt="Portrait of Zamilah Ajimatanrareje" loading="lazy"><figcaption>Zamilah Ajimatanrareje</figcaption></figure>
+      </div>
+      <div>
+        <span class="kicker">Executive Vice Presidents</span>
+        <h2 class="serif">Anointed to build. Appointed to protect.</h2>
+        <p>Simi and Zamilah Ajimatanrareje lead AMG with conviction, discipline, and a standard of excellence worthy of the families they serve.</p>
+        <blockquote>"Money is not the mission. Money is the instrument. The mission is a family that never has to start over."<footer>— Simi &amp; Zamilah Ajimatanrareje</footer></blockquote>
+        <div class="pillars">
+          <div class="pillar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><div><strong>Stewardship over speculation</strong><span>Proven, protected strategies. Never trends, never gambles.</span></div></div>
+          <div class="pillar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><div><strong>Education before transaction</strong><span>You'll understand every vehicle before a single dollar moves.</span></div></div>
+          <div class="pillar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><div><strong>Generational horizon</strong><span>Every plan is stress-tested against a 100-year family timeline.</span></div></div>
+        </div>
       </div>
     </div>
-    <div class="shell reveal" data-d="2">
-      <form class="core" name="consultation" method="POST" action="/thank-you.html" data-netlify="true" netlify netlify-honeypot="bot-field">
-        <input type="hidden" name="form-name" value="consultation">
-        <p style="display:none"><label>Do not fill this out: <input name="bot-field"></label></p>
+  </div>
+</section>
+
+<!-- ══ BUILD WITH AMG (promo banner) ══ -->
+<section class="bg-paper" id="build-with-amg" aria-labelledby="build-invite-title" style="padding-top:0">
+  <div class="wrap">
+    <div class="promo reveal">
+      <div class="promo-copy">
+        <span class="kicker on-dark">Build with AMG</span>
+        <h2 class="serif" id="build-invite-title">Ready to build?</h2>
+        <p>Explore entrepreneurship in financial services. Join a Business Opportunity Meeting to meet the team, learn how the business works, and see what it takes to get started.</p>
+        <article class="meet" aria-labelledby="meeting-thursday">
+          <div><span class="ml">Midweek meeting</span><h3 id="meeting-thursday">Thursdays</h3><p>7:00 PM ET</p></div>
+          <a class="btn btn-gold" href="https://soldoutservants.com/guests" target="_blank" rel="noopener noreferrer" aria-label="Save my seat for a Thursday meeting (opens guest calendar)">Save my seat</a>
+        </article>
+        <article class="meet" aria-labelledby="meeting-saturday">
+          <div><span class="ml">Weekend meeting</span><h3 id="meeting-saturday">Saturdays</h3><p>10:00 AM or 2:00 PM ET</p></div>
+          <a class="btn btn-gold" href="https://soldoutservants.com/guests" target="_blank" rel="noopener noreferrer" aria-label="Save my seat for a Saturday meeting (opens guest calendar)">Save my seat</a>
+        </article>
+        <p class="promo-fine">Choose an available date on the guest calendar. All times Eastern. Attendance does not guarantee income or business results.<sup>3</sup></p>
+      </div>
+      <figure class="promo-media">
+        <img src="assets/culture-stage.webp" alt="Simi and Zamilah presenting together on stage" loading="lazy">
+        <figcaption>Simi and Zamilah on building culture in the Gen Z market.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SPOTLIGHT ══ -->
+<section class="bg-white" id="amg-spotlight" aria-labelledby="spotlight-title">
+  <div class="wrap">
+    <div class="spotlight-heading">
+      <div><span class="kicker">Inside AMG</span><h2 class="serif" id="spotlight-title">What's happening at AMG</h2></div>
+      <a class="pill pill-soft" href="/resources">See all resources</a>
+    </div>
+    <div class="spotlight-card spot" data-amg-slideshow role="region" aria-roledescription="carousel" aria-label="AMG highlights">
+      <div class="spot-picker">
+        <p class="spot-label" id="spot-label">Highlights</p>
+        <div class="opt-list" role="tablist" aria-labelledby="spot-label">
+          <button type="button" class="opt" role="tab" id="so-weekly" aria-controls="ss-weekly" aria-selected="true" tabindex="0" data-slide-opt><span class="opt-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span>Weekly schedule</span><span class="opt-progress" aria-hidden="true"></span></button>
+          <button type="button" class="opt" role="tab" id="so-tokyo" aria-controls="ss-tokyo" aria-selected="false" tabindex="-1" data-slide-opt><span class="opt-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span>Tokyo world trip</span><span class="opt-progress" aria-hidden="true"></span></button>
+          <button type="button" class="opt" role="tab" id="so-vegas" aria-controls="ss-vegas" aria-selected="false" tabindex="-1" data-slide-opt><span class="opt-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span>Las Vegas ladies’ trip</span><span class="opt-progress" aria-hidden="true"></span></button>
+        </div>
+      </div>
+      <div class="spot-stage">
+        <div class="spot-bars" data-spot-bars>
+          <button type="button" class="spot-bar" data-bar aria-label="Show Weekly schedule" tabindex="-1"><span></span></button>
+          <button type="button" class="spot-bar" data-bar aria-label="Show World trip · Tokyo, Japan" tabindex="-1"><span></span></button>
+          <button type="button" class="spot-bar" data-bar aria-label="Show Ladies’ trip · Las Vegas" tabindex="-1"><span></span></button>
+        </div>
+        <article class="spotlight-slide" id="ss-weekly" data-slide data-title="Weekly schedule">
+          <div class="spotlight-media" role="group" tabindex="0" aria-label="Weekly schedule banner. Use the left and right arrow keys to change banners."><div class="scene scene-week"><svg class="wk-lines lp" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="wkgold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e8c766" stop-opacity="0"/><stop offset=".5" stop-color="#e8c766" stop-opacity=".55"/><stop offset="1" stop-color="#e8c766" stop-opacity="0"/></linearGradient></defs><path d="M-200 900 C 100 600 300 300 700 -50"/><path d="M60 900 C 360 600 560 300 960 -50"/><path d="M320 900 C 620 600 820 300 1220 -50"/><path d="M580 900 C 880 600 1080 300 1480 -50"/><path d="M840 900 C 1140 600 1340 300 1740 -50"/><path d="M1100 900 C 1400 600 1600 300 2000 -50"/><path d="M1360 900 C 1660 600 1860 300 2260 -50"/></svg><div class="wk-head"><span class="wk-logo"><img src="assets/logo-mark.webp" alt=""></span><span class="wk-brand"><b>AMG</b><small>Anointed Money Group</small></span><p class="wk-title"><span class="w">Weekly</span><span class="w">Schedule</span></p><p class="wk-next" data-wk-next><span class="wk-next-label lp">Next up</span><span class="wk-next-track"><span class="wk-next-item" data-wk-next-item>Monday 9:00 AM · Builders Meeting</span></span></p></div><div class="wk-chips" role="group" aria-label="Choose a day"><button type="button" class="wk-chip" data-wk-chip="1" aria-pressed="false">Mon</button><button type="button" class="wk-chip" data-wk-chip="2" aria-pressed="false">Tue</button><button type="button" class="wk-chip" data-wk-chip="3" aria-pressed="false">Wed</button><button type="button" class="wk-chip" data-wk-chip="4" aria-pressed="false">Thu</button><button type="button" class="wk-chip" data-wk-chip="5" aria-pressed="false">Fri</button><button type="button" class="wk-chip" data-wk-chip="6" aria-pressed="false">Sat</button></div><ol class="wk-days"><li class="wk-day" data-dow="1" style="--i:0"><p class="wk-dname">Monday</p><ul class="wk-evs"><li class="wk-ev" data-dow="1" data-start="09:00" data-label="9:00 AM" data-name="Builders Meeting" data-place="In office" style="--j:0"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3"/><circle cx="5.5" cy="10" r="2.2"/><circle cx="18.5" cy="10" r="2.2"/><path d="M6.5 19a5.5 5.5 0 0111 0M1.8 18a3.8 3.8 0 015-3.4M22.2 18a3.8 3.8 0 00-5-3.4"/></svg><span><span class="t">9:00 AM</span><span class="n">Builders Meeting</span><span class="p">In office</span></span></li><li class="wk-ev" data-dow="1" data-start="18:00" data-label="6:00 PM" data-name="Phone Zone" data-place="In office" style="--j:1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg><span><span class="t">6:00 PM</span><span class="n">Phone Zone</span><span class="p">In office</span></span></li><li class="wk-ev" data-dow="1" data-start="21:00" data-label="9:00 PM" data-name="CFT Academy & SOS After Hours" data-place="Zoom" style="--j:2"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="10" rx="1.5"/><path d="M2 19h20"/></svg><span><span class="t">9:00 PM</span><span class="n">CFT Academy &amp; SOS After Hours</span><span class="p">Zoom</span></span></li></ul></li><li class="wk-day" data-dow="2" style="--i:1"><p class="wk-dname">Tuesday</p><ul class="wk-evs"><li class="wk-ev" data-dow="2" data-start="12:00" data-label="12:00 PM" data-name="Skills Training" data-place="Zoom" style="--j:0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20v-4M9 20v-7M14 20v-5M19 20V9M4 12l5-5 4 3 7-6M16 4h4v4"/></svg><span><span class="t">12:00 PM</span><span class="n">Skills Training</span><span class="p">Zoom</span></span></li><li class="wk-ev" data-dow="2" data-start="19:00" data-label="7:00 PM" data-name="BOM" data-place="In office" style="--j:1"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3"/><circle cx="5.5" cy="10" r="2.2"/><circle cx="18.5" cy="10" r="2.2"/><path d="M6.5 19a5.5 5.5 0 0111 0M1.8 18a3.8 3.8 0 015-3.4M22.2 18a3.8 3.8 0 00-5-3.4"/></svg><span><span class="t">7:00 PM</span><span class="n"><abbr title="Business Opportunity Meeting">BOM</abbr></span><span class="p">In office</span></span></li></ul></li><li class="wk-day" data-dow="3" style="--i:2"><p class="wk-dname">Wednesday</p><ul class="wk-evs"><li class="wk-ev" data-dow="3" data-start="12:00" data-label="12–1 PM" data-name="Writing Lab" data-place="Zoom" style="--j:0"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="10" rx="1.5"/><path d="M2 19h20"/></svg><span><span class="t">12–1 PM</span><span class="n">Writing Lab</span><span class="p">Zoom</span></span></li><li class="wk-ev" data-dow="3" data-start="19:00" data-label="7:00 PM" data-name="BOM" data-place="In office" style="--j:1"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3"/><circle cx="5.5" cy="10" r="2.2"/><circle cx="18.5" cy="10" r="2.2"/><path d="M6.5 19a5.5 5.5 0 0111 0M1.8 18a3.8 3.8 0 015-3.4M22.2 18a3.8 3.8 0 00-5-3.4"/></svg><span><span class="t">7:00 PM</span><span class="n"><abbr title="Business Opportunity Meeting">BOM</abbr></span><span class="p">In office</span></span></li></ul></li><li class="wk-day" data-dow="4" style="--i:3"><p class="wk-dname">Thursday</p><ul class="wk-evs"><li class="wk-ev" data-dow="4" data-start="12:00" data-label="12:00 PM" data-name="Skills Training" data-place="Zoom" style="--j:0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20v-4M9 20v-7M14 20v-5M19 20V9M4 12l5-5 4 3 7-6M16 4h4v4"/></svg><span><span class="t">12:00 PM</span><span class="n">Skills Training</span><span class="p">Zoom</span></span></li><li class="wk-ev" data-dow="4" data-start="19:00" data-label="7:00 PM" data-name="BOM" data-place="In office" style="--j:1"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3"/><circle cx="5.5" cy="10" r="2.2"/><circle cx="18.5" cy="10" r="2.2"/><path d="M6.5 19a5.5 5.5 0 0111 0M1.8 18a3.8 3.8 0 015-3.4M22.2 18a3.8 3.8 0 00-5-3.4"/></svg><span><span class="t">7:00 PM</span><span class="n"><abbr title="Business Opportunity Meeting">BOM</abbr></span><span class="p">In office</span></span></li></ul></li><li class="wk-day" data-dow="5" style="--i:4"><p class="wk-dname">Friday</p><ul class="wk-evs"><li class="wk-none">No meetings</li></ul></li><li class="wk-day" data-dow="6" style="--i:5"><p class="wk-dname">Saturday</p><ul class="wk-evs"><li class="wk-ev" data-dow="6" data-start="10:00" data-label="10:00 AM" data-name="BOM" data-place="In person" style="--j:0"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3"/><circle cx="5.5" cy="10" r="2.2"/><circle cx="18.5" cy="10" r="2.2"/><path d="M6.5 19a5.5 5.5 0 0111 0M1.8 18a3.8 3.8 0 015-3.4M22.2 18a3.8 3.8 0 00-5-3.4"/></svg><span><span class="t">10:00 AM</span><span class="n"><abbr title="Business Opportunity Meeting">BOM</abbr></span><span class="p">In person</span></span></li><li class="wk-ev" data-dow="6" data-start="14:00" data-label="2:00 PM" data-name="BOM" data-place="In person" style="--j:1"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3"/><circle cx="5.5" cy="10" r="2.2"/><circle cx="18.5" cy="10" r="2.2"/><path d="M6.5 19a5.5 5.5 0 0111 0M1.8 18a3.8 3.8 0 015-3.4M22.2 18a3.8 3.8 0 00-5-3.4"/></svg><span><span class="t">2:00 PM</span><span class="n"><abbr title="Business Opportunity Meeting">BOM</abbr></span><span class="p">In person</span></span></li></ul></li></ol><div class="wk-foot"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4M8 14h.01M12 14h.01M16 14h.01M8 17h.01M12 17h.01"/></svg><span>First Monday of every month</span><i class="sep"></i><b>9:00 PM</b><i class="sep"></i><span>SOS National Call</span><i class="sep"></i><span class="z">Zoom</span><span class="wk-foot-next" data-wk-monthly></span></div></div><button type="button" class="spot-zoom" data-enlarge aria-label="Enlarge the weekly schedule flyer"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L20 20M10.5 7.5v6M7.5 10.5h6"/></svg><span>Enlarge</span></button></div>
+          <div class="spotlight-caption"><div><div class="spot-chips"><span class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V6a2 2 0 012-2h13v13H6a2 2 0 00-2 2zm0 0a2 2 0 002 2h13"/></svg>Training</span><span class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>Monday – Saturday</span></div><h3>Weekly schedule</h3><p>Your week of training, meetings, and team calls.</p></div><a class="pill pill-solid" data-view data-alt="AMG weekly schedule of training, meetings, and team calls from Monday through Saturday" href="assets/resources/amg-weekly-schedule.png" target="_blank" rel="noopener">View full schedule</a></div>
+        </article>
+        <article class="spotlight-slide" id="ss-tokyo" data-slide data-title="World trip · Tokyo, Japan" hidden>
+          <div class="spotlight-media" role="group" tabindex="0" aria-label="World trip · Tokyo, Japan banner. Use the left and right arrow keys to change banners." style="--bg:url('/assets/resources/php-world-trip-tokyo-2028.webp')"><div class="scene scene-flyer"><span class="spot-ambient" aria-hidden="true"></span><div class="fl kb" aria-hidden="true" style="--ar:1049/589;--img:url('/assets/resources/php-world-trip-tokyo-2028.webp')"><span class="fl-base"></span><span class="fx fx-pop" style="--t:20%;--r:76.0%;--b:66.0%;--l:3%;--ox:13.5%;--oy:27.0%;--d:0.25s"></span><span class="fx fx-left" style="--t:33%;--r:20.0%;--b:50.5%;--l:9%;--ox:44.5%;--oy:41.2%;--d:0.55s"></span><span class="fx fx-down" style="--t:33%;--r:16.0%;--b:51.0%;--l:79.8%;--ox:81.9%;--oy:41.0%;--d:0.95s"></span><span class="fx fx-rise" style="--t:48%;--r:61.3%;--b:30.4%;--l:32.3%;--ox:35.5%;--oy:58.8%;--d:1.05s"></span><span class="fx fx-rise" style="--t:48%;--r:55.3%;--b:30.4%;--l:38.7%;--ox:41.7%;--oy:58.8%;--d:1.12s"></span><span class="fx fx-rise" style="--t:48%;--r:49.6%;--b:30.4%;--l:44.7%;--ox:47.5%;--oy:58.8%;--d:1.19s"></span><span class="fx fx-rise" style="--t:48%;--r:43.9%;--b:30.4%;--l:50.4%;--ox:53.2%;--oy:58.8%;--d:1.26s"></span><span class="fx fx-rise" style="--t:48%;--r:38.0%;--b:30.4%;--l:56.1%;--ox:59.0%;--oy:58.8%;--d:1.33s"></span><span class="fx fx-rise" style="--t:48%;--r:34.0%;--b:25.0%;--l:62.0%;--ox:64.0%;--oy:61.5%;--d:1.40s"></span><span class="fx fx-rise" style="--t:48%;--r:26.6%;--b:30.4%;--l:66.0%;--ox:69.7%;--oy:58.8%;--d:1.47s"></span><span class="fx fx-rise" style="--t:48%;--r:20.2%;--b:30.4%;--l:73.4%;--ox:76.6%;--oy:58.8%;--d:1.54s"></span><span class="fx fx-rise" style="--t:48%;--r:14.8%;--b:30.4%;--l:79.8%;--ox:82.5%;--oy:58.8%;--d:1.61s"></span><span class="fx fx-rise" style="--t:48%;--r:9.4%;--b:30.4%;--l:85.2%;--ox:87.9%;--oy:58.8%;--d:1.68s"></span><span class="fx fx-rise" style="--t:48%;--r:3.0%;--b:30.4%;--l:90.6%;--ox:93.8%;--oy:58.8%;--d:1.75s"></span><span class="fx fx-right" style="--t:69.6%;--r:3.0%;--b:24.0%;--l:81%;--ox:89.0%;--oy:72.8%;--d:1.95s"></span><span class="fx fx-wipe" style="--t:87%;--r:4.0%;--b:0.5%;--l:46%;--ox:71.0%;--oy:93.2%;--d:2.10s"></span><span class="gl lp" style="--cx:89%;--cy:72.5%;--mw:12%;--mh:6%;--d:3.40s;--dur:3.6s"></span><span class="gl lp" style="--cx:82%;--cy:41%;--mw:4%;--mh:10%;--d:4.20s;--dur:4.0s"></span><span class="gl lp" style="--cx:11%;--cy:72%;--mw:10%;--mh:22%;--d:3.00s;--dur:5.0s"></span><span class="gl lp" style="--cx:64%;--cy:61%;--mw:36%;--mh:14%;--d:5.20s;--dur:6.0s"></span></div><div class="petals lp" aria-hidden="true"><i style="--x:79%;--d:-3.1s;--t:11.2s;--s:1.18"></i><i style="--x:94%;--d:-7.8s;--t:12.2s;--s:1.29"></i><i style="--x:99%;--d:-11.3s;--t:12.9s;--s:1.33"></i><i style="--x:14%;--d:-4.5s;--t:14.2s;--s:0.97"></i><i style="--x:13%;--d:-6.9s;--t:9.1s;--s:0.85"></i><i style="--x:35%;--d:-2.2s;--t:14.2s;--s:0.97"></i><i style="--x:97%;--d:-9.6s;--t:9.8s;--s:1.13"></i><i style="--x:16%;--d:-1.6s;--t:14.8s;--s:0.70"></i><i style="--x:99%;--d:-2.6s;--t:14.9s;--s:1.31"></i><i style="--x:37%;--d:-3.8s;--t:10.2s;--s:1.31"></i><i style="--x:80%;--d:-2.5s;--t:14.6s;--s:1.18"></i><i style="--x:49%;--d:-3.6s;--t:11.2s;--s:0.82"></i><i style="--x:18%;--d:-3.2s;--t:11.0s;--s:1.27"></i><i style="--x:75%;--d:-0.0s;--t:13.1s;--s:0.94"></i><i style="--x:39%;--d:-4.3s;--t:10.8s;--s:1.19"></i><i style="--x:23%;--d:-5.8s;--t:13.2s;--s:0.74"></i><i style="--x:2%;--d:-11.4s;--t:11.1s;--s:0.98"></i><i style="--x:70%;--d:-9.5s;--t:11.2s;--s:1.10"></i><i style="--x:1%;--d:-5.4s;--t:13.2s;--s:1.14"></i><i style="--x:25%;--d:-1.4s;--t:10.5s;--s:1.27"></i></div><p class="sr-only">PHP World Trip 2028: Tokyo, Japan. Summer 2028. The adventure awaits.</p></div><button type="button" class="spot-zoom" data-enlarge aria-label="Enlarge the Tokyo world trip flyer"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L20 20M10.5 7.5v6M7.5 10.5h6"/></svg><span>Enlarge</span></button></div>
+          <div class="spotlight-caption"><div><div class="spot-chips"><span class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9S14.5 18.4 12 21c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg>World trip</span><span class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>Summer 2028</span></div><h3>World trip · Tokyo, Japan</h3><p>The adventure awaits.</p></div><a class="pill pill-solid" data-view data-alt="PHP World Trip to Tokyo, Japan, in summer 2028. Mount Fuji, a pagoda, and the Tokyo skyline." href="assets/resources/php-world-trip-tokyo-2028.webp" target="_blank" rel="noopener">View trip flyer</a></div>
+        </article>
+        <article class="spotlight-slide" id="ss-vegas" data-slide data-title="Ladies’ trip · Las Vegas" data-month="2026-11" hidden>
+          <div class="spotlight-media" role="group" tabindex="0" aria-label="Ladies’ trip · Las Vegas banner. Use the left and right arrow keys to change banners." style="--bg:url('/assets/resources/php-ladies-trip-las-vegas-2026.webp')"><div class="scene scene-flyer"><span class="spot-ambient" aria-hidden="true"></span><div class="fl kb" aria-hidden="true" style="--ar:1024/570;--img:url('/assets/resources/php-ladies-trip-las-vegas-2026.webp')"><span class="fl-base"></span><span class="fx fx-pop" style="--t:8%;--r:34.0%;--b:79.0%;--l:41%;--ox:53.5%;--oy:14.5%;--d:0.25s"></span><span class="fx fx-wipe" style="--t:18%;--r:11.0%;--b:57.0%;--l:9%;--ox:49.0%;--oy:30.5%;--d:0.55s"></span><span class="fx fx-grow" style="--t:41%;--r:24.0%;--b:53.5%;--l:19%;--ox:47.5%;--oy:43.8%;--d:1.60s"></span><span class="fx fx-rise" style="--t:47%;--r:72.5%;--b:41.5%;--l:21%;--ox:24.2%;--oy:52.8%;--d:1.80s"></span><span class="fx fx-rise" style="--t:47%;--r:65.7%;--b:41.5%;--l:27.5%;--ox:30.9%;--oy:52.8%;--d:1.88s"></span><span class="fx fx-rise" style="--t:47%;--r:59.0%;--b:41.5%;--l:34.3%;--ox:37.6%;--oy:52.8%;--d:1.96s"></span><span class="fx fx-rise" style="--t:47%;--r:50.0%;--b:41.5%;--l:41%;--ox:45.5%;--oy:52.8%;--d:2.04s"></span><span class="fx fx-rise" style="--t:47%;--r:44.0%;--b:41.5%;--l:50%;--ox:53.0%;--oy:52.8%;--d:2.12s"></span><span class="fx fx-rise" style="--t:47%;--r:37.0%;--b:41.5%;--l:56%;--ox:59.5%;--oy:52.8%;--d:2.20s"></span><span class="fx fx-rise" style="--t:47%;--r:30.0%;--b:41.5%;--l:63%;--ox:66.5%;--oy:52.8%;--d:2.28s"></span><span class="fx fx-rise" style="--t:47%;--r:22.0%;--b:41.5%;--l:70%;--ox:74.0%;--oy:52.8%;--d:2.36s"></span><span class="fx fx-pop" style="--t:59%;--r:18.0%;--b:21.0%;--l:18%;--ox:50.0%;--oy:69.0%;--d:2.50s"></span><span class="fx fx-rise" style="--t:90%;--r:69.0%;--b:0.5%;--l:14%;--ox:22.5%;--oy:94.8%;--d:2.90s"></span><span class="fx fx-rise" style="--t:90%;--r:38.5%;--b:0.5%;--l:31%;--ox:46.2%;--oy:94.8%;--d:3.15s"></span><span class="fx fx-rise" style="--t:90%;--r:16.0%;--b:0.5%;--l:61.5%;--ox:72.8%;--oy:94.8%;--d:3.40s"></span><span class="gl lp" style="--cx:50%;--cy:69%;--mw:34%;--mh:12%;--d:3.60s;--dur:3.0s"></span><span class="gl chase lp" style="--cx:24.25%;--cy:52.5%;--mw:5%;--mh:7%;--d:3.80s;--dur:2.6s"></span><span class="gl chase lp" style="--cx:30.9%;--cy:52.5%;--mw:5%;--mh:7%;--d:3.98s;--dur:2.6s"></span><span class="gl chase lp" style="--cx:37.65%;--cy:52.5%;--mw:5%;--mh:7%;--d:4.16s;--dur:2.6s"></span><span class="gl chase lp" style="--cx:45.5%;--cy:52.5%;--mw:5%;--mh:7%;--d:4.34s;--dur:2.6s"></span><span class="gl chase lp" style="--cx:53.0%;--cy:52.5%;--mw:5%;--mh:7%;--d:4.52s;--dur:2.6s"></span><span class="gl chase lp" style="--cx:59.5%;--cy:52.5%;--mw:5%;--mh:7%;--d:4.70s;--dur:2.6s"></span><span class="gl chase lp" style="--cx:66.5%;--cy:52.5%;--mw:5%;--mh:7%;--d:4.88s;--dur:2.6s"></span><span class="gl chase lp" style="--cx:74.0%;--cy:52.5%;--mw:5%;--mh:7%;--d:5.06s;--dur:2.6s"></span><span class="gl lp" style="--cx:48%;--cy:44%;--mw:4%;--mh:5%;--d:4.60s;--dur:3.4s"></span></div><div class="sparkles" aria-hidden="true"><i class="bokeh lp" style="--x:77.5%;--d:-0.78s;--t:8.39s;--s:1.38"></i><i class="bokeh lp" style="--x:58.4%;--d:-4.06s;--t:8.61s;--s:1.49"></i><i class="bokeh lp" style="--x:57.4%;--d:-0.17s;--t:10.20s;--s:0.90"></i><i class="bokeh lp" style="--x:43.4%;--d:-1.92s;--t:8.78s;--s:0.89"></i><i class="bokeh lp" style="--x:8.9%;--d:-5.67s;--t:7.41s;--s:1.31"></i><i class="bokeh lp" style="--x:2.5%;--d:-7.03s;--t:10.23s;--s:1.05"></i><i class="bokeh lp" style="--x:70.9%;--d:-2.23s;--t:9.95s;--s:0.98"></i><i class="bokeh lp" style="--x:23.1%;--d:-8.68s;--t:8.60s;--s:0.94"></i><i class="bokeh lp" style="--x:86.0%;--d:-3.32s;--t:9.67s;--s:0.75"></i><i class="spk lp" style="--x:45.6%;--y:33.0%;--d:-0.55s;--t:3.93s;--s:0.61"></i><i class="spk lp" style="--x:49.3%;--y:72.4%;--d:-0.32s;--t:3.31s;--s:1.09"></i><i class="spk lp" style="--x:6.8%;--y:33.4%;--d:-2.81s;--t:3.10s;--s:1.18"></i><i class="spk lp" style="--x:17.5%;--y:22.9%;--d:-0.44s;--t:3.21s;--s:1.34"></i><i class="spk lp" style="--x:57.3%;--y:63.1%;--d:-1.53s;--t:3.69s;--s:0.68"></i><i class="spk lp" style="--x:29.8%;--y:55.6%;--d:-2.90s;--t:3.04s;--s:0.67"></i><i class="spk lp" style="--x:27.5%;--y:20.7%;--d:-1.12s;--t:3.82s;--s:0.76"></i><i class="spk lp" style="--x:84.5%;--y:71.0%;--d:-0.22s;--t:2.96s;--s:0.99"></i><i class="spk lp" style="--x:5.2%;--y:36.9%;--d:-3.63s;--t:2.42s;--s:1.08"></i><i class="spk lp" style="--x:14.2%;--y:48.4%;--d:-3.58s;--t:2.61s;--s:0.61"></i><i class="spk lp" style="--x:10.7%;--y:45.5%;--d:-0.07s;--t:2.37s;--s:1.00"></i><i class="spk lp" style="--x:87.7%;--y:36.5%;--d:-1.59s;--t:3.48s;--s:0.67"></i><i class="spk lp" style="--x:56.3%;--y:17.9%;--d:-2.44s;--t:4.12s;--s:0.64"></i><i class="spk lp" style="--x:54.1%;--y:50.5%;--d:-0.60s;--t:2.74s;--s:1.40"></i><i class="spk lp" style="--x:94.8%;--y:14.1%;--d:-2.82s;--t:4.10s;--s:0.79"></i><i class="spk lp" style="--x:59.2%;--y:8.2%;--d:-1.46s;--t:3.55s;--s:1.07"></i></div><p class="sr-only">PHP Ladies’ Trip, Las Vegas, November 2026. Relax. Reconnect. Recharge.</p></div><button type="button" class="spot-zoom" data-enlarge aria-label="Enlarge the Las Vegas ladies’ trip flyer"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L20 20M10.5 7.5v6M7.5 10.5h6"/></svg><span>Enlarge</span></button></div>
+          <div class="spotlight-caption"><div><div class="spot-chips"><span class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-9-8.6A4.9 4.9 0 0112 6.3a4.9 4.9 0 019 5.1C19 15.6 12 20 12 20z"/></svg>Ladies’ trip</span><span class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>November 2026</span></div><h3>Ladies’ trip · Las Vegas</h3><p>Relax. Reconnect. Recharge.</p></div><a class="pill pill-solid" data-view data-alt="PHP Ladies’ Trip to Las Vegas in November 2026. Relax, reconnect, recharge." href="assets/resources/php-ladies-trip-las-vegas-2026.webp" target="_blank" rel="noopener">View trip flyer</a></div>
+        </article>
+      </div>
+      <div class="spot-ctrl" data-slideshow-controls hidden>
+        <button type="button" class="pill pill-soft" data-slide-toggle aria-pressed="false"><span class="pill-ico" aria-hidden="true"><svg data-ico-pause viewBox="0 0 12 12"><rect x="2" y="1.5" width="2.6" height="9" rx="1"/><rect x="7.4" y="1.5" width="2.6" height="9" rx="1"/></svg><svg data-ico-play viewBox="0 0 12 12"><path d="M3 1.6v8.8L10.2 6z"/></svg></span><span data-toggle-label>Pause slideshow</span></button>
+        <p class="spotlight-status" data-slide-status aria-live="polite" aria-atomic="true"></p>
+      </div>
+    </div>
+    <dialog class="flyer-viewer" id="flyer-viewer" aria-labelledby="fv-title">
+      <div class="fv-head"><h2 id="fv-title" data-fv-title></h2><button type="button" class="pill pill-soft" data-fv-close>Close</button></div>
+      <div class="fv-body"><img data-fv-img alt=""></div>
+      <div class="fv-foot"><a class="pill pill-soft" data-fv-download download>Download</a><a class="pill pill-solid" data-fv-open target="_blank" rel="noopener">Open in new tab</a></div>
+    </dialog>
+  </div>
+</section>
+
+<!-- ══ TESTIMONIAL + BROKERAGE NETWORK ══ -->
+<section class="bg-dark on-dark" aria-label="Client story">
+  <div class="wrap">
+    <figure class="testimonial reveal">
+      <div class="stars" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2l3 6.9 7.5.7-5.7 5 1.7 7.4L12 18.3 5.5 22l1.7-7.4-5.7-5 7.5-.7z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3 6.9 7.5.7-5.7 5 1.7 7.4L12 18.3 5.5 22l1.7-7.4-5.7-5 7.5-.7z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3 6.9 7.5.7-5.7 5 1.7 7.4L12 18.3 5.5 22l1.7-7.4-5.7-5 7.5-.7z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3 6.9 7.5.7-5.7 5 1.7 7.4L12 18.3 5.5 22l1.7-7.4-5.7-5 7.5-.7z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3 6.9 7.5.7-5.7 5 1.7 7.4L12 18.3 5.5 22l1.7-7.4-5.7-5 7.5-.7z"/></svg></div>
+      <blockquote>"AMG didn't just organize our finances. They changed the trajectory of our family. Our children will inherit a plan, not a problem."</blockquote>
+      <figcaption><cite>— The Okafor Family · Clients since 2019</cite></figcaption>
+    </figure>
+    <div class="brokers" role="region" aria-labelledby="brokers-label">
+      <p class="strip-label" id="brokers-label">Our brokerage network</p>
+      <div class="marquee-viewport" tabindex="0" aria-label="Brokerage network logos">
+        <div class="marquee-track" style="animation-duration:46s">
+          <div class="logo-group" role="list" aria-label="Brokerages">
+            <div class="network-logo" role="listitem"><img src="assets/brokers/amg-mark.webp" alt="AMG"></div>
+            <div class="network-logo" role="listitem"><img src="assets/brokers/cfc.webp" alt="CFC"></div>
+            <div class="network-logo" role="listitem"><img src="assets/brokers/lww-financial-services.webp" alt="LWW Financial Services"></div>
+            <div class="network-logo" role="listitem"><img src="assets/brokers/built-for-redemption.webp" alt="Built for Redemption"></div>
+            <div class="network-logo" role="listitem"><img src="assets/brokers/standard-financial-group.webp" alt="Standard Financial Group"></div>
+            <div class="network-logo" role="listitem"><img src="assets/brokers/crowned-wealth-group.webp" alt="Crowned Wealth Group"></div>
+            <div class="network-logo" role="listitem"><img src="assets/brokers/wealth-by-serving.webp" alt="Wealth by Serving"></div>
+            <div class="network-logo" role="listitem"><img src="assets/brokers/summit-financial-solutions.webp" alt="Summit Financial Solutions"></div>
+            <div class="network-logo" role="listitem"><img src="assets/brokers/agape-financial-group.webp" alt="Agape Financial Group"></div>
+            <div class="network-logo" role="listitem"><img src="assets/brokers/valor.webp" alt="Valor"></div>
+            <div class="network-logo" role="listitem"><img src="assets/brokers/made-to-shine.webp" alt="Made To Shine"></div>
+          </div>
+          <div class="logo-group" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FAQ ══ -->
+<section class="bg-paper" id="faq">
+  <div class="wrap faq-grid">
+    <div class="sec-head reveal">
+      <span class="kicker">FAQ</span>
+      <h2 class="serif">Questions, answered.</h2>
+      <p>Don't see yours? <a class="text-link" href="#contact">Ask us directly →</a></p>
+    </div>
+    <div class="faq reveal" data-d="1">
+      <details open><summary>What happens in a consultation?<span class="pm" aria-hidden="true"></span></summary><div class="ans"><p>We start with Discovery: a private conversation about your income, family, assets, debts, and goals. You leave with a clear picture of where you stand and a recommended next step. There's no obligation to buy anything.</p></div></details>
+      <details><summary>Who does AMG work with?<span class="pm" aria-hidden="true"></span></summary><div class="ans"><p>Families, young professionals, business owners, and pre-retirees. If you have people who depend on you or a future you want to protect, we can help you plan for it.</p></div></details>
+      <details><summary>Which insurance companies do you work with?<span class="pm" aria-hidden="true"></span></summary><div class="ans"><p>As a proud partner of Integrity Marketing Group, we shop coverage across carriers such as Athene, North American, F&amp;G, Pacific Life, Mutual of Omaha, Nationwide, AIG, and more, so the recommendation fits you rather than one company.</p></div></details>
+      <details><summary>How much life insurance do I need?<span class="pm" aria-hidden="true"></span></summary><div class="ans"><p>It depends on your income, debts, children, and existing savings. Try the <a class="text-link" href="#estimator">coverage estimator</a> for a starting number, then we'll refine it together.</p></div></details>
+      <details><summary>Do I need a medical exam?<span class="pm" aria-hidden="true"></span></summary><div class="ans"><p>Not always. Many carriers offer accelerated underwriting that relies on health history instead of an exam for eligible applicants. Requirements depend on the carrier, your age, and the amount of coverage.</p></div></details>
+      <details><summary>Which states are you licensed in?<span class="pm" aria-hidden="true"></span></summary><div class="ans"><p>Our agents are licensed across 38 states and growing. Reach out and we'll confirm availability where you live.</p></div></details>
+      <details><summary>Can I become an AMG agent?<span class="pm" aria-hidden="true"></span></summary><div class="ans"><p>Yes. Start by joining a <a class="text-link" href="#build-with-amg">Business Opportunity Meeting</a>, then visit <a class="text-link" href="/licensing">Licensing</a> to begin the process.</p></div></details>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CONTACT ══ -->
+<section class="bg-white" id="contact">
+  <div class="wrap contact-grid">
+    <div class="contact-info reveal">
+      <span class="kicker">Book a consultation</span>
+      <h2 class="serif">Your legacy has a first step.</h2>
+      <p>Tell us where you are. We'll show you what's possible, with discretion, clarity, and zero pressure.</p>
+      <div class="c-cards">
+        <a class="c-line" href="tel:+13018755812"><span class="icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg></span><span><small>Simi</small>(301) 875-5812</span></a>
+        <a class="c-line" href="tel:+14437833180"><span class="icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg></span><span><small>Zamilah</small>(443) 783-3180</span></a>
+        <a class="c-line" href="mailto:simiaji@amgfinancialagency.com"><span class="icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg></span><span><small>Simi</small>simiaji@amgfinancialagency.com</span></a>
+        <a class="c-line" href="mailto:Zamilah1@gmail.com"><span class="icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg></span><span><small>Zamilah</small>Zamilah1@gmail.com</span></a>
+        <a class="c-line" href="https://www.instagram.com/anointedmg" target="_blank" rel="noopener noreferrer"><span class="icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></svg></span><span><small>Instagram</small>@anointedmg</span></a>
+      </div>
+    </div>
+    <div class="reveal" data-d="1">
+      <form class="form-card" name="consultation" method="POST" action="/.netlify/functions/submit-inquiry">
+        <h3>Request your consultation</h3>
+        <input type="hidden" name="submissionId" value="">
+        <p style="display:none" aria-hidden="true"><label>Do not fill this out: <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
         <div class="f-row">
-          <div class="field"><label for="fn">Full Name</label><input id="fn" name="full-name" type="text" placeholder="Alexandra Sterling" required></div>
-          <div class="field"><label for="em">Email</label><input id="em" name="email" type="email" placeholder="you@email.com" required></div>
+          <div class="field"><label for="fn">Full name</label><input id="fn" name="full-name" type="text" placeholder="Alexandra Sterling" autocomplete="name" maxlength="160" required></div>
+          <div class="field"><label for="em">Email</label><input id="em" name="email" type="email" placeholder="you@email.com" autocomplete="email" maxlength="254" required></div>
         </div>
         <div class="f-row">
-          <div class="field"><label for="ph">Phone</label><input id="ph" name="phone" type="tel" placeholder="(555) 000-0000"></div>
-          <div class="field"><label for="int">I'm Interested In</label>
-            <select id="int" name="interest">
-              <option>Wealth Creation</option><option>Asset Protection</option>
-              <option>Retirement Planning</option><option>Financial Education</option>
-              <option>Generational Legacy</option><option>The Full Blueprint</option>
+          <div class="field"><label for="ph">Phone</label><input id="ph" name="phone" type="tel" placeholder="(555) 000-0000" autocomplete="tel" maxlength="40"></div>
+          <div class="field"><label for="int">I'm interested in</label>
+            <select id="int" name="interest" data-fancy>
+              <option data-icon="growth" data-desc="Indexed strategies and tax-advantaged growth">Wealth Creation</option>
+              <option data-icon="shield" data-desc="Life insurance and living benefits">Asset Protection</option>
+              <option data-icon="clock" data-desc="401(k) rollovers, IRAs, and income for life">Retirement Planning</option>
+              <option data-icon="book" data-desc="Workshops and one-on-one coaching">Financial Education</option>
+              <option data-icon="heart" data-desc="Estate and wealth-transfer planning">Generational Legacy</option>
+              <option data-icon="star" data-desc="Every discipline, in one plan">The Full Blueprint</option>
             </select>
           </div>
         </div>
-        <div class="field"><label for="msg">Tell Us About Your Goals</label><textarea id="msg" name="goals" placeholder="Where would you like your family to be in 30 years?"></textarea></div>
-        <button type="submit" class="btn btn-dark" style="width:100%;justify-content:space-between;padding-left:1.7rem">Request My Consultation
-          <span class="orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+        <div class="field"><label for="msg">Tell us about your goals</label><textarea id="msg" name="goals" maxlength="5000" placeholder="Where would you like your family to be in 30 years?"></textarea></div>
+        <p id="inquiry-error" class="inquiry-error" role="alert" tabindex="-1" hidden></p>
+        <button type="submit" class="btn btn-dark" style="width:100%"><span data-inquiry-submit-label>Request my consultation</span>
         </button>
+        <p id="inquiry-status" class="form-note" role="status" aria-live="polite"></p>
         <p class="form-note">Private &amp; confidential. Your information is never sold or shared.</p>
       </form>
     </div>
   </div>
 </section>
+
+<!-- ══ FINAL CTA ══ -->
+<div class="final">
+  <div class="final-card reveal">
+    <h2 class="serif">Ready to get started?</h2>
+    <p>One conversation. A complete picture of where you stand, and a plan for where your family is going.</p>
+    <div class="hero-ctas">
+      <a href="#contact" class="btn btn-gold">Book a consultation</a>
+      <a href="#estimator" class="btn btn-ghost">Estimate my coverage</a>
+    </div>
+  </div>
+</div>
+</main>
 
 <!-- ══ FOOTER ══ -->
 <footer>
@@ -784,63 +1179,127 @@ body>footer{background:#050807;border-top:1px solid rgba(212,175,55,.15);padding
       </a>
       <p>Building generational wealth through protection, education, and intentional legacy design.</p>
     </div>
-    <div><h5>Services</h5><a href="#services">Wealth Creation</a><a href="#services">Asset Protection</a><a href="#services">Retirement Planning</a><a href="#services">Financial Education</a><a href="#services">Generational Legacy</a></div>
-    <div><h5>Firm</h5><a href="#philosophy">Philosophy</a><a href="#approach">Our Process</a><a href="resources.html">Resources</a><a href="licensing.html">Licensing</a><a href="/app/">AMG App</a><a href="#contact">Consultations</a></div>
-    <div><h5>Connect</h5><a href="tel:+13018755812">Simi · (301) 875-5812</a><a href="tel:+14437833180">Zamilah · (443) 783-3180</a><a href="licensing.html">Book Licensing</a><a href="https://www.instagram.com/anointedmg" target="_blank" rel="noopener noreferrer">Follow us on Instagram</a></div>
+    <div><h2>Services</h2><a href="#services">Wealth Creation</a><a href="#services">Asset Protection</a><a href="#services">Retirement Planning</a><a href="#services">Financial Education</a><a href="#services">Generational Legacy</a></div>
+    <div><h2>Firm</h2><a href="#philosophy">Philosophy</a><a href="#approach">Our Process</a><a href='/resources'>Resources</a><a href='/licensing'>Licensing</a><a href="/app/">AMG App</a><a href='/agent-portal'>Agent Portal</a></div>
+    <div><h2>Connect</h2><a href="tel:+13018755812">Simi · (301) 875-5812</a><a href="tel:+14437833180">Zamilah · (443) 783-3180</a><a href='/licensing'>Book Licensing</a><a href="https://www.instagram.com/anointedmg" target="_blank" rel="noopener noreferrer">Follow us on Instagram</a></div>
+  </div>
+  <div class="disclosures">
+    <h2>Important disclosures</h2>
+    <p><sup>1</sup> Insurance and financial products are offered through licensed professionals. Products, features, riders, and pricing vary by carrier and are not available in all states. Coverage is subject to underwriting approval by the issuing carrier.</p>
+    <p><sup>2</sup> The coverage estimator is for educational purposes only and is not a quote, an offer of coverage, or financial, tax, or legal advice. It uses a simplified formula (income × years + debts + $50,000 per child + $15,000 final expenses − existing coverage and savings). Your actual needs may differ; speak with a licensed AMG professional.</p>
+    <p><sup>3</sup> Business Opportunity Meetings are informational. Attendance does not guarantee income or business results. Becoming an agent requires state licensing.</p>
+    <p>Carrier names and logos are trademarks of their respective owners and are shown to identify companies AMG agents may work with; their display does not imply endorsement. Annuity and life insurance guarantees are backed by the claims-paying ability of the issuing insurer. This site is for informational purposes only.</p>
   </div>
   <div class="foot-bottom">
     <span>© 2026 Anointed Money Group. All rights reserved.</span>
-    <span>Insurance and financial products offered through licensed professionals. This site is for informational purposes only.</span>
+    <span>Serving families nationwide · By appointment</span>
   </div>
 </footer>
 
 <script>
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyb2NfpW_jHLIlyck1sgzsURnMRNXBhWs9Spy1N7qYpkvCwSSFRVcBqsFxUGV31KWy-UA/exec";
+// duplicate marquee groups for seamless loop
+document.querySelectorAll('.marquee-track').forEach(track=>{
+  const [first,clone]=track.querySelectorAll('.logo-group');
+  if(first&&clone){clone.innerHTML=first.innerHTML;clone.querySelectorAll('img').forEach(i=>i.alt='');clone.querySelectorAll('[role]').forEach(n=>n.removeAttribute('role'))}
+});
 
 // scroll reveal
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12,rootMargin:'0px 0px -8% 0px'});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
 // animated counters
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const cio=new IntersectionObserver(es=>es.forEach(e=>{
   if(!e.isIntersecting)return;cio.unobserve(e.target);
-  const el=e.target,end=+el.dataset.count,pre=el.dataset.prefix||'',suf=el.dataset.suffix||'',t0=performance.now(),dur=1800;
-  const tick=t=>{const p=Math.min((t-t0)/dur,1),ease=1-Math.pow(1-p,4);
-    el.textContent=pre+Math.round(end*ease).toLocaleString()+suf;
-    if(p<1)requestAnimationFrame(tick)};
+  const el=e.target,end=+el.dataset.count,suf=el.dataset.suffix||'',t0=performance.now(),dur=1600;
+  if(reduce)return;
+  const tick=t=>{const p=Math.min((t-t0)/dur,1),ease=1-Math.pow(1-p,4);el.textContent=Math.round(end*ease).toLocaleString()+suf;if(p<1)requestAnimationFrame(tick)};
   requestAnimationFrame(tick);
 }),{threshold:.6});
 document.querySelectorAll('[data-count]').forEach(el=>cio.observe(el));
 
-// mobile menu
+// mobile menu (unchanged behavior)
 const burger=document.getElementById('burger'),menu=document.getElementById('menu');
-burger.addEventListener('click',()=>{burger.classList.toggle('open');menu.classList.toggle('open');document.body.style.overflow=menu.classList.contains('open')?'hidden':''});
-menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{burger.classList.remove('open');menu.classList.remove('open');document.body.style.overflow=''}));
-
-const consultationForm = document.querySelector('form[name="consultation"]');
-if (consultationForm) {
-  consultationForm.addEventListener('submit', async event => {
-    if (!GOOGLE_SCRIPT_URL) return;
-
-    event.preventDefault();
-    const formData = new FormData(consultationForm);
-    formData.set('formType', 'consultation');
-    formData.set('submittedAt', new Date().toISOString());
-    formData.set('source', 'AMG website consultation form');
-    formData.set('userAgent', navigator.userAgent);
-
-    try {
-      await fetch(GOOGLE_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(formData),
-      });
-    } finally {
-      window.location.href = consultationForm.action || '/thank-you.html';
-    }
-  });
+function setMenuOpen(open){
+  burger.classList.toggle('open',open);menu.classList.toggle('open',open);
+  burger.setAttribute('aria-expanded',String(open));
+  document.body.style.overflow=open?'hidden':'';
 }
+burger.addEventListener('click',()=>setMenuOpen(!menu.classList.contains('open')));
+menu.querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>setMenuOpen(false)));
+window.matchMedia('(max-width:1120px)').addEventListener('change',()=>setMenuOpen(false));
+window.addEventListener('pageshow',()=>setMenuOpen(false));
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menu.classList.contains('open')){setMenuOpen(false);burger.focus({preventScroll:true})}});
+
+// benefit cards: play visuals in view, replay on hover/tap, spotlight + tilt on fine pointers
+(()=>{
+  const cards=[...document.querySelectorAll('.benefit')];
+  const fine=matchMedia('(hover:hover) and (pointer:fine)').matches;
+  function countUp(card){
+    card.querySelectorAll('.viz-count').forEach(el=>{
+      const to=+el.dataset.to;if(reduce){el.textContent=to;return}
+      const t0=performance.now(),d=900;
+      const step=t=>{const p=Math.min((t-t0)/d,1);el.textContent=Math.round(to*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(step)};
+      requestAnimationFrame(step);
+    });
+  }
+  function play(card){
+    if(reduce){card.classList.add('active');return}
+    card.classList.remove('active');void card.offsetWidth;card.classList.add('active');countUp(card);
+  }
+  const vio=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){vio.unobserve(e.target);setTimeout(()=>play(e.target),350)}}),{threshold:.45});
+  cards.forEach(c=>{
+    vio.observe(c);
+    c.addEventListener('click',()=>play(c));
+    if(!fine||reduce)return;
+    c.addEventListener('pointerenter',()=>{c.classList.add('tilting');play(c)});
+    c.addEventListener('pointermove',e=>{
+      const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
+      c.style.setProperty('--mx',(x*100).toFixed(1)+'%');c.style.setProperty('--my',(y*100).toFixed(1)+'%');
+      c.style.setProperty('--rx',((.5-y)*7).toFixed(2)+'deg');c.style.setProperty('--ry',((x-.5)*7).toFixed(2)+'deg');
+    });
+    c.addEventListener('pointerleave',()=>{c.classList.remove('tilting');c.style.setProperty('--rx','0deg');c.style.setProperty('--ry','0deg')});
+  });
+})();
+
+// tabs (WAI-ARIA tabs pattern)
+const tabs=[...document.querySelectorAll('#compare [role="tab"]')];
+function selectTab(tab,focus){
+  tabs.forEach(t=>{const on=t===tab;t.setAttribute('aria-selected',on);t.tabIndex=on?0:-1;document.getElementById(t.getAttribute('aria-controls')).hidden=!on});
+  if(focus)tab.focus();
+}
+tabs.forEach((t,i)=>{
+  t.addEventListener('click',()=>selectTab(t));
+  t.addEventListener('keydown',e=>{
+    let n=null;
+    if(e.key==='ArrowRight'||e.key==='ArrowDown')n=(i+1)%tabs.length;else if(e.key==='ArrowLeft'||e.key==='ArrowUp')n=(i-1+tabs.length)%tabs.length;
+    else if(e.key==='Home')n=0;else if(e.key==='End')n=tabs.length-1;
+    if(n!==null){e.preventDefault();selectTab(tabs[n],true)}
+  });
+});
+document.querySelectorAll('[role="tabpanel"]').forEach(p=>p.classList.add('in'));
+
+// coverage estimator
+(()=>{
+  const $=id=>document.getElementById(id);
+  const money=v=>v>=1e6?'$'+(v/1e6).toFixed(v%1e6===0?0:2).replace(/\.?0+$/,'')+'M':'$'+Math.round(v/1000).toLocaleString()+'K';
+  const full=v=>'$'+Math.round(v).toLocaleString();
+  const ids=['income','years','debt','kids','have'];
+  const fmt={income:money,years:v=>v+(v==1?' year':' years'),debt:money,kids:v=>v+(v==1?' child':' children'),have:money};
+  function paint(el){const p=(el.value-el.min)/(el.max-el.min)*100;el.style.setProperty('--p',p+'%')}
+  function update(){
+    const v={};ids.forEach(k=>{const el=$('c-'+k);v[k]=+el.value;$('o-'+k).textContent=fmt[k](v[k]);paint(el)});
+    const inc=v.income*v.years,edu=v.kids*50000,fin=15000,debt=v.debt;
+    const gross=inc+debt+edu+fin,total=Math.max(0,gross-v.have);
+    $('o-total').textContent=full(total);
+    [['b-inc',inc],['b-debt',debt],['b-edu',edu],['b-fin',fin]].forEach(([id,x])=>$(id).style.width=(x/gross*100)+'%');
+    $('l-inc').textContent=money(inc);$('l-debt').textContent=money(debt);$('l-edu').textContent=money(edu);$('l-have').textContent=money(v.have);
+    const sel=$('int'),msg=$('msg');
+    $('calc-cta').onclick=()=>{if(sel&&sel.value!=='Asset Protection'){sel.value='Asset Protection';sel.dispatchEvent(new Event('change',{bubbles:true}))}if(msg&&!msg.value)msg.value='My coverage estimate was '+full(total)+'. I\'d like to review it.'};
+  }
+  ids.forEach(k=>$('c-'+k).addEventListener('input',update));
+  update();
+})();
 </script>
 </body>
 </html>

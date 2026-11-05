@@ -1,0 +1,124 @@
+/* ─────────────────────────────────────────────────────────────
+   SoFi-pattern controls in AMG colors
+   - .opt      : option pill with a check circle (selected = filled)
+   - .pill     : rounded action buttons (solid / soft), no arrows
+   - spotlight : picker + stage layout, autoplay progress, flyer viewer
+   - compare   : vertical option list beside the detail panel
+   ───────────────────────────────────────────────────────────── */
+
+/* ── option pills ───────────────────────────────── */
+.opt-list{display:flex;flex-direction:column;gap:.6rem;list-style:none}
+.opt{
+  position:relative;overflow:hidden;isolation:isolate;
+  display:flex;align-items:center;gap:.85rem;width:100%;min-height:52px;
+  padding:.55rem 1.25rem .55rem .6rem;border:0;border-radius:999px;
+  background:#ECEBE5;color:var(--emerald-deep);
+  font:600 1rem/1.25 'Jost',sans-serif;text-align:left;cursor:pointer;
+  box-shadow:inset 0 0 0 2px transparent;
+  transition:background .25s ease,color .25s ease,box-shadow .25s ease,transform .2s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.opt:hover{box-shadow:inset 0 0 0 2px var(--emerald);background:#E6E5DE}
+.opt:active{transform:scale(.985)}
+.opt:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.opt-check{
+  width:32px;height:32px;flex:none;border-radius:50%;
+  display:grid;place-items:center;
+  border:2px solid var(--emerald);background:transparent;
+  transition:background .25s ease,border-color .25s ease;
+}
+.opt-check svg{width:16px;height:16px;fill:none;stroke:var(--emerald);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;transition:stroke .25s ease}
+.opt[aria-selected="true"]{background:var(--emerald-deep);color:#fff;box-shadow:inset 0 0 0 2px var(--emerald-deep)}
+.opt[aria-selected="true"]:hover{box-shadow:inset 0 0 0 2px var(--gold)}
+.opt[aria-selected="true"] .opt-check{background:#fff;border-color:#fff}
+.opt[aria-selected="true"] .opt-check svg{stroke:var(--emerald-deep)}
+/* autoplay progress inside the selected pill */
+.opt-progress{position:absolute;left:0;bottom:0;height:3px;width:100%;transform-origin:left;transform:scaleX(0);background:var(--gold-bright);z-index:-1;pointer-events:none}
+.opt[aria-selected="true"] .opt-progress.run{animation:optfill var(--slide-ms,8000ms) linear forwards}
+.is-paused .opt-progress.run{animation-play-state:paused}
+@keyframes optfill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+/* ── action pills ───────────────────────────────── */
+.pill{
+  display:inline-flex;align-items:center;justify-content:center;gap:.65rem;
+  min-height:48px;padding:.7rem 1.7rem;border:0;border-radius:999px;
+  font:600 .95rem/1.2 'Jost',sans-serif;text-decoration:none;cursor:pointer;white-space:nowrap;
+  transition:background .25s ease,color .25s ease,box-shadow .25s ease,transform .2s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.pill:active{transform:scale(.97)}
+.pill:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.pill-solid{background:var(--emerald-deep);color:#fff;box-shadow:0 10px 24px -14px rgba(11,46,36,.7)}
+.pill-solid:hover{background:var(--emerald);box-shadow:0 14px 28px -14px rgba(11,46,36,.75);transform:translateY(-1px)}
+.pill-solid:active{transform:scale(.97)}
+.pill-soft{background:#ECEBE5;color:var(--emerald-deep);box-shadow:inset 0 0 0 2px transparent}
+.pill-soft:hover{box-shadow:inset 0 0 0 2px var(--emerald);background:#E6E5DE}
+.pill .pill-ico{width:28px;height:28px;margin-left:-.95rem;flex:none;border-radius:50%;display:grid;place-items:center;border:2px solid var(--emerald)}
+.pill .pill-ico svg{width:12px;height:12px;fill:var(--emerald)}
+.pill[aria-pressed="true"] [data-ico-pause],.pill[aria-pressed="false"] [data-ico-play]{display:none}
+.pill[aria-pressed="true"]{background:var(--emerald-deep);color:#fff}
+.pill[aria-pressed="true"] .pill-ico{background:#fff;border-color:#fff}
+.pill[aria-pressed="true"] .pill-ico svg{fill:var(--emerald-deep)}
+.pill[aria-pressed="true"]:hover{box-shadow:inset 0 0 0 2px var(--gold)}
+
+/* ── spotlight layout ───────────────────────────── */
+.spotlight-card.spot{display:grid;grid-template-columns:minmax(250px,320px) 1fr;grid-template-areas:"picker stage" "ctrl stage";grid-template-rows:auto 1fr;gap:0}
+.spot-picker{grid-area:picker;padding:1.6rem 1.4rem 1rem}
+.spot-picker .spot-label{font-size:.72rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin:0 0 .9rem .4rem}
+.spot-ctrl{grid-area:ctrl;align-self:end;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 1.4rem 1.6rem}
+.spot-ctrl .spotlight-status{font-size:.85rem;color:var(--muted);margin:0}
+.spot-stage{grid-area:stage;border-left:1px solid var(--line);min-width:0}
+.spot .spotlight-media{display:block;position:relative;cursor:zoom-in;background:#07120c;touch-action:pan-y}
+.spot .spotlight-media img{display:block;width:100%;height:auto;aspect-ratio:16/10;object-fit:contain}
+.spot .spotlight-media::after{
+  content:'Tap to enlarge';position:absolute;right:1rem;bottom:1rem;
+  padding:.4rem .8rem;border-radius:999px;background:rgba(6,12,9,.7);color:#fff;font-size:.78rem;font-weight:500;
+  opacity:0;transform:translateY(4px);transition:opacity .25s ease,transform .25s ease;pointer-events:none;
+}
+.spot .spotlight-media:hover::after,.spot .spotlight-media:focus-visible::after{opacity:1;transform:none}
+@media(hover:hover){.spot .spotlight-media::after{content:'Click to enlarge'}}
+.spot .spotlight-caption{padding:1.3rem 1.6rem;gap:1.5rem}
+.spot .spotlight-slide:not([hidden]){animation:spotin .35s ease-out}
+@keyframes spotin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ── flyer viewer ───────────────────────────────── */
+.flyer-viewer{
+  width:min(1100px,calc(100vw - 2rem));max-height:calc(100dvh - 2rem);margin:auto;padding:0;border:0;
+  border-radius:24px;background:#fff;color:var(--text);overflow:hidden;
+  box-shadow:0 40px 100px -30px rgba(0,0,0,.6);
+}
+.flyer-viewer::backdrop{background:rgba(4,10,7,.78);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.flyer-viewer[open]{display:flex;flex-direction:column;animation:fvin .3s var(--ease-out-soft,ease-out)}
+@keyframes fvin{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
+.fv-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 1rem 1rem 1.6rem;border-bottom:1px solid var(--line)}
+.fv-head h2{font-family:'Bodoni Moda',serif;font-size:1.3rem;color:var(--emerald-deep);line-height:1.2}
+.fv-body{flex:1;min-height:0;overflow:auto;background:#07120c;display:grid;place-items:center}
+.fv-body img{display:block;max-width:100%;max-height:calc(100dvh - 12rem);object-fit:contain}
+.fv-foot{display:flex;flex-wrap:wrap;gap:.75rem;justify-content:flex-end;padding:1rem 1.6rem}
+
+/* ── compare: vertical option list beside panel ─── */
+.compare-grid{display:grid;grid-template-columns:minmax(260px,360px) 1fr;gap:clamp(1.5rem,3vw,2.5rem);align-items:start}
+.compare-grid .tabs{display:flex;flex-direction:column;flex-wrap:nowrap;gap:.6rem;margin:0;overflow:visible;padding:0}
+.compare-grid .panel{grid-template-columns:1fr}
+@media(min-width:1180px){.compare-grid .panel{grid-template-columns:1.2fr .8fr}}
+
+/* ── responsive ─────────────────────────────────── */
+@media(max-width:900px){
+  .spotlight-card.spot{grid-template-columns:minmax(0,1fr);grid-template-areas:"picker" "stage" "ctrl";grid-template-rows:auto}
+  .spot-picker,.spot-stage,.spot-ctrl{min-width:0}
+  .spot-stage{border-left:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .spot-picker{padding:1.2rem 1rem .9rem}
+  .spot-picker .opt-list{flex-direction:row;overflow-x:auto;scrollbar-width:none;margin:0 -1rem;padding:.2rem 1rem .4rem;scroll-snap-type:x mandatory}
+  .spot-picker .opt-list::-webkit-scrollbar{display:none}
+  .spot-picker .opt{width:auto;flex:none;scroll-snap-align:start;padding-right:1.1rem}
+  .spot-ctrl{padding:1rem}
+  .compare-grid{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  .spot .spotlight-caption{flex-direction:column;align-items:stretch;gap:1rem;padding:1.2rem 1rem}
+  .spot .spotlight-caption .pill{width:100%}
+  .fv-foot .pill{flex:1}
+}
+@media(prefers-reduced-motion:reduce){
+  .opt,.pill,.spot .spotlight-slide,.flyer-viewer[open]{animation:none!important;transition:none!important}
+}

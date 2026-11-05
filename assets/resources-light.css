@@ -18,7 +18,6 @@ body.res-light{
 .res-light .hero h1{color:#0B2E24}
 .res-light h1 em{color:#9A7A1C}
 .res-light .hero .intro{color:#4C5A52;font-size:1.08rem}
-.res-light .resource-team-photo{border-radius:22px;border:6px solid #fff;box-shadow:0 34px 60px -34px rgba(11,46,36,.5)}
 
 /* buttons */
 .res-light .gold{background:linear-gradient(120deg,#B8901F,#E0BC55 55%,#C9A227);color:#1A1405;box-shadow:0 12px 26px -14px rgba(138,109,20,.65)}

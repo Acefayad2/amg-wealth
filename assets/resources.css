@@ -60,7 +60,5 @@ h1{font:500 clamp(2.6rem,4.1vw,3.7rem)/1.13 var(--serif);letter-spacing:-.045em;
 @media(max-width:360px){.site-nav{width:100%;justify-content:space-between;gap:1rem;padding-top:.3rem}.site-header{padding-bottom:.55rem}.quick-card-image{width:115px;height:70px}.hero h1{font-size:2.2rem}.flyer-grid{grid-template-columns:1fr}.footer-top .brand small{display:none}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}.quick-card:hover,.resource-row:hover,.compact-card:hover,.video-card:hover,.reading-card:hover,.flyer-grid>a:hover,.gold:hover,.video-card:hover img{transform:none}}
 
-.resource-photo-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(200px,.48fr);gap:2rem;align-items:center}.resource-team-photo{display:block;width:100%;height:clamp(230px,24vw,340px);object-fit:cover;object-position:50% 31%;border-radius:8px}
-@media(max-width:680px){.resource-photo-hero{grid-template-columns:1fr;gap:1.25rem}.resource-team-photo{max-width:100%;height:240px;object-position:50% 30%}}
 
 .site-header{position:sticky;top:0;z-index:10;background:var(--ink)}

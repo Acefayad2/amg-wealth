@@ -630,6 +630,9 @@ body>footer{background:#050807;color:var(--cream);padding:4.5rem 6vw 2.5rem}
 /* solid gold instead of gradient-clipped text in the weekly schedule banner */
 #amg-spotlight .wk-brand b,#amg-spotlight .wk-title .w{background:none;-webkit-background-clip:border-box;background-clip:border-box;-webkit-text-fill-color:currentColor;color:var(--gold-bright)}
 #amg-spotlight .wk-none{color:rgba(255,255,255,.7)}
+/* partner badge is a link: no underline, 44px tap target, clear hover */
+.partner-tag{text-decoration:none;min-height:44px;transition:border-color .3s,background .3s}
+.partner-tag:hover{border-color:var(--gold-bright);background:rgba(7,26,20,.8)}
 /* 44px tap targets in the footer */
 .foot-grid a{display:flex;align-items:center;min-height:44px;padding:0}
 /* headings sit closer to the top now that most section labels are gone */
@@ -691,7 +694,7 @@ body>footer{background:#050807;color:var(--cream);padding:4.5rem 6vw 2.5rem}
 <header class="hero" id="top">
   <div class="hero-grid">
     <div class="hero-copy">
-      <span class="partner-tag reveal"><b aria-hidden="true">✦</b>Proud partner of Integrity Marketing Group</span>
+      <a class="partner-tag reveal" href="https://integrity.com/"><b aria-hidden="true">✦</b>Proud partner of Integrity Marketing Group</a>
       <h1 class="serif reveal" data-d="1">Build wealth.<br><span class="gold-text">Leave a legacy.</span></h1>
       <p class="lede reveal" data-d="2">Life insurance, retirement, and wealth strategies built around your family, explained in plain language by licensed AMG professionals.</p>
       <div class="hero-ctas reveal" data-d="3">

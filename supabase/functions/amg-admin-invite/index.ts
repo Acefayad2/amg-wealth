@@ -49,8 +49,11 @@ Deno.serve(async (req) => {
 
   try {
     const input = await req.json();
-    const phone = String(input?.phone || "").trim();
-    if (!/^\+[1-9][0-9]{7,14}$/.test(phone)) return json({ error: "Enter a valid E.164 phone number." }, 400);
+    const rawPhone = String(input?.phone || "").trim();
+    const phoneDigits = /^\+?[0-9().\s-]+$/.test(rawPhone) ? rawPhone.replace(/\D/g, "") : "";
+    const tenDigits = phoneDigits.length === 11 && phoneDigits.startsWith("1") ? phoneDigits.slice(1) : phoneDigits;
+    if (tenDigits.length !== 10 || !/^[2-9]\d{2}[2-9]\d{6}$/.test(tenDigits)) return json({ error: "Enter a valid US phone number." }, 400);
+    const phone = `+1${tenDigits}`;
     const tokenBytes = crypto.getRandomValues(new Uint8Array(32));
     const token = base64url(tokenBytes);
     const tokenHash = hex(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(token))));
@@ -96,26 +99,9 @@ Deno.serve(async (req) => {
         });
         return json({ error: "An account already uses this phone. Review it without changing its credentials before inviting." }, 409);
       }
-    } else {
-      const { data: created, error: createError } = await admin.auth.admin.createUser({ phone, phone_confirm: false });
-      if (createError || !created.user?.id) {
-        await admin.rpc("amg_crm_record_phone_admin_invite_result", {
-          p_id: prepared.id, p_outcome: "failed", p_failure_reason: "Supabase Auth did not create the phone account.",
-        });
-        throw new Error("The phone account could not be prepared.");
-      }
-      const { error: recordUserError } = await admin.rpc("amg_crm_record_phone_admin_invite_user", {
-        p_id: prepared.id, p_user_id: created.user.id,
-      });
-      if (recordUserError) {
-        await admin.rpc("amg_crm_record_phone_admin_invite_result", {
-          p_id: prepared.id, p_outcome: "failed", p_failure_reason: "The prepared phone account could not be bound to its invitation.",
-        });
-        throw new Error("The phone account could not be safely bound to this invitation.");
-      }
     }
-    const privateUrl = `${setupUrl}?invite=${encodeURIComponent(token)}`;
-    const content = `AMG admin invitation: Open this private link to verify your phone, choose your email, and create your dashboard password: ${privateUrl}\n\nThis link expires in 12 hours and can be used once. Reply STOP to opt out.`;
+    const privateUrl = `${setupUrl}#invite=${encodeURIComponent(token)}`;
+    const content = `AMG admin invitation: Open your personal link to set your email and password for AMG Communications: ${privateUrl}\n\nThis link expires in 12 hours and can be used once. Reply STOP to opt out.`;
     let providerResponse: Response;
     try {
       providerResponse = await fetch("https://api.quo.com/v1/messages", {

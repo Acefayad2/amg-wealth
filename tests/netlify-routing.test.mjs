@@ -48,3 +48,15 @@ test('protected Life uses redirects while public assets and guides are explicit'
   assert.ok(routes.some(route => route.from === '/guides/life-producer.docx' && route.status === 200))
   assert.match(resources, /href="\/practice\/health\/"/)
 })
+
+
+test('AMG Matchups is a safe external card under Agent tools', () => {
+  const toolkit = resources.match(/<section class="resource-section" id="toolkit"[\s\S]*?<\/section>/)?.[0]
+  assert.ok(toolkit)
+  const card = toolkit.match(/<a class="compact-card" href="https:\/\/amg-matchup-portal\.netlify\.app\/"[\s\S]*?<\/a>/)?.[0]
+  assert.ok(card)
+  assert.match(card, /<h3>AMG Matchups<\/h3>/)
+  assert.match(card, /target="_blank"/)
+  assert.match(card, /rel="noopener noreferrer"/)
+  assert.equal((resources.match(/<h3>AMG Matchups<\/h3>/g) || []).length, 1)
+})

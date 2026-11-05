@@ -12,9 +12,8 @@ const setupSource = fs.readFileSync(new URL("../src/admin-setup.mjs", import.met
 const adminSource = fs.readFileSync(new URL("../src/admin.mjs", import.meta.url), "utf8");
 const handler = fs.readFileSync(new URL("../netlify/functions/admin-crm.mts", import.meta.url), "utf8");
 const setupHtml = fs.readFileSync(new URL("../admin/setup/index.html", import.meta.url), "utf8");
-const setupDocs = fs.readFileSync(new URL("../docs/admin-crm-setup.md", import.meta.url), "utf8");
 
-test("admin access requires the exact invited phone plus confirmed phone and chosen email", () => {
+test("legacy phone acceptance requires the exact invited phone plus confirmed phone and chosen email", () => {
   assert.match(migration, /phone TEXT NOT NULL UNIQUE/);
   assert.match(migration, /token_hash TEXT NOT NULL UNIQUE/);
   assert.match(migration, /SELECT amg_private\.canonical_invite_phone\(phone\), NULLIF\(lower\(email\), ''\), phone_confirmed_at, email_confirmed_at/);
@@ -34,8 +33,6 @@ test("only CRM admins prepare phone invites and repeated clicks cannot duplicate
   assert.match(migration, /provisioned_user_id UUID REFERENCES auth\.users\(id\) ON DELETE SET NULL/);
   assert.match(migration, /amg_crm_record_phone_admin_invite_user[\s\S]*canonical_invite_phone\(u\.phone\) = i\.phone AND NULLIF\(u\.email, ''\) IS NULL/);
   assert.match(migration, /amg_crm_invite_owns_auth_user[\s\S]*i\.provisioned_user_id = p_user_id/);
-  assert.match(inviteFunction, /amg_crm_invite_owns_auth_user/);
-  assert.match(inviteFunction, /amg_crm_record_phone_admin_invite_user/);
 });
 
 test("private text uses a random single-use token, checks opt-outs, and never returns the token", () => {
@@ -105,14 +102,12 @@ test("Quo Auth hook suppresses opted-out phones and provider failures", async ()
   assert.equal(unavailable.status, 503);
 });
 
-test("browser requires phone OTP and verified email before server-side acceptance", () => {
-  assert.match(setupSource, /auth\.verifyOtp\(\{ phone, token: otp, type: "sms" \}\)/);
-  assert.match(setupSource, /amg_crm_bind_verified_invite_phone/);
-  assert.match(setupSource, /auth\.updateUser\(\{ email, password \}/);
-  assert.match(setupSource, /amg_crm_accept_phone_admin_invite/);
+test("personal links keep the credential form private and reach the standard dashboard sign-in", () => {
   assert.match(setupHtml, /<meta name="referrer" content="no-referrer">/);
-  assert.match(setupDocs, /email confirmation is required for email changes/);
-  assert.doesNotMatch(setupSource, /\.signUp\(|auth\.admin|service_role|role\s*:/i);
+  assert.match(setupHtml, /href="\/admin\/"/);
+  assert.doesNotMatch(setupHtml, /id="phone-verification"|autocomplete="one-time-code"/);
+  assert.doesNotMatch(setupSource, /\.signUp\(|auth\.admin|service_role/i);
+  assert.match(adminSource, /auth\.signInWithPassword\(\{ email: \$\("#login-email"\)\.value, password: \$\("#login-password"\)\.value \}\)/);
 });
 
 test("portal invitation action uses only an approved phone and stays separate from normal messages", () => {

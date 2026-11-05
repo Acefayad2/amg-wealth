@@ -2,13 +2,16 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import test from "node:test";
 import vm from "node:vm";
-import { normalizeEmail, validateSetup } from "../admin/setup/core.mjs";
+import * as setupCore from "../admin/setup/core.mjs";
 
+const html = fs.readFileSync(new URL("../admin/setup/index.html", import.meta.url), "utf8");
 const source = fs.readFileSync(new URL("../src/admin-setup.mjs", import.meta.url), "utf8");
-const start = source.indexOf("async function savePassword(event) {");
-const end = source.indexOf("\nasync function sendRecoveryEmail", start);
-assert.ok(start >= 0 && end > start, "production password-submit function must be present");
-const functionSource = `${source.slice(start, end)}\nthis.savePassword = savePassword;`;
+const production = source.replace(/^import .+;$/gm, "").replace(/\binit\(\);\s*$/, "this.ready = init();");
+const token = "synthetic-invitation-token-for-local-tests-only";
+const email = "approved@example.test";
+const password = "Strong!Password2";
+const confirmedUser = { email, email_confirmed_at: "2026-10-30T00:00:00Z" };
+const completionUrl = "https://supabase.example.test/functions/v1/amg-admin-complete-invite";
 
 function deferred() {
   let resolve;
@@ -16,94 +19,140 @@ function deferred() {
   return { promise, resolve };
 }
 
-function setup({ signInImpl = async () => ({ error: null }), updateImpl = async () => ({ data: { user: { email: "approved@example.test", email_confirmed_at: "2026-10-30T00:00:00Z" } }, error: null }), recoveryMode = false, invitationMode = false } = {}) {
-  const calls = { signIn: 0, verify: 0, pending: 0, accept: 0, update: 0, signOut: 0 };
-  const fields = {
-    "#setup-email": { value: "approved@example.test" },
-    "#current-password": { value: "Existing!Password1" },
-    "#new-password": { value: "Strong!Password2" },
-    "#confirm-password": { value: "Strong!Password2" },
-    "#setup-form": { hidden: false },
-    "#recovery-panel": { hidden: false },
-    "#setup-success": { hidden: true, focus() {} },
-    "#setup-success-title": { textContent: "Password saved" },
-    "#setup-success-copy": { textContent: "Existing account ready." },
-  };
+async function setup({ search = "", hash = "", user = null, signIn = async () => ({ error: null }),
+  check = async () => Response.json({ ok: true }), complete = async () => Response.json({ ok: true }, { status: 201 }) } = {}) {
+  const fields = new Map();
+  for (const match of html.matchAll(/<[^>]+\bid="([^"]+)"[^>]*>/g)) {
+    const element = {
+      value: "", textContent: "", hidden: /\bhidden\b/.test(match[0]), disabled: /\bdisabled\b/.test(match[0]),
+      focus() {}, setAttribute(name, value) { this[name] = value; },
+      addEventListener(type, handler) { this[type] = handler; },
+    };
+    fields.set(`#${match[1]}`, element);
+  }
+  const get = (selector) => fields.get(selector);
+  const calls = { signIn: [], update: [], signOut: 0, verify: 0, checks: [], complete: [], history: [] };
+  const client = { auth: {
+    onAuthStateChange() {},
+    getUser: async () => ({ data: { user } }),
+    getSession: async () => ({ data: { session: { access_token: "test-session" } } }),
+    signInWithPassword: async (payload) => { calls.signIn.push({ ...payload }); return signIn(); },
+    updateUser: async (payload) => { calls.update.push({ ...payload }); return { data: { user }, error: null }; },
+    signOut: async () => { calls.signOut += 1; },
+  } };
+  const location = new URL(`https://example.test/admin/setup/${search}${hash}`);
   const context = {
-    setupBusy: false,
-    recoveryMode,
-    invitationMode,
-    invitePhoneVerified: invitationMode,
-    inviteToken: "synthetic-test-token-with-more-than-32-characters",
-    location: { origin: "https://example.test" },
-    normalizeEmail,
-    validateSetup,
-    $: (selector) => fields[selector],
-    showError(message) { context.lastError = message; },
-    setBusy(value) { context.setupBusy = value; },
-    async verifyCrmAdmin() { calls.verify += 1; },
-    async verifyPendingInvitation() { calls.pending += 1; },
-    async acceptInvitation() { calls.accept += 1; },
-    authClient: { auth: {
-      async signInWithPassword(payload) { calls.signIn += 1; context.signInPayload = payload; return signInImpl(payload); },
-      async updateUser(payload) { calls.update += 1; context.updatePayload = payload; return updateImpl(payload); },
-      async signOut() { calls.signOut += 1; },
-    } },
+    ...setupCore, URL, URLSearchParams, location,
+    document: { querySelector: get, title: "AMG setup" },
+    history: { replaceState(_state, _title, url) { calls.history.push(url); } },
+    createClient: () => client,
+    async fetch(url, options = {}) {
+      if (url === "/api/admin/config") return Response.json({ url: "https://supabase.example.test", key: "public-test-key" });
+      if (url === "/api/admin/crm") { calls.verify += 1; return Response.json({}); }
+      assert.equal(url, completionUrl, "Setup should only contact its config, authorized CRM, or completion endpoint");
+      assert.equal(options.method, "POST");
+      const payload = JSON.parse(options.body);
+      if (payload.action === "check") { calls.checks.push(payload); return check(); }
+      calls.complete.push(payload);
+      return complete();
+    },
   };
-  vm.runInNewContext(functionSource, context, { filename: "src/admin-setup.mjs:save-password" });
-  return { context, calls, fields, submit: () => context.savePassword({ preventDefault() {} }) };
+  vm.runInNewContext(production, context, { filename: "src/admin-setup.mjs" });
+  await context.ready;
+  get("#setup-email").value = ` ${email.toUpperCase()} `;
+  get("#new-password").value = password;
+  return { calls, get, submit: () => get("#setup-form").submit({ preventDefault() {} }) };
 }
 
 test("existing-account setup reauthenticates, verifies CRM access, then updates once", async () => {
-  const app = setup();
+  const app = await setup();
+  app.get("#current-password").value = "Existing!Password1";
   await app.submit();
-  assert.deepEqual(app.calls, { signIn: 1, verify: 1, pending: 0, accept: 0, update: 1, signOut: 1 });
-  assert.equal(app.context.signInPayload.email, "approved@example.test");
-  assert.equal(app.context.updatePayload.password, "Strong!Password2");
-  assert.equal(app.fields["#setup-success"].hidden, false);
-  assert.equal(app.fields["#setup-form"].hidden, true);
+  assert.deepEqual(app.calls.signIn, [{ email, password: "Existing!Password1" }]);
+  assert.equal(app.calls.verify, 1);
+  assert.deepEqual(app.calls.update, [{ password }]);
+  assert.equal(app.calls.signOut, 1);
+  assert.equal(app.get("#setup-success").hidden, false);
+  assert.equal(app.get("#setup-form").hidden, true);
 });
 
 test("repeated password submission is ignored while reauthentication is pending", async () => {
   const pending = deferred();
-  const app = setup({ signInImpl: () => pending.promise });
+  const app = await setup({ signIn: () => pending.promise });
+  app.get("#current-password").value = "Existing!Password1";
   const first = app.submit();
   await app.submit();
-  assert.equal(app.calls.signIn, 1);
-  assert.equal(app.calls.update, 0);
+  assert.equal(app.calls.signIn.length, 1);
+  assert.equal(app.calls.update.length, 0);
   pending.resolve({ error: null });
   await first;
-  assert.equal(app.calls.update, 1);
-  assert.equal(app.context.setupBusy, false);
+  assert.equal(app.calls.update.length, 1);
+  assert.equal(app.get("#setup-submit").disabled, false);
 });
 
 test("recovery setup does not require or transmit the old password", async () => {
-  const app = setup({ recoveryMode: true });
-  app.fields["#current-password"].value = "";
+  const app = await setup({ hash: "#type=recovery", user: confirmedUser });
   await app.submit();
-  assert.equal(app.calls.signIn, 0);
+  assert.equal(app.calls.signIn.length, 0);
   assert.equal(app.calls.verify, 1);
-  assert.equal(app.calls.update, 1);
+  assert.deepEqual(app.calls.update, [{ password }]);
 });
 
-test("invitation setup verifies exact eligibility, updates password, then accepts admin access", async () => {
-  const app = setup({ recoveryMode: true, invitationMode: true });
-  app.fields["#current-password"].value = "";
+test("personal link opens the account form and completes once with the chosen credentials, even with another session", async () => {
+  const pending = deferred();
+  const app = await setup({ search: `?invite=${token}`, user: { email: "other@example.test" }, complete: () => pending.promise });
+  assert.equal(app.get("#setup-form").hidden, false);
+  assert.equal(app.get("#current-password-field").hidden, true);
+  const first = app.submit();
   await app.submit();
-  assert.equal(app.calls.signIn, 0);
-  assert.equal(app.calls.pending, 0);
-  assert.equal(app.calls.update, 1);
-  assert.equal(app.calls.accept, 1);
-  assert.equal(app.calls.verify, 0);
-  assert.equal(app.calls.signOut, 0);
+  assert.deepEqual(app.calls.complete, [{ inviteToken: token, email, password }]);
+  assert.equal(app.calls.update.length, 0);
+  assert.equal(app.calls.signIn.length, 0);
+  assert.equal(app.get("#setup-success").hidden, true);
+  pending.resolve(Response.json({ ok: true }, { status: 201 }));
+  await first;
+  assert.equal(app.get("#setup-success").hidden, false);
+  assert.equal(app.get("#setup-form").hidden, true);
+  assert.equal(app.get("#new-password").value, "");
+  assert.ok(app.calls.history.includes("/admin/setup/"));
+});
+
+test("a used fragment link is rejected on opening, before asking for credentials", async () => {
+  const app = await setup({ hash: `#invite=${token}`,
+    check: async () => Response.json({ error: "Already used." }, { status: 410 }) });
+  assert.deepEqual(app.calls.checks, [{ inviteToken: token, action: "check" }]);
+  assert.equal(app.calls.complete.length, 0);
+  assert.equal(app.get("#setup-form").hidden, true);
+  assert.equal(app.get("#link-error").hidden, false);
+  assert.match(app.get("#link-error").textContent, /sign in/i);
+});
+
+test("an unusable invitation shows a link error instead of reporting account creation", async () => {
+  const app = await setup({ search: `?invite=${token}`,
+    complete: async () => Response.json({ error: "This setup link has expired or was already used." }, { status: 410 }) });
+  await app.submit();
+  assert.equal(app.get("#setup-success").hidden, true);
+  assert.equal(app.get("#setup-form").hidden, true);
+  assert.equal(app.get("#link-error").hidden, false);
+  assert.match(app.get("#link-error").textContent, /expired|already used/i);
+});
+
+test("a correctable email conflict leaves the invitation form available for retry", async () => {
+  const app = await setup({ search: `?invite=${token}`,
+    complete: async () => Response.json({ error: "Choose a different email." }, { status: 409 }) });
+  await app.submit();
+  assert.equal(app.get("#setup-form").hidden, false);
+  assert.equal(app.get("#setup-success").hidden, true);
+  assert.equal(app.get("#setup-submit").disabled, false);
+  assert.match(app.get("#setup-error").textContent, /email/i);
 });
 
 test("failed reauthentication never reaches the password update", async () => {
-  const app = setup({ signInImpl: async () => ({ error: new Error("bad credentials") }) });
+  const app = await setup({ signIn: async () => ({ error: new Error("bad credentials") }) });
+  app.get("#current-password").value = "Existing!Password1";
   await app.submit();
   assert.equal(app.calls.verify, 0);
-  assert.equal(app.calls.pending, 0);
-  assert.equal(app.calls.update, 0);
+  assert.equal(app.calls.update.length, 0);
   assert.equal(app.calls.signOut, 1);
-  assert.equal(app.context.lastError, "Email or current password is incorrect.");
+  assert.equal(app.get("#setup-error").textContent, "Email or current password is incorrect.");
 });

@@ -1,3 +1,4 @@
+import { normalizeUsPhone } from "../netlify/functions/_shared/us-phone.mjs";
 import { createClient } from "@supabase/supabase-js";
 import { STATUS_LABELS, contactsForGroupContext, defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, personalizationHint, recurringCalendarEntries, scheduleInputValue, weekCells, weekRangeLabel } from "../admin/core.mjs";
 
@@ -6,6 +7,7 @@ const state = { contacts: [], groups: [], messages: [], recurring_reminders: [],
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 let authClient = null;
 let startupBusy = false;
+const inquiryState = { records: [], total: 0, page: 1, pageSize: 25, loading: false, error: "", requestId: 0, controller: null, preview: false };
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
 const initials = (name) => String(name || "?").split(/\s+/).map((part) => part[0]).join("").slice(0, 2).toUpperCase();
 const contactLabel = (contact) => contact.full_name || contact.phone;
@@ -39,6 +41,95 @@ async function load() {
   const payload = await api();
   Object.assign(state, payload);
   render();
+}
+
+function resetInquiries() {
+  inquiryState.controller?.abort();
+  inquiryState.requestId += 1;
+  Object.assign(inquiryState, { records: [], total: 0, page: 1, loading: false, error: "", controller: null });
+  renderInquiries();
+  $("#communications-view").hidden = false;
+  $("#inquiries-view").hidden = true;
+  $(".sidebar").classList.remove("inquiry-mode");
+  document.querySelectorAll("[data-admin-view]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.adminView === "communications")));
+}
+
+function inquiryContact(value, kind) {
+  const text = String(value || "").trim();
+  if (!text) return '<span class="muted">Not provided</span>';
+  const phone = text.replace(/[().\s-]/g, "");
+  const href = kind === "email" && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(text)
+    ? `mailto:${encodeURIComponent(text)}`
+    : kind === "phone" && /^\+?\d{7,15}$/.test(phone) ? `tel:${phone}` : null;
+  return href ? `<a href="${escapeHtml(href)}">${escapeHtml(text)}</a>` : escapeHtml(text);
+}
+
+function renderInquiries() {
+  const { records, total, page, pageSize, loading, error } = inquiryState;
+  const pages = Math.max(1, Math.ceil(total / pageSize));
+  $("#inquiries-list").setAttribute("aria-busy", String(loading));
+  $("#inquiries-summary").textContent = loading ? "Loading inquiries…" : error ? "Inquiries could not be refreshed." : `${total.toLocaleString()} submitted ${total === 1 ? "inquiry" : "inquiries"}`;
+  $("#inquiries-error").hidden = !error;
+  $("#inquiries-error").textContent = error;
+  $("#refresh-inquiries").disabled = loading;
+  $("#previous-inquiries").disabled = loading || page <= 1;
+  $("#next-inquiries").disabled = loading || page >= pages;
+  $("#inquiries-pagination").hidden = pages <= 1;
+  $("#inquiries-page").textContent = `Page ${page} of ${pages}`;
+  $("#inquiries-list").innerHTML = records.length ? records.map((inquiry) => {
+    const received = Number.isFinite(Date.parse(inquiry.created_at)) ? formatDateTime(inquiry.created_at) : "Date unavailable";
+    return `<article class="inquiry-card">
+      <header><div><p class="eyebrow">${escapeHtml(inquiry.interest || "Consultation request")}</p><h2>${escapeHtml(inquiry.full_name)}</h2></div><span class="inquiry-date">Received ${escapeHtml(received)}</span></header>
+      <dl class="inquiry-contacts"><div><dt>Email</dt><dd>${inquiryContact(inquiry.email, "email")}</dd></div><div><dt>Phone</dt><dd>${inquiryContact(inquiry.phone, "phone")}</dd></div></dl>
+      <div class="inquiry-message"><h3>Goals &amp; message</h3><p>${escapeHtml(inquiry.message || "No additional message provided.")}</p></div>
+    </article>`;
+  }).join("") : loading ? '<p class="empty">Retrieving website inquiries…</p>' : error ? '<p class="empty">Use Refresh inquiries to try again.</p>' : '<div class="inquiry-empty"><h2>No inquiries yet</h2><p>New consultation requests from the website will appear here. Use Refresh inquiries to check for new submissions.</p></div>';
+}
+
+async function loadInquiries(page = 1) {
+  if (inquiryState.loading) return;
+  if (inquiryState.preview) { renderInquiries(); return; }
+  const requestId = ++inquiryState.requestId;
+  const controller = new AbortController();
+  Object.assign(inquiryState, { loading: true, error: "", controller });
+  renderInquiries();
+  try {
+    const { data, error } = await authClient.auth.getSession();
+    if (error) throw error;
+    if (requestId !== inquiryState.requestId) return;
+    const token = data.session?.access_token;
+    if (!token) throw new Error("Sign in again to view submitted inquiries.");
+    const response = await fetch(`/.netlify/functions/admin-inquiries?page=${page}`, {
+      headers: { accept: "application/json", authorization: `Bearer ${token}` },
+      cache: "no-store", signal: controller.signal,
+    });
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(payload.error || "Unable to load inquiries. Try refreshing again.");
+    if (requestId !== inquiryState.requestId) return;
+    if (!Array.isArray(payload.inquiries) || !Number.isInteger(payload.total) || payload.total < 0
+      || !Number.isInteger(payload.page) || payload.page < 1 || !Number.isInteger(payload.page_size) || payload.page_size < 1) {
+      throw new Error("The inquiry response was incomplete. Try refreshing again.");
+    }
+    Object.assign(inquiryState, { records: payload.inquiries, total: payload.total, page: payload.page, pageSize: payload.page_size });
+  } catch (error) {
+    if (requestId !== inquiryState.requestId || error.name === "AbortError") return;
+    inquiryState.error = error.message || "Unable to load inquiries. Try refreshing again.";
+  } finally {
+    if (requestId === inquiryState.requestId) {
+      inquiryState.loading = false;
+      inquiryState.controller = null;
+      renderInquiries();
+    }
+  }
+}
+
+function showAdminView(view) {
+  const inquiries = view === "inquiries";
+  $("#communications-view").hidden = inquiries;
+  $("#inquiries-view").hidden = !inquiries;
+  $(".sidebar").classList.toggle("inquiry-mode", inquiries);
+  document.querySelectorAll("[data-admin-view]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.adminView === view)));
+  if (inquiries) void loadInquiries();
 }
 
 function showStartup(message = "Restoring your secure AMG session and checking CRM admin access…") {
@@ -129,7 +220,7 @@ function renderAdminInvitations() {
   const invitations = state.admin_invitations || [];
   $("#admin-invitations").innerHTML = invitations.length ? invitations.map((invitation) => `
     <article class="message-row">
-      <div class="message-copy"><strong>${escapeHtml(invitation.phone)}</strong><span>${escapeHtml(invitation.status === "accepted" ? `Admin access accepted${invitation.chosen_email ? ` · ${invitation.chosen_email}` : ""}` : invitation.status === "sent" ? "Private setup text accepted by Quo" : invitation.status === "phone_verified" ? "Phone verified · email verification pending" : invitation.status === "uncertain" ? "Provider outcome uncertain — do not retry" : invitation.status === "expired" ? "Expired — a new invitation is required" : invitation.status)}</span></div>
+      <div class="message-copy"><strong>${escapeHtml(invitation.phone)}</strong><span>${escapeHtml(invitation.status === "accepted" ? `Admin access accepted${invitation.chosen_email ? ` · ${invitation.chosen_email}` : ""}` : invitation.status === "sent" ? "Private setup text accepted by Quo" : invitation.status === "phone_verified" ? "Account setup pending" : invitation.status === "uncertain" ? "Provider outcome uncertain — do not retry" : invitation.status === "expired" ? "Expired — a new invitation is required" : invitation.status)}</span></div>
       <span class="message-meta">${escapeHtml(invitation.accepted_at ? formatDateTime(invitation.accepted_at) : invitation.expires_at ? `Expires ${formatDateTime(invitation.expires_at)}` : formatDateTime(invitation.created_at))}</span>
     </article>`).join("") : '<p class="empty">No admin invitations have been prepared.</p>';
 }
@@ -137,16 +228,16 @@ function renderAdminInvitations() {
 async function createAdminInvitation(event) {
   event.preventDefault();
   if (state.adminInviteBusy) return;
-  const phone = $("#admin-invite-phone").value.trim();
+  const phone = normalizeUsPhone($("#admin-invite-phone").value);
   const submit = $("#admin-invite-submit");
   const error = $("#admin-invite-error");
   error.textContent = "";
-  if (!/^\+[1-9][0-9]{7,14}$/.test(phone)) {
-    error.textContent = "Enter the approved phone in E.164 format, such as +12025550123.";
+  if (!phone) {
+    error.textContent = "Enter a valid US phone number.";
     error.focus();
     return;
   }
-  if (!window.confirm(`Send one private, single-use AMG admin setup link to ${phone}? The recipient must separately verify this phone and their chosen email before access is granted.`)) return;
+  if (!window.confirm(`Send one private, single-use AMG admin setup link to ${phone}? Anyone with this link can create an AMG admin account. The link expires when used or after 12 hours.`)) return;
   state.adminInviteBusy = true;
   submit.disabled = true;
   try {
@@ -725,6 +816,7 @@ $("#login-form").addEventListener("submit", async (event) => {
   if (startupBusy) return;
   $("#login-error").textContent = "";
   $("#login-submit").disabled = true;
+  resetInquiries();
   try {
     if (!authClient) throw new Error("Sign-in service is still loading. Try again in a moment.");
     const { error } = await authClient.auth.signInWithPassword({ email: $("#login-email").value, password: $("#login-password").value });
@@ -736,12 +828,17 @@ $("#login-form").addEventListener("submit", async (event) => {
 });
 $("#sign-out").addEventListener("click", async () => {
   if (startupBusy) return;
+  resetInquiries();
   showStartup("Signing out securely…");
   await authClient.auth.signOut();
   showLogin();
 });
 $("#startup-retry").addEventListener("click", () => authClient ? verifyAdminSession() : init());
 $("#startup-sign-in").addEventListener("click", () => showLogin());
+document.querySelectorAll("[data-admin-view]").forEach((button) => button.addEventListener("click", () => showAdminView(button.dataset.adminView)));
+$("#refresh-inquiries").addEventListener("click", () => loadInquiries(1));
+$("#previous-inquiries").addEventListener("click", () => loadInquiries(inquiryState.page - 1));
+$("#next-inquiries").addEventListener("click", () => loadInquiries(inquiryState.page + 1));
 $("#new-message").addEventListener("click", () => openComposer());
 $("#group-new-message").addEventListener("click", composeSelectedGroup);
 $("#add-contact").addEventListener("click", () => openContact());
@@ -847,6 +944,14 @@ async function init() {
       admin_invitations: [],
     });
     render();
+    if (previewMode === "inquiries" || previewMode === "inquiries-empty" || previewMode === "inquiries-error") {
+      Object.assign(inquiryState, {
+        preview: true, total: previewMode === "inquiries" ? 1 : 0,
+        records: previewMode === "inquiries" ? [{ id: "preview-inquiry", full_name: "Jordan Sample", email: "jordan@example.com", phone: "+12025550123", interest: "Retirement Planning", message: "I would like to learn more about retirement planning.\nPlease contact me in the afternoon to discuss next steps.", created_at: "2026-11-04T14:30:00.000Z" }] : [],
+        error: previewMode === "inquiries-error" ? "Unable to load inquiries. Try refreshing again." : "",
+      });
+      showAdminView("inquiries");
+    }
     return;
   }
   try {
@@ -857,6 +962,7 @@ async function init() {
     authClient = createClient(config.url, config.key, {
       auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
     });
+    authClient.auth.onAuthStateChange((event) => { if (event === "SIGNED_OUT") resetInquiries(); });
     $("#login-submit").disabled = false;
     await verifyAdminSession();
   } catch (error) {

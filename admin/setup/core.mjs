@@ -1,26 +1,13 @@
-export const PASSWORD_MIN_LENGTH = 12;
+export const PASSWORD_MIN_LENGTH = 8;
 
 export function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();
 }
 
-export function passwordChecks(password) {
-  const value = String(password || "");
-  return {
-    length: value.length >= PASSWORD_MIN_LENGTH,
-    upper: /[A-Z]/.test(value),
-    lower: /[a-z]/.test(value),
-    number: /[0-9]/.test(value),
-    symbol: /[^A-Za-z0-9]/.test(value),
-  };
-}
-
-export function validateSetup({ email, currentPassword, password, confirmation, recoveryMode = false }) {
-  const checks = passwordChecks(password);
+export function validateSetup({ email, currentPassword, password, recoveryMode = false }) {
   if (!/^\S+@\S+\.\S+$/.test(normalizeEmail(email))) return "Enter a valid email address.";
   if (!recoveryMode && !String(currentPassword || "")) return "Enter your current password.";
-  if (!Object.values(checks).every(Boolean)) return "Use at least 12 characters with uppercase, lowercase, a number, and a symbol.";
-  if (password !== confirmation) return "New password and confirmation must match.";
+  if (String(password || "").length < PASSWORD_MIN_LENGTH) return "Use at least 8 characters for your password.";
   if (!recoveryMode && password === currentPassword) return "Choose a new password that is different from your current password.";
   return "";
 }

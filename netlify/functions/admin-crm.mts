@@ -1,5 +1,6 @@
 import type { Config, Context } from "@netlify/functions";
-import { cleanText, E164, manualOptInEvidence, publicError, requireUuid, validTimezone, verifySameOrigin } from "./_shared/crm.mjs";
+import { cleanText, manualOptInEvidence, publicError, requireUuid, validTimezone, verifySameOrigin } from "./_shared/crm.mjs";
+import { normalizeUsPhone } from "./_shared/us-phone.mjs";
 import { verifyQuoTransport } from "./_shared/quo.mjs";
 import { getAuthenticatedUser } from "./_shared/supabase.mjs";
 import { verifyCrmStorage } from "./_shared/db.mjs";
@@ -70,8 +71,8 @@ export default async function handler(req: Request, _context: Context) {
     }
 
     if (input.action === "create_admin_invitation") {
-      const phone = typeof input.phone === "string" ? input.phone.trim() : "";
-      if (!E164.test(phone)) throw new Error("Phone number must use E.164 format, such as +12025550123.");
+      const phone = normalizeUsPhone(input.phone);
+      if (!phone) throw new Error("Enter a valid US phone number.");
       const { data, error } = await client.functions.invoke("amg-admin-invite", { body: { phone } });
       if (error) throw Object.assign(new Error("The secure invitation service could not be reached."), { status: 503 });
       if (data?.error) throw Object.assign(new Error(String(data.error)), { status: 409 });
@@ -81,8 +82,8 @@ export default async function handler(req: Request, _context: Context) {
     if (input.action === "save_contact") {
       const fullName = typeof input.fullName === "string" ? input.fullName.trim() : "";
       if ([...fullName].length > 160) throw new Error("Contact name must be 160 characters or fewer.");
-      const phone = cleanText(input.phone, 16, "Phone number");
-      if (!E164.test(phone)) throw new Error("Phone number must use E.164 format, such as +12025550123.");
+      const phone = normalizeUsPhone(cleanText(input.phone, 40, "Phone number"));
+      if (!phone) throw new Error("Enter a valid US phone number.");
       const consentStatus = String(input.consentStatus);
       if (!["pending", "opted_in", "opted_out"].includes(consentStatus)) throw new Error("Consent status is invalid.");
       const id = input.id ? requireUuid(input.id, "Contact") : null;

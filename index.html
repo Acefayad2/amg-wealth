@@ -422,7 +422,7 @@ input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 4px rgba(
 .pillar span{font-size:.88rem;color:var(--muted)}
 
 /* ── promo banner (opportunity) ─────────────────── */
-.promo{display:grid;grid-template-columns:1fr 1fr;border-radius:28px;overflow:hidden;background:linear-gradient(150deg,#0F3D30,#07170F);color:#fff}
+.promo{display:grid;grid-template-columns:minmax(0,1fr) clamp(18rem,28vw,21rem);max-width:64rem;margin-inline:auto;border-radius:28px;overflow:hidden;background:linear-gradient(150deg,#0F3D30,#07170F);color:#fff}
 .promo-copy{padding:clamp(2rem,4vw,3.5rem)}
 .promo-copy h2{font-size:clamp(2.2rem,4vw,3.4rem);margin:1rem 0}
 .promo-copy>p{color:rgba(248,245,238,.75);margin-bottom:1.6rem;max-width:30rem}
@@ -433,9 +433,8 @@ input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 4px rgba(
 .meet p{font-size:.9rem;color:rgba(248,245,238,.75)}
 .meet .btn{flex:none;padding-left:1.1rem;font-size:.85rem}
 .promo-fine{font-size:.76rem;color:rgba(248,245,238,.55);margin-top:1rem}
-.promo-media{position:relative;min-height:320px}
-.promo-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.promo-media figcaption{position:absolute;left:1rem;right:1rem;bottom:1rem;background:rgba(6,12,9,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:var(--r-sm);padding:.7rem .9rem;font-size:.82rem;color:#f2f1eb}
+.promo-media{align-self:center;background:#07170f}
+.promo-media video{display:block;width:100%;height:auto;aspect-ratio:9/16;object-fit:contain;background:#000}
 
 /* ── spotlight ──────────────────────────────────── */
 .spotlight-heading{display:flex;align-items:end;justify-content:space-between;gap:1.5rem;margin-bottom:1.5rem}
@@ -533,7 +532,7 @@ body>footer{background:#050807;color:var(--cream);padding:4.5rem 6vw 2.5rem}
   .hero-grid{grid-template-columns:1fr;min-height:0}
   .hero-copy{padding-bottom:1rem}
   .hero-media img{height:clamp(360px,52vh,460px)}
-  .est-grid,.contact-grid,.faq-grid,.lead-card,.promo{grid-template-columns:1fr}
+  .est-grid,.contact-grid,.faq-grid,.lead-card{grid-template-columns:1fr}
   .faq-grid .sec-head{position:static}
   .panel{grid-template-columns:1fr}
   .stats{grid-template-columns:repeat(2,1fr)}
@@ -551,6 +550,7 @@ body>footer{background:#050807;color:var(--cream);padding:4.5rem 6vw 2.5rem}
   .tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-inline:-1.2rem;padding-inline:1.2rem}
   .tab{flex:none}
   .f-row{grid-template-columns:1fr}
+  .promo{grid-template-columns:1fr;max-width:26rem}
   .meet{flex-direction:column;align-items:stretch}
   .meet .btn{justify-content:space-between}
   .spotlight-heading{flex-direction:column;align-items:flex-start}
@@ -1056,10 +1056,12 @@ body>footer{background:#050807;color:var(--cream);padding:4.5rem 6vw 2.5rem}
         </article>
         <p class="promo-fine">Choose an available date on the guest calendar. All times Eastern. Attendance does not guarantee income or business results.<sup>3</sup></p>
       </div>
-      <figure class="promo-media">
-        <img src="assets/culture-stage.webp" alt="Simi and Zamilah presenting together on stage" loading="lazy">
-        <figcaption>Simi and Zamilah on building culture in the Gen Z market.</figcaption>
-      </figure>
+      <div class="promo-media">
+        <video controls playsinline preload="none" poster="assets/resources/amg-stage-reel-poster.jpg" width="540" height="960" aria-label="AMG stage reel: Simi and Zamilah on stage">
+          <source src="assets/amg-stage-reel.mp4" type="video/mp4">
+          <a href="assets/amg-stage-reel.mp4">Watch the AMG stage reel</a>
+        </video>
+      </div>
     </div>
   </div>
 </section>

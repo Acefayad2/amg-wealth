@@ -146,6 +146,16 @@ footer a{color:var(--gold-bright);text-decoration:none}
   .practice-grid{grid-template-columns:1fr}
   footer{flex-direction:column}
 }
+
+/* UI/UX audit fixes (WCAG 2.2 AA): solid gold instead of gradient text, readable sizes, 44px tap targets */
+.gold-text{background:none;-webkit-background-clip:border-box;background-clip:border-box;-webkit-text-fill-color:currentColor;color:var(--gold-bright)}
+.eyebrow{font-size:11px}
+.contact-strip a{min-height:44px}
+.practice-actions a:not(.btn){display:inline-flex;align-items:center;min-height:44px}
+footer{color:rgba(248,245,238,.66)}
+footer a{display:inline-flex;align-items:center;min-height:44px}
+.step span{color:var(--gold-bright);-webkit-text-stroke:0}
+.coordinator-phone{min-height:44px;display:inline-flex;align-items:center}
 </style>
 </head>
 <body>

@@ -168,9 +168,7 @@ section{padding:7rem 6vw}
   padding:10.5rem 6vw 0;
   background:linear-gradient(90deg,rgba(5,21,16,.9),rgba(5,21,16,.74) 45%,rgba(5,21,16,.34)),url("assets/hero-office.webp") center / cover no-repeat,#102b20;
 }
-.hero-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:clamp(1.5rem,4vw,4rem);min-height:min(760px,calc(100svh - 10.5rem));align-items:center}
-.hero-media{position:relative;align-self:end;display:flex;justify-content:center;min-width:0}
-.hero-media img{display:block;width:auto;max-width:100%;height:clamp(460px,64vh,660px);object-fit:contain;object-position:center bottom;filter:drop-shadow(0 28px 36px rgba(0,0,0,.45))}
+.hero-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr);min-height:min(680px,calc(100svh - 10.5rem));align-items:center}
 .hero-copy{max-width:44rem;padding-bottom:5.5rem}
 .partner-tag{display:inline-flex;align-items:center;gap:.65rem;padding:.45rem .9rem .45rem .5rem;border-radius:999px;background:rgba(7,26,20,.62);border:1px solid rgba(242,213,128,.45);font-size:.78rem;color:#f5dc96}
 .partner-tag b{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--gold);color:var(--ink);font-size:.7rem}
@@ -406,11 +404,9 @@ input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 4px rgba(
 
 /* ── leadership ─────────────────────────────────── */
 .lead-card{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(2rem,5vw,4.5rem);align-items:center;background:var(--white);border:1px solid var(--line);border-radius:28px;padding:clamp(1.4rem,3vw,2.6rem)}
-.speaker-pair{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-.speaker-pair figure{margin:0;min-width:0}
-.speaker-pair figure+figure{padding-top:3rem}
-.speaker-pair img{display:block;width:100%;aspect-ratio:2/3;object-fit:cover;border-radius:var(--r-md)}
-.speaker-pair figcaption{padding:.7rem .2rem 0;font-family:'Bodoni Moda',serif;color:var(--emerald-deep);font-size:1rem}
+.speaker-pair{display:grid;place-items:end center;align-self:stretch;overflow:hidden;border-radius:var(--r-md);background:linear-gradient(155deg,#F5F1E5,#E7E0CC)}
+.speaker-pair figure{margin:0;min-width:0;width:100%;height:100%;display:grid;place-items:end center}
+.speaker-pair img{display:block;width:auto;max-width:100%;height:min(610px,100%);object-fit:contain;object-position:center bottom;filter:drop-shadow(0 22px 26px rgba(11,46,36,.24))}
 .lead-card h2{font-size:clamp(2rem,3.6vw,3rem);color:var(--emerald-deep);margin:1rem 0}
 .lead-card>div>p{color:var(--muted);margin-bottom:1.4rem}
 .lead-card blockquote{font-family:'Bodoni Moda',serif;font-size:1.25rem;line-height:1.5;color:var(--emerald-deep);margin:0 0 1.6rem;padding:1.3rem 1.4rem;border-radius:var(--r-md);background:linear-gradient(150deg,rgba(201,162,39,.12),rgba(201,162,39,.04))}
@@ -531,7 +527,6 @@ body>footer{background:#050807;color:var(--cream);padding:4.5rem 6vw 2.5rem}
   .hero{background-image:linear-gradient(180deg,rgba(5,21,16,.86),rgba(5,21,16,.74) 55%,rgba(5,21,16,.66)),url("assets/hero-office.webp")}
   .hero-grid{grid-template-columns:1fr;min-height:0}
   .hero-copy{padding-bottom:1rem}
-  .hero-media img{height:clamp(360px,52vh,460px)}
   .est-grid,.contact-grid,.faq-grid,.lead-card{grid-template-columns:1fr}
   .faq-grid .sec-head{position:static}
   .panel{grid-template-columns:1fr}
@@ -708,9 +703,6 @@ body>footer{background:#050807;color:var(--cream);padding:4.5rem 6vw 2.5rem}
         <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg>273+ licensed agents</li>
         <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6-5.2-6-10a6 6 0 1112 0c0 4.8-6 10-6 10z"/><circle cx="12" cy="11" r="2.2"/></svg>Licensed in 38 states</li>
       </ul>
-    </div>
-    <div class="hero-media reveal" data-d="2">
-      <img src="assets/hero-leadership-portrait.webp" alt="Simi and Zamilah Ajimatanrareje, AMG Executive Vice Presidents" width="1012" height="1242" loading="eager" fetchpriority="high">
     </div>
   </div>
 </header>
@@ -1023,8 +1015,7 @@ body>footer{background:#050807;color:var(--cream);padding:4.5rem 6vw 2.5rem}
   <div class="wrap">
     <div class="lead-card reveal">
       <div class="speaker-pair">
-        <figure><img src="assets/simi-headshot.webp" alt="Portrait of Simi Ajimatanrareje" loading="lazy"><figcaption>Simi Ajimatanrareje</figcaption></figure>
-        <figure><img src="assets/zamilah-headshot.webp" alt="Portrait of Zamilah Ajimatanrareje" loading="lazy"><figcaption>Zamilah Ajimatanrareje</figcaption></figure>
+        <figure><img src="assets/hero-leadership-portrait.webp" alt="Simi and Zamilah Ajimatanrareje, AMG Executive Vice Presidents" width="1012" height="1242" loading="lazy"></figure>
       </div>
       <div>
         <span class="kicker">Executive Vice Presidents</span>

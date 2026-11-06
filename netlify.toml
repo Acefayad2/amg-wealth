@@ -6,6 +6,19 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
+# Send every Agent Portal entry point straight to the live portal.
+[[redirects]]
+  from = "/agent-portal"
+  to = "https://agents.anointedmoneygroup.com/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/agent-portal.html"
+  to = "https://agents.anointedmoneygroup.com/"
+  status = 302
+  force = true
+
 # Short, memorable entry points for the AMG payment checkout.
 [[redirects]]
   from = "/pay"

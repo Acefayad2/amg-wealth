@@ -17,8 +17,10 @@ MONDAY
 "9:00 PM" / "CFT ACADEMY &" / "SOS AFTER HOURS" / "ZOOM"
 TUESDAY
 "12:00 PM" / "SKILLS TRAINING" / "ZOOM"
+"7:00 PM" / "BOM" / "IN OFFICE"
 WEDNESDAY
 "12–1 PM" / "WRITING LAB" / "ZOOM"
+"7:00 PM" / "BOM" / "IN OFFICE"
 THURSDAY
 "12:00 PM" / "SKILLS TRAINING" / "ZOOM"
 "7:00 PM" / "BOM" / "IN OFFICE"
@@ -27,10 +29,4 @@ SATURDAY
 "10:00 AM" / "BOM" / "IN PERSON"
 "2:00 PM" / "BOM" / "IN PERSON"
 Bottom notice: "FIRST MONDAY OF EVERY MONTH" / "9:00 PM" / "SOS NATIONAL CALL" / "ZOOM"
-Important: SOS is removed as the flyer branding, but retain SOS in the two actual event names SOS AFTER HOURS and SOS NATIONAL CALL, as those are part of the source schedule. Do not add timezone, dates, URLs, contact details or anything not listed. All six days and all nine regular events plus the monthly call must be present and accurate.
-
-## Schedule correction (2026-11-07)
-
-The user requested BOM only on Thursday and Saturday. Removed Tuesday and Wednesday 7:00 PM BOM from the on-page schedule and edited the existing PNG with the built-in image generation tool. All other meetings, branding, and layout are preserved.
-
-Edit prompt: Remove only the Tuesday and Wednesday 7:00 PM BOM IN OFFICE events and their people icons. Fill those areas with the matching dark green background. Preserve all other text, events, logo, typography, borders, and layout, including Thursday 7:00 PM and Saturday 10:00 AM and 2:00 PM BOM.
+Important: SOS is removed as the flyer branding, but retain SOS in the two actual event names SOS AFTER HOURS and SOS NATIONAL CALL, as those are part of the source schedule. Do not add timezone, dates, URLs, contact details or anything not listed. All six days and all eleven regular events plus the monthly call must be present and accurate.

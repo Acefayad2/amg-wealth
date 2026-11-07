@@ -19,44 +19,8 @@
   status = 302
   force = true
 
-# Keep the current Matchup app on the primary AMG domain, including its
-# broker workspace and root-relative assets. Force these proxies so the
-# older static export checked in under matchups/ cannot shadow the live app.
-[[redirects]]
-  from = "/matchups"
-  to = "https://amg-matchup-portal.netlify.app/"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/matchups/"
-  to = "https://amg-matchup-portal.netlify.app/"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/matchups/*"
-  to = "https://amg-matchup-portal.netlify.app/:splat"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/_next/*"
-  to = "https://amg-matchup-portal.netlify.app/_next/:splat"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/amg-logo.webp"
-  to = "https://amg-matchup-portal.netlify.app/amg-logo.webp"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/icon.svg"
-  to = "https://amg-matchup-portal.netlify.app/icon.svg"
-  status = 200
-  force = true
+# Serve the bundled /matchups export from the Nov 6 production site.
+# Do not proxy this path to the separately deployed broker workspace.
 
 # Short, memorable entry points for the AMG payment checkout.
 [[redirects]]

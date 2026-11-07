@@ -314,10 +314,9 @@ section{padding:7rem 6vw}
   gap:0 clamp(1.25rem,3vw,3.5rem);align-items:stretch
 }
 .service-monogram{
-  grid-area:mark;align-self:center;aspect-ratio:1;background:linear-gradient(135deg,#95763d,#c5a45c);
-  -webkit-mask:url("assets/logo.webp") center / 205% auto no-repeat;mask:url("assets/logo.webp") center / 205% auto no-repeat;
-  -webkit-mask-mode:luminance;mask-mode:luminance
+  grid-area:mark;align-self:center;aspect-ratio:1
 }
+.service-monogram svg{display:block;width:100%;height:100%;overflow:hidden}
 .service-item{padding:2rem 0;align-self:stretch}
 .service-item h3{font:500 clamp(1.5rem,2.2vw,2.25rem)/1.15 'Bodoni Moda',serif;color:var(--emerald-deep);margin:0 0 .65rem}
 .service-item p{color:#465750;font-size:1rem;line-height:1.65;margin:0}
@@ -831,7 +830,22 @@ body>footer{background:#050807;color:var(--cream);padding:4.5rem 6vw 2.5rem}
       <p>Every engagement is built around a single question: what will your money mean a generation from now?</p>
     </div>
     <div class="service-layout">
-      <div class="service-monogram reveal" aria-hidden="true"></div>
+      <div class="service-monogram reveal" aria-hidden="true">
+        <!-- SVG luminance masking works in Safari versions that treat a CSS
+             raster mask as alpha-only and otherwise show a solid gold square. -->
+        <svg viewBox="0 0 100 100" focusable="false" xmlns:xlink="http://www.w3.org/1999/xlink">
+          <defs>
+            <linearGradient id="service-logo-gold" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#95763d"/>
+              <stop offset="1" stop-color="#c5a45c"/>
+            </linearGradient>
+            <mask id="service-logo-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100" mask-type="luminance">
+              <image href="assets/logo.webp" xlink:href="assets/logo.webp" x="-52.5" y="-26.875" width="205" height="153.75" preserveAspectRatio="none"/>
+            </mask>
+          </defs>
+          <rect width="100" height="100" fill="url(#service-logo-gold)" mask="url(#service-logo-mask)"/>
+        </svg>
+      </div>
       <article class="service-item service-wealth reveal">
         <h3>Wealth Creation</h3>
         <p>Strategic accumulation frameworks: indexed strategies, tax-advantaged vehicles, and disciplined cash-flow design that compound quietly while you live loudly.</p>

@@ -577,9 +577,25 @@ body>footer{background:#050807;color:var(--cream);padding:4.5rem 6vw 2.5rem}
 #compare .opt[aria-selected="true"] .opt-check svg{stroke:var(--gold-bright)}
 #compare .panel{border-color:transparent;box-shadow:0 40px 80px -50px rgba(0,0,0,.7)}
 /* stats (cream) */
+#stats{padding:2rem 6vw}
+#stats .wrap{display:grid;grid-template-columns:minmax(190px,.62fr) minmax(0,2.38fr);align-items:center;gap:1.5rem}
+#stats .sec-head{margin:0}
+#stats .sec-head h2{font-size:clamp(1.35rem,2vw,1.85rem);line-height:1.08;margin:0}
+#stats .stats{gap:.75rem}
 #stats .stat{background:#fff;border:1px solid var(--line);box-shadow:0 20px 40px -34px rgba(11,46,36,.5)}
+#stats .stat{padding:1rem 1.1rem;border-radius:16px}
+#stats .stat .num{font-size:clamp(1.65rem,2.5vw,2.15rem)}
 #stats .stat .num{color:var(--emerald-deep)}
-#stats .stat .lbl{color:var(--muted)}
+#stats .stat .lbl{color:var(--muted);font-size:.8rem;margin-top:.3rem}
+@media(max-width:900px){
+  #stats .wrap{grid-template-columns:1fr;gap:1rem}
+  #stats .sec-head h2{max-width:none}
+}
+@media(max-width:560px){
+  #stats{padding:1.5rem 1.2rem}
+  #stats .stats{grid-template-columns:repeat(2,1fr)}
+  #stats .stat{padding:.9rem}
+}
 /* leadership (green): white card stays, its kicker keeps the light-card color */
 #philosophy .lead-card{border-color:transparent;box-shadow:0 40px 80px -50px rgba(0,0,0,.7)}
 #philosophy .lead-card .kicker{color:var(--gold-ink)}
@@ -732,6 +748,21 @@ body>footer{background:#050807;color:var(--cream);padding:4.5rem 6vw 2.5rem}
   </div>
 </div>
 
+<!-- ══ STATS ══ -->
+<section class="bg-paper" id="stats" aria-labelledby="stats-title">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2 class="serif" id="stats-title">A growing family of professionals.</h2>
+    </div>
+    <div class="stats">
+      <div class="stat reveal"><div class="num" data-count="400" data-suffix="+">400+</div><div class="lbl">Licensed agents</div></div>
+      <div class="stat reveal" data-d="1"><div class="num" data-count="2200" data-suffix="+">2,200+</div><div class="lbl">Submitted applications</div></div>
+      <div class="stat reveal" data-d="2"><div class="num" data-count="38">38</div><div class="lbl">States licensed</div></div>
+      <div class="stat reveal" data-d="3"><div class="num" data-count="98" data-suffix="%">98%</div><div class="lbl">Client retention</div></div>
+    </div>
+  </div>
+</section>
+
 <!-- ══ BUILD WITH AMG (promo banner) ══ -->
 <section class="bg-paper" id="build-with-amg" aria-labelledby="build-invite-title">
   <div class="wrap">
@@ -751,7 +782,7 @@ body>footer{background:#050807;color:var(--cream);padding:4.5rem 6vw 2.5rem}
         <p class="promo-fine">Choose an available date on the guest calendar. All times Eastern. Attendance does not guarantee income or business results.<sup>3</sup></p>
       </div>
       <div class="promo-media">
-        <video controls playsinline preload="none" poster="assets/resources/amg-stage-reel-poster.jpg" width="540" height="960" aria-label="AMG stage reel: Simi and Zamilah on stage">
+        <video controls muted playsinline preload="metadata" data-autoplay-in-view poster="assets/resources/amg-stage-reel-poster.jpg" width="540" height="960" aria-label="AMG stage reel: Simi and Zamilah on stage">
           <source src="assets/amg-stage-reel.mp4" type="video/mp4">
           <a href="assets/amg-stage-reel.mp4">Watch the AMG stage reel</a>
         </video>
@@ -1037,21 +1068,6 @@ body>footer{background:#050807;color:var(--cream);padding:4.5rem 6vw 2.5rem}
   </div>
 </section>
 
-<!-- ══ STATS ══ -->
-<section class="bg-paper" id="stats" aria-labelledby="stats-title">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <h2 class="serif" id="stats-title">A growing family of professionals.</h2>
-    </div>
-    <div class="stats">
-      <div class="stat reveal"><div class="num" data-count="400" data-suffix="+">400+</div><div class="lbl">Licensed agents</div></div>
-      <div class="stat reveal" data-d="1"><div class="num" data-count="2200" data-suffix="+">2,200+</div><div class="lbl">Submitted applications</div></div>
-      <div class="stat reveal" data-d="2"><div class="num" data-count="38">38</div><div class="lbl">States licensed</div></div>
-      <div class="stat reveal" data-d="3"><div class="num" data-count="98" data-suffix="%">98%</div><div class="lbl">Client retention</div></div>
-    </div>
-  </div>
-</section>
-
 <!-- ══ LEADERSHIP ══ -->
 <section class="bg-dark on-dark" id="philosophy">
   <div class="wrap">
@@ -1265,6 +1281,22 @@ body>footer{background:#050807;color:var(--cream);padding:4.5rem 6vw 2.5rem}
 document.querySelectorAll('.marquee-track').forEach(track=>{
   const [first,clone]=track.querySelectorAll('.logo-group');
   if(first&&clone){clone.innerHTML=first.innerHTML;clone.querySelectorAll('img').forEach(i=>i.alt='');clone.querySelectorAll('[role]').forEach(n=>n.removeAttribute('role'))}
+});
+
+// Start the Save My Seat video when it enters view. Native controls remain
+// available, so a visitor can pause it without the observer immediately
+// starting it again; leaving the section pauses playback automatically.
+document.querySelectorAll('video[data-autoplay-in-view]').forEach(video=>{
+  video.muted=true;
+  if(!('IntersectionObserver' in window))return;
+  const videoObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      if(!video.ended)video.play().catch(()=>{});
+    }else if(!video.paused){
+      video.pause();
+    }
+  }),{threshold:.55});
+  videoObserver.observe(video);
 });
 
 // scroll reveal

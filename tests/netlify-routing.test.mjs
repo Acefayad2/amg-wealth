@@ -50,13 +50,48 @@ test('protected Life uses redirects while public assets and guides are explicit'
 })
 
 
-test('AMG Matchups is a safe external card under Agent tools', () => {
+test('AMG Matchups cards use the primary-domain portal', () => {
   const toolkit = resources.match(/<section class="resource-section" id="toolkit"[\s\S]*?<\/section>/)?.[0]
   assert.ok(toolkit)
-  const card = toolkit.match(/<a class="compact-card" href="https:\/\/amg-matchup-portal\.netlify\.app\/"[\s\S]*?<\/a>/)?.[0]
+  const card = toolkit.match(/<a class="compact-card" href="\/matchups\/"[\s\S]*?<\/a>/)?.[0]
   assert.ok(card)
+  assert.match(resources, /<a class="quick-card matchups" href="\/matchups\/"/)
   assert.match(card, /<h3>AMG Matchups<\/h3>/)
   assert.match(card, /target="_blank"/)
   assert.match(card, /rel="noopener noreferrer"/)
   assert.equal((resources.match(/<h3>AMG Matchups<\/h3>/g) || []).length, 1)
+})
+
+
+test('Agent Portal entry points keep their direct redirects', () => {
+  const routes = redirectBlocks()
+  for (const from of ['/agent-portal', '/agent-portal.html']) {
+    assert.deepEqual(routes.filter(route => route.from === from), [{
+      from,
+      to: 'https://agents.anointedmoneygroup.com/',
+      status: 302,
+      force: true,
+    }])
+  }
+})
+
+test('Matchup routes and root-relative assets proxy to the current portal', () => {
+  const routes = redirectBlocks()
+  const expected = [
+    ['/matchups', '/'],
+    ['/matchups/', '/'],
+    ['/matchups/*', '/:splat'],
+    ['/_next/*', '/_next/:splat'],
+    ['/amg-logo.webp', '/amg-logo.webp'],
+    ['/icon.svg', '/icon.svg'],
+  ]
+  for (const [from, suffix] of expected) {
+    assert.deepEqual(routes.filter(route => route.from === from), [{
+      from,
+      to: `https://amg-matchup-portal.netlify.app${suffix}`,
+      status: 200,
+      force: true,
+    }])
+  }
+  assert.equal(routes.some(route => route.from === '/*'), false)
 })

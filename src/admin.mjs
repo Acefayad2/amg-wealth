@@ -7,6 +7,7 @@ const state = { contacts: [], groups: [], messages: [], recurring_reminders: [],
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 let authClient = null;
 let startupBusy = false;
+const resultState = { records: [], total: 0, page: 1, pageSize: 25, loading: false, error: "", requestId: 0, controller: null, preview: false };
 const inquiryState = { records: [], total: 0, page: 1, pageSize: 25, loading: false, error: "", requestId: 0, controller: null, preview: false };
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
 const initials = (name) => String(name || "?").split(/\s+/).map((part) => part[0]).join("").slice(0, 2).toUpperCase();
@@ -44,6 +45,11 @@ async function load() {
 }
 
 function resetInquiries() {
+  resultState.controller?.abort();
+  resultState.requestId += 1;
+  Object.assign(resultState, { records: [], total: 0, page: 1, loading: false, error: "", controller: null });
+  renderResults();
+  $("#results-view").hidden = true;
   inquiryState.controller?.abort();
   inquiryState.requestId += 1;
   Object.assign(inquiryState, { records: [], total: 0, page: 1, loading: false, error: "", controller: null });
@@ -123,13 +129,68 @@ async function loadInquiries(page = 1) {
   }
 }
 
+function renderResults() {
+  const { records, total, page, pageSize, loading, error } = resultState;
+  const pages = Math.max(1, Math.ceil(total / pageSize));
+  $("#results-list").setAttribute("aria-busy", String(loading));
+  $("#results-summary").textContent = loading ? "Loading results…" : error ? "Results could not be refreshed." : `${total.toLocaleString()} submitted ${total === 1 ? "result" : "results"}`;
+  $("#results-error").hidden = !error;
+  $("#results-error").textContent = error;
+  $("#refresh-results").disabled = loading;
+  $("#previous-results").disabled = loading || page <= 1;
+  $("#next-results").disabled = loading || page >= pages;
+  $("#results-pagination").hidden = pages <= 1;
+  $("#results-page").textContent = `Page ${page} of ${pages}`;
+  $("#results-list").innerHTML = records.length ? records.map((r) => `<article class="inquiry-card"><header><div><p class="eyebrow">${escapeHtml(r.exam_type)}</p><h2>${escapeHtml(r.full_name)}</h2></div><span>${r.passed ? "PASS" : "NOT PASSED"}</span></header><p>${escapeHtml(r.email)}</p><p><strong>${escapeHtml(r.score)} / ${escapeHtml(r.total)} (${escapeHtml(r.percentage)}%)</strong> · Incorrect: ${escapeHtml(r.wrong)} · Skipped: ${escapeHtml(r.skipped)}</p><p>${r.early_fail ? "Ended early · " : ""}${escapeHtml(formatDateTime(r.created_at))}</p></article>`).join("") : '<p class="empty">' + (loading ? 'Loading practice results…' : error ? 'Use Refresh results to try again.' : 'No results saved yet. New practice attempts will appear here.') + '</p>';
+}
+
+async function loadResults(page = 1) {
+  if (resultState.loading) return;
+  if (resultState.preview) { renderResults(); return; }
+  const requestId = ++resultState.requestId;
+  const controller = new AbortController();
+  Object.assign(resultState, { loading: true, error: "", controller });
+  renderResults();
+  try {
+    const { data, error } = await authClient.auth.getSession();
+    if (error) throw error;
+    if (requestId !== resultState.requestId) return;
+    const token = data.session?.access_token;
+    if (!token) throw new Error("Sign in again to view submitted results.");
+    const response = await fetch(`/api/admin/practice-results?page=${page}`, {
+      headers: { accept: "application/json", authorization: `Bearer ${token}` },
+      cache: "no-store", signal: controller.signal,
+    });
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(payload.error || "Unable to load results. Try refreshing again.");
+    if (requestId !== resultState.requestId) return;
+    if (!Array.isArray(payload.results) || !Number.isInteger(payload.total) || payload.total < 0
+      || !Number.isInteger(payload.page) || payload.page < 1 || !Number.isInteger(payload.page_size) || payload.page_size < 1) {
+      throw new Error("The result response was incomplete. Try refreshing again.");
+    }
+    Object.assign(resultState, { records: payload.results, total: payload.total, page: payload.page, pageSize: payload.page_size });
+  } catch (error) {
+    if (requestId !== resultState.requestId || error.name === "AbortError") return;
+    resultState.error = error.message || "Unable to load results. Try refreshing again.";
+  } finally {
+    if (requestId === resultState.requestId) {
+      resultState.loading = false;
+      resultState.controller = null;
+      renderResults();
+    }
+  }
+}
+
 function showAdminView(view) {
   const inquiries = view === "inquiries";
-  $("#communications-view").hidden = inquiries;
+  const results = view === "results";
+  $("#communications-view").hidden = inquiries || results;
+  $("#results-view").hidden = !results;
   $("#inquiries-view").hidden = !inquiries;
-  $(".sidebar").classList.toggle("inquiry-mode", inquiries);
+  $(".sidebar").classList.toggle("inquiry-mode", inquiries || results);
   document.querySelectorAll("[data-admin-view]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.adminView === view)));
   if (inquiries) void loadInquiries();
+  if (results) void loadResults();
 }
 
 function showStartup(message = "Restoring your secure AMG session and checking CRM admin access…") {
@@ -836,6 +897,10 @@ $("#sign-out").addEventListener("click", async () => {
 $("#startup-retry").addEventListener("click", () => authClient ? verifyAdminSession() : init());
 $("#startup-sign-in").addEventListener("click", () => showLogin());
 document.querySelectorAll("[data-admin-view]").forEach((button) => button.addEventListener("click", () => showAdminView(button.dataset.adminView)));
+$("#refresh-results").addEventListener("click", () => loadResults(resultState.page));
+$("#previous-results").addEventListener("click", () => loadResults(resultState.page - 1));
+$("#next-results").addEventListener("click", () => loadResults(resultState.page + 1));
+
 $("#refresh-inquiries").addEventListener("click", () => loadInquiries(1));
 $("#previous-inquiries").addEventListener("click", () => loadInquiries(inquiryState.page - 1));
 $("#next-inquiries").addEventListener("click", () => loadInquiries(inquiryState.page + 1));
@@ -944,6 +1009,10 @@ async function init() {
       admin_invitations: [],
     });
     render();
+    if (previewMode === "results" || previewMode === "results-empty" || previewMode === "results-error") {
+      Object.assign(resultState, { preview: true, total: previewMode === "results" ? 1 : 0, records: previewMode === "results" ? [{ id: "sample", full_name: "Jordan Sample", email: "jordan@example.com", exam_type: "Accident & Health or Sickness Producer", score: 80, total: 90, percentage: 89, wrong: 8, skipped: 2, passed: true, created_at: "2026-11-09T17:00:00Z" }] : [], error: previewMode === "results-error" ? "Practice results could not be loaded." : "" });
+      showAdminView("results");
+    }
     if (previewMode === "inquiries" || previewMode === "inquiries-empty" || previewMode === "inquiries-error") {
       Object.assign(inquiryState, {
         preview: true, total: previewMode === "inquiries" ? 1 : 0,

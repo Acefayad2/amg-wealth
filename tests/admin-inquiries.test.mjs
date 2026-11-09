@@ -19,12 +19,13 @@ function setup({ token = "admin-token", fetchImpl } = {}) {
   };
   const buttons = ["communications", "inquiries"].map((view) => ({ dataset: { adminView: view }, setAttribute() {} }));
   const context = {
+    resultState: { records: [], total: 0, page: 1, pageSize: 25, loading: false, error: "", requestId: 0, controller: null, preview: false },
     inquiryState: { records: [], total: 0, page: 1, pageSize: 25, loading: false, error: "", requestId: 0, controller: null, preview: false },
     authClient: { auth: { getSession: async () => ({ data: { session: token ? { access_token: token } : null }, error: null }) } },
     lookup, document: { querySelectorAll: () => buttons }, AbortController,
     fetch: fetchImpl || (async () => ({ ok: true, json: async () => ({ inquiries: [], total: 0, page: 1, page_size: 25 }) })),
   };
-  vm.runInNewContext(`const $=this.lookup;const inquiryState=this.inquiryState;const authClient=this.authClient;${helpers}\n${production}\nthis.loadInquiries=loadInquiries;this.renderInquiries=renderInquiries;this.resetInquiries=resetInquiries;this.showAdminView=showAdminView;`, context);
+  vm.runInNewContext(`const $=this.lookup;const inquiryState=this.inquiryState;const resultState=this.resultState;const authClient=this.authClient;${helpers}\n${production}\nthis.loadInquiries=loadInquiries;this.renderInquiries=renderInquiries;this.resetInquiries=resetInquiries;this.showAdminView=showAdminView;`, context);
   return { ...context, fields, lookup };
 }
 

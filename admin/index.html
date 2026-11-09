@@ -40,6 +40,7 @@
       <a href="/" class="brand"><img src="/assets/logo-mark.webp" alt="" width="34" height="34"><span>AMG</span></a>
       <nav class="workspace-nav" aria-label="Admin workspace">
         <button type="button" data-admin-view="communications" aria-pressed="true" aria-controls="communications-view">Communications</button>
+        <button type="button" data-admin-view="results" aria-pressed="false" aria-controls="results-view">Exam results</button>
         <button type="button" data-admin-view="inquiries" aria-pressed="false" aria-controls="inquiries-view">Inquiries</button>
       </nav>
       <div class="side-heading"><div><p class="eyebrow">CRM</p><h2>Contacts</h2></div><button id="add-contact" class="icon-button" title="Add contact" aria-label="Add contact">+</button></div>
@@ -109,6 +110,20 @@
           <button id="previous-inquiries" class="secondary" type="button">Previous</button>
           <span id="inquiries-page"></span>
           <button id="next-inquiries" class="secondary" type="button">Next</button>
+        </nav>
+      </section>
+      <section id="results-view" aria-labelledby="results-title" hidden>
+        <header class="topbar">
+          <div><p class="eyebrow">Practice exams</p><h1 id="results-title">Exam results</h1><p class="muted">Self-reported practice scores, newest first. These are not official licensing results. New attempts only; historical results have not been imported.</p></div>
+          <button id="refresh-results" class="secondary" type="button">Refresh results</button>
+        </header>
+        <p id="results-summary" class="inquiries-summary" role="status" aria-live="polite"></p>
+        <p id="results-error" class="form-error" role="alert" hidden></p>
+        <div id="results-list" class="inquiries-list" aria-busy="false"></div>
+        <nav id="results-pagination" class="inquiries-pagination" aria-label="Result pages" hidden>
+          <button id="previous-results" class="secondary" type="button">Previous</button>
+          <span id="results-page"></span>
+          <button id="next-results" class="secondary" type="button">Next</button>
         </nav>
       </section>
     </main>

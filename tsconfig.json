@@ -9,5 +9,8 @@
     "skipLibCheck": true,
     "types": ["node"]
   },
-  "include": ["netlify/functions/**/*.mts", "integrations/**/*.mts"]
+  "include": ["netlify/functions/**/*.mts", "integrations/**/*.mts"],
+  // Moved as-is from amg-practice-exam (never type-checked there); covered by
+  // tests/learning-access.test.mjs and tests/learning.test.mjs instead.
+  "exclude": ["netlify/functions/learning-access.mts", "netlify/functions/learning.mts"]
 }

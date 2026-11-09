@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta name="description" content="Enter your AMG team code and continue your Maryland life insurance course.">
+  <title>Enter course · AMG Learning</title>
+  <link rel="icon" href="/course/assets/amg-mark.webp">
+  <link rel="stylesheet" href="/course/shared/app.css">
+  <link rel="stylesheet" href="/login/login.css">
+  <script src="/course/shared/login.js" type="module"></script>
+</head>
+<body class="login-page">
+<a class="skip" href="#main">Skip to course entry</a>
+<header class="login-header"><a class="brand" href="/login/" aria-label="AMG Learning course entry"><span class="brand-mark"><img src="/course/assets/amg-mark.webp" width="68" height="64" alt=""></span><span class="brand-wordmark">AMG<span>Learning</span></span></a><span class="login-program">Maryland Life</span></header>
+<main id="main" class="login-layout">
+  <section class="login-introduction" aria-labelledby="welcome-heading"><p class="eyebrow">THE AMG LEARNING EXPERIENCE</p><h1 id="welcome-heading">Build your knowledge.<br>Be ready for what’s next.</h1><p>Life insurance concepts, clear explanations and practice you can return to.</p><ul class="learning-highlights"><li><span class="highlight-number">60</span><span>Video lessons<span>Learn at your own pace</span></span></li><li><span class="highlight-symbol" aria-hidden="true">✓</span><span>Required lesson checks<span>Understand each answer before moving on</span></span></li><li><span class="highlight-symbol" aria-hidden="true">↗</span><span>Practice anytime<span>Build confidence with exam-style questions</span></span></li></ul><p class="login-team-note">Use the same email each time to pick up where you left off.</p></section>
+  <section id="auth-card" class="auth-card" aria-labelledby="auth-title" aria-busy="true">
+    <div class="auth-heading"><p class="eyebrow">AMG TEAM ACCESS</p><h2 id="auth-title" tabindex="-1">Welcome to AMG</h2><p id="auth-intro">Enter your team’s access code.</p></div>
+    <div id="auth-loading" class="auth-loading" role="status"><span class="loading-indicator" aria-hidden="true"></span>Checking course access…</div>
+    <p id="auth-error" class="auth-error" role="alert" tabindex="-1" hidden></p>
+    <button id="auth-retry" type="button" class="primary form-submit" hidden>Try again</button>
+    <form id="code-form" data-auth-panel="code" hidden>
+      <div class="form-field"><label for="access-code">AMG access code</label><div class="password-field"><input id="access-code" name="access-code" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="200" aria-describedby="access-code-help" required><button id="toggle-code" type="button" class="password-toggle" aria-controls="access-code" aria-pressed="false" aria-label="Show or hide access code">Show</button></div><p id="access-code-help" class="field-hint">Use the shared code from your licensing coordinator.</p></div>
+      <button id="code-submit" class="primary form-submit" type="submit">Continue</button>
+    </form>
+    <form id="profile-form" data-auth-panel="profile" hidden>
+      <div class="form-field"><label for="learner-name">Full name</label><input id="learner-name" name="name" autocomplete="name" maxlength="120" required></div>
+      <div class="form-field"><label for="learner-email">Email address</label><input id="learner-email" name="email" type="email" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" maxlength="254" aria-describedby="learner-email-help" required><p id="learner-email-help" class="field-hint">Use your own email each time. No account or email verification needed.</p></div>
+      <p class="account-notice">Your name, email and learning progress are used for AMG course tracking.</p>
+      <button id="profile-submit" class="primary form-submit" type="submit">Start learning</button>
+      <button id="change-code" type="button" class="text-action back-to-login">Use another code</button>
+    </form>
+    <p id="auth-help" class="auth-help">Need access? Contact your licensing coordinator.</p>
+    <noscript><p class="auth-error">JavaScript is required to enter the course. Enable it and reload this page.</p></noscript>
+  </section>
+</main>
+<footer class="login-footer"><span>AMG Learning · Maryland Life</span><span>Learn with purpose.</span></footer>
+</body>
+</html>

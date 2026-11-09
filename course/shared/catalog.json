@@ -1,0 +1,911 @@
+{
+  "version": 1,
+  "planned": 60,
+  "lessons": [
+    {
+      "id": "03",
+      "number": 3,
+      "version": 1,
+      "title": "Handling risk and reinsurance",
+      "subtitle": "Choose what changes: the exposure, the loss, or who pays.",
+      "duration": 246.753,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/d6fa7c40-a5ec-4e1b-ad63-0e50672842e0.png",
+      "questions": 8,
+      "module": "Foundations",
+      "outline": [
+        "2.1"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "04",
+      "number": 4,
+      "version": 2,
+      "title": "Insurers and distribution",
+      "subtitle": "Ownership, location and authorization answer different questions.",
+      "duration": 271.919,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/ff2f2d61-a970-4870-9723-68c939ae0e47.png",
+      "questions": 9,
+      "module": "Foundations",
+      "outline": [
+        "2.2",
+        "1.2"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "05",
+      "number": 5,
+      "version": 1,
+      "title": "Agency and producer authority",
+      "subtitle": "A professional title does not grant unlimited power.",
+      "duration": 218.75,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/f82a459a-7ce0-4751-b4d5-e64b017675db.png",
+      "questions": 8,
+      "module": "Foundations",
+      "outline": [
+        "2.3"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "06",
+      "number": 6,
+      "version": 1,
+      "title": "Building the insurance contract",
+      "subtitle": "Four elements, then the characteristics of the promise.",
+      "duration": 245.545,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/38bdfe06-5f0c-424c-986c-842eb74669f0.png",
+      "questions": 8,
+      "module": "Foundations",
+      "outline": [
+        "2.4"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "07",
+      "number": 7,
+      "version": 1,
+      "title": "Truth, interpretation and enforceability",
+      "subtitle": "Read the promise carefully and distinguish a mistake from a material issue.",
+      "duration": 257.544,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/96e654dc-2dd6-4e93-a263-aac3bf8ba39b.png",
+      "questions": 8,
+      "module": "Foundations",
+      "outline": [
+        "2.4"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "08",
+      "number": 8,
+      "version": 1,
+      "title": "Federal rules and industry organizations",
+      "subtitle": "Know which rule applies and which organization does the work.",
+      "duration": 245.1,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/be0e041d-e0c9-408b-9ef3-9a9d1708caa2.png",
+      "questions": 8,
+      "module": "Foundations",
+      "outline": [
+        "2.5",
+        "2.6"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "09",
+      "number": 9,
+      "version": 1,
+      "title": "Maryland licensing: who may do what?",
+      "subtitle": "Separate a person’s authority, an agency’s license and special exceptions.",
+      "duration": 275.592,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/93f9e96c-b0a1-40b2-aedc-6190d5888408.png",
+      "questions": 8,
+      "module": "Maryland practice",
+      "outline": [
+        "1.1"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "10",
+      "number": 10,
+      "version": 1,
+      "title": "Keep the license active",
+      "subtitle": "Use the right clock for renewal, education and reporting.",
+      "duration": 250.752,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/31c14e49-8361-4e32-9e1c-38c49bdca23d.png",
+      "questions": 8,
+      "module": "Maryland practice",
+      "outline": [
+        "1.1"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "11",
+      "number": 11,
+      "version": 2,
+      "title": "Appointments, oversight and discipline",
+      "subtitle": "Separate state licensing from insurer authority and understand the regulator’s role.",
+      "duration": 257.004,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/7f3e2fed-234e-4441-b315-505e744e0716.png",
+      "questions": 10,
+      "module": "Maryland practice",
+      "outline": [
+        "1.1",
+        "1.2"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "12",
+      "number": 12,
+      "version": 1,
+      "title": "Handle money, records and compensation",
+      "subtitle": "Know whose money it is, what may be charged and what must be kept.",
+      "duration": 248.292,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/73cf918e-0fab-4792-ad21-762880420e75.png",
+      "questions": 8,
+      "module": "Maryland practice",
+      "outline": [
+        "1.2"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "13",
+      "number": 13,
+      "version": 2,
+      "title": "Recognize unfair sales practices",
+      "subtitle": "Identify the conduct, the harm and the lawful correction.",
+      "duration": 283.421,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/51c1c2e3-4bf1-4402-b4d4-e09f967a7b71.png",
+      "questions": 8,
+      "module": "Maryland practice",
+      "outline": [
+        "1.2"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "14",
+      "number": 14,
+      "version": 2,
+      "title": "Clear presentations and private information",
+      "subtitle": "Show what is guaranteed, deliver the right documents and protect the client’s information.",
+      "duration": 253.877,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/64ef82b8-d503-4c81-8c3e-30d49ba63b70.png",
+      "questions": 8,
+      "module": "Maryland practice",
+      "outline": [
+        "1.2",
+        "3.8"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "15",
+      "number": 15,
+      "version": 1,
+      "title": "Replace coverage with full information",
+      "subtitle": "Recognize a replacement, compare its consequences and follow Maryland’s process.",
+      "duration": 268.794,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/2f8a1230-fef3-4ada-80d7-73b7a467ae37.png",
+      "questions": 8,
+      "module": "Maryland practice",
+      "outline": [
+        "1.3",
+        "3.8"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "16",
+      "number": 16,
+      "version": 1,
+      "title": "Maryland group life rights",
+      "subtitle": "Follow the employee’s coverage from enrollment through leaving the group.",
+      "duration": 269.669,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/872637dc-e9fb-498c-9423-f54fdeedc4c8.png",
+      "questions": 8,
+      "module": "Maryland practice",
+      "outline": [
+        "1.3",
+        "4.5"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "17",
+      "number": 17,
+      "version": 1,
+      "title": "Claims and the insurer safety net",
+      "subtitle": "Help a beneficiary through a claim and understand the limits of Maryland’s guaranty protection.",
+      "duration": 282.834,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/b17702c9-521e-47ef-a2b2-6660bf93ca0a.png",
+      "questions": 8,
+      "module": "Maryland practice",
+      "outline": [
+        "1.2",
+        "1.3",
+        "2.2",
+        "3.8",
+        "5.1"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "18",
+      "number": 18,
+      "version": 1,
+      "title": "Who owns it, whose life, who benefits?",
+      "subtitle": "Separate policy roles and apply Maryland’s insurable-interest and consent rules.",
+      "duration": 262.421,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/6ad43869-f837-4c40-8097-a4aef8d1f6c6.png",
+      "questions": 8,
+      "module": "Life decisions",
+      "outline": [
+        "3.1",
+        "5.1"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "19",
+      "number": 19,
+      "version": 1,
+      "title": "Build a protection plan from real needs",
+      "subtitle": "Turn a family’s responsibilities, income and resources into a clear, reasoned estimate.",
+      "duration": 258,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/eac2f54e-b811-4673-a1ce-a8dad7165459.png",
+      "questions": 8,
+      "module": "Life decisions",
+      "outline": [
+        "3.2",
+        "3.4"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "20",
+      "number": 20,
+      "version": 1,
+      "title": "Selling a life policy: settlements",
+      "subtitle": "Follow the money, the rights and the Maryland safeguards before an owner sells coverage.",
+      "duration": 276.478,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/9cb8e63d-8708-4204-a4ea-2285f1971849.png",
+      "questions": 8,
+      "module": "Life decisions",
+      "outline": [
+        "3.3"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "21",
+      "number": 21,
+      "version": 1,
+      "title": "Protect the business and its people",
+      "subtitle": "Separate ownership succession, key-person protection and an executive bonus.",
+      "duration": 264.294,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/f9b385bb-1f7f-4127-8c74-f84c76300df5.png",
+      "questions": 8,
+      "module": "Life decisions",
+      "outline": [
+        "3.5"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "22",
+      "number": 22,
+      "version": 2,
+      "title": "Classify coverage and understand its price",
+      "subtitle": "Keep product labels separate and see how mortality, interest and expenses shape premiums.",
+      "duration": 282.347,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/4d750cdd-bb69-4720-8be1-a08d03355a6d.png",
+      "questions": 10,
+      "module": "Life decisions",
+      "outline": [
+        "3.6",
+        "3.7"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "23",
+      "number": 23,
+      "version": 1,
+      "title": "Build an accurate application file",
+      "subtitle": "Follow a client from fact gathering to a complete, honestly documented submission.",
+      "duration": 284.334,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/aa5ec7bd-93b3-412b-9034-ab714187b6ab.png",
+      "questions": 8,
+      "module": "Life decisions",
+      "outline": [
+        "3.8",
+        "3.9"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "24",
+      "number": 24,
+      "version": 1,
+      "title": "Understand a fair underwriting decision",
+      "subtitle": "Distinguish evidence, risk classifications and the limits on how information may be used.",
+      "duration": 283.877,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/7d878b09-54c8-44de-a7d9-a9905c57adf0.png",
+      "questions": 10,
+      "module": "Life decisions",
+      "outline": [
+        "3.9",
+        "3.8"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "25",
+      "number": 25,
+      "version": 1,
+      "title": "Know when protection actually begins",
+      "subtitle": "Read premium receipts, effective dates and delivery conditions as a connected timeline.",
+      "duration": 281.71,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/93fbea98-ff19-4641-9263-8bf86688cfb5.png",
+      "questions": 8,
+      "module": "Life decisions",
+      "outline": [
+        "3.8"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "26",
+      "number": 26,
+      "version": 1,
+      "title": "Read term insurance along a timeline",
+      "subtitle": "Separate the benefit schedule, premium period, renewal right and conversion deadline.",
+      "duration": 272.46,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/05edb717-160c-4700-850f-e25986949f9f.png",
+      "questions": 8,
+      "module": "Policy designs",
+      "outline": [
+        "4.1"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "27",
+      "number": 27,
+      "version": 1,
+      "title": "Whole life: coverage and payment schedules",
+      "subtitle": "Separate lifetime protection from the years in which premiums are due.",
+      "duration": 276.959,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/689572b4-c30d-43cc-b8d6-705580cdaf97.png",
+      "questions": 8,
+      "module": "Policy designs",
+      "outline": [
+        "4.2"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "28",
+      "number": 28,
+      "version": 1,
+      "title": "Universal and indexed life: follow the funding",
+      "subtitle": "Trace premiums, charges, crediting rules and the conditions behind guarantees.",
+      "duration": 297.46,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/be3817fb-e0f8-4e4e-8f93-179ff36742bf.png",
+      "questions": 10,
+      "module": "Policy designs",
+      "outline": [
+        "4.2",
+        "4.3"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "29",
+      "number": 29,
+      "version": 1,
+      "title": "Variable and adjustable life: identify the moving part",
+      "subtitle": "Separate investment risk, premium flexibility and changes to protection.",
+      "duration": 292.96,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/b662e51c-4f1d-4be3-bb2a-ef842035c75e.png",
+      "questions": 8,
+      "module": "Policy designs",
+      "outline": [
+        "4.2",
+        "4.3",
+        "3.6"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "30",
+      "number": 30,
+      "version": 1,
+      "title": "Family, joint, juvenile and credit life",
+      "subtitle": "Identify the insured life, payment trigger and intended recipient.",
+      "duration": 281.754,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/ce068574-843c-41e2-a9e7-c854ee8b863d.png",
+      "questions": 10,
+      "module": "Policy designs",
+      "outline": [
+        "4.4",
+        "4.6"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "31",
+      "number": 31,
+      "version": 1,
+      "title": "Group life: follow the contract and the covered lives",
+      "subtitle": "Identify eligible groups, enrollment conditions, conversion and federal programs.",
+      "duration": 274.752,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/2944356d-d8da-4b4b-9b9b-6fc7d2a36925.png",
+      "questions": 10,
+      "module": "Policy designs",
+      "outline": [
+        "4.5",
+        "3.6"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "32",
+      "number": 32,
+      "version": 1,
+      "title": "Policy ownership: rights, assignments and the contract",
+      "subtitle": "Follow who can act, what was transferred and which documents govern.",
+      "duration": 261.792,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/2b13d19f-a3b3-409d-bc6a-433ece12c02d.png",
+      "questions": 8,
+      "module": "Policy operation",
+      "outline": [
+        "5.1"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "33",
+      "number": 33,
+      "version": 1,
+      "title": "Beneficiaries: follow the intended payment",
+      "subtitle": "Read names, classes, trusts, family changes and survival conditions carefully.",
+      "duration": 274.752,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/81f2ea12-389f-4cce-aa25-e28fadb88cce.png",
+      "questions": 10,
+      "module": "Policy operation",
+      "outline": [
+        "5.2"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "34",
+      "number": 34,
+      "version": 1,
+      "title": "Policy clocks: return, premium grace and contestability",
+      "subtitle": "Use the right starting event and the right Maryland provision.",
+      "duration": 272.544,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/a003218b-fd5c-45fa-840c-edf04fc6a4e6.png",
+      "questions": 8,
+      "module": "Policy operation",
+      "outline": [
+        "5.1"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "35",
+      "number": 35,
+      "version": 1,
+      "title": "Reinstatement, exclusions and accurate policy dates",
+      "subtitle": "Separate restoring coverage, correcting an age and applying a permitted exclusion.",
+      "duration": 291.792,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/0ca8057a-4cae-40bd-a373-28b9fc9ac9bd.png",
+      "questions": 9,
+      "module": "Policy operation",
+      "outline": [
+        "5.1"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "36",
+      "number": 36,
+      "version": 1,
+      "title": "Death-benefit payment options: what is fixed?",
+      "subtitle": "Compare cash, interest, a selected period, a selected amount and lifetime income.",
+      "duration": 263.004,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/6320c231-9f19-4a43-ae4d-67aaa592a4c3.png",
+      "questions": 9,
+      "module": "Policy operation",
+      "outline": [
+        "5.1",
+        "5.3"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "37",
+      "number": 37,
+      "version": 1,
+      "title": "Stopping premiums: preserve the value already built",
+      "subtitle": "Compare cash surrender, extended term and reduced paid-up insurance.",
+      "duration": 261.187,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/d97df1fb-400a-4ead-bc99-88ceaca069db.png",
+      "questions": 8,
+      "module": "Policy operation",
+      "outline": [
+        "5.4"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "38",
+      "number": 38,
+      "version": 1,
+      "title": "Policy loans and withdrawals: follow the remaining value",
+      "subtitle": "Borrowing, automatic premium loans and taking money out have different effects.",
+      "duration": 282.209,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/0701b6fd-8279-4a01-809b-9de972b39594.png",
+      "questions": 9,
+      "module": "Policy operation",
+      "outline": [
+        "5.5"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "39",
+      "number": 39,
+      "version": 1,
+      "title": "Dividends: choose what the money does",
+      "subtitle": "Separate cash, premium payments and additional insurance from guarantees.",
+      "duration": 290.544,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/a40682b5-45b2-43bc-9e20-b323f0f0e498.png",
+      "questions": 9,
+      "module": "Policy operation",
+      "outline": [
+        "5.6",
+        "3.6"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "40",
+      "number": 40,
+      "version": 1,
+      "title": "Disability riders: follow the person and the benefit",
+      "subtitle": "Premium waiver, charge waiver, income and juvenile payor protection do different jobs.",
+      "duration": 291.671,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/bdaa5d84-bd0f-43e1-8dcd-8a3ec8fe7801.png",
+      "questions": 8,
+      "module": "Policy operation",
+      "outline": [
+        "5.7"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "41",
+      "number": 41,
+      "version": 1,
+      "title": "Accelerated benefits: money before death changes what remains",
+      "subtitle": "Check the trigger, the written calculation and the remaining protection.",
+      "duration": 294.419,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/e8172aed-3e4d-47da-8623-680f438b8f51.png",
+      "questions": 9,
+      "module": "Policy operation",
+      "outline": [
+        "5.8"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "42",
+      "number": 42,
+      "version": 1,
+      "title": "Family riders: identify whose life is covered",
+      "subtitle": "Map the base policy, spouse coverage and children’s term benefits.",
+      "duration": 276.792,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/b80633a1-af35-42fa-bb14-3f913a8775d0.png",
+      "questions": 8,
+      "module": "Policy operation",
+      "outline": [
+        "5.9"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "43",
+      "number": 43,
+      "version": 2,
+      "title": "Additional riders: match the benefit to its trigger",
+      "subtitle": "Separate accidental death, future purchase rights, inflation adjustments and premium-linked benefits.",
+      "duration": 272.585,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/46f1fe27-c450-49a5-b392-d28c6d36629b.png",
+      "questions": 8,
+      "module": "Policy operation",
+      "outline": [
+        "5.10"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "44",
+      "number": 44,
+      "version": 2,
+      "title": "Annuities: who controls the contract and when income begins",
+      "subtitle": "Separate accumulation, lifetime income and the people named in the contract.",
+      "duration": 293.879,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/003b77e2-5b90-4205-a711-727cc5314ebb.png",
+      "questions": 8,
+      "module": "Annuities",
+      "outline": [
+        "6.1"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "45",
+      "number": 45,
+      "version": 1,
+      "title": "Immediate or deferred: separate funding from access",
+      "subtitle": "Read when income starts, what can be withdrawn and which protections remain.",
+      "duration": 292.044,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/61828324-90a9-421e-b9e0-7e2cf9d3b2c7.png",
+      "questions": 9,
+      "module": "Annuities",
+      "outline": [
+        "6.2"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "46",
+      "number": 46,
+      "version": 1,
+      "title": "Choose the income promise: life, years or a stated amount",
+      "subtitle": "Follow payments through an early death and a long retirement.",
+      "duration": 292.625,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/f89882bd-fd02-495e-8708-82d19f8b8a00.png",
+      "questions": 9,
+      "module": "Annuities",
+      "outline": [
+        "6.3"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "47",
+      "number": 47,
+      "version": 1,
+      "title": "Annuity designs: follow the guarantee and the risk",
+      "subtitle": "Compare fixed rates, separate-account investments, index formulas and early-exit adjustments.",
+      "duration": 281.837,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/014aafd0-d594-4ca8-bb23-ce8e93ceea34.png",
+      "questions": 9,
+      "module": "Annuities",
+      "outline": [
+        "6.4"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "48",
+      "number": 48,
+      "version": 1,
+      "title": "Annuity uses and Maryland’s best-interest standard",
+      "subtitle": "Start with the client, evaluate the whole transaction and make the reasoning reviewable.",
+      "duration": 269.879,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/34a2fd97-0e12-4589-a31c-f3c7dcf64667.png",
+      "questions": 12,
+      "module": "Annuities",
+      "outline": [
+        "6.5"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "49",
+      "number": 49,
+      "version": 2,
+      "title": "Life insurance taxes: identify the event first",
+      "subtitle": "Separate cash growth, dividends, loans, surrender, death proceeds and estate inclusion.",
+      "duration": 285.587,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/1660a752-a14a-4b5e-b609-6678be96a19f.png",
+      "questions": 8,
+      "module": "Tax and retirement",
+      "outline": [
+        "7.1"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "50",
+      "number": 50,
+      "version": 2,
+      "title": "Modified endowment contracts: funding changes access taxes",
+      "subtitle": "Apply the seven-pay test and calculate earnings-first distributions without confusing them with death benefits.",
+      "duration": 280.379,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/229d25ad-ed10-4414-aca0-6a4d237166eb.png",
+      "questions": 9,
+      "module": "Tax and retirement",
+      "outline": [
+        "7.2"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "51",
+      "number": 51,
+      "version": 1,
+      "title": "Annuity withdrawals: find the gain before calculating tax",
+      "subtitle": "Use nonqualified annuity rules and keep insurer charges separate.",
+      "duration": 290.796,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/84ca5bd1-e5d4-4823-9095-bcaa0856a66c.png",
+      "questions": 8,
+      "module": "Tax and retirement",
+      "outline": [
+        "7.3"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "52",
+      "number": 52,
+      "version": 1,
+      "title": "Annuity income, death payments and corporate ownership",
+      "subtitle": "Separate investment recovery, beneficiary timing and the identity of the tax owner.",
+      "duration": 289.002,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/449be2dd-c1d6-46fe-a4fe-df9b8b012579.png",
+      "questions": 9,
+      "module": "Tax and retirement",
+      "outline": [
+        "7.3"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "53",
+      "number": 53,
+      "version": 2,
+      "title": "Traditional IRAs: contribution, deduction and withdrawal",
+      "subtitle": "Keep eligibility, current tax savings and later distributions separate.",
+      "duration": 288.629,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/f88d4a26-cc92-46c4-a16c-803d5b43e46d.png",
+      "questions": 9,
+      "module": "Tax and retirement",
+      "outline": [
+        "7.4"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "54",
+      "number": 54,
+      "version": 1,
+      "title": "Roth IRAs: distinguish contributions, conversions and earnings",
+      "subtitle": "Use the ordering rules and both timing tests before deciding what is tax-free.",
+      "duration": 290.25,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/f0f75ec7-a3b0-4d72-8e03-9c9e50334e25.png",
+      "questions": 9,
+      "module": "Tax and retirement",
+      "outline": [
+        "7.4"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "55",
+      "number": 55,
+      "version": 1,
+      "title": "Move retirement money: transfer, rollover or conversion?",
+      "subtitle": "Follow the destination, payee, deadline and withholding before moving funds.",
+      "duration": 289.462,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/b0b03ec0-992d-43fb-ae8e-3bc4281485d3.png",
+      "questions": 8,
+      "module": "Tax and retirement",
+      "outline": [
+        "7.5"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "56",
+      "number": 56,
+      "version": 1,
+      "title": "Section 1035: permitted exchanges do not erase every cost",
+      "subtitle": "Check the direction, transaction method, basis and replacement consequences.",
+      "duration": 290.417,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/34612c95-889f-45aa-9a24-fff899e96e5c.png",
+      "questions": 8,
+      "module": "Tax and retirement",
+      "outline": [
+        "7.6"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "57",
+      "number": 57,
+      "version": 1,
+      "title": "Qualified plans: tax treatment comes with requirements",
+      "subtitle": "Separate plan qualification, ownership, tax deferral and distribution rights.",
+      "duration": 292.709,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/ed8bdc6f-21ce-49e1-9f3b-42cab5a4db9b.png",
+      "questions": 9,
+      "module": "Tax and retirement",
+      "outline": [
+        "8.1",
+        "8.2"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "58",
+      "number": 58,
+      "version": 1,
+      "title": "Match the employer to the retirement plan",
+      "subtitle": "Recognize SEP, Keogh, profit sharing, 401(k), SIMPLE and 403(b) arrangements.",
+      "duration": 293.417,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/9516d134-8c0b-4b5b-926d-548c3a063613.png",
+      "questions": 8,
+      "module": "Tax and retirement",
+      "outline": [
+        "8.3"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "59",
+      "number": 59,
+      "version": 1,
+      "title": "Family workshop: follow the decision from need to claim",
+      "subtitle": "Apply the rules together when one household faces several decisions.",
+      "duration": 296.71,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/d367649c-b536-45b9-a08a-fd3a41e08bfe.png",
+      "questions": 8,
+      "module": "Mixed application",
+      "outline": [
+        "1.3",
+        "3.1",
+        "3.4",
+        "3.8",
+        "4.1",
+        "5.1",
+        "5.2"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "60",
+      "number": 60,
+      "version": 1,
+      "title": "Business and retirement workshop: put the rules together",
+      "subtitle": "Follow the purpose, money, income promise and tax event before choosing an answer.",
+      "duration": 291.676,
+      "poster": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F3Wyc8aPIE73qdpViOJx8BolpH/0b957e04-1101-4d09-8feb-387e5e256f89.png",
+      "questions": 8,
+      "module": "Mixed application",
+      "outline": [
+        "3.5",
+        "6.3",
+        "6.5",
+        "7.3",
+        "7.5",
+        "7.6",
+        "8.3"
+      ],
+      "status": "ready"
+    }
+  ]
+}

@@ -74,16 +74,16 @@ test('Agent Portal entry points keep their direct redirects', () => {
   }
 })
 
-test('the November 6 Matchup export is not shadowed by a proxy', () => {
+test('the bundled Matchup export is not shadowed by a proxy', () => {
   const routes = redirectBlocks()
   const protectedPaths = ['/matchups', '/matchups/', '/matchups/*', '/_next/*', '/amg-logo.webp', '/icon.svg']
   assert.equal(routes.some(route => protectedPaths.includes(route.from)), false)
   assert.equal(routes.some(route => route.from === '/*'), false)
   const matchup = fs.readFileSync(new URL('../matchups/index.html', import.meta.url), 'utf8')
-  assert.match(matchup, /Are you an Agent or a CFT/)
-  assert.match(matchup, /type="radio"[^>]*value="agent"/)
-  assert.match(matchup, /type="radio"[^>]*value="cft"/)
-  for (const page of ["agent.html", "cft.html"]) {
+  assert.match(matchup, /Find the right trainer/)
+  assert.match(matchup, /href="\/matchups\/broker\/"/)
+  assert.match(matchup, /href="\/matchups\/cft\/"/)
+  for (const page of ["agent/index.html", "broker/index.html", "cft/index.html"]) {
     assert.ok(fs.existsSync(new URL(`../matchups/${page}`, import.meta.url)))
   }
   assert.match(matchup, /src="\/matchups\/amg-logo\.webp"/)

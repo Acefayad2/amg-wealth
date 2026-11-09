@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { buildAdminLearningSnapshot, createAdminLearningHandler, persistAdminLearningSnapshot } from '../netlify/functions/_shared/admin-learning.mjs';
 import { schema } from '../netlify/functions/_shared/learning-core.mjs';
+import fs from 'node:fs';
 
 const NOW = Date.parse('2026-11-09T18:42:00Z');
 const USER = { id: 'learner-001', name: 'Jordan Sample', email: 'jordan@example.test' };
@@ -60,4 +61,12 @@ test('admin licensing endpoint is admin-only and returns paginated learners', as
   assert.equal(payload.page_size, 25);
   const denied = createAdminLearningHandler({ authenticate: async () => ({ id: 'other' }), isAdmin: async () => false, list: async () => assert.fail() });
   assert.equal((await denied(new Request('https://amg.example.test/.netlify/functions/admin-learning'))).status, 403);
+});
+
+test('admin preview contains no sample learner placeholders', () => {
+  const source = fs.readFileSync(new URL('../src/admin.mjs', import.meta.url), 'utf8');
+  const licensingPreview = source.slice(source.indexOf('previewMode === "licensing"'), source.indexOf('showAdminView("licensing")'));
+  assert(!licensingPreview.includes('Jordan Sample'));
+  assert(!licensingPreview.includes('Taylor Agent'));
+  assert(!licensingPreview.includes('learnerId'));
 });

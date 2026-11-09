@@ -1024,13 +1024,7 @@ async function init() {
       });
       showAdminView("inquiries");
     } else if (previewMode === "licensing") {
-      Object.assign(licensingState, {
-        preview: true, total: 2,
-        learners: [
-          { learnerId: "preview-1", name: "Jordan Sample", email: "jordan@example.com", lastActiveAt: "2026-11-09T18:42:00.000Z", completedLessons: 14, totalLessons: 60, courseProgressPercent: 23.33, attempts: [{ attemptId: "attempt-1", title: "Maryland Life Mock Exam A", status: "in_progress", startedAt: "2026-11-09T18:20:00.000Z", submittedAt: null, answered: 37, total: 90, progressPercent: 41.11, scorePercent: null }] },
-          { learnerId: "preview-2", name: "Taylor Agent", email: "taylor@example.com", lastActiveAt: "2026-11-08T16:10:00.000Z", completedLessons: 60, totalLessons: 60, courseProgressPercent: 100, attempts: [{ attemptId: "attempt-2", title: "Maryland Life Diagnostic", status: "completed", startedAt: "2026-11-08T15:20:00.000Z", submittedAt: "2026-11-08T16:10:00.000Z", answered: 32, total: 32, progressPercent: 100, scorePercent: 87.5 }] },
-        ],
-      });
+      Object.assign(licensingState, { preview: true, total: 0, learners: [] });
       showAdminView("licensing");
     }
     return;

@@ -20,6 +20,7 @@ function setup({ token = "admin-token", fetchImpl } = {}) {
   const buttons = ["communications", "results"].map((view) => ({ dataset: { adminView: view }, setAttribute() {} }));
   const context = {
     inquiryState: { records: [], total: 0, page: 1, pageSize: 25, loading: false, error: "", requestId: 0, controller: null, preview: false },
+    licensingState: { learners: [], total: 0, page: 1, pageSize: 25, loading: false, error: "", requestId: 0, controller: null, preview: true },
     resultState: { records: [], total: 0, page: 1, pageSize: 25, loading: false, error: "", requestId: 0, controller: null, preview: false },
     authClient: { auth: { getSession: async () => ({ data: { session: token ? { access_token: token } : null }, error: null }) } },
     lookup, document: { querySelectorAll: () => buttons }, AbortController,

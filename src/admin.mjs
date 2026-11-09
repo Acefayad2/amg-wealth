@@ -8,6 +8,7 @@ const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 let authClient = null;
 let startupBusy = false;
 const inquiryState = { records: [], total: 0, page: 1, pageSize: 25, loading: false, error: "", requestId: 0, controller: null, preview: false };
+const licensingState = { learners: [], total: 0, page: 1, pageSize: 25, loading: false, error: "", requestId: 0, controller: null, preview: false };
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
 const initials = (name) => String(name || "?").split(/\s+/).map((part) => part[0]).join("").slice(0, 2).toUpperCase();
 const contactLabel = (contact) => contact.full_name || contact.phone;
@@ -50,8 +51,16 @@ function resetInquiries() {
   renderInquiries();
   $("#communications-view").hidden = false;
   $("#inquiries-view").hidden = true;
-  $(".sidebar").classList.remove("inquiry-mode");
+  $("#licensing-view").hidden = true;
+  $(".sidebar").classList.remove("focused-mode");
   document.querySelectorAll("[data-admin-view]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.adminView === "communications")));
+}
+
+function resetLicensing() {
+  licensingState.controller?.abort();
+  licensingState.requestId += 1;
+  Object.assign(licensingState, { learners: [], total: 0, page: 1, loading: false, error: "", controller: null });
+  renderLicensing();
 }
 
 function inquiryContact(value, kind) {
@@ -123,13 +132,71 @@ async function loadInquiries(page = 1) {
   }
 }
 
+function renderLicensing() {
+  const { learners, total, page, pageSize, loading, error } = licensingState;
+  const pages = Math.max(1, Math.ceil(total / pageSize));
+  $("#licensing-list").setAttribute("aria-busy", String(loading));
+  $("#licensing-summary").textContent = loading ? "Loading licensing progress…" : error ? "Licensing progress could not be refreshed." : `${total.toLocaleString()} ${total === 1 ? "learner" : "learners"} tracked`;
+  $("#licensing-error").hidden = !error;
+  $("#licensing-error").textContent = error;
+  $("#refresh-licensing").disabled = loading;
+  $("#previous-licensing").disabled = loading || page <= 1;
+  $("#next-licensing").disabled = loading || page >= pages;
+  $("#licensing-pagination").hidden = pages <= 1;
+  $("#licensing-page").textContent = `Page ${page} of ${pages}`;
+  $("#licensing-list").innerHTML = learners.length ? learners.map((learner) => {
+    const attempts = Array.isArray(learner.attempts) ? learner.attempts : [];
+    const inProgress = attempts.filter((attempt) => attempt.status === "in_progress").length;
+    const completed = attempts.length - inProgress;
+    const lastActive = Number.isFinite(Date.parse(learner.lastActiveAt)) ? formatDateTime(learner.lastActiveAt) : "Activity time unavailable";
+    const attemptRows = attempts.length ? `<div class="attempt-list"><h3>Exam attempts</h3>${attempts.map((attempt) => {
+      const isComplete = attempt.status === "completed";
+      const detail = isComplete
+        ? `${Number(attempt.scorePercent).toFixed(2).replace(/\.00$/, "")}% score · ${attempt.answered} of ${attempt.total} answered`
+        : `${attempt.answered} of ${attempt.total} answered · ${Math.round(attempt.progressPercent)}% through attempt`;
+      return `<article class="attempt-row"><div><strong>${escapeHtml(attempt.title)}</strong><span>${escapeHtml(detail)}</span></div><span class="attempt-status${isComplete ? " completed" : ""}">${isComplete ? "Completed" : "In progress"}</span><div class="attempt-progress" aria-label="${escapeHtml(String(Math.round(attempt.progressPercent)))}% answered"><span style="width:${Math.max(0, Math.min(100, Number(attempt.progressPercent) || 0))}%"></span></div></article>`;
+    }).join("")}</div>` : '<div class="attempt-list"><h3>Exam attempts</h3><p class="muted">No exam attempt started yet.</p></div>';
+    return `<article class="learner-card"><header><div><p class="eyebrow">AMG learner</p><h2>${escapeHtml(learner.name || "Name not provided")}</h2><a class="learner-email" href="mailto:${encodeURIComponent(learner.email)}">${escapeHtml(learner.email)}</a></div><span class="learner-active">Last active ${escapeHtml(lastActive)}</span></header><div class="learner-stats"><div class="learner-stat"><strong>${escapeHtml(learner.completedLessons)} / ${escapeHtml(learner.totalLessons)}</strong><span>Lessons completed</span></div><div class="learner-stat"><strong>${completed}</strong><span>Completed exams</span></div><div class="learner-stat"><strong>${inProgress}</strong><span>Unfinished exams</span></div></div>${attemptRows}</article>`;
+  }).join("") : loading ? '<p class="empty">Retrieving learner progress…</p>' : error ? '<p class="empty">Use Refresh progress to try again.</p>' : '<div class="learner-empty"><h2>No learner activity yet</h2><p>People will appear here as soon as they enter AMG Learning. Their saved course and exam progress will remain visible even if an exam is unfinished.</p></div>';
+}
+
+async function loadLicensing(page = 1) {
+  if (licensingState.loading) return;
+  if (licensingState.preview) { renderLicensing(); return; }
+  const requestId = ++licensingState.requestId;
+  const controller = new AbortController();
+  Object.assign(licensingState, { loading: true, error: "", controller });
+  renderLicensing();
+  try {
+    const { data, error } = await authClient.auth.getSession();
+    if (error) throw error;
+    if (requestId !== licensingState.requestId) return;
+    const token = data.session?.access_token;
+    if (!token) throw new Error("Sign in again to view licensing progress.");
+    const response = await fetch(`/.netlify/functions/admin-learning?page=${page}`, { headers: { accept: "application/json", authorization: `Bearer ${token}` }, cache: "no-store", signal: controller.signal });
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(payload.error || "Unable to load licensing progress. Try refreshing again.");
+    if (requestId !== licensingState.requestId) return;
+    if (!Array.isArray(payload.learners) || !Number.isInteger(payload.total) || payload.total < 0 || !Number.isInteger(payload.page) || payload.page < 1 || !Number.isInteger(payload.page_size) || payload.page_size < 1) throw new Error("The licensing progress response was incomplete. Try refreshing again.");
+    Object.assign(licensingState, { learners: payload.learners, total: payload.total, page: payload.page, pageSize: payload.page_size });
+  } catch (error) {
+    if (requestId !== licensingState.requestId || error.name === "AbortError") return;
+    licensingState.error = error.message || "Unable to load licensing progress. Try refreshing again.";
+  } finally {
+    if (requestId === licensingState.requestId) { licensingState.loading = false; licensingState.controller = null; renderLicensing(); }
+  }
+}
+
 function showAdminView(view) {
   const inquiries = view === "inquiries";
-  $("#communications-view").hidden = inquiries;
+  const licensing = view === "licensing";
+  $("#communications-view").hidden = inquiries || licensing;
   $("#inquiries-view").hidden = !inquiries;
-  $(".sidebar").classList.toggle("inquiry-mode", inquiries);
+  $("#licensing-view").hidden = !licensing;
+  $(".sidebar").classList.toggle("focused-mode", inquiries || licensing);
   document.querySelectorAll("[data-admin-view]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.adminView === view)));
   if (inquiries) void loadInquiries();
+  if (licensing) void loadLicensing();
 }
 
 function showStartup(message = "Restoring your secure AMG session and checking CRM admin access…") {
@@ -817,6 +884,7 @@ $("#login-form").addEventListener("submit", async (event) => {
   $("#login-error").textContent = "";
   $("#login-submit").disabled = true;
   resetInquiries();
+  resetLicensing();
   try {
     if (!authClient) throw new Error("Sign-in service is still loading. Try again in a moment.");
     const { error } = await authClient.auth.signInWithPassword({ email: $("#login-email").value, password: $("#login-password").value });
@@ -829,6 +897,7 @@ $("#login-form").addEventListener("submit", async (event) => {
 $("#sign-out").addEventListener("click", async () => {
   if (startupBusy) return;
   resetInquiries();
+  resetLicensing();
   showStartup("Signing out securely…");
   await authClient.auth.signOut();
   showLogin();
@@ -839,6 +908,9 @@ document.querySelectorAll("[data-admin-view]").forEach((button) => button.addEve
 $("#refresh-inquiries").addEventListener("click", () => loadInquiries(1));
 $("#previous-inquiries").addEventListener("click", () => loadInquiries(inquiryState.page - 1));
 $("#next-inquiries").addEventListener("click", () => loadInquiries(inquiryState.page + 1));
+$("#refresh-licensing").addEventListener("click", () => loadLicensing(1));
+$("#previous-licensing").addEventListener("click", () => loadLicensing(licensingState.page - 1));
+$("#next-licensing").addEventListener("click", () => loadLicensing(licensingState.page + 1));
 $("#new-message").addEventListener("click", () => openComposer());
 $("#group-new-message").addEventListener("click", composeSelectedGroup);
 $("#add-contact").addEventListener("click", () => openContact());
@@ -951,6 +1023,15 @@ async function init() {
         error: previewMode === "inquiries-error" ? "Unable to load inquiries. Try refreshing again." : "",
       });
       showAdminView("inquiries");
+    } else if (previewMode === "licensing") {
+      Object.assign(licensingState, {
+        preview: true, total: 2,
+        learners: [
+          { learnerId: "preview-1", name: "Jordan Sample", email: "jordan@example.com", lastActiveAt: "2026-11-09T18:42:00.000Z", completedLessons: 14, totalLessons: 60, courseProgressPercent: 23.33, attempts: [{ attemptId: "attempt-1", title: "Maryland Life Mock Exam A", status: "in_progress", startedAt: "2026-11-09T18:20:00.000Z", submittedAt: null, answered: 37, total: 90, progressPercent: 41.11, scorePercent: null }] },
+          { learnerId: "preview-2", name: "Taylor Agent", email: "taylor@example.com", lastActiveAt: "2026-11-08T16:10:00.000Z", completedLessons: 60, totalLessons: 60, courseProgressPercent: 100, attempts: [{ attemptId: "attempt-2", title: "Maryland Life Diagnostic", status: "completed", startedAt: "2026-11-08T15:20:00.000Z", submittedAt: "2026-11-08T16:10:00.000Z", answered: 32, total: 32, progressPercent: 100, scorePercent: 87.5 }] },
+        ],
+      });
+      showAdminView("licensing");
     }
     return;
   }
@@ -962,7 +1043,7 @@ async function init() {
     authClient = createClient(config.url, config.key, {
       auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
     });
-    authClient.auth.onAuthStateChange((event) => { if (event === "SIGNED_OUT") resetInquiries(); });
+    authClient.auth.onAuthStateChange((event) => { if (event === "SIGNED_OUT") { resetInquiries(); resetLicensing(); } });
     $("#login-submit").disabled = false;
     await verifyAdminSession();
   } catch (error) {

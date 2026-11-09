@@ -17,11 +17,12 @@ function setup({ token = "admin-token", fetchImpl } = {}) {
     });
     return fields.get(selector);
   };
-  const buttons = ["communications", "inquiries"].map((view) => ({ dataset: { adminView: view }, setAttribute() {} }));
+  const buttons = ["communications", "inquiries", "licensing"].map((view) => ({ dataset: { adminView: view }, attributes: {}, setAttribute(name, value) { this.attributes[name] = value; } }));
   const context = {
     inquiryState: { records: [], total: 0, page: 1, pageSize: 25, loading: false, error: "", requestId: 0, controller: null, preview: false },
+    licensingState: { learners: [], total: 0, page: 1, pageSize: 25, loading: false, error: "", requestId: 0, controller: null, preview: true },
     authClient: { auth: { getSession: async () => ({ data: { session: token ? { access_token: token } : null }, error: null }) } },
-    lookup, document: { querySelectorAll: () => buttons }, AbortController,
+    lookup, buttons, document: { querySelectorAll: () => buttons }, AbortController,
     fetch: fetchImpl || (async () => ({ ok: true, json: async () => ({ inquiries: [], total: 0, page: 1, page_size: 25 }) })),
   };
   vm.runInNewContext(`const $=this.lookup;const inquiryState=this.inquiryState;const authClient=this.authClient;${helpers}\n${production}\nthis.loadInquiries=loadInquiries;this.renderInquiries=renderInquiries;this.resetInquiries=resetInquiries;this.showAdminView=showAdminView;`, context);
@@ -44,6 +45,15 @@ test("inquiries request uses the current access token and paginates without expo
   assert.equal(app.lookup("#previous-inquiries").disabled, false);
   assert.equal(app.lookup("#next-inquiries").disabled, true);
   assert.equal(app.lookup("#inquiries-pagination").hidden, false);
+});
+
+test("licensing navigation opens its dedicated workspace without loading inquiries", () => {
+  const app = setup();
+  app.showAdminView("licensing");
+  assert.equal(app.lookup("#communications-view").hidden, true);
+  assert.equal(app.lookup("#inquiries-view").hidden, true);
+  assert.equal(app.lookup("#licensing-view").hidden, false);
+  assert.equal(app.buttons.find((button) => button.dataset.adminView === "licensing").attributes["aria-pressed"], "true");
 });
 
 test("untrusted names, interests, messages and contact fields render safely", () => {

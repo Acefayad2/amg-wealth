@@ -41,6 +41,7 @@
       <nav class="workspace-nav" aria-label="Admin workspace">
         <button type="button" data-admin-view="communications" aria-pressed="true" aria-controls="communications-view">Communications</button>
         <button type="button" data-admin-view="inquiries" aria-pressed="false" aria-controls="inquiries-view">Inquiries</button>
+        <button type="button" data-admin-view="licensing" aria-pressed="false" aria-controls="licensing-view">Licensing</button>
       </nav>
       <div class="side-heading"><div><p class="eyebrow">CRM</p><h2>Contacts</h2></div><button id="add-contact" class="icon-button" title="Add contact" aria-label="Add contact">+</button></div>
       <input id="contact-search" name="contact-search" class="search" type="search" placeholder="Search contacts" aria-label="Search contacts" autocomplete="off">
@@ -109,6 +110,20 @@
           <button id="previous-inquiries" class="secondary" type="button">Previous</button>
           <span id="inquiries-page"></span>
           <button id="next-inquiries" class="secondary" type="button">Next</button>
+        </nav>
+      </section>
+      <section id="licensing-view" aria-labelledby="licensing-title" hidden>
+        <header class="topbar licensing-topbar">
+          <div><p class="eyebrow">AMG Learning</p><h1 id="licensing-title">Licensing progress</h1><p class="muted">See every learner who starts the course or an exam, including unfinished attempts.</p></div>
+          <button id="refresh-licensing" class="secondary" type="button">Refresh progress</button>
+        </header>
+        <p id="licensing-summary" class="inquiries-summary" role="status" aria-live="polite"></p>
+        <p id="licensing-error" class="form-error" role="alert" hidden></p>
+        <div id="licensing-list" class="licensing-list" aria-busy="false"></div>
+        <nav id="licensing-pagination" class="inquiries-pagination" aria-label="Licensing progress pages" hidden>
+          <button id="previous-licensing" class="secondary" type="button">Previous</button>
+          <span id="licensing-page"></span>
+          <button id="next-licensing" class="secondary" type="button">Next</button>
         </nav>
       </section>
     </main>

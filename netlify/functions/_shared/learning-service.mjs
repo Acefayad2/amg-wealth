@@ -63,10 +63,14 @@ function configuredURL(value) {
 
 // Dependencies make every authorization, CAS and reporting-failure path testable
 // without contacting production Blobs or the company's spreadsheet.
-export function createLearningHandler({ getUser, getStore, appsScriptURL = () => '', getToken = request => {
+export function createLearningHandler({ getUser, getStore, saveAdminSnapshot = async () => {}, appsScriptURL = () => '', getToken = request => {
   const match = /(?:^|;\s*)__Host-amg_session=([^;]+)/.exec(request.headers.get('cookie') || '');
   try { return match ? decodeURIComponent(match[1]) : null; } catch { return null; }
 }, fetchImpl = fetch, now = Date.now, reportTimeoutMs = REPORT_TIMEOUT_MS }) {
+  const trackForAdmin = async (store, user, records) => {
+    try { await saveAdminSnapshot(store, user, records, now()); }
+    catch { /* Learner progress remains available even if the private admin index needs a later refresh. */ }
+  };
   async function reporting(store, prefix, user, records, request, attemptSync) {
     const key = prefix + 'reporting';
     const entry = await store.getWithMetadata(key, { type: 'json' });
@@ -125,6 +129,7 @@ export function createLearningHandler({ getUser, getStore, appsScriptURL = () =>
       const store = getStore(), prefix = userPrefix(user.id);
       if (request.method === 'GET') {
         const records = await readRecords(store, prefix);
+        await trackForAdmin(store, user, records);
         if (new URL(request.url).searchParams.get('report') === '1') return json(buildReport(user, records));
         let state;
         try { state = await reporting(store, prefix, user, records, request, 'login'); }
@@ -134,6 +139,7 @@ export function createLearningHandler({ getUser, getStore, appsScriptURL = () =>
       const body = await readBody(request);
       if (body.action === 'sync-report' && Object.keys(body).length === 1) {
         const records = await readRecords(store, prefix);
+        await trackForAdmin(store, user, records);
         return json({ reporting: await reporting(store, prefix, user, records, request, 'retry') });
       }
       if (Object.keys(body).length !== 4 || !['key', 'value', 'revision', 'mutationId'].every(key => Object.prototype.hasOwnProperty.call(body, key))) throw new InputError('Invalid progress envelope');
@@ -151,6 +157,7 @@ export function createLearningHandler({ getUser, getStore, appsScriptURL = () =>
       if (retry) {
         if (retry.hash !== digest) return json({ error: 'conflict', record: publicRecord(entry.data) }, 409);
         const records = await readRecords(store, prefix);
+        await trackForAdmin(store, user, records);
         return json({ record: publicRecord(entry.data), idempotent: true, reporting: await reporting(store, prefix, user, records, request, false) });
       }
       if (revision !== (entry?.data.revision || 0)) return json({ error: 'conflict', record: publicRecord(entry?.data) }, 409);
@@ -167,11 +174,13 @@ export function createLearningHandler({ getUser, getStore, appsScriptURL = () =>
         const matchingRetry = current?.data.mutations?.find(mutation => mutation.id === mutationId && mutation.hash === digest);
         if (matchingRetry) {
           const records = await readRecords(store, prefix);
+          await trackForAdmin(store, user, records);
           return json({ record: publicRecord(current.data), idempotent: true, reporting: await reporting(store, prefix, user, records, request, false) });
         }
         return json({ error: 'conflict', record: publicRecord(current?.data) }, 409);
       }
       const records = await readRecords(store, prefix);
+      await trackForAdmin(store, user, records);
       let state;
       try { state = await reporting(store, prefix, user, records, request, importantEvent ? 'event' : false); }
       catch { state = { status: 'pending', lastSyncedAt: null, retryAfterMs: REPORT_INTERVAL_MS }; }

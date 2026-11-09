@@ -90,6 +90,19 @@ test('GET has private no-store headers and absent records; paths contain no raw 
   assert.notEqual(userPrefix(USER.id), userPrefix('another-user'));
 });
 
+test('every learner visit and unfinished assessment save refreshes the private admin snapshot', async () => {
+  const snapshots = [];
+  const s = setup({ saveAdminSnapshot: async (_store, user, savedRecords) => snapshots.push({ user, records: clone(savedRecords) }) });
+  await send(s);
+  const partial = attempt(schema.forms[1], false, 'unfinished-001');
+  partial.answers[0] = 0;
+  await send(s, envelope(assessmentValue([partial]), 0, 'mutation-partial-001', schema.assessmentKey));
+  assert.equal(snapshots.length, 2);
+  assert.equal(snapshots[0].user.email, USER.email);
+  assert.equal(snapshots[1].records[schema.assessmentKey].value.attempts[0].submittedAt, null);
+  assert.equal(snapshots[1].records[schema.assessmentKey].value.attempts[0].answers[0], 0);
+});
+
 test('every current lesson state and all four assessment forms validate', () => {
   for (const lesson of schema.lessons) {
     assert.deepEqual(validateValue(lesson.key, lessonValue(lesson), NOW), lessonValue(lesson));
@@ -321,6 +334,7 @@ test('source adapter uses signed server session, strong store and Netlify enviro
   assert.match(source, /consistency: 'strong'/); assert.match(source, /Netlify\.env\.get\('AMG_APPS_SCRIPT_URL'\)/);
   assert(!source.includes('process.env'));
   assert.match(source, /readAccessCookie\(request, SESSION_COOKIE\)/);
+  assert.match(source, /saveAdminSnapshot: persistAdminLearningSnapshot/);
   assert(!source.includes('@netlify/identity'));
   assert(!source.includes('nf_jwt'));
   assert(!source.includes('VITE_APPS_SCRIPT_URL'), 'Legacy build-time endpoint must never become a reporting destination');

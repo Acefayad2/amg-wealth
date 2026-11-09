@@ -1,0 +1,14 @@
+body.account-loading main,body.account-loading .app-header,body.account-loading .app-footer{visibility:hidden}
+.account-controls{margin-left:auto;display:flex;align-items:center;gap:12px;font-size:12px;font-weight:650;min-width:0}
+.account-controls>span{max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.account-controls button,.account-sync-status button{padding:6px 10px;font-size:12px;white-space:nowrap}
+.account-sync-status{max-width:1360px;margin:0 auto;padding:8px 0;color:var(--muted,#686f68);font-size:11px;min-height:32px}
+.account-sync-status:empty{display:none}
+#account-access-guard{font-family:var(--font,system-ui,sans-serif);color:#202820;line-height:1.6}
+#account-access-guard h1{margin-bottom:16px;letter-spacing:-.025em}
+#account-access-guard button{font:inherit;font-size:14px;cursor:pointer;border:1px solid #c7cbc4;border-radius:9px;padding:10px 16px;background:#fff;color:#202820;margin-top:8px}
+#account-access-guard button:first-of-type{background:#202820;color:#fff;border-color:#202820}
+#account-access-guard button:focus-visible{outline:3px solid #76603a;outline-offset:4px}
+@media(max-width:740px){.account-controls{width:100%;justify-content:space-between;order:5;margin-left:0;padding:0 0 10px}.app-header-inner:has(.account-controls){flex-wrap:wrap;column-gap:18px;row-gap:0}.account-sync-status{padding:8px 20px}.account-controls>span{max-width:240px}}
+@media(min-width:741px) and (max-width:1440px){.account-sync-status{padding-left:40px;padding-right:40px}.app-header-inner:has(.account-controls){gap:24px}.account-controls>span{max-width:150px}}
+@media(min-width:741px) and (max-width:1100px){.app-header-inner:has(.account-controls){gap:16px}.app-header:has(.account-controls) .program-label{display:none}.account-controls>span{max-width:110px}}

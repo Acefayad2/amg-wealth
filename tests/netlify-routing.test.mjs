@@ -27,28 +27,27 @@ test('payment entry points remain forced LaunchPoint redirects', () => {
   assert.match(config, /node_bundler\s*=\s*"esbuild"/)
 })
 
-test('only explicit public practice pages are reverse proxied', () => {
-  const proxies = redirectBlocks().filter(route => route.status === 200)
-  assert.deepEqual(
-    proxies.filter(route => route.from === '/practice' || route.from?.startsWith('/practice/')).map(route => route.from),
-    ['/practice', '/practice/', '/practice/health', '/practice/health/'],
-  )
-  assert.equal(proxies.some(route => route.from === '/practice/*'), false)
-  assert.equal(proxies.some(route => route.from?.includes('course')), false)
-  assert.equal(proxies.some(route => route.from?.includes('login')), false)
-  assert.equal(proxies.some(route => route.from?.includes('api')), false)
-})
-
-test('protected Life uses redirects while public assets and guides are explicit', () => {
+test('AMG Learning is served from this site, not proxied to the old exam portal', () => {
   const routes = redirectBlocks()
-  assert.ok(routes.some(route => route.from === '/course/*' && route.status === 302))
-  assert.ok(routes.some(route => route.from === '/login/*' && route.status === 302))
-  assert.ok(routes.some(route => route.from === '/practice-assets/*' && route.status === 200))
-  assert.ok(routes.some(route => route.from === '/guides/accident-health.docx' && route.status === 200))
-  assert.ok(routes.some(route => route.from === '/guides/life-producer.docx' && route.status === 200))
+  assert.equal(routes.some(route => route.to?.includes('amg-exam-portal')), false)
+  for (const prefix of ['/course', '/login', '/api', '/practice-assets', '/guides']) {
+    assert.equal(routes.some(route => route.from?.startsWith(prefix)), false, prefix)
+  }
+  const health = routes.find(route => route.from === '/practice/health')
+  assert.deepEqual({ to: health?.to, status: health?.status, force: health?.force }, { to: '/practice/index.html', status: 200, force: true })
+  assert.equal(routes.some(route => route.from === '/practice/*'), false)
   assert.match(resources, /href="\/practice\/health\/"/)
 })
 
+test('AMG Learning pages, practice bundle and study guides ship with the site', () => {
+  for (const file of ['course/index.html', 'course/assessments/index.html', 'course/lesson-01/index.html', 'course/lesson-60/index.html', 'login/index.html', 'practice/index.html', 'guides/accident-health.docx', 'guides/life-producer.docx']) {
+    assert.ok(fs.existsSync(new URL('../' + file, import.meta.url)), file)
+  }
+  const practice = fs.readFileSync(new URL('../practice/index.html', import.meta.url), 'utf8')
+  const bundles = [...practice.matchAll(/(?:src|href)="(\/practice-assets\/[^"]+)"/g)].map(match => match[1])
+  assert.ok(bundles.length >= 2)
+  for (const bundle of bundles) assert.ok(fs.existsSync(new URL('..' + bundle, import.meta.url)), bundle)
+})
 
 test('AMG Matchups cards use the primary-domain portal', () => {
   const toolkit = resources.match(/<section class="resource-section" id="toolkit"[\s\S]*?<\/section>/)?.[0]

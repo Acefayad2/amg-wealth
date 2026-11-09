@@ -41,67 +41,23 @@
   status = 302
   force = true
 
-# Serve public Health resources on the AMG origin. Protected Life routes use a
-# normal redirect so the exam portal's signed Edge authorization still runs;
-# proxying those routes between Netlify sites would bypass that protection.
-[[redirects]]
-  from = "/practice"
-  to = "https://amg-exam-portal.netlify.app/"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/practice/"
-  to = "https://amg-exam-portal.netlify.app/"
-  status = 200
-  force = true
-
+# AMG Learning (licensing course, practice tests, study guides) is served from
+# this site. Built output is synced from Acefayad2/amg-practice-exam; see
+# docs/learning-course.md. /course/* is gated by
+# netlify/edge-functions/course-access.ts; /api/access and /api/learning are
+# netlify/functions/learning-access.mts and learning.mts.
+# The practice app (practice/index.html) is a single-page app; Health is a
+# client-side route. Netlify matches /x and /x/ alike, so one rule covers both.
 [[redirects]]
   from = "/practice/health"
-  to = "https://amg-exam-portal.netlify.app/health/"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/practice/health/"
-  to = "https://amg-exam-portal.netlify.app/health/"
+  to = "/practice/index.html"
   status = 200
   force = true
 
 [[redirects]]
   from = "/health/*"
-  to = "/practice/health/:splat"
+  to = "/practice/health/"
   status = 302
-  force = true
-
-[[redirects]]
-  from = "/course/*"
-  to = "https://amg-exam-portal.netlify.app/course/:splat"
-  status = 302
-  force = true
-
-[[redirects]]
-  from = "/login/*"
-  to = "https://amg-exam-portal.netlify.app/login/:splat"
-  status = 302
-  force = true
-
-[[redirects]]
-  from = "/practice-assets/*"
-  to = "https://amg-exam-portal.netlify.app/practice-assets/:splat"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/guides/accident-health.docx"
-  to = "https://amg-exam-portal.netlify.app/Accident%20%26%20Health%20Study%20Guide.docx"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/guides/life-producer.docx"
-  to = "https://amg-exam-portal.netlify.app/Life%20Producer%20Study%20Guide.docx"
-  status = 200
   force = true
 
 [[headers]]

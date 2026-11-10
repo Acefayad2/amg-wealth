@@ -156,12 +156,12 @@
  }
  function exam(a){
   currentAttempt=a;const f=bank.formFor(a),q=f.questions[a.current];
-  const bar = node('div', undefined, 'exam-bar');
+  const bar = node('div', undefined, 'exam-bar reference-exam-bar');
   const position = node('div');
   position.append(node('strong', testTitle(f)), node('div', 'Question ' + (a.current+1) + ' of ' + f.questions.length));
   bar.append(position);
-  app.append(bar);
-  const layout=node('div',undefined,'exam-layout'),panel=node('section',undefined,'question-panel'),fieldset=node('fieldset');fieldset.append(node('legend',q.prompt));
+
+  const layout=node('div',undefined,'exam-layout'),panel=node('section',undefined,'question-panel'),fieldset=node('fieldset');panel.append(bar);const progress=node('progress',undefined,'reference-question-progress');progress.max=f.questions.length;progress.value=a.current;progress.setAttribute('aria-label','Questions completed');bar.append(progress);const mark=node('span','?','reference-question-icon');mark.setAttribute('aria-hidden','true');panel.append(mark);fieldset.append(node('legend',q.prompt));
   q.options.forEach((text,i)=>{const label=node('label',undefined,'answer-option'),input=document.createElement('input');Object.assign(input,{type:'radio',name:'exam-answer',value:String(i),checked:a.answers[a.current]===i});input.addEventListener('change',()=>{if(!active(a))return;a.answers[a.current]=i;save();updateNav(a);});label.append(input,node('span',String.fromCharCode(65+i)+'. '+text));fieldset.append(label);});panel.append(fieldset);
   const unsure=node('label',undefined,'confidence'),cb=document.createElement('input');cb.type='checkbox';cb.checked=a.uncertain[a.current];cb.addEventListener('change',()=>{if(!active(a))return;a.uncertain[a.current]=cb.checked;save();});unsure.append(cb,node('span','I’m uncertain about this answer — include it in later review'));panel.append(unsure);
   const actions=node('div',undefined,'actions'),prev=button('Previous',()=>move(a,a.current-1)),next=button('Next',()=>move(a,a.current+1));prev.disabled=a.current===0;next.disabled=a.current===f.questions.length-1;

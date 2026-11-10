@@ -7,12 +7,14 @@ export type LearnerSnapshot = {
   totalLessons: number;
   courseProgressPercent: number;
   currentLesson: string | null;
+  courses?: { id: string; title: string; completedLessons: number; totalLessons: number; lessons: { lessonId: string; title: string; complete: boolean; lastActiveAt: string | null }[] }[];
   attempts: unknown[];
   firstSeenAt?: string;
 };
 
 export function buildAdminLearningSnapshot(user: { id: string; name?: string; email: string }, records: Record<string, unknown>, observedAt?: number): LearnerSnapshot;
 export function persistAdminLearningSnapshot(store: any, user: { id: string; name?: string; email: string }, records: Record<string, unknown>, observedAt?: number): Promise<LearnerSnapshot>;
+export function refreshAdminLearningSnapshot(store: any, learner: LearnerSnapshot): Promise<LearnerSnapshot>;
 export function createAdminLearningHandler(deps: {
   authenticate: (request: Request) => Promise<{ id: string }>;
   isAdmin: (id: string) => Promise<boolean>;

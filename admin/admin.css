@@ -106,3 +106,34 @@
 .account-profile strong{font-size:13px;font-weight:700;line-height:1.4}
 .account-profile>div>span{margin-top:3px;font-size:11px;color:rgba(255,255,255,.7);line-height:1.4}
 @media(max-width:900px){.sidebar .sidebar-footer{display:grid;margin-top:18px}}
+
+.licensing-settings-row{gap:10px;flex-wrap:wrap}
+#licensing-learning{border-color:#d1bc7a;color:var(--green);background:#fbf7e9}
+.learning-progress-dialog{width:min(1080px,calc(100% - 32px));background:#eeece3}
+.learning-progress-content{gap:18px;padding:30px;background:#eeece3;color:#123e32}
+.learning-progress-content>.dialog-heading h2{font-size:clamp(24px,4vw,36px)}
+.learning-progress-content>.muted{max-width:720px;margin:0;font-size:13px;line-height:1.7}
+.learning-progress-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.learning-progress-toolbar p{margin:0;color:var(--muted);font-size:13px}
+.learning-progress-list{display:grid;gap:22px}
+.learning-progress-list .learner-card{min-width:0;padding:24px;border:1px solid #f8f7ef;background:#f2f0e8;box-shadow:7px 7px 20px #d7d4c7,-5px -5px 16px #fffdf5}
+.learner-name{margin:0;font:600 26px 'Playfair Display',serif;overflow-wrap:anywhere}
+.learner-courses{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin:24px 0}
+.learner-course{min-width:0}
+.learner-course-heading{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.learner-course-heading h3{margin:0;font-size:14px}
+.learner-course-heading>span{color:var(--muted);font-size:11px;white-space:nowrap}
+.learner-course progress{display:block;width:100%;height:8px;margin:12px 0;border:0;border-radius:20px;overflow:hidden;background:#deded2;accent-color:var(--gold)}
+.learner-course progress::-webkit-progress-bar{background:#deded2;border-radius:20px}
+.learner-course progress::-webkit-progress-value{background:var(--gold);border-radius:20px}
+.learner-course progress::-moz-progress-bar{background:var(--gold);border-radius:20px}
+.learner-current{margin:10px 0;color:var(--muted);font-size:12px;line-height:1.6;overflow-wrap:anywhere}
+.learner-lessons,.learner-exams{margin-top:15px;border-top:1px solid #dcded2;padding-top:12px}
+.learner-course summary{cursor:pointer;font-size:12px;font-weight:700;line-height:1.6}
+.learner-lessons ul{list-style:none;padding:0;margin:12px 0;max-height:270px;overflow:auto}
+.learner-lessons li{display:grid;grid-template-columns:80px minmax(0,1fr);gap:10px;padding:9px 0;border-top:1px solid #e1e2d8;font-size:11px;line-height:1.6}
+.lesson-state{font-size:10px;color:#7e7762}.lesson-state.complete{color:#16704d}
+.learner-course .attempt-row{padding:13px;background:#e9e8df;box-shadow:inset 2px 2px 5px #d8d6ca,inset -2px -2px 5px #fffdf3;font-size:12px}
+.learner-course .attempt-status{font-size:10px;white-space:nowrap}
+.learner-course .attempt-row progress{grid-column:1/-1;margin:2px 0}
+@media(max-width:760px){.learner-courses{grid-template-columns:1fr}.learning-progress-content{padding:20px}.learning-progress-list .learner-card{padding:18px}.learning-progress-toolbar{align-items:flex-start;flex-direction:column}.learner-course .attempt-row{grid-template-columns:minmax(0,1fr) auto}.learner-course .attempt-status{grid-column:2;grid-row:1}}

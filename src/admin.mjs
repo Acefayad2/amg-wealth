@@ -4,13 +4,16 @@ import { learnerProgressCard } from "../admin/licensing-learning.mjs";
 import { licensingSteps, licensingProgress, selectedStepsForStage, taskDone } from "../licensing-progress/steps.js";
 import { normalizeUsPhone } from "../netlify/functions/_shared/us-phone.mjs";
 import { createClient } from "@supabase/supabase-js";
-import { STATUS_LABELS, contactsForGroupContext, defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, personalizationHint, recurringCalendarEntries, scheduleInputValue, weekCells, weekRangeLabel } from "../admin/core.mjs";
+import { STATUS_LABELS, contactsForGroupContext, defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, personalizationHint, recurringCalendarEntries, scheduleInputValue, scheduledDateTimeUtc, weekCells, weekRangeLabel } from "../admin/core.mjs";
 
 const $ = (selector) => document.querySelector(selector);
-const state = { contacts: [], groups: [], messages: [], recurring_reminders: [], scheduler_events: [], admin_invitations: [], dispatch_control: { individual_enabled: false, scheduled_enabled: false, version: 1, audit: [] }, storage_verified: false, transport: {}, week: new Date(), search: "", selectedGroupId: null, composerGroupId: null, draftId: null, messageEditSnapshot: null, messageRequestKey: null, messageBusy: false, pendingScheduleSave: null, contactBusy: false, contactEditVersion: null, recurringDraftId: null, recurringEditSnapshot: null, recurringRequestKey: null, recurringBusy: false, recurringStatusBusy: false, dispatchBusy: false, pendingDispatchChange: null, adminInviteBusy: false };
+const initialState = () => ({ contacts: [], groups: [], messages: [], recurring_reminders: [], scheduler_events: [], admin_invitations: [], dispatch_control: { individual_enabled: false, scheduled_enabled: false, version: 1, audit: [] }, storage_verified: false, transport: {}, week: new Date(), search: "", selectedGroupId: null, composerGroupId: null, draftId: null, messageEditSnapshot: null, messageRequestKey: null, messageBusy: false, pendingScheduleSave: null, contactBusy: false, contactEditVersion: null, recurringDraftId: null, recurringEditSnapshot: null, recurringRequestKey: null, recurringBusy: false, recurringStatusBusy: false, dispatchBusy: false, pendingDispatchChange: null, adminInviteBusy: false });
+const state = initialState();
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 let authClient = null;
 let startupBusy = false;
+let sessionRevision = 0;
+let licensingStageEdited = false;
 let accountUserId = null;
 
 function renderAccountProfile(user, profile = null) {
@@ -34,7 +37,9 @@ const formatTime = (value) => new Intl.DateTimeFormat("en-US", { hour: "numeric"
 const formatDateTime = (value) => value ? new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value)) : "Not scheduled";
 
 async function api(body) {
+  const revision = sessionRevision;
   const { data: sessionData, error: sessionError } = await authClient.auth.getSession();
+  if (revision !== sessionRevision) throw new Error("The admin session changed. Sign in again.");
   if (sessionError) throw sessionError;
   const token = sessionData.session?.access_token;
   if (!token) throw new Error("Sign in required.");
@@ -44,6 +49,7 @@ async function api(body) {
     body: body ? JSON.stringify(body) : undefined,
   });
   const payload = await response.json().catch(() => ({}));
+  if (revision !== sessionRevision) throw new Error("The admin session changed. Sign in again.");
   if (!response.ok) throw new Error(payload.error || "The CRM request failed.");
   return payload;
 }
@@ -57,7 +63,9 @@ function toast(message) {
 }
 
 async function load() {
+  const revision = sessionRevision;
   const payload = await api();
+  if (revision !== sessionRevision) return;
   Object.assign(state, payload);
   render();
 }
@@ -162,10 +170,14 @@ async function loadInquiries(page = 1) {
 const examCalendarState = { week: mondayOf(), exams: [], loading: false, requestId: 0, error: '' };
 let calendarUnlock = '';
 async function licensingCalendarRequest(url, body = null, unlock = '') {
+  const revision = sessionRevision;
   const { data, error } = await authClient.auth.getSession();
+    if (revision !== sessionRevision) throw new Error("The admin session changed. Sign in again.");
   if (error || !data.session?.access_token) throw new Error('Sign in again to access licensing.');
   const response = await fetch(url, { method: body ? 'POST' : 'GET', headers: { authorization: `Bearer ${data.session.access_token}`, ...(body ? { 'content-type': 'application/json' } : {}), ...(unlock ? { 'x-calendar-unlock': unlock } : {}) }, body: body ? JSON.stringify(body) : undefined, cache: 'no-store' });
+    if (revision !== sessionRevision) throw new Error("The admin session changed. Sign in again.");
   const payload = await response.json().catch(() => ({}));
+    if (revision !== sessionRevision) throw new Error("The admin session changed. Sign in again.");
   if (!response.ok) throw new Error(payload.error || 'The exam calendar could not load.');
   return payload;
 }
@@ -203,7 +215,9 @@ function lockCalendarSettings() {
   $('#calendar-settings-status').textContent = '';
 }
 async function showCalendarConnection(action = 'status') {
+  const revision = sessionRevision;
   const payload = await licensingCalendarRequest('/api/licensing-calendar-settings', { action }, calendarUnlock);
+    if (revision !== sessionRevision) return;
   $('#calendar-feed-url').value = payload.feedUrl;
   $('#calendar-google-link').href = payload.googleUrl;
   $('#calendar-unlock-form').hidden = true;
@@ -211,7 +225,9 @@ async function showCalendarConnection(action = 'status') {
 }
 
 async function licensingApi(body = null, page = 1) {
+  const revision = sessionRevision;
   const { data, error } = await authClient.auth.getSession();
+    if (revision !== sessionRevision) throw new Error("The admin session changed. Sign in again.");
   if (error) throw error;
   const token = data.session?.access_token;
   if (!token) throw new Error("Sign in again to manage licensing.");
@@ -220,7 +236,9 @@ async function licensingApi(body = null, page = 1) {
   if (licensingState.status) params.set("status", licensingState.status);
   params.set("category", licensingState.category);
   const response = await fetch(`/api/licensing-pipeline?${params}`, { method: body ? "POST" : "GET", headers: { authorization: `Bearer ${token}`, ...(body ? { "content-type": "application/json" } : {}) }, body: body ? JSON.stringify(body) : undefined, cache: "no-store" });
+    if (revision !== sessionRevision) throw new Error("The admin session changed. Sign in again.");
   const payload = await response.json().catch(() => ({}));
+    if (revision !== sessionRevision) throw new Error("The admin session changed. Sign in again.");
   if (!response.ok) throw new Error(payload.error || "Licensing could not be updated.");
   return payload;
 }
@@ -342,6 +360,7 @@ async function loadLearningProgress(page = 1, silent = false) {
 }
 
 function openLicensingPerson(person = null) {
+  licensingStageEdited = false;
   $("#licensing-person-form").reset();
   $("#licensing-person-title").textContent = person?.id ? "Edit licensing progress" : "Add a person";
   $("#licensing-person-id").value = person?.id || "";
@@ -382,12 +401,30 @@ function showStartupError(message) {
   $("#startup-error-actions").hidden = false;
 }
 
-function showLogin(message = "") {
+function invalidateAdminSession() {
+  sessionRevision += 1;
+  startupBusy = false;
+  Object.assign(state, initialState());
   renderAccountProfile(null);
+  resetInquiries();
+  resetLicensing();
+  document.querySelectorAll("dialog[open]").forEach(dialog => dialog.close());
+  document.querySelectorAll("dialog form").forEach(form => form.reset());
+  document.querySelectorAll('dialog button[type="submit"], #save-draft, #confirm-send-now, #confirm-schedule-save, #admin-invite-submit').forEach(button => { button.disabled = false; });
+  document.querySelectorAll("dialog [aria-busy]").forEach(element => element.removeAttribute("aria-busy"));
+  $("#delivery-loading").hidden = true;
+  $("#confirm-schedule-save").textContent = "Confirm save";
+  $("#app").removeAttribute("aria-busy");
+  render();
+}
+
+function showLogin(message = "") {
+  invalidateAdminSession();
   $("#startup-view").hidden = true;
   $("#app").hidden = true;
   $("#auth-view").hidden = false;
   $("#login-error").textContent = message;
+  $("#login-submit").disabled = !authClient;
 }
 
 function isExpiredSessionError(error) {
@@ -400,28 +437,32 @@ function isExpiredSessionError(error) {
 async function verifyAdminSession() {
   if (startupBusy) return;
   startupBusy = true;
+  const revision = sessionRevision;
   showStartup();
   try {
     const { data, error } = await authClient.auth.getUser();
+    if (revision !== sessionRevision) return;
     if (error) throw error;
     if (!data.user) {
       showLogin();
       return;
     }
     await load();
+    if (revision !== sessionRevision) return;
     renderAccountProfile(data.user);
     const user = data.user;
     void authClient.from("profiles").select("first_name,last_name").eq("id", user.id).maybeSingle().then(async ({ data: profile }) => {
-      if (!profile?.first_name && !profile?.last_name && accountUserId === user.id) {
+      if (!profile?.first_name && !profile?.last_name && revision === sessionRevision && accountUserId === user.id) {
         const membership = await authClient.from("amg_organization_memberships").select("display_name").eq("user_id", user.id).eq("is_active", true).limit(1).maybeSingle();
         profile = membership.data;
       }
-      if (accountUserId === user.id) renderAccountProfile(user, profile);
+      if (revision === sessionRevision && accountUserId === user.id) renderAccountProfile(user, profile);
     });
     $("#startup-view").hidden = true;
     $("#auth-view").hidden = true;
     $("#app").hidden = false;
   } catch (error) {
+    if (revision !== sessionRevision) return;
     if (error.message === "AMG CRM admin access required.") {
       showLogin("This account does not have AMG CRM admin access.");
     } else if (isExpiredSessionError(error)) {
@@ -431,7 +472,7 @@ async function verifyAdminSession() {
       showStartupError(error.message || "AMG could not verify this session. Retry when your connection is ready.");
     }
   } finally {
-    startupBusy = false;
+    if (revision === sessionRevision) startupBusy = false;
   }
 }
 
@@ -468,6 +509,7 @@ function renderAdminInvitations() {
 }
 
 async function createAdminInvitation(event) {
+  const revision = sessionRevision;
   event.preventDefault();
   if (state.adminInviteBusy) return;
   const phone = normalizeUsPhone($("#admin-invite-phone").value);
@@ -484,13 +526,17 @@ async function createAdminInvitation(event) {
   submit.disabled = true;
   try {
     const result = await api({ action: "create_admin_invitation", phone });
+    if (revision !== sessionRevision) return;
     $("#admin-invite-form").reset();
     await load();
+    if (revision !== sessionRevision) return;
     toast(result.already_pending ? "A valid invitation is already pending for that phone." : "Private setup text accepted by Quo.");
   } catch (reason) {
+    if (revision !== sessionRevision) return;
     error.textContent = reason.message;
     error.focus();
   } finally {
+    if (revision !== sessionRevision) return;
     state.adminInviteBusy = false;
     submit.disabled = false;
   }
@@ -553,6 +599,7 @@ function openDispatchConfirmation(channel) {
 }
 
 async function setDispatchChannel(channel, enabled) {
+  const revision = sessionRevision;
   if (state.dispatchBusy) return;
   state.dispatchBusy = channel;
   renderDispatchControl();
@@ -564,10 +611,13 @@ async function setDispatchChannel(channel, enabled) {
     let result;
     try {
       result = await api({ action: "set_dispatch_channel", channel, enabled, expectedVersion: state.dispatch_control.version });
+    if (revision !== sessionRevision) return;
     } catch (reason) {
+    if (revision !== sessionRevision) return;
       error.textContent = reason.message;
       error.focus();
       await load().catch(() => {});
+    if (revision !== sessionRevision) return;
       return;
     }
     if (result.dispatch_control) state.dispatch_control = result.dispatch_control;
@@ -576,12 +626,15 @@ async function setDispatchChannel(channel, enabled) {
     const label = channel === "individual" ? "Individual Texts" : "Scheduled Texts";
     try {
       await load();
+    if (revision !== sessionRevision) return;
       toast(`${label} turned ${enabled ? "on" : "off"}.`);
     } catch {
+    if (revision !== sessionRevision) return;
       renderDispatchControl();
       toast(`${label} changed, but the page could not refresh. Reload before making another change.`);
     }
   } finally {
+    if (revision !== sessionRevision) return;
     state.dispatchBusy = false;
     $("#delivery-loading").hidden = true;
     $("#app").removeAttribute("aria-busy");
@@ -627,6 +680,7 @@ function renderRecurring() {
 }
 
 async function setRecurringStatus(id, status) {
+  const revision = sessionRevision;
   if (state.recurringStatusBusy) return;
   const reminder = (state.recurring_reminders || []).find((item) => item.id === id);
   if (!reminder) return;
@@ -637,11 +691,15 @@ async function setRecurringStatus(id, status) {
   state.recurringStatusBusy = true;
   try {
     await api({ action: "set_recurring_status", id, status, expectedUpdatedAt: reminder.updated_at });
+    if (revision !== sessionRevision) return;
     await load();
+    if (revision !== sessionRevision) return;
     toast(activating ? "Recurring reminder activated." : "Recurring reminder paused.");
   } catch (reason) {
+    if (revision !== sessionRevision) return;
     toast(reason.message);
   } finally {
+    if (revision !== sessionRevision) return;
     state.recurringStatusBusy = false;
   }
 }
@@ -804,7 +862,7 @@ function editMessage(id) {
   if (!message || !["draft", "scheduled"].includes(message.status)) return;
   openComposer(message.target_type, message.target_id);
   state.draftId = id;
-  state.messageEditSnapshot = { id: message.id, updated_at: message.updated_at, status: message.status };
+  state.messageEditSnapshot = { id: message.id, updated_at: message.updated_at, status: message.status, scheduled_for: message.scheduled_for };
   $("#save-draft").hidden = message.status === "scheduled";
   $("#message-body").value = message.body;
   $("#message-timezone").value = message.timezone;
@@ -838,6 +896,7 @@ function editRecurring(id) {
 }
 
 async function saveRecurring(event) {
+  const revision = sessionRevision;
   event.preventDefault();
   if (state.recurringBusy) return;
   const reminder = state.recurringEditSnapshot;
@@ -863,18 +922,23 @@ async function saveRecurring(event) {
       idempotencyKey: state.recurringRequestKey,
       expectedUpdatedAt: reminder.updated_at,
     });
+    if (revision !== sessionRevision) return;
     $("#recurring-dialog").close();
     saved = true;
     try {
       await load();
+    if (revision !== sessionRevision) return;
       toast("Inactive recurring draft saved.");
     } catch {
+    if (revision !== sessionRevision) return;
       toast("Reminder saved, but the dashboard could not refresh. Reload before editing again.");
     }
   } catch (reason) {
+    if (revision !== sessionRevision) return;
     error.textContent = reason.message;
     error.focus();
   } finally {
+    if (revision !== sessionRevision) return;
     state.recurringBusy = false;
     submit.disabled = false;
   }
@@ -908,6 +972,7 @@ function updateManualOptInConfirmation() {
 }
 
 async function saveMessage(status) {
+  const revision = sessionRevision;
   if (state.messageBusy) return;
   const error = $("#composer-error");
   const form = $("#composer-form");
@@ -923,24 +988,29 @@ async function saveMessage(status) {
       action: "save_message", messageId: state.draftId,
       body: $("#message-body").value, targetType: $("#target-type").value,
       targetId: $("#target-id").value, status,
-      scheduledFor: status === "scheduled" ? new Date($("#scheduled-for").value).toISOString() : null,
+      scheduledFor: status === "scheduled" ? scheduledDateTimeUtc($("#scheduled-for").value, $("#message-timezone").value, state.messageEditSnapshot?.scheduled_for) : null,
       timezone: $("#message-timezone").value,
       idempotencyKey: state.messageRequestKey,
       expectedUpdatedAt: state.messageEditSnapshot?.updated_at || null,
     };
     await api(payload);
+    if (revision !== sessionRevision) return;
     $("#composer").close();
     saved = true;
     try {
       await load();
+    if (revision !== sessionRevision) return;
       toast(status === "draft" ? "Draft saved." : "Message scheduled.");
     } catch {
+    if (revision !== sessionRevision) return;
       toast("Message saved, but the dashboard could not refresh. Reload before editing again.");
     }
   } catch (reason) {
+    if (revision !== sessionRevision) return;
     error.textContent = reason.message;
     error.focus();
   } finally {
+    if (revision !== sessionRevision) return;
     state.messageBusy = false;
     form.removeAttribute("aria-busy");
     $("#save-draft").disabled = false;
@@ -961,6 +1031,7 @@ function openScheduleSaveConfirmation(kind) {
 }
 
 async function confirmScheduleSave(event) {
+  const revision = sessionRevision;
   event.preventDefault();
   const kind = state.pendingScheduleSave;
   if (!kind || state.messageBusy || state.recurringBusy) return;
@@ -972,6 +1043,7 @@ async function confirmScheduleSave(event) {
     const saved = kind === "message"
       ? await saveMessage("scheduled")
       : await saveRecurring({ preventDefault() {}, submitter });
+    if (revision !== sessionRevision) return;
     if (saved) $("#schedule-save-dialog").close();
     else {
       $("#schedule-save-error").textContent = kind === "message"
@@ -980,9 +1052,11 @@ async function confirmScheduleSave(event) {
       $("#schedule-save-error").focus();
     }
   } catch (reason) {
+    if (revision !== sessionRevision) return;
     $("#schedule-save-error").textContent = reason.message;
     $("#schedule-save-error").focus();
   } finally {
+    if (revision !== sessionRevision) return;
     submitter.disabled = false;
     submitter.textContent = submitLabel;
   }
@@ -1011,6 +1085,7 @@ function openSendNowConfirmation() {
 }
 
 async function sendMessageNow(event) {
+  const revision = sessionRevision;
   event.preventDefault();
   if (state.messageBusy) return;
   state.messageBusy = true;
@@ -1029,7 +1104,9 @@ async function sendMessageNow(event) {
       idempotencyKey: state.messageRequestKey,
       personalizeName: $("#target-type").value === "individual" && $("#personalize-name").checked,
     });
+    if (revision !== sessionRevision) return;
     await load();
+    if (revision !== sessionRevision) return;
     if (result.status === "queued") {
       $("#send-now-dialog").close();
       $("#composer").close();
@@ -1043,10 +1120,13 @@ async function sendMessageNow(event) {
     $("#composer").close();
     toast("Message accepted by Quo.");
   } catch (reason) {
+    if (revision !== sessionRevision) return;
     error.textContent = reason.message;
     error.focus();
     await load().catch(() => {});
+    if (revision !== sessionRevision) return;
   } finally {
+    if (revision !== sessionRevision) return;
     state.messageBusy = false;
     submit.disabled = false;
     updateRecipientNote();
@@ -1054,6 +1134,7 @@ async function sendMessageNow(event) {
 }
 
 $("#login-form").addEventListener("submit", async (event) => {
+  const revision = sessionRevision;
   event.preventDefault();
   if (startupBusy) return;
   $("#login-error").textContent = "";
@@ -1063,16 +1144,19 @@ $("#login-form").addEventListener("submit", async (event) => {
   try {
     if (!authClient) throw new Error("Sign-in service is still loading. Try again in a moment.");
     const { error } = await authClient.auth.signInWithPassword({ email: $("#login-email").value, password: $("#login-password").value });
+    if (revision !== sessionRevision) return;
     if (error) throw error;
     await verifyAdminSession();
+    if (revision !== sessionRevision) return;
   }
-  catch (error) { $("#login-error").textContent = error.message || "Sign in failed."; }
-  finally { $("#login-submit").disabled = !authClient; }
+  catch (error) {
+    if (revision !== sessionRevision) return; $("#login-error").textContent = error.message || "Sign in failed."; }
+  finally {
+    if (revision !== sessionRevision) return; $("#login-submit").disabled = !authClient; }
 });
 $("#sign-out").addEventListener("click", async () => {
   if (startupBusy) return;
-  resetInquiries();
-  resetLicensing();
+  invalidateAdminSession();
   showStartup("Signing out securely…");
   await authClient.auth.signOut({ scope: "local" });
   showLogin();
@@ -1097,14 +1181,25 @@ $('#previous-learning-progress').addEventListener('click', () => loadLearningPro
 $('#next-learning-progress').addEventListener('click', () => loadLearningProgress(learningProgressState.page + 1));
 $('#calendar-settings-lock').addEventListener('click', lockCalendarSettings);
 $('#calendar-unlock-form').addEventListener('submit', async event => {
+  const revision = sessionRevision;
   event.preventDefault(); const button = event.currentTarget.querySelector('button'); button.disabled = true;
   $('#calendar-settings-status').textContent = 'Checking password…';
-  try { const payload = await licensingCalendarRequest('/api/licensing-calendar-settings', { action: 'unlock', password: $('#calendar-unlock-password').value }); calendarUnlock = payload.unlock; $('#calendar-unlock-password').value = ''; await showCalendarConnection(); $('#calendar-settings-status').textContent = ''; }
-  catch (error) { lockCalendarSettings(); $('#calendar-settings-status').textContent = error.message; }
-  finally { button.disabled = false; }
+  try { const payload = await licensingCalendarRequest('/api/licensing-calendar-settings', { action: 'unlock', password: $('#calendar-unlock-password').value });
+    if (revision !== sessionRevision) return; calendarUnlock = payload.unlock; $('#calendar-unlock-password').value = ''; await showCalendarConnection();
+    if (revision !== sessionRevision) return; $('#calendar-settings-status').textContent = ''; }
+  catch (error) {
+    if (revision !== sessionRevision) return; lockCalendarSettings(); $('#calendar-settings-status').textContent = error.message; }
+  finally {
+    if (revision !== sessionRevision) return; button.disabled = false; }
 });
-$('#calendar-copy-link').addEventListener('click', async () => { try { await navigator.clipboard.writeText($('#calendar-feed-url').value); $('#calendar-settings-status').textContent = 'Private link copied.'; } catch { $('#calendar-feed-url').select(); $('#calendar-settings-status').textContent = 'Select and copy the private link.'; } });
-$('#calendar-reset-link').addEventListener('click', async () => { if (!confirm('Reset the private link? Existing Google subscriptions will stop updating until the new link is added.')) return; try { await showCalendarConnection('rotate'); $('#calendar-settings-status').textContent = 'Link reset. Add the new link in Google Calendar.'; } catch (error) { $('#calendar-settings-status').textContent = error.message; } });
+$('#calendar-copy-link').addEventListener('click', async () => {
+  const revision = sessionRevision; try { await navigator.clipboard.writeText($('#calendar-feed-url').value);
+    if (revision !== sessionRevision) return; $('#calendar-settings-status').textContent = 'Private link copied.'; } catch {
+    if (revision !== sessionRevision) return; $('#calendar-feed-url').select(); $('#calendar-settings-status').textContent = 'Select and copy the private link.'; } });
+$('#calendar-reset-link').addEventListener('click', async () => {
+  const revision = sessionRevision; if (!confirm('Reset the private link? Existing Google subscriptions will stop updating until the new link is added.')) return; try { await showCalendarConnection('rotate');
+    if (revision !== sessionRevision) return; $('#calendar-settings-status').textContent = 'Link reset. Add the new link in Google Calendar.'; } catch (error) {
+    if (revision !== sessionRevision) return; $('#calendar-settings-status').textContent = error.message; } });
 $("#refresh-licensing").addEventListener("click", () => { void loadLicensing(1); void loadExamCalendar(); });
 $("#previous-licensing").addEventListener("click", () => loadLicensing(licensingState.page - 1));
 $("#next-licensing").addEventListener("click", () => loadLicensing(licensingState.page + 1));
@@ -1119,6 +1214,7 @@ $("#licensing-metrics").addEventListener('click', (event) => {
 });
 $("#licensing-filter").addEventListener("change", (event) => { licensingState.status = event.target.value; void loadLicensing(1); });
 $("#license-exam-status").addEventListener("change", (event) => {
+  licensingStageEdited = true;
   const slider = $("#license-stage-editor");
   if (event.target.value === 'passed' && Number(slider.value) < 3) slider.value = '3';
   else if (event.target.value !== 'passed' && Number(slider.value) >= 3) slider.value = ['scheduled', 'rescheduled', 'failed'].includes(event.target.value) ? '2' : '1';
@@ -1128,11 +1224,13 @@ $("#license-exam-status").addEventListener("change", (event) => {
 });
 $("#license-steps").addEventListener("input", (event) => {
   if (!event.target.matches('[data-stage-editor]')) return;
+  licensingStageEdited = true;
   updateLicensingSlider(event.target);
   const stage = Number(event.target.value);
   $("#license-exam-status").value = stage >= 3 ? 'passed' : stage === 2 ? 'scheduled' : 'studying';
 });
 $("#licensing-person-form").addEventListener("submit", async (event) => {
+  const revision = sessionRevision;
   event.preventDefault();
   const button = event.currentTarget.querySelector('[type="submit"]');
   button.disabled = true;
@@ -1144,17 +1242,23 @@ $("#licensing-person-form").addEventListener("submit", async (event) => {
       examStatus: $("#license-exam-status").value, examDate: $("#license-exam-date").value, examTime: $("#license-exam-time").value,
       followUpDate: $("#license-follow-up").value, firstCheckDate: $("#license-first-check").value,
       nextAction: $("#license-next-action").value, blocker: $("#license-blocker").value,
-      completedSteps: selectedStepsForStage(Number($("#license-stage-editor").value)) });
+      ...(!$("#licensing-person-id").value || licensingStageEdited
+        ? { completedSteps: selectedStepsForStage(Number($("#license-stage-editor").value)) } : {}) });
+    if (revision !== sessionRevision) return;
     $("#licensing-person-dialog").close();
     await loadLicensing(1);
+    if (revision !== sessionRevision) return;
     void loadExamCalendar();
     toast("Licensing progress saved.");
-  } catch (reason) { $("#licensing-person-error").textContent = reason.message; } finally { button.disabled = false; }
+  } catch (reason) {
+    if (revision !== sessionRevision) return; $("#licensing-person-error").textContent = reason.message; } finally {
+    if (revision !== sessionRevision) return; button.disabled = false; }
 });
 $("#licensing-list").addEventListener("input", (event) => {
   if (event.target.matches('[data-license-stage]')) updateLicensingSlider(event.target);
 });
 $("#licensing-list").addEventListener("change", async (event) => {
+  const revision = sessionRevision;
   const input = event.target.closest('[data-license-stage]');
   if (!input) return;
   const person = licensingState.people.find(item => item.id === input.dataset.licenseStage);
@@ -1164,6 +1268,7 @@ $("#licensing-list").addEventListener("change", async (event) => {
   box.querySelector('[role="status"]').textContent = 'Saving…';
   try {
     const payload = await licensingApi({ action: "set_stage", id: person.id, expectedVersion: person.version, stage: Number(input.value) });
+    if (revision !== sessionRevision) return;
     const updated = payload.person;
     const oldMembership = licensingMembership(person), newMembership = licensingMembership(updated);
     for (const [key, category] of [['unlicensed', 'unlicensed'], ['licensed', 'licensed'], ['eoCompleted', 'eo_completed'], ['appointed', 'appointed'], ['followUpsDue', 'follow_ups_due']]) licensingState[key] += Number(newMembership[category]) - Number(oldMembership[category]);
@@ -1175,6 +1280,7 @@ $("#licensing-list").addEventListener("change", async (event) => {
     saved.closest('.licensing-slider').querySelector('[role="status"]').textContent = 'Saved. Earlier steps are marked complete.';
     saved.focus({ preventScroll: true });
   } catch (reason) {
+    if (revision !== sessionRevision) return;
     const progress = licensingProgress(person);
     input.value = String(progress.current < 0 ? 6 : progress.current + 1);
     updateLicensingSlider(input);
@@ -1229,6 +1335,7 @@ document.querySelectorAll("[data-close]").forEach((button) => button.addEventLis
 $("#admin-invite-form").addEventListener("submit", createAdminInvitation);
 
 $("#contact-form").addEventListener("submit", async (event) => {
+  const revision = sessionRevision;
   event.preventDefault();
   if (state.contactBusy) return;
   const form = event.currentTarget;
@@ -1248,19 +1355,24 @@ $("#contact-form").addEventListener("submit", async (event) => {
       consentConfirmed: $("#manual-opt-in-confirmed").checked,
       consentEvidence: $("#consent-evidence").value, timezone: $("#contact-timezone").value,
     });
+    if (revision !== sessionRevision) return;
     const contactId = result.id;
     for (const group of state.groups) {
       const isMember = Boolean($(`#contact-groups input[value="${group.id}"]`)?.checked);
       const wasMember = previous?.group_ids?.includes(group.id) || false;
       if (isMember !== wasMember) await api({ action: "set_membership", contactId, groupId: group.id, isMember });
+    if (revision !== sessionRevision) return;
     }
     $("#contact-dialog").close();
     await load();
+    if (revision !== sessionRevision) return;
     toast("Contact saved.");
   } catch (reason) {
+    if (revision !== sessionRevision) return;
     error.textContent = reason.message;
     error.focus();
   } finally {
+    if (revision !== sessionRevision) return;
     state.contactBusy = false;
     form.removeAttribute("aria-busy");
     if (submit) submit.disabled = false;
@@ -1319,7 +1431,7 @@ async function init() {
     authClient = createClient(config.url, config.key, {
       auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
     });
-    authClient.auth.onAuthStateChange((event) => { if (event === "SIGNED_OUT") { renderAccountProfile(null); resetInquiries(); resetLicensing(); showLogin(); } });
+    authClient.auth.onAuthStateChange((event) => { if (event === "SIGNED_OUT") showLogin(); });
     $("#login-submit").disabled = false;
     await verifyAdminSession();
   } catch (error) {

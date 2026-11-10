@@ -32,7 +32,9 @@ async function readBody(request: Request) {
   if (!/^application\/json(?:\s*;|$)/i.test(request.headers.get('content-type') || '')) throw Object.assign(new Error('JSON required.'), { status: 415 });
   const raw = await request.text();
   if (raw.length > 8000) throw Object.assign(new Error('Request too large.'), { status: 413 });
-  const body = JSON.parse(raw);
+  let body: unknown;
+  try { body = JSON.parse(raw); }
+  catch { throw Object.assign(new Error('Invalid JSON.'), { status: 400 }); }
   if (!body || typeof body !== 'object' || Array.isArray(body)) throw Object.assign(new Error('Invalid request.'), { status: 400 });
   return body as Record<string, unknown>;
 }
@@ -171,9 +173,10 @@ export default async function licensingPipeline(request: Request): Promise<Respo
   } catch (error) {
     const failure = error as { status?: number; code?: string; message?: string };
     if (failure.code === '23505') return json({ error: 'That email is already in the tracker.' }, 409);
-    if (failure.status === 401 || failure.status === 403 || failure.status === 413 || failure.status === 415) return json({ error: failure.message }, failure.status);
+    if (failure.status === 400 || failure.status === 401 || failure.status === 403 || failure.status === 413 || failure.status === 415) return json({ error: failure.message }, failure.status);
     return json({ error: 'Licensing tracker could not save. Try again.' }, 503);
   }
 }
 
 export const config: Config = { path: '/api/licensing-pipeline' };
+

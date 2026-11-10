@@ -165,3 +165,25 @@ test('weekly exam query spans seven days and includes all bookings beyond list p
   assert.deepEqual(query.params,['2026-11-09']);
   assert.equal((await handler(new Request('https://amg.example/api/licensing-pipeline?calendar_week=2026-11-10',{headers:{authorization:'Bearer test'}}))).status,400);
 });
+
+
+
+test('malformed JSON and non-object bodies return 400 without writes', async () => {
+  admin = true; stale = false;
+  for (const body of ['{', 'null', '[]', '"text"']) {
+    calls.length = 0;
+    const response = await handler(new Request('https://amg.example/api/licensing-pipeline', {
+      method: 'POST', headers: { origin: 'https://amg.example', 'content-type': 'application/json', authorization: 'Bearer test' }, body,
+    }));
+    assert.equal(response.status, 400);
+    assert.match((await response.json()).error, /Invalid (JSON|request)/);
+    assert.equal(calls.some(call => /^(INSERT|UPDATE|DELETE)/.test(call.sql)), false);
+  }
+});
+
+test('ordinary field edits omit milestone replacements and preserve existing task data', async () => {
+  admin = true; stale = false; calls.length = 0;
+  const { completedSteps, ...ordinaryEdit } = save;
+  assert.equal((await handler(request(ordinaryEdit))).status, 200);
+  assert.deepEqual(JSON.parse(calls.at(-1).params[12]), {});
+});

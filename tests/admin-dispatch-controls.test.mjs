@@ -41,6 +41,7 @@ function setup({ apiImpl = async () => ({}), loadImpl = async () => {} } = {}) {
   let renders = 0;
   let loads = 0;
   const context = {
+    sessionRevision: 0,
     $: (selector) => fields[selector],
     state,
     api: async (body) => { calls.push(body); return apiImpl(body); },

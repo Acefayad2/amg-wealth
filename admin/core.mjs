@@ -49,6 +49,24 @@ export function scheduleInputValue(value, timeZone) {
   return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
 }
 
+// Round-trip wall times in the displayed timezone, never the browser timezone.
+// Preserve the original instant when unchanged, including repeated fall-back hours.
+export function scheduledDateTimeUtc(value, timeZone, originalValue = null) {
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value)) throw new Error("Choose a valid scheduled date and time.");
+  if (originalValue && scheduleInputValue(originalValue, timeZone) === value) return new Date(originalValue).toISOString();
+  const [dateKey, localTime] = value.split("T");
+  const candidate = zonedDateTimeToUtc(dateKey, localTime, timeZone);
+  if (!Number.isFinite(candidate.getTime()) || scheduleInputValue(candidate, timeZone) !== value) {
+    throw new Error("That time does not exist in the selected timezone. Choose another time.");
+  }
+  for (const minutes of [-120, -90, -60, -30, 30, 60, 90, 120]) {
+    if (scheduleInputValue(new Date(candidate.getTime() + minutes * 60000), timeZone) === value) {
+      throw new Error("That time occurs twice when clocks change. Choose a time outside the repeated hour.");
+    }
+  }
+  return candidate.toISOString();
+}
+
 export function filterContacts(contacts, query) {
   const term = query.trim().toLowerCase();
   if (!term) return contacts;

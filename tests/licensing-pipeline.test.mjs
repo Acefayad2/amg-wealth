@@ -188,3 +188,24 @@ test('only an administrator can delete a person, with explicit confirmation and 
   assert.equal((await handler(request(deletion))).status, 409);
   stale = false;
 });
+
+
+test('malformed JSON and non-object bodies return 400 without writes', async () => {
+  admin = true; stale = false;
+  for (const body of ['{', 'null', '[]', '"text"']) {
+    calls.length = 0;
+    const response = await handler(new Request('https://amg.example/api/licensing-pipeline', {
+      method: 'POST', headers: { origin: 'https://amg.example', 'content-type': 'application/json', authorization: 'Bearer test' }, body,
+    }));
+    assert.equal(response.status, 400);
+    assert.match((await response.json()).error, /Invalid (JSON|request)/);
+    assert.equal(calls.some(call => /^(INSERT|UPDATE|DELETE)/.test(call.sql)), false);
+  }
+});
+
+test('ordinary field edits omit milestone replacements and preserve existing task data', async () => {
+  admin = true; stale = false; calls.length = 0;
+  const { completedSteps, ...ordinaryEdit } = save;
+  assert.equal((await handler(request(ordinaryEdit))).status, 200);
+  assert.deepEqual(JSON.parse(calls.at(-1).params[12]), {});
+});

@@ -58,6 +58,7 @@ function setup({ apiImpl = async () => ({ id: "contact-1" }), loadImpl = async (
   };
   for (const group of groups) fields[`#contact-groups input[value="${group.id}"]`] = { checked: true };
   vm.runInNewContext(listener, {
+    sessionRevision: 0,
     $: (selector) => fields[selector],
     state,
     api: async (body) => { calls.push(body); return apiImpl(body); },

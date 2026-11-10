@@ -10,7 +10,7 @@ function setup(apiImpl=async()=>({})) {
  const reminder={id:'one',name:'Reminder',body:'old',updated_at:'2026-11-01T00:00:00.123456Z',idempotency_key:'key',weekdays:[1],timezone:'America/New_York',start_date:'2026-11-01'};
  const state={recurring_reminders:[reminder],groups:[]};const fields=new Map(),calls=[];
  const $=key=>{if(!fields.has(key)) fields.set(key,{value:'',textContent:'',disabled:false,open:false,reset(){},focus(){},showModal(){this.open=true},close(){this.open=false}});return fields.get(key)};
- const ctx={weekdayNames:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],state,$,escapeHtml:String,api:async body=>{calls.push(body);return apiImpl(body)},load:async()=>{},toast(){}};vm.createContext(ctx);vm.runInContext(code,ctx);
+ const ctx={sessionRevision:0,weekdayNames:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],state,$,escapeHtml:String,api:async body=>{calls.push(body);return apiImpl(body)},load:async()=>{},toast(){}};vm.createContext(ctx);vm.runInContext(code,ctx);
  ctx.editRecurring('one');const button={disabled:false};const submit=()=>ctx.saveRecurring({preventDefault(){},submitter:button});
  return {state,ctx,$,calls,submit,button};
 }

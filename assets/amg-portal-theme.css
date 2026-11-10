@@ -1,0 +1,206 @@
+/* AMG reference template: shared by Matchup, learning, examinations and licensing. */
+@font-face{font-family:'AMG Bodoni';src:url('/assets/fonts/bodoni-moda-500.ttf') format('truetype');font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:'AMG Bodoni';src:url('/assets/fonts/bodoni-moda-600.ttf') format('truetype');font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:'AMG Manrope';src:url('/course/assets/fonts/manrope-latin.woff2') format('woff2');font-weight:400 800;font-style:normal;font-display:swap}
+.amg-reference-theme,body:has(#licensing-view:not([hidden])){--amg-cream:#efede5;--amg-page:#e7e4db;--amg-ink:#123f33;--amg-muted:#6c786f;--amg-gold:#c8a329;--amg-edge:#e3dfd2;--amg-raised:7px 7px 16px #d5d0c2,-7px -7px 16px #fffffc;--amg-soft:4px 4px 9px #d7d2c4,-4px -4px 9px #fffffc;--amg-inset:inset 5px 5px 10px #d8d3c6,inset -5px -5px 10px #fffffb;--ink:var(--amg-ink);--text:var(--amg-ink);--muted:var(--amg-muted);--accent:var(--amg-gold);--accent-dark:#96751f;--paper:var(--amg-cream);--surface:var(--amg-cream);--line:var(--amg-edge);--font:'AMG Manrope',sans-serif;--green:var(--amg-ink);--green-2:#1a5945;--gold:var(--amg-gold);background:var(--amg-cream);color:var(--amg-ink);font-family:var(--font);-webkit-font-smoothing:antialiased}
+.amg-reference-theme :is(h1,h2),body:has(#licensing-view:not([hidden])) :is(.topbar h1,.dialog h2,.licensing-person-title h2,.licensing-exam-calendar h2){font-family:'AMG Bodoni',Georgia,serif;font-weight:600;letter-spacing:-.025em;color:var(--amg-ink)}
+.amg-reference-theme :is(button,a,input,select,textarea):focus-visible,body:has(#licensing-view:not([hidden])) :is(button,a,input,select,textarea):focus-visible{outline:2px solid var(--amg-gold);outline-offset:4px}
+.amg-reference-theme .eyebrow{color:#96751f;font-family:var(--font);font-size:10px;font-weight:800;letter-spacing:.17em}
+.amg-reference-theme :is(input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea,select),body:has(#licensing-view:not([hidden])) :is(.licensing-form-grid input,.licensing-form-grid select,.licensing-toolbar input,.licensing-toolbar select,.licensing-dialog input:not([type=range]),.licensing-dialog textarea){border:1px solid transparent;border-radius:15px;background:var(--amg-cream);color:var(--amg-ink);box-shadow:var(--amg-inset);min-height:49px;padding:13px 16px;font:500 14px/1.5 var(--font);color-scheme:light;min-width:0}
+.amg-reference-theme :is(input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea,select):focus,body:has(#licensing-view:not([hidden])) :is(.licensing-dialog input,.licensing-dialog textarea):focus{border-color:var(--amg-gold);outline-color:var(--amg-gold)}
+.amg-reference-theme :is(input[type=checkbox],input[type=radio]){accent-color:var(--amg-ink);flex:none}
+/* Matchup shell and question cards. */
+.amg-matchup-theme .agent-match-page,.amg-matchup-theme :is(.cft-auth-page,.broker-auth-page){background:var(--amg-cream);min-height:100dvh}
+.amg-matchup-theme :is(.agent-match-header,.cft-auth-header){height:auto;min-height:78px;max-width:1120px;margin:auto;padding:16px 28px;border:0;background:var(--amg-cream);backdrop-filter:none;gap:18px}
+.amg-matchup-theme .agent-match-brand strong{font:500 25px/1 'AMG Bodoni',Georgia,serif;letter-spacing:.12em;color:var(--amg-ink)}
+.amg-matchup-theme .agent-match-brand>div>span{font:800 9px/1.6 var(--font);letter-spacing:.2em;color:#96751f}
+.amg-matchup-theme .logo-wrap{box-shadow:var(--amg-soft);border:4px solid var(--amg-cream);background:#050806;border-radius:50%}
+.amg-matchup-theme .agent-header-note,.amg-matchup-theme .cft-login-button{display:inline-flex;align-items:center;gap:7px;border:0;border-radius:99px;background:var(--amg-cream);box-shadow:var(--amg-soft);padding:9px 13px;color:var(--amg-muted);font:600 11px/1.4 var(--font);white-space:nowrap}
+.amg-matchup-theme .agent-header-note .live-dot{width:6px;height:6px;flex:none;background:#40996d;box-shadow:none}
+.amg-matchup-theme .agent-match-main{width:min(540px,calc(100% - 36px));padding:30px 0 46px;margin:auto}
+.amg-matchup-theme .agent-intro{display:none}
+.amg-matchup-theme :is(.agent-form-card.liquid-glass-card,.agent-result.liquid-glass-result,.cft-auth-card,.broker-auth-card,.portal-welcome-card){position:relative;width:100%;max-width:620px;margin:0 auto;padding:30px;border:1px solid #f8f6ee;border-radius:26px;background:var(--amg-cream);color:var(--amg-ink);box-shadow:var(--amg-raised);backdrop-filter:none;overflow:visible}
+.amg-matchup-theme :is(.liquid-glass-card,.liquid-glass-result)::before,.amg-matchup-theme .match-card::after,.amg-matchup-theme .match-glow{display:none}
+.amg-matchup-theme .guided-progress-copy{font:800 10px/1.6 var(--font);text-transform:uppercase;letter-spacing:.12em;color:var(--amg-muted)}
+.amg-matchup-theme .guided-progress-copy>span:first-child{color:#96751f}
+.amg-matchup-theme .guided-progress{height:6px;margin:13px 0 26px;border:0;background:var(--amg-cream);box-shadow:inset 2px 2px 4px #d0cbbb,inset -2px -2px 4px #fffefa;border-radius:99px}
+.amg-matchup-theme .guided-progress>span{background:linear-gradient(90deg,#bc971c,#e6c863);border-radius:99px}
+.amg-matchup-theme .portal-stage-icon{display:grid;place-items:center;width:54px;height:54px;margin:0 0 23px;border-radius:50%;background:var(--amg-cream);box-shadow:var(--amg-soft);color:var(--amg-ink)}
+.amg-matchup-theme .guided-heading h2{margin:0;color:var(--amg-ink);font:600 clamp(29px,4vw,37px)/1.12 'AMG Bodoni',Georgia,serif;letter-spacing:-.025em;text-wrap:balance}
+.amg-matchup-theme .guided-heading p{margin:13px 0 0;color:var(--amg-muted);font:500 13px/1.8 var(--font)}
+.amg-matchup-theme .match-form.guided-form{margin-top:25px;gap:23px}
+.amg-matchup-theme .guided-form :is(.guided-input>span,.guided-options legend){color:var(--amg-ink);font-size:12px;font-weight:750}
+.amg-matchup-theme .guided-form .guided-input{gap:9px}
+.amg-matchup-theme .guided-form input:not([type=radio]):not([type=checkbox]),.amg-matchup-theme .guided-form textarea{background:var(--amg-cream);border:1px solid transparent;box-shadow:var(--amg-inset);border-radius:15px;font-size:15px;color:var(--amg-ink);min-height:52px}
+.amg-matchup-theme .guided-form input:not([type=radio]):not([type=checkbox]):focus{border-color:var(--amg-gold)}
+.amg-matchup-theme .guided-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.amg-matchup-theme .guided-options legend{margin-bottom:14px}
+.amg-matchup-theme .guided-form .guided-option{display:flex;position:relative;flex-direction:column;justify-content:center;align-items:center;min-height:151px;padding:21px 13px 17px;gap:15px;text-align:center;border:1px solid transparent;border-radius:19px;background:var(--amg-cream);box-shadow:var(--amg-soft)}
+.amg-matchup-theme .guided-form .guided-option>.guided-option-copy{flex:0;color:var(--amg-ink);font-size:12px;font-weight:750;line-height:1.6}
+.amg-matchup-theme .guided-form .guided-option>.guided-option-icon{display:grid;place-items:center;flex:0 0 42px;width:42px;height:42px;color:#987623;border-radius:50%;box-shadow:var(--amg-soft)}
+.amg-matchup-theme .guided-option input{position:absolute;top:12px;right:12px;width:14px;height:14px;accent-color:var(--amg-gold)}
+.amg-matchup-theme .guided-option.selected{background:var(--amg-cream);border-color:var(--amg-gold);box-shadow:inset 0 0 0 1px #c8a32930,var(--amg-soft)}
+.amg-matchup-theme .guided-form .guided-sms-consent{padding:17px 15px;border:0;border-radius:17px;background:var(--amg-cream);box-shadow:var(--amg-soft);gap:11px}
+.amg-matchup-theme .guided-form .guided-sms-consent>span{color:var(--amg-ink);font-size:11px;font-weight:600;line-height:1.7}
+.amg-matchup-theme .guided-sms-consent small{font-size:10px;color:var(--amg-muted);line-height:1.7}
+.amg-matchup-theme .guided-sms-consent a{color:var(--amg-ink)}
+.amg-matchup-theme .guided-actions{gap:13px;margin-top:4px}
+.amg-matchup-theme .guided-actions .match-button,.amg-matchup-theme .confirm-button,.amg-matchup-theme .portal-continue{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:51px;padding:14px 21px;border:0;border-radius:16px;background:linear-gradient(120deg,#185842,#0c3428);color:#f4eac2;box-shadow:5px 7px 12px #bdbfaf,-3px -3px 9px #fffffa;font:750 13px/1.5 var(--font)}
+.amg-matchup-theme .guided-actions .match-button{flex:1;min-width:0}
+.amg-matchup-theme .guided-actions .match-button svg{color:#d9be61}
+.amg-matchup-theme .guided-back{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:51px;padding:13px 18px;border:0;border-radius:16px;background:var(--amg-cream);box-shadow:var(--amg-soft);color:var(--amg-ink);font:750 12px/1.5 var(--font)}
+.amg-matchup-theme .guided-back::before{content:'←';font-size:18px}
+.amg-matchup-theme .guided-reassurance{font-size:10px;line-height:1.8;color:var(--amg-muted);text-align:center;margin:0}
+.amg-matchup-theme .guided-review{padding:0 16px;border-radius:17px;box-shadow:var(--amg-inset);background:var(--amg-cream)}
+.amg-matchup-theme .guided-review-row{padding:14px 0;border-bottom:1px solid #dbd7ca}
+.amg-matchup-theme .guided-review-row span{color:var(--amg-muted);font-size:10px}
+.amg-matchup-theme .guided-review-row strong{color:var(--amg-ink);font-size:12px;font-weight:650}
+.amg-matchup-theme .guided-review-row button{color:var(--amg-ink);font-size:11px;text-decoration:underline;text-underline-offset:3px}
+.amg-matchup-theme .portal-flow-footer{max-width:470px;margin:29px auto 0;text-align:center;color:var(--amg-muted);font-size:10px;line-height:1.9}
+.amg-matchup-theme .portal-flow-footer nav{display:flex;justify-content:center;gap:20px;margin-top:14px;color:var(--amg-ink);font-weight:750}
+.amg-matchup-theme .portal-flow-footer a{text-decoration:none}
+.amg-matchup-theme .portal-welcome-card{text-align:center;padding-top:29px}
+.amg-matchup-theme .portal-welcome-mark{display:block;width:74px;height:74px;margin:0 auto 23px;border:6px solid var(--amg-cream);border-radius:50%;box-shadow:var(--amg-soft);background:#050806;object-fit:cover}
+.amg-matchup-theme .portal-welcome-card h1{font-size:32px;line-height:1.08;margin:13px auto;max-width:290px}
+.amg-matchup-theme .portal-welcome-card>p:not(.eyebrow){font-size:13px;line-height:1.8;color:var(--amg-muted);max-width:330px;margin:14px auto 23px}
+.amg-matchup-theme .portal-role-choices{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin:0 0 22px}
+.amg-matchup-theme .portal-role-choices button{position:relative;display:flex;align-items:center;flex-direction:column;gap:13px;padding:22px 13px;min-height:165px;border:1px solid transparent;border-radius:19px;background:var(--amg-cream);color:var(--amg-ink);box-shadow:var(--amg-soft)}
+.amg-matchup-theme .portal-role-choices button[aria-pressed=true]{border-color:var(--amg-gold)}
+.amg-matchup-theme .portal-role-choices button::after{content:'';position:absolute;right:12px;top:12px;width:10px;height:10px;border:3px solid var(--amg-cream);border-radius:50%;box-shadow:inset 2px 2px 4px #c9c3b4,inset -2px -2px 4px #fffefa}
+.amg-matchup-theme .portal-role-choices button[aria-pressed=true]::after{background:var(--amg-gold);box-shadow:0 0 0 2px var(--amg-gold)}
+.amg-matchup-theme .portal-role-icon{display:grid;place-items:center;width:45px;height:45px;border-radius:50%;box-shadow:var(--amg-soft);color:#96751f}
+.amg-matchup-theme .portal-role-choices strong{font:800 13px/1.5 var(--font)}
+.amg-matchup-theme .portal-role-choices small{font:500 10px/1.6 var(--font);color:var(--amg-muted)}
+.amg-matchup-theme .portal-continue{width:100%;text-decoration:none}
+/* Trainer, broker and result surfaces use the same material. */
+.amg-matchup-theme :is(.cft-auth-main,.broker-auth-main){padding-top:35px}
+.amg-matchup-theme .cft-auth-card{max-width:490px}
+.amg-matchup-theme :is(.cft-auth-card h1,.broker-auth-card h1){font-size:36px;line-height:1.14}
+.amg-matchup-theme :is(.cft-auth-card>p,.broker-auth-card>p){font-size:13px;line-height:1.8;color:var(--amg-muted)}
+.amg-matchup-theme .auth-shield{display:grid;width:54px;height:54px;border:0;border-radius:50%;background:var(--amg-cream);box-shadow:var(--amg-soft);color:var(--amg-ink);margin-bottom:20px}
+.amg-matchup-theme .auth-mode-switch{border:0;border-radius:15px;background:var(--amg-cream);box-shadow:var(--amg-inset);padding:5px}
+.amg-matchup-theme .auth-mode-switch button{border-radius:12px;color:var(--amg-muted)}
+.amg-matchup-theme .auth-mode-switch button.active{background:var(--amg-cream);color:var(--amg-ink);box-shadow:var(--amg-soft)}
+.amg-matchup-theme :is(.app-shell,.app-shell main){background:var(--amg-cream)}
+.amg-matchup-theme .glass-light,.amg-matchup-theme .cft-card{background:var(--amg-cream);border:1px solid #f8f6ee;box-shadow:var(--amg-raised);border-radius:22px;backdrop-filter:none}
+.amg-matchup-theme .sidebar.glass-dark{background:var(--amg-cream);border-right:1px solid #dfdace;color:var(--amg-ink);box-shadow:6px 0 18px #d8d4c550;backdrop-filter:none}
+.amg-matchup-theme .sidebar :is(.brand strong,.user-chip strong,.nav-item,.role-switch){color:var(--amg-ink)}
+.amg-matchup-theme .sidebar :is(.brand span,.user-chip small){color:var(--amg-muted)}
+.amg-matchup-theme .nav-item.active{background:var(--amg-cream);color:var(--amg-ink);box-shadow:var(--amg-soft);border-color:transparent}
+.amg-matchup-theme .availability-panel{border:0;border-radius:17px;background:var(--amg-cream);box-shadow:var(--amg-inset);padding:19px}
+.amg-matchup-theme .slot-grid button{border:1px solid transparent;border-radius:12px;background:var(--amg-cream);box-shadow:var(--amg-soft);color:var(--amg-ink)}
+.amg-matchup-theme .slot-grid button.selected{border-color:var(--amg-gold);background:var(--amg-cream);color:#96751f}
+/* Learning, course entry, lessons, Life and Health mock exams. */
+.amg-learning-theme :is(.app-header,.login-header){background:var(--amg-cream);border:0;box-shadow:none}
+.amg-learning-theme :is(.brand-wordmark,.brand-wordmark>span){color:var(--amg-ink)}
+.amg-learning-theme .brand-wordmark{font-family:'AMG Bodoni',Georgia,serif;font-size:25px;font-weight:500;letter-spacing:.12em}
+.amg-learning-theme .brand-wordmark>span{font-family:var(--font);font-size:9px;letter-spacing:.2em;color:#96751f}
+.amg-learning-theme .brand-mark{width:41px;height:41px;box-shadow:var(--amg-soft);border:4px solid var(--amg-cream);border-radius:50%}
+.amg-learning-theme .brand-mark img{width:100%;height:100%;max-width:100%;transform:none;object-fit:contain}
+.amg-learning-theme .app-nav a{border:0;border-radius:12px;padding:9px 13px;margin-block:auto;min-height:40px;color:var(--amg-muted)}
+.amg-learning-theme .app-nav a[aria-current]{background:var(--amg-cream);box-shadow:var(--amg-soft);color:var(--amg-ink)}
+.amg-learning-theme :is(.auth-card,.card,.course-rail,.simple-card,.term-detail,.pool-lab,.lesson-list a,.question-card,.assessment-question,.review-question,.practice-track){background:var(--amg-cream);color:var(--amg-ink);border:1px solid #f8f6ee;border-radius:23px;box-shadow:var(--amg-raised)}
+.amg-learning-theme :is(.practice-card,.practice-support .card){padding:27px;background:var(--amg-cream);box-shadow:var(--amg-raised)}
+.amg-learning-theme :is(.practice-shortcut,.continue-card){background:var(--amg-cream);color:var(--amg-ink);border:1px solid #f8f6ee;box-shadow:var(--amg-raised);border-radius:24px}
+.amg-learning-theme .continue-card :is(.eyebrow,.continue-kicker,.continue-note){color:var(--amg-muted)}
+.amg-learning-theme .continue-card h2{color:var(--amg-ink)}
+.amg-learning-theme :is(.primary,.continue-card .primary){background:linear-gradient(120deg,#185842,#0c3428);border:0;border-radius:15px;box-shadow:5px 7px 12px #c7c7b7,-3px -3px 9px #fffffa;color:#f4eac2;min-height:47px;padding:12px 20px}
+.amg-learning-theme button:not(.primary):not(.password-toggle):not(.chapter-button):not(.answer):not(.option):not(.question-nav-button){border:1px solid transparent;background:var(--amg-cream);color:var(--amg-ink);box-shadow:var(--amg-soft);border-radius:13px}
+.amg-learning-theme :is(.lesson-search,.account-notice,.question-gate,.learning-highlights,.chapter-button[aria-pressed=true]){background:var(--amg-cream);border:0;border-radius:17px;box-shadow:var(--amg-inset)}
+.amg-learning-theme .lesson-search input{box-shadow:none;border:0;min-height:0;padding:3px;background:transparent}
+.amg-learning-theme :is(.question-options label,.options label,.answer-option,.quiz-option,.option){background:var(--amg-cream);border:1px solid transparent;border-radius:16px;box-shadow:var(--amg-soft);color:var(--amg-ink)}
+.amg-learning-theme :is(.question-options label,.options label):has(input:checked),.amg-learning-theme .option.selected{border-color:var(--amg-gold);background:var(--amg-cream)}
+.amg-learning-theme .login-layout{max-width:1020px;margin:auto;gap:65px}
+.amg-learning-theme .auth-card{padding:30px;max-width:460px}
+.amg-learning-theme .auth-heading::before{content:'↗';display:grid;place-items:center;width:52px;height:52px;margin-bottom:25px;border-radius:50%;box-shadow:var(--amg-soft);color:var(--amg-ink);font-size:23px}
+.amg-learning-theme .auth-heading h2{font-size:32px;line-height:1.15}
+.amg-learning-theme .password-field{background:transparent;border:0;box-shadow:none}
+.amg-learning-theme .password-field input{padding-right:65px}
+.amg-learning-theme .password-toggle{background:transparent;border:0;box-shadow:none;color:var(--amg-ink)}
+.amg-learning-theme .app-footer{border:0;color:var(--amg-muted)}
+/* Practice drill app uses inline styles; override materials without hiding answer feedback. */
+.amg-practice-theme #root>div{background:var(--amg-cream)!important;color:var(--amg-ink)}
+.amg-practice-theme :is(.practice-track,.register-card,.exam-question-card,.results-score-card){background:var(--amg-cream)!important;border:1px solid #f8f6ee!important;border-radius:24px!important;box-shadow:var(--amg-raised)!important}
+.amg-practice-theme :is(.practice-hero h1,.practice-track h2,.register-card h2,.exam-question-card p:first-of-type){font-family:'AMG Bodoni',Georgia,serif!important;font-weight:600!important;color:var(--amg-ink)!important}
+.amg-practice-theme :is(.track-primary,.track-secondary){border:0;border-radius:15px;min-height:49px;box-shadow:var(--amg-soft)}
+.amg-practice-theme .track-primary{background:linear-gradient(120deg,#185842,#0c3428);color:#f4eac2}
+.amg-practice-theme .track-secondary,.amg-practice-theme .track-facts div{background:var(--amg-cream);color:var(--amg-ink);box-shadow:var(--amg-inset);border-radius:14px}
+.amg-practice-theme :is(.exam-topbar,.results-topbar,.exam-sidebar){background:var(--amg-cream)!important;color:var(--amg-ink)!important;border-color:var(--amg-edge)!important}
+.amg-practice-theme .register-card input{background:var(--amg-cream)!important;border:1px solid transparent!important;border-radius:14px!important;box-shadow:var(--amg-inset);min-height:49px}
+.amg-practice-theme .register-card input:focus{border-color:var(--amg-gold)!important}
+.amg-practice-theme .practice-answer{border-radius:15px!important;box-shadow:var(--amg-soft);border-width:1px!important}
+.amg-practice-theme .practice-answer:not([data-revealed=true]){background:var(--amg-cream)!important;color:var(--amg-ink)!important}
+/* Personal checklist. */
+.amg-progress-theme :is(.site-header,.overview){background:var(--amg-cream);color:var(--amg-ink);border:0}
+.amg-progress-theme .brand small{color:#96751f}
+.amg-progress-theme .site-header nav a[aria-current]{color:var(--amg-ink)}
+.amg-progress-theme .overview{border-radius:24px 24px 0 0;box-shadow:var(--amg-raised);padding:27px}
+.amg-progress-theme .overview p:last-child{color:var(--amg-muted)}
+.amg-progress-theme .score strong{color:#96751f}
+.amg-progress-theme .score span{color:var(--amg-muted)}
+.amg-progress-theme :is(.checklist-panel,.support,.course-summary article){background:var(--amg-cream);border:1px solid #f8f6ee;border-radius:23px;box-shadow:var(--amg-raised)}
+.amg-progress-theme .phase.current{background:var(--amg-cream);box-shadow:var(--amg-inset);border-left:2px solid var(--amg-gold);border-radius:16px}
+/* Admin Licensing, scoped so Communications keeps its own controls. */
+body:has(#licensing-view:not([hidden])) :is(.main,.sidebar){background:var(--amg-cream);color:var(--amg-ink)}
+body:has(#licensing-view:not([hidden])) .sidebar{border-right:1px solid var(--amg-edge)}
+body:has(#licensing-view:not([hidden])) .workspace-nav button{color:var(--amg-muted)}
+body:has(#licensing-view:not([hidden])) .workspace-nav button[aria-pressed=true]{border-color:transparent;background:var(--amg-cream);color:var(--amg-ink);box-shadow:var(--amg-soft)}
+body:has(#licensing-view:not([hidden])) :is(.sidebar-footer a,.sidebar-footer .text-button){color:var(--amg-ink)}
+body:has(#licensing-view:not([hidden])) :is(.licensing-person,.licensing-exam-calendar,.licensing-metric,.licensing-course-activity,.licensing-dialog){background:var(--amg-cream);border:1px solid #f8f6ee;border-radius:22px;box-shadow:var(--amg-raised);color:var(--amg-ink)}
+body:has(#licensing-view:not([hidden])) .licensing-metric[aria-pressed=true]{background:var(--amg-cream);border-color:var(--amg-gold);color:var(--amg-ink);box-shadow:var(--amg-inset)}
+body:has(#licensing-view:not([hidden])) .licensing-metric[aria-pressed=true] span{color:#96751f}
+body:has(#licensing-view:not([hidden])) .licensing-metric:first-child span{color:var(--amg-muted)}
+body:has(#licensing-view:not([hidden])) .licensing-slider{background:var(--amg-cream);border:0;border-radius:18px;box-shadow:var(--amg-inset)}
+body:has(#licensing-view:not([hidden])) :is(.secondary,.icon-button,.close){background:var(--amg-cream);border:1px solid transparent;box-shadow:var(--amg-soft);border-radius:13px;color:var(--amg-ink)}
+body:has(#licensing-view:not([hidden])) .primary{background:linear-gradient(120deg,#185842,#0c3428);border:0;border-radius:15px;box-shadow:var(--amg-soft);color:#f4eac2}
+body:has(#licensing-view:not([hidden])) .exam-week-day.today{background:#e9e5d9}
+body:has(#licensing-view:not([hidden])) .exam-week-event{border:0;border-left:2px solid var(--amg-gold);background:var(--amg-cream);box-shadow:var(--amg-soft);border-radius:13px}
+body:has(#licensing-view:not([hidden])) :is(.licensing-due,.licensing-avatar){background:var(--amg-cream);box-shadow:var(--amg-soft);color:var(--amg-ink)}
+@media(max-width:680px){
+ .amg-matchup-theme :is(.agent-match-header,.cft-auth-header){padding:15px 19px;min-height:74px;gap:10px}
+ .amg-matchup-theme .agent-header-actions{gap:8px}
+ .amg-matchup-theme .agent-header-note{font-size:9px;padding:8px 9px;gap:5px}
+ .amg-matchup-theme .agent-header-actions>.cft-login-button{display:none}
+ .amg-matchup-theme .mobile-cft-count{display:none}
+ .amg-matchup-theme .agent-match-main{width:calc(100% - 32px);padding:16px 0 34px}
+ .amg-matchup-theme :is(.agent-form-card.liquid-glass-card,.portal-welcome-card,.agent-result.liquid-glass-result){padding:24px 20px;border-radius:24px}
+ .amg-matchup-theme .guided-heading h2{font-size:29px;line-height:1.1}
+ .amg-matchup-theme .guided-heading p{font-size:12px}
+ .amg-matchup-theme .guided-form .guided-option{padding:20px 10px 16px;min-height:150px}
+ .amg-matchup-theme .guided-form .guided-option>.guided-option-copy{font-size:11px}
+ .amg-matchup-theme .guided-actions .match-button{font-size:12px;padding:14px 17px}
+ .amg-matchup-theme .portal-flow-footer{font-size:10px;margin-top:28px}
+ .amg-matchup-theme .cft-auth-main{padding:20px 16px 40px}
+ .amg-matchup-theme .cft-auth-card{padding:25px 21px;border-radius:24px}
+ .amg-matchup-theme .cft-auth-card h1{font-size:31px}
+ .amg-learning-theme .login-layout{display:block;max-width:420px;padding:20px 16px 45px}
+ .amg-learning-theme .login-introduction{display:none}
+ .amg-learning-theme .auth-card{padding:25px 22px;border-radius:24px}
+ .amg-learning-theme .classroom,.amg-learning-theme .assessment-main{padding-left:18px;padding-right:18px}
+ .amg-learning-theme .lesson-list a{padding:15px;border-radius:18px}
+ .amg-progress-theme .hero h1{font-size:37px}
+ body:has(#licensing-view:not([hidden])) .licensing-person{padding:20px}
+}
+@media(prefers-reduced-motion:reduce){.amg-reference-theme *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+/* Reference details shared by the active mock exam and lesson checks. */
+.amg-matchup-theme .portal-flow-footer a{color:var(--amg-ink)}
+.amg-learning-theme :is(.question-panel,.nav-panel,.check-dialog,.review-result){background:var(--amg-cream);border:1px solid #f8f6ee;border-radius:24px;box-shadow:var(--amg-raised)}
+.amg-learning-theme :is(.question-panel legend,.question legend){font-family:'AMG Bodoni',Georgia,serif;font-size:27px;font-weight:600;line-height:1.25;letter-spacing:-.015em;color:var(--amg-ink)}
+.amg-learning-theme .reference-exam-bar{position:static;box-shadow:none;border:0;background:transparent;padding:0;margin:0 0 24px;display:block}
+.amg-learning-theme .reference-exam-bar>div{display:flex;justify-content:space-between;align-items:center;gap:16px;font-size:10px;text-transform:uppercase;letter-spacing:.08em}
+.amg-learning-theme .reference-exam-bar strong{font-size:10px;color:#96751f}
+.amg-learning-theme .reference-exam-bar>div>div{font-size:10px;margin:0}
+.amg-learning-theme .reference-question-progress{display:block;width:100%;height:6px;border:0;margin:15px 0 0;border-radius:99px;appearance:none;overflow:hidden;background:var(--amg-cream);box-shadow:inset 2px 2px 4px #d0cbbb,inset -2px -2px 4px #fffefa}
+.amg-learning-theme .reference-question-progress::-webkit-progress-bar{background:transparent}
+.amg-learning-theme .reference-question-progress::-webkit-progress-value{background:var(--amg-gold);border-radius:99px}
+.amg-learning-theme .reference-question-progress::-moz-progress-bar{background:var(--amg-gold)}
+.amg-learning-theme .reference-question-icon{display:grid;place-items:center;width:49px;height:49px;margin:0 0 24px;background:var(--amg-cream);box-shadow:var(--amg-soft);border-radius:50%;font:500 25px 'AMG Bodoni',Georgia,serif;color:var(--amg-ink)}
+.amg-learning-theme .question-panel .actions button:nth-child(2){background:linear-gradient(120deg,#185842,#0c3428);color:#f4eac2;box-shadow:5px 7px 12px #c7c7b7,-3px -3px 9px #fffffa;border-radius:15px}
+.amg-learning-theme .answer-option:has(input:checked){border:1px solid var(--amg-gold);background:var(--amg-cream);padding:17px 18px}
+.amg-learning-theme .answer-option{border-radius:17px}
+@media(max-width:680px){.amg-learning-theme .question-panel legend{font-size:25px;line-height:1.24}.amg-learning-theme .app-nav{gap:5px;overflow-x:auto}.amg-learning-theme .app-nav a{padding:8px;font-size:10px;min-height:36px}.amg-learning-theme .app-nav .track-switch{padding-left:8px;margin:0}.amg-learning-theme .app-nav .track-switch::before{display:none}.amg-learning-theme .app-header-inner{padding-inline:18px}}
+.amg-matchup-theme .cft-auth-header .agent-match-brand>div{display:block}
+.amg-learning-theme .question-panel .actions button:nth-child(2),.amg-learning-theme .question-panel .actions button:nth-child(2):hover:not(:disabled){background:linear-gradient(120deg,#185842,#0c3428)!important;color:#f4eac2!important}
+.amg-learning-theme .question-nav button.answered{background:#e0e9dc!important;color:#1b503d!important;border-color:#b2c7a8!important;box-shadow:var(--amg-inset)!important}
+.amg-learning-theme .option.correct{background:#e3eadf;border-color:#7b9b70;color:var(--amg-ink)}
+.amg-learning-theme .primary:hover:not(:disabled){background:linear-gradient(120deg,#1c6249,#103e2f);color:#f4eac2}

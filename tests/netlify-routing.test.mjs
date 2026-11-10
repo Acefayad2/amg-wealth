@@ -80,7 +80,8 @@ test('the bundled Matchup export is not shadowed by a proxy', () => {
   assert.equal(routes.some(route => protectedPaths.includes(route.from)), false)
   assert.equal(routes.some(route => route.from === '/*'), false)
   const matchup = fs.readFileSync(new URL('../matchups/index.html', import.meta.url), 'utf8')
-  assert.match(matchup, /Find the right trainer/)
+  assert.match(matchup, /Are you an Agent/);
+  assert.match(fs.readFileSync(new URL('../matchups/agent/index.html', import.meta.url), 'utf8'), /Find the right trainer/)
   assert.match(matchup, /href="\/matchups\/broker\/"/)
   assert.match(matchup, /href="\/matchups\/cft\/"/)
   for (const page of ["agent/index.html", "broker/index.html", "cft/index.html"]) {

@@ -1,3 +1,4 @@
+import { easternDay, addDays, mondayOf, examTimeLabel } from "../admin/licensing-calendar.mjs";
 import { licensingReminderLinks, licensingGroupTextLink } from "../admin/licensing-reminders.mjs";
 import { licensingSteps, licensingProgress, selectedStepsForStage, taskDone } from "../licensing-progress/steps.js";
 import { normalizeUsPhone } from "../netlify/functions/_shared/us-phone.mjs";
@@ -63,6 +64,9 @@ function resetLicensing() {
   licensingState.requestId += 1;
   Object.assign(licensingState, { people: [], learners: [], total: 0, tracked: 0, unlicensed: 0, licensed: 0, eoCompleted: 0, appointed: 0, followUpsDue: 0, category: "all", page: 1, loading: false, error: "", controller: null });
   $("#licensing-activity-list").innerHTML = "";
+  examCalendarState.requestId += 1; examCalendarState.exams = []; examCalendarState.loading = false;
+  lockCalendarSettings();
+  renderExamCalendar();
   renderLicensing();
 }
 
@@ -133,6 +137,56 @@ async function loadInquiries(page = 1) {
       renderInquiries();
     }
   }
+}
+
+const examCalendarState = { week: mondayOf(), exams: [], loading: false, requestId: 0, error: '' };
+let calendarUnlock = '';
+async function licensingCalendarRequest(url, body = null, unlock = '') {
+  const { data, error } = await authClient.auth.getSession();
+  if (error || !data.session?.access_token) throw new Error('Sign in again to access licensing.');
+  const response = await fetch(url, { method: body ? 'POST' : 'GET', headers: { authorization: `Bearer ${data.session.access_token}`, ...(body ? { 'content-type': 'application/json' } : {}), ...(unlock ? { 'x-calendar-unlock': unlock } : {}) }, body: body ? JSON.stringify(body) : undefined, cache: 'no-store' });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(payload.error || 'The exam calendar could not load.');
+  return payload;
+}
+function renderExamCalendar() {
+  const { week, exams, loading, error } = examCalendarState;
+  const displayDate = day => new Intl.DateTimeFormat('en-US', {month:'short',day:'numeric',timeZone:'UTC'}).format(new Date(day + 'T12:00:00Z'));
+  $('#exam-week-heading').textContent = `${displayDate(week)} – ${displayDate(addDays(week,6))}, ${week.slice(0,4)}`;
+  $('#exam-week-summary').textContent = loading ? 'Loading exams…' : `${exams.length} ${exams.length === 1 ? 'exam' : 'exams'} booked · select an exam to edit`;
+  $('#exam-week-grid').setAttribute('aria-busy', String(loading));
+  $('#exam-week-error').textContent = error;
+  $('#exam-week-grid').innerHTML = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map((day,index) => {
+    const date = addDays(week,index), matches = exams.filter(person => person.exam_date === date);
+    return `<section class="exam-week-day${date === easternDay() ? ' today' : ''}"><h3><span>${day}</span><time datetime="${date}">${displayDate(date)}</time></h3><div>${matches.length ? matches.map(person => `<button type="button" class="exam-week-event" data-exam-person="${person.id}"><time>${examTimeLabel(person.exam_time)}</time><strong>${escapeHtml(person.name)}</strong><small>${escapeHtml(person.track === 'both' ? 'Life + Health' : person.track)} exam</small></button>`).join('') : `<p class="exam-day-empty">${loading ? 'Loading…' : 'No exams'}</p>`}</div></section>`;
+  }).join('');
+}
+async function loadExamCalendar() {
+  const requestId = ++examCalendarState.requestId;
+  examCalendarState.loading = true; examCalendarState.error = ''; examCalendarState.exams = []; renderExamCalendar();
+  try {
+    const result = await licensingCalendarRequest(`/api/licensing-pipeline?calendar_week=${examCalendarState.week}`);
+    if (requestId !== examCalendarState.requestId) return;
+    if (!Array.isArray(result.exams)) throw new Error('Exam data was incomplete.');
+    examCalendarState.exams = result.exams;
+  } catch (error) { if (requestId === examCalendarState.requestId) examCalendarState.error = error.message; }
+  finally { if (requestId === examCalendarState.requestId) { examCalendarState.loading = false; renderExamCalendar(); } }
+}
+function lockCalendarSettings() {
+  calendarUnlock = '';
+  $('#calendar-unlock-form').hidden = false;
+  $('#calendar-connect-panel').hidden = true;
+  $('#calendar-unlock-password').value = '';
+  $('#calendar-feed-url').value = '';
+  $('#calendar-google-link').removeAttribute('href');
+  $('#calendar-settings-status').textContent = '';
+}
+async function showCalendarConnection(action = 'status') {
+  const payload = await licensingCalendarRequest('/api/licensing-calendar-settings', { action }, calendarUnlock);
+  $('#calendar-feed-url').value = payload.feedUrl;
+  $('#calendar-google-link').href = payload.googleUrl;
+  $('#calendar-unlock-form').hidden = true;
+  $('#calendar-connect-panel').hidden = false;
 }
 
 async function licensingApi(body = null, page = 1) {
@@ -235,7 +289,7 @@ function openLicensingPerson(person = null) {
   $("#licensing-person-title").textContent = person?.id ? "Edit licensing progress" : "Add a person";
   $("#licensing-person-id").value = person?.id || "";
   $("#licensing-person-version").value = person?.version || "";
-  for (const [id, key] of [["license-name", "name"], ["license-email", "email"], ["license-phone", "phone"], ["license-recruiter", "recruiter"], ["license-recruiter-phone", "recruiter_phone"], ["license-state", "state"], ["license-track", "track"], ["license-exam-status", "exam_status"], ["license-exam-date", "exam_date"], ["license-follow-up", "follow_up_date"], ["license-first-check", "first_check_date"], ["license-next-action", "next_action"], ["license-blocker", "blocker"]]) $("#" + id).value = person?.[key] || (id === "license-track" ? "both" : id === "license-exam-status" ? "studying" : "");
+  for (const [id, key] of [["license-name", "name"], ["license-email", "email"], ["license-phone", "phone"], ["license-recruiter", "recruiter"], ["license-recruiter-phone", "recruiter_phone"], ["license-state", "state"], ["license-track", "track"], ["license-exam-status", "exam_status"], ["license-exam-date", "exam_date"], ["license-exam-time", "exam_time"], ["license-follow-up", "follow_up_date"], ["license-first-check", "first_check_date"], ["license-next-action", "next_action"], ["license-blocker", "blocker"]]) $("#" + id).value = person?.[key] || (id === "license-track" ? "both" : id === "license-exam-status" ? "studying" : "");
   $("#license-steps").innerHTML = licensingSlider(person, true);
   $("#licensing-person-error").textContent = "";
   $("#licensing-person-dialog").showModal();
@@ -250,7 +304,7 @@ function showAdminView(view) {
   $(".sidebar").classList.toggle("focused-mode", inquiries || licensing);
   document.querySelectorAll("[data-admin-view]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.adminView === view)));
   if (inquiries) void loadInquiries();
-  if (licensing) void loadLicensing();
+  if (licensing) { void loadLicensing(); void loadExamCalendar(); }
 }
 
 function showStartup(message = "Restoring your secure AMG session and checking CRM admin access…") {
@@ -962,7 +1016,24 @@ document.querySelectorAll("[data-admin-view]").forEach((button) => button.addEve
 $("#refresh-inquiries").addEventListener("click", () => loadInquiries(1));
 $("#previous-inquiries").addEventListener("click", () => loadInquiries(inquiryState.page - 1));
 $("#next-inquiries").addEventListener("click", () => loadInquiries(inquiryState.page + 1));
-$("#refresh-licensing").addEventListener("click", () => loadLicensing(1));
+$('#exam-week-previous').addEventListener('click', () => { examCalendarState.week = addDays(examCalendarState.week,-7); void loadExamCalendar(); });
+$('#exam-week-next').addEventListener('click', () => { examCalendarState.week = addDays(examCalendarState.week,7); void loadExamCalendar(); });
+$('#exam-week-today').addEventListener('click', () => { examCalendarState.week = mondayOf(); void loadExamCalendar(); });
+$('#exam-week-grid').addEventListener('click', event => { const button = event.target.closest('[data-exam-person]'); if (button) openLicensingPerson(examCalendarState.exams.find(person => person.id === button.dataset.examPerson)); });
+$('#license-exam-date').addEventListener('change', event => { if (!event.target.value) $('#license-exam-time').value = ''; });
+$('#licensing-settings').addEventListener('click', () => { lockCalendarSettings(); $('#licensing-settings-dialog').showModal(); });
+$('#licensing-settings-dialog').addEventListener('close', lockCalendarSettings);
+$('#calendar-settings-lock').addEventListener('click', lockCalendarSettings);
+$('#calendar-unlock-form').addEventListener('submit', async event => {
+  event.preventDefault(); const button = event.currentTarget.querySelector('button'); button.disabled = true;
+  $('#calendar-settings-status').textContent = 'Checking password…';
+  try { const payload = await licensingCalendarRequest('/api/licensing-calendar-settings', { action: 'unlock', password: $('#calendar-unlock-password').value }); calendarUnlock = payload.unlock; $('#calendar-unlock-password').value = ''; await showCalendarConnection(); $('#calendar-settings-status').textContent = ''; }
+  catch (error) { lockCalendarSettings(); $('#calendar-settings-status').textContent = error.message; }
+  finally { button.disabled = false; }
+});
+$('#calendar-copy-link').addEventListener('click', async () => { try { await navigator.clipboard.writeText($('#calendar-feed-url').value); $('#calendar-settings-status').textContent = 'Private link copied.'; } catch { $('#calendar-feed-url').select(); $('#calendar-settings-status').textContent = 'Select and copy the private link.'; } });
+$('#calendar-reset-link').addEventListener('click', async () => { if (!confirm('Reset the private link? Existing Google subscriptions will stop updating until the new link is added.')) return; try { await showCalendarConnection('rotate'); $('#calendar-settings-status').textContent = 'Link reset. Add the new link in Google Calendar.'; } catch (error) { $('#calendar-settings-status').textContent = error.message; } });
+$("#refresh-licensing").addEventListener("click", () => { void loadLicensing(1); void loadExamCalendar(); });
 $("#previous-licensing").addEventListener("click", () => loadLicensing(licensingState.page - 1));
 $("#next-licensing").addEventListener("click", () => loadLicensing(licensingState.page + 1));
 $("#add-license-person").addEventListener("click", () => openLicensingPerson());
@@ -998,12 +1069,13 @@ $("#licensing-person-form").addEventListener("submit", async (event) => {
     await licensingApi({ action: "save_person", id: $("#licensing-person-id").value || null, expectedVersion: Number($("#licensing-person-version").value) || null,
       name: $("#license-name").value, email: $("#license-email").value, phone: $("#license-phone").value,
       recruiter: $("#license-recruiter").value, recruiterPhone: $("#license-recruiter-phone").value, state: $("#license-state").value, track: $("#license-track").value,
-      examStatus: $("#license-exam-status").value, examDate: $("#license-exam-date").value,
+      examStatus: $("#license-exam-status").value, examDate: $("#license-exam-date").value, examTime: $("#license-exam-time").value,
       followUpDate: $("#license-follow-up").value, firstCheckDate: $("#license-first-check").value,
       nextAction: $("#license-next-action").value, blocker: $("#license-blocker").value,
       completedSteps: selectedStepsForStage(Number($("#license-stage-editor").value)) });
     $("#licensing-person-dialog").close();
     await loadLicensing(1);
+    void loadExamCalendar();
     toast("Licensing progress saved.");
   } catch (reason) { $("#licensing-person-error").textContent = reason.message; } finally { button.disabled = false; }
 });

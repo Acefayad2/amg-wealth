@@ -49,7 +49,7 @@ test('admin saves editable person fields and all five milestones atomically with
   admin = true; stale = false; calls.length = 0;
   assert.equal((await handler(request(save))).status, 200);
   const query = calls.at(-1);
-  assert.match(query.sql, /WHERE id=\$16 AND version=\$17/);
+  assert.match(query.sql, /WHERE id=\$18 AND version=\$19/);
   assert.equal(query.params[0], 'Edited Name');
   assert.equal(query.params[2], '+12025550123');
   assert.equal(query.params[7], 'passed');
@@ -142,4 +142,26 @@ test('category filters are allowlisted, use actual license/E&O milestones, and i
   }
   const invalid = await handler(new Request('https://amg.example/api/licensing-pipeline?category=unknown', { headers: { authorization: 'Bearer test' } }));
   assert.equal(invalid.status, 400);
+});
+
+test('admin can save or clear an exam time and older clients preserve it', async () => {
+  admin=true;stale=false;
+  assert.equal((await handler(request({...save,examDate:'2026-11-12',examTime:'14:30'}))).status,200);
+  assert.equal(calls.at(-1).params[15],'14:30');
+  assert.equal(calls.at(-1).params[16],true);
+  assert.match(calls.at(-1).sql,/ELSE exam_time END/);
+  assert.equal((await handler(request({...save,examDate:'2026-11-12',examTime:''}))).status,200);
+  assert.equal(calls.at(-1).params[15],null);
+  await handler(request(save));assert.equal(calls.at(-1).params[16],false);
+  assert.equal((await handler(request({...save,examDate:'2026-11-12',examTime:'25:00'}))).status,400);
+  assert.equal((await handler(request({...save,examDate:'',examTime:'14:00'}))).status,400);
+});
+test('weekly exam query spans seven days and includes all bookings beyond list pagination', async () => {
+  admin=true;calls.length=0;
+  assert.equal((await handler(new Request('https://amg.example/api/licensing-pipeline?calendar_week=2026-11-09',{headers:{authorization:'Bearer test'}}))).status,200);
+  const query=calls.at(-1);
+  assert.match(query.sql,/exam_date >= \$1::date AND exam_date < \$1::date \+ 7/);
+  assert(!query.sql.includes('LIMIT 25'));
+  assert.deepEqual(query.params,['2026-11-09']);
+  assert.equal((await handler(new Request('https://amg.example/api/licensing-pipeline?calendar_week=2026-11-10',{headers:{authorization:'Bearer test'}}))).status,400);
 });

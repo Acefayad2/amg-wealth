@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import vm from "node:vm";
+import { mondayOf, addDays, easternDay } from "../admin/licensing-calendar.mjs";
 
 const source = fs.readFileSync(new URL("../src/admin.mjs", import.meta.url), "utf8");
 const production = source.slice(source.indexOf("function resetInquiries()"), source.indexOf("function showStartup("));
@@ -22,7 +23,7 @@ function setup({ token = "admin-token", fetchImpl } = {}) {
     inquiryState: { records: [], total: 0, page: 1, pageSize: 25, loading: false, error: "", requestId: 0, controller: null, preview: false },
     licensingState: { people: [], learners: [], total: 0, preLicense: 0, onboarding: 0, appointed: 0, overdue: 0, page: 1, pageSize: 25, loading: false, error: "", requestId: 0, controller: null, preview: true },
     authClient: { auth: { getSession: async () => ({ data: { session: token ? { access_token: token } : null }, error: null }) } },
-    lookup, buttons, document: { querySelectorAll: () => buttons }, AbortController,
+    mondayOf, addDays, easternDay, lookup, buttons, document: { querySelectorAll: () => buttons }, AbortController,
     fetch: fetchImpl || (async () => ({ ok: true, json: async () => ({ inquiries: [], total: 0, page: 1, page_size: 25 }) })),
   };
   vm.runInNewContext(`const $=this.lookup;const inquiryState=this.inquiryState;const authClient=this.authClient;${helpers}\n${production}\nthis.loadInquiries=loadInquiries;this.renderInquiries=renderInquiries;this.resetInquiries=resetInquiries;this.showAdminView=showAdminView;`, context);

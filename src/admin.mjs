@@ -1,4 +1,4 @@
-import { licensingSteps, stepDone, licensingProgress } from "../licensing-progress/steps.js";
+import { licensingSteps, licensingProgress, selectedStepsForStage } from "../licensing-progress/steps.js";
 import { normalizeUsPhone } from "../netlify/functions/_shared/us-phone.mjs";
 import { createClient } from "@supabase/supabase-js";
 import { STATUS_LABELS, contactsForGroupContext, defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, personalizationHint, recurringCalendarEntries, scheduleInputValue, weekCells, weekRangeLabel } from "../admin/core.mjs";
@@ -151,6 +151,22 @@ async function licensingApi(body = null, page = 1) {
   return payload;
 }
 
+const licensingStageLabel = (stage) => stage === 6 ? 'Licensing complete' : `Step ${stage} of 5 · ${licensingSteps[stage - 1].label}`;
+function licensingSlider(person, editor = false) {
+  const progress = licensingProgress(person || {});
+  const stage = progress.current < 0 ? 6 : progress.current + 1;
+  const id = editor ? 'license-stage-editor' : `license-stage-${person.id}`;
+  return `<div class="licensing-slider stage-${stage}"><div class="licensing-slider-heading"><label for="${id}">Current step</label><output for="${id}" data-stage-label>${escapeHtml(licensingStageLabel(stage))}</output></div><input id="${id}" type="range" min="1" max="6" step="1" value="${stage}" aria-label="Current licensing step${editor ? '' : ` for ${escapeHtml(person.name)}`}" aria-valuetext="${escapeHtml(licensingStageLabel(stage))}" ${editor ? 'data-stage-editor' : `data-license-stage="${person.id}"`}><ol class="licensing-slider-stops" aria-hidden="true">${[...licensingSteps.map(step => step.label), 'Complete'].map((label, index) => `<li${index + 1 === stage ? ' class="selected"' : ''}><span>${index === 5 ? '✓' : index + 1}</span><small>${label}</small></li>`).join('')}</ol><p class="licensing-slider-hint" role="status" aria-live="polite">${editor ? 'Earlier steps will be marked complete when you save.' : 'Drag to their current step. Release to save.'}</p></div>`;
+}
+function updateLicensingSlider(input) {
+  const stage = Number(input.value);
+  const box = input.closest('.licensing-slider');
+  box.className = `licensing-slider stage-${stage}`;
+  box.querySelector('[data-stage-label]').textContent = licensingStageLabel(stage);
+  input.setAttribute('aria-valuetext', licensingStageLabel(stage));
+  box.querySelectorAll('li').forEach((item, index) => item.classList.toggle('selected', index + 1 === stage));
+}
+
 function renderLicensing() {
   const { people, total, page, pageSize, loading, error } = licensingState;
   const metrics = [["People tracked", total], ["Before license", licensingState.preLicense], ["Onboarding", licensingState.onboarding], ["Appointed", licensingState.appointed], ["Follow ups overdue", licensingState.overdue]];
@@ -166,11 +182,9 @@ function renderLicensing() {
   $("#licensing-page").textContent = `Page ${page} of ${Math.max(1, Math.ceil(total / pageSize))}`;
   $("#licensing-list").innerHTML = people.length ? people.map((person) => {
     const progress = licensingProgress(person);
-    const count = progress.completed, percent = progress.percent;
     const due = person.follow_up_date && person.follow_up_date < new Date().toISOString().slice(0, 10) && progress.current >= 0;
     const stage = progress.label;
-    const checklist = licensingSteps.map((step, index) => `<label class="licensing-task${index === progress.current ? ' current' : ''}"><input type="checkbox" data-license-task="${step.id}" data-person-id="${person.id}" ${stepDone(person, step) ? "checked" : ""}><span><small>STEP ${index + 1}</small>${step.label}</span></label>`).join("");
-    return `<article class="licensing-person" data-person-id="${person.id}"><div class="licensing-person-main"><div class="licensing-avatar">${escapeHtml(initials(person.name))}</div><div class="licensing-person-title"><p class="eyebrow">${escapeHtml(stage)} · ${escapeHtml(person.track === "both" ? "Life + Health" : person.track)}</p><h2>${escapeHtml(person.name)}</h2><p>${person.email ? escapeHtml(person.email) : '<span class="licensing-missing">Add email to connect their checklist</span>'}${person.phone ? ` · ${escapeHtml(person.phone)}` : ""}${person.recruiter ? ` · Upline: ${escapeHtml(person.recruiter)}` : ""}</p></div><span class="licensing-due${due ? " overdue" : ""}">${person.follow_up_date ? `${due ? "Overdue · " : "Follow up · "}${escapeHtml(person.follow_up_date)}` : "No follow up date"}</span></div><div class="licensing-progress"><div><strong>${count} of 5 steps</strong><span>${percent}% complete</span></div><div class="licensing-progress-track"><span style="width:${percent}%"></span></div></div>${person.next_action || person.blocker ? `<div class="licensing-notes">${person.next_action ? `<p><strong>Next:</strong> ${escapeHtml(person.next_action)}</p>` : ""}${person.blocker ? `<p><strong>Blocker:</strong> ${escapeHtml(person.blocker)}</p>` : ""}</div>` : ""}<details class="licensing-checklist" open><summary>Licensing steps</summary><div>${checklist}</div></details><div class="licensing-person-actions"><button class="secondary" type="button" data-license-edit="${person.id}">Edit person & progress</button><button class="secondary" type="button" data-license-text="${person.id}">Text reminder</button>${person.email ? `<a class="secondary" href="mailto:${encodeURIComponent(person.email)}?subject=${encodeURIComponent("Your AMG licensing next step")}&body=${encodeURIComponent(licensingReminder(person))}">Email reminder</a>` : '<button type="button" class="secondary" disabled title="Add an email first">Email reminder</button>'}</div></article>`;
+    return `<article class="licensing-person" data-person-id="${person.id}"><div class="licensing-person-main"><div class="licensing-avatar">${escapeHtml(initials(person.name))}</div><div class="licensing-person-title"><p class="eyebrow">${escapeHtml(stage)} · ${escapeHtml(person.track === "both" ? "Life + Health" : person.track)}</p><h2>${escapeHtml(person.name)}</h2><p>${person.email ? escapeHtml(person.email) : '<span class="licensing-missing">Add email to connect their checklist</span>'}${person.phone ? ` · ${escapeHtml(person.phone)}` : ""}${person.recruiter ? ` · Upline: ${escapeHtml(person.recruiter)}` : ""}</p></div><span class="licensing-due${due ? " overdue" : ""}">${person.follow_up_date ? `${due ? "Overdue · " : "Follow up · "}${escapeHtml(person.follow_up_date)}` : "No follow up date"}</span></div>${licensingSlider(person)}${person.next_action || person.blocker ? `<div class="licensing-notes">${person.next_action ? `<p><strong>Next:</strong> ${escapeHtml(person.next_action)}</p>` : ""}${person.blocker ? `<p><strong>Blocker:</strong> ${escapeHtml(person.blocker)}</p>` : ""}</div>` : ""}<div class="licensing-person-actions"><button class="secondary" type="button" data-license-edit="${person.id}">Edit person & progress</button><button class="secondary" type="button" data-license-text="${person.id}">Text reminder</button>${person.email ? `<a class="secondary" href="mailto:${encodeURIComponent(person.email)}?subject=${encodeURIComponent("Your AMG licensing next step")}&body=${encodeURIComponent(licensingReminder(person))}">Email reminder</a>` : '<button type="button" class="secondary" disabled title="Add an email first">Email reminder</button>'}</div></article>`;
   }).join("") : loading ? '<p class="empty">Loading people…</p>' : error ? '<p class="empty">Refresh to try again.</p>' : '<div class="learner-empty"><h2>No one in this view yet</h2><p>Add a person to track their licensing steps, or clear the filters to see everyone.</p></div>';
 }
 
@@ -215,7 +229,7 @@ function openLicensingPerson(person = null) {
   $("#licensing-person-id").value = person?.id || "";
   $("#licensing-person-version").value = person?.version || "";
   for (const [id, key] of [["license-name", "name"], ["license-email", "email"], ["license-phone", "phone"], ["license-recruiter", "recruiter"], ["license-state", "state"], ["license-track", "track"], ["license-exam-status", "exam_status"], ["license-exam-date", "exam_date"], ["license-follow-up", "follow_up_date"], ["license-first-check", "first_check_date"], ["license-next-action", "next_action"], ["license-blocker", "blocker"]]) $("#" + id).value = person?.[key] || (id === "license-track" ? "both" : id === "license-exam-status" ? "studying" : "");
-  $("#license-steps").innerHTML = licensingSteps.map((step, index) => `<label class="licensing-task"><input type="checkbox" name="completed-step" value="${step.id}" ${person && stepDone(person, step) ? 'checked' : ''}><span><small>STEP ${index + 1}</small>${step.label}</span></label>`).join('');
+  $("#license-steps").innerHTML = licensingSlider(person, true);
   $("#licensing-person-error").textContent = "";
   $("#licensing-person-dialog").showModal();
 }
@@ -949,12 +963,18 @@ let licensingSearchTimer;
 $("#licensing-search").addEventListener("input", (event) => { clearTimeout(licensingSearchTimer); licensingSearchTimer = setTimeout(() => { licensingState.query = event.target.value.trim(); void loadLicensing(1); }, 250); });
 $("#licensing-filter").addEventListener("change", (event) => { licensingState.status = event.target.value; void loadLicensing(1); });
 $("#license-exam-status").addEventListener("change", (event) => {
-  const passed = $("#license-steps input[value='state_exam_passed']");
-  passed.checked = event.target.value === 'passed';
-  if (['scheduled', 'rescheduled', 'passed'].includes(event.target.value)) $("#license-steps input[value='exam_booked']").checked = true;
+  const slider = $("#license-stage-editor");
+  if (event.target.value === 'passed' && Number(slider.value) < 3) slider.value = '3';
+  else if (event.target.value !== 'passed' && Number(slider.value) >= 3) slider.value = ['scheduled', 'rescheduled', 'failed'].includes(event.target.value) ? '2' : '1';
+  else if (['scheduled', 'rescheduled', 'failed'].includes(event.target.value)) slider.value = '2';
+  else if (event.target.value === 'studying') slider.value = '1';
+  updateLicensingSlider(slider);
 });
-$("#license-steps").addEventListener("change", (event) => {
-  if (event.target.value === 'state_exam_passed') $("#license-exam-status").value = event.target.checked ? 'passed' : ($("#license-exam-date").value ? 'scheduled' : 'studying');
+$("#license-steps").addEventListener("input", (event) => {
+  if (!event.target.matches('[data-stage-editor]')) return;
+  updateLicensingSlider(event.target);
+  const stage = Number(event.target.value);
+  $("#license-exam-status").value = stage >= 3 ? 'passed' : stage === 2 ? 'scheduled' : 'studying';
 });
 $("#licensing-person-form").addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -968,21 +988,44 @@ $("#licensing-person-form").addEventListener("submit", async (event) => {
       examStatus: $("#license-exam-status").value, examDate: $("#license-exam-date").value,
       followUpDate: $("#license-follow-up").value, firstCheckDate: $("#license-first-check").value,
       nextAction: $("#license-next-action").value, blocker: $("#license-blocker").value,
-      completedSteps: [...document.querySelectorAll('#license-steps input:checked')].map(input => input.value) });
+      completedSteps: selectedStepsForStage(Number($("#license-stage-editor").value)) });
     $("#licensing-person-dialog").close();
     await loadLicensing(1);
     toast("Licensing progress saved.");
   } catch (reason) { $("#licensing-person-error").textContent = reason.message; } finally { button.disabled = false; }
 });
+$("#licensing-list").addEventListener("input", (event) => {
+  if (event.target.matches('[data-license-stage]')) updateLicensingSlider(event.target);
+});
 $("#licensing-list").addEventListener("change", async (event) => {
-  const input = event.target.closest('[data-license-task]');
+  const input = event.target.closest('[data-license-stage]');
   if (!input) return;
+  const person = licensingState.people.find(item => item.id === input.dataset.licenseStage);
+  if (!person) return;
+  const box = input.closest('.licensing-slider');
   input.disabled = true;
+  box.querySelector('[role="status"]').textContent = 'Saving…';
   try {
-    await licensingApi({ action: "set_step", id: input.dataset.personId, task: input.dataset.licenseTask, done: input.checked });
-    await loadLicensing(licensingState.page);
-    toast("Checklist updated.");
-  } catch (reason) { input.checked = !input.checked; toast(reason.message || "Could not update checklist."); input.disabled = false; }
+    const payload = await licensingApi({ action: "set_stage", id: person.id, expectedVersion: person.version, stage: Number(input.value) });
+    const updated = payload.person;
+    const appointed = item => item.tasks?.appointed?.done === true;
+    const before = item => item.exam_status !== 'passed';
+    const onboard = item => !before(item) && !appointed(item);
+    const overdue = item => !!item.follow_up_date && item.follow_up_date < new Date().toISOString().slice(0,10) && !appointed(item);
+    for (const [key, match] of [['preLicense', before], ['onboarding', onboard], ['appointed', appointed], ['overdue', overdue]]) licensingState[key] += Number(match(updated)) - Number(match(person));
+    licensingState.people = licensingState.people.map(item => item.id === person.id ? updated : item);
+    renderLicensing();
+    const saved = document.getElementById(`license-stage-${person.id}`);
+    saved.closest('.licensing-slider').querySelector('[role="status"]').textContent = 'Saved. Earlier steps are marked complete.';
+    saved.focus({ preventScroll: true });
+  } catch (reason) {
+    const progress = licensingProgress(person);
+    input.value = String(progress.current < 0 ? 6 : progress.current + 1);
+    updateLicensingSlider(input);
+    input.disabled = false;
+    box.querySelector('[role="status"]').textContent = reason.message || 'Could not save. Try again.';
+    toast(reason.message || 'Could not update step.');
+  }
 });
 $("#licensing-list").addEventListener("click", (event) => {
   const edit = event.target.closest('[data-license-edit]');

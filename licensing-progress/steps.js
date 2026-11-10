@@ -22,3 +22,8 @@ export function stepUpdates(selected, source) {
   const updatedAt = new Date().toISOString();
   return Object.fromEntries(licensingSteps.flatMap(step => step.tasks.map(key => [key, { done: selected.includes(step.id), source, updatedAt }])));
 }
+
+export function selectedStepsForStage(stage) {
+  if (!Number.isInteger(stage) || stage < 1 || stage > 6) throw new Error('Choose a licensing step from 1 to 5, or Complete.');
+  return licensingSteps.slice(0, stage - 1).map(step => step.id);
+}

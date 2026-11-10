@@ -5,3 +5,5 @@ export function taskDone(person: LicensingPerson, key: string): boolean;
 export function stepDone(person: LicensingPerson, step: LicensingStep): boolean;
 export function licensingProgress(person: LicensingPerson): { completed: number; percent: number; current: number; label: string };
 export function stepUpdates(selected: string[], source: string): Record<string, { done: boolean; source: string; updatedAt: string }>;
+
+export function selectedStepsForStage(stage: number): string[];

@@ -4,6 +4,7 @@ const responseHeaders = { 'cache-control': 'private, no-store', 'content-type': 
 const json = (value, status = 200) => new Response(JSON.stringify(value), { status, headers: responseHeaders });
 const iso = value => value === null || value === undefined ? null : new Date(value).toISOString();
 const percentage = (part, total) => total ? Math.round(part / total * 10000) / 100 : 0;
+export const reportableLearner = value => Boolean(value && typeof value.email === 'string' && !value.email.toLowerCase().endsWith('@example.invalid'));
 
 export function buildAdminLearningSnapshot(user, records, observedAt = Date.now()) {
   const report = buildReport(user, records);

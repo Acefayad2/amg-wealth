@@ -1,7 +1,7 @@
 import { getStore } from '@netlify/blobs';
 import { getInquiryPool } from './_shared/inquiry-db.mjs';
 import { getAuthenticatedUser } from './_shared/supabase.mjs';
-import { createAdminLearningHandler, refreshAdminLearningSnapshot } from './_shared/admin-learning.mjs';
+import { createAdminLearningHandler, refreshAdminLearningSnapshot, reportableLearner } from './_shared/admin-learning.mjs';
 
 export default createAdminLearningHandler({
   authenticate: async request => (await getAuthenticatedUser(request)).user,
@@ -15,7 +15,7 @@ export default createAdminLearningHandler({
     const learners = [];
     for (let start = 0; start < blobs.length; start += 25) {
       const batch = await Promise.all(blobs.slice(start, start + 25).map(blob => store.get(blob.key, { type: 'json' })));
-      learners.push(...batch.filter(value => value && typeof value === 'object' && typeof value.email === 'string'));
+      learners.push(...batch.filter(reportableLearner));
     }
     learners.sort((a, b) => Date.parse(b.lastActiveAt || 0) - Date.parse(a.lastActiveAt || 0));
     const selected = learners.slice((page - 1) * pageSize, page * pageSize);

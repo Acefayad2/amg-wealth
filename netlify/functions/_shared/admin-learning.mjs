@@ -1,4 +1,4 @@
-import { buildReport, formById, hash, schema, scoreAttempt } from './learning-core.mjs';
+import { assessmentSchemas, buildReport, hash, scoreAttempt } from './learning-core.mjs';
 
 const responseHeaders = { 'cache-control': 'private, no-store', 'content-type': 'application/json; charset=utf-8', 'x-content-type-options': 'nosniff' };
 const json = (value, status = 200) => new Response(JSON.stringify(value), { status, headers: responseHeaders });
@@ -7,26 +7,23 @@ const percentage = (part, total) => total ? Math.round(part / total * 10000) / 1
 
 export function buildAdminLearningSnapshot(user, records, observedAt = Date.now()) {
   const report = buildReport(user, records);
-  const rawAttempts = records[schema.assessmentKey]?.value?.attempts || [];
-  const attempts = rawAttempts.map(attempt => {
-    const form = formById.get(attempt.form);
-    if (!form) return null;
-    const answered = attempt.answers.filter(answer => answer !== null).length;
-    const submitted = attempt.submittedAt !== null;
-    const score = submitted ? scoreAttempt(attempt) : null;
-    return {
-      attemptId: attempt.id,
-      formId: attempt.form,
-      title: form.title,
-      status: submitted ? 'completed' : 'in_progress',
-      startedAt: iso(attempt.startedAt),
-      submittedAt: iso(attempt.submittedAt),
-      answered,
-      total: form.questions.length,
-      progressPercent: percentage(answered, form.questions.length),
-      scorePercent: score?.percentage ?? null,
-    };
-  }).filter(Boolean).sort((a, b) => b.startedAt.localeCompare(a.startedAt));
+  const attempts = [];
+  for (const [key, assessment] of assessmentSchemas) {
+    for (const attempt of records[key]?.value?.attempts || []) {
+      const form = assessment.formById.get(attempt.form);
+      if (!form) continue;
+      const answered = attempt.answers.filter(answer => answer !== null).length;
+      const submitted = attempt.submittedAt !== null;
+      attempts.push({
+        attemptId: attempt.id, formId: attempt.form, title: form.title,
+        status: submitted ? 'completed' : 'in_progress',
+        startedAt: iso(attempt.startedAt), submittedAt: iso(attempt.submittedAt),
+        answered, total: form.questions.length, progressPercent: percentage(answered, form.questions.length),
+        scorePercent: submitted ? scoreAttempt(attempt, assessment).percentage : null,
+      });
+    }
+  }
+  attempts.sort((a, b) => b.startedAt.localeCompare(a.startedAt));
   const lastActiveAt = report.summary.lastActiveAt || new Date(observedAt).toISOString();
   return {
     learnerId: hash(user.id),

@@ -52,7 +52,7 @@ const envelope = (value = lessonValue(), revision = 0, mutationId = 'mutation-00
 async function send(system, body, options) { const response = await system.handler(request(body, options)); return { response, data: await response.json() }; }
 
 test('server answer schema binds all61 exact current source files and all814 questions', () => {
-  assert.equal(schema.lessons.length, 60); assert.equal(allowedKeys.length, 121); assert.equal(allowedKeys.filter(key => key.startsWith('amg-life-')).length, 61);
+  assert.equal(schema.lessons.length, 60); assert.equal(allowedKeys.length, 122); assert.equal(allowedKeys.filter(key => key.startsWith('amg-life-')).length, 61);
   assert.equal(schema.lessons.flatMap(l => l.questions).length, 512);
   assert.equal(schema.forms.flatMap(f => f.questions).length, 302);
   for (const [path, expected] of Object.entries(schema.sourceHashes)) assert.equal(createHash('sha256').update(fs.readFileSync(new URL('../' + path.replace(/^public\//, ''), import.meta.url))).digest('hex'), expected, path);
@@ -343,10 +343,10 @@ test('source adapter uses signed server session, strong store and Netlify enviro
 
 test('health track binds 60 lessons, 484 answers and exact current source files', () => {
   const health = schema.tracks.health;
-  assert.equal(health.lessons.length, 60); assert.equal(health.forms.length, 0);
+  assert.equal(health.lessons.length, 60); assert.deepEqual(health.forms.map(f => f.id), ['A', 'B', 'C']);
   assert.equal(health.lessons.flatMap(lesson => lesson.questions).length, 484);
-  assert.equal(Object.keys(health.sourceHashes).length, 60);
-  assert(!allowedKeys.includes(health.assessmentKey), 'the Health assessment key opens only when Health forms exist');
+  assert.equal(Object.keys(health.sourceHashes).length, 61);
+  assert(allowedKeys.includes(health.assessmentKey), 'the Health assessment key is enabled for these forms');
   for (const [sourcePath, expected] of Object.entries(health.sourceHashes)) {
     const localPath = sourcePath.replace(/^public\//, '');
     assert.equal(createHash('sha256').update(fs.readFileSync(new URL('../' + localPath, import.meta.url))).digest('hex'), expected, sourcePath);
@@ -386,5 +386,25 @@ test('health lessons validate, save through the reading path and report per trac
   assert.equal(report.tracks.health.lessons[0].correct, lesson.questions.length);
   assert.equal(report.summary.completedLessons, 0); assert.equal(report.summary.totalLessons, 60); assert.equal(report.lessons.length, 60);
   assert.equal((await send(system, envelope(value, 0, 'mutation-h002', 'amg-health-lesson-61-v1'))).response.status, 400);
-  assert.equal((await send(system, envelope({ version: 1, attempts: [], seen: [], reviews: {}, lessonImports: {} }, 0, 'mutation-h003', health.assessmentKey))).response.status, 400);
+  assert.equal((await send(system, envelope({ version: 1, attempts: [], seen: [], reviews: {}, lessonImports: {} }, 0, 'mutation-h003', health.assessmentKey))).response.status, 200);
+});
+
+test('Health mocks resume and score against their own key, including when Life uses the same form letter', async () => {
+  const health = schema.tracks.health, form = health.forms[1], service = setup();
+  const started = attempt(form, false, 'health-exam-002');
+  started.answers[0] = form.questions[0].answer;
+  const save = await send(service, envelope(assessmentValue([started]), 0, 'mutation-mock-01', health.assessmentKey));
+  assert.equal(save.response.status, 200);
+  const resume = (await send(service, undefined)).data.records[health.assessmentKey].value.attempts[0];
+  assert.deepEqual(resume, started);
+  const finished = { ...started, answers: form.questions.map(q => q.scored ? q.answer : (q.answer + 1) % q.options), submittedAt: NOW };
+  assert.equal((await send(service, envelope(assessmentValue([finished]), 1, 'mutation-mock-02', health.assessmentKey))).response.status, 200);
+  const report = (await send(service, undefined, {query:'?report=1'})).data;
+  assert.deepEqual(report.attempts, []);
+  assert.equal(report.tracks.health.attempts[0].title, 'Health Mock Exam B');
+  assert.equal(report.tracks.health.attempts[0].correct, 80);
+  assert.equal(report.tracks.health.attempts[0].unscoredCorrect, 0);
+  assert.equal(report.tracks.health.latestMockScore, 100);
+  const wrongKey = { ...assessmentValue([finished]), lessonImports:{[schema.lessons[0].key]:'a'} };
+  assert.throws(() => validateValue(health.assessmentKey, wrongKey, NOW), /imported lesson/);
 });

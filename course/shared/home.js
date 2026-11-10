@@ -35,7 +35,7 @@
    const note=document.querySelector('.continue-note');if(note)note.textContent=text?(next.dataset.audio?'Read or listen, then try the questions.':'Read the lesson. Answer the questions.'):'Watch the video. Answer the questions.';
    if(!initialized)selected=next.dataset.moduleIndex;
   }else{
-   link.href=preview.href=document.body.dataset.assessments||'/course/assessments/';link.querySelector('span').textContent=document.body.dataset.track==='health'?'Find the Health practice exam':'Explore practice tests';$('continue-label').textContent='ALL LESSONS COMPLETED';$('continue-meta').textContent=rows.length+' OF '+rows.length+' COMPLETE';$('continue-title').textContent='Course complete. Keep your knowledge sharp.';preview.hidden=true;
+   link.href=preview.href=document.body.dataset.assessments||'/course/assessments/';link.querySelector('span').textContent=document.body.dataset.track==='health'?'Open Health mock exams':'Explore practice tests';$('continue-label').textContent='ALL LESSONS COMPLETED';$('continue-meta').textContent=rows.length+' OF '+rows.length+' COMPLETE';$('continue-title').textContent='Course complete. Keep your knowledge sharp.';preview.hidden=true;
   }
   initialized=true;filter();
  }

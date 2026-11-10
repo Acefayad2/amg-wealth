@@ -5296,7 +5296,7 @@ export const schema = {
           "title": "Risk, perils and the health peril",
           "version": 1,
           "key": "amg-health-lesson-01-v1",
-          "maxPosition": 0,
+          "maxPosition": 246,
           "questions": [
             {
               "id": "H01-01",
@@ -5345,7 +5345,7 @@ export const schema = {
           "title": "Handling risk, pooling and insurability",
           "version": 1,
           "key": "amg-health-lesson-02-v1",
-          "maxPosition": 0,
+          "maxPosition": 218,
           "questions": [
             {
               "id": "H02-01",
@@ -5394,7 +5394,7 @@ export const schema = {
           "title": "Insurers, nonprofit plans and HMOs",
           "version": 1,
           "key": "amg-health-lesson-03-v1",
-          "maxPosition": 0,
+          "maxPosition": 286,
           "questions": [
             {
               "id": "H03-01",
@@ -5443,7 +5443,7 @@ export const schema = {
           "title": "Agency and producer authority",
           "version": 1,
           "key": "amg-health-lesson-04-v1",
-          "maxPosition": 0,
+          "maxPosition": 234,
           "questions": [
             {
               "id": "H04-01",
@@ -5492,7 +5492,7 @@ export const schema = {
           "title": "Building and interpreting the contract",
           "version": 1,
           "key": "amg-health-lesson-05-v1",
-          "maxPosition": 0,
+          "maxPosition": 284,
           "questions": [
             {
               "id": "H05-01",
@@ -5541,7 +5541,7 @@ export const schema = {
           "title": "Health losses, benefits and policy classes",
           "version": 1,
           "key": "amg-health-lesson-06-v1",
-          "maxPosition": 0,
+          "maxPosition": 258,
           "questions": [
             {
               "id": "H06-01",
@@ -5590,7 +5590,7 @@ export const schema = {
           "title": "Federal rules and industry organizations",
           "version": 1,
           "key": "amg-health-lesson-07-v1",
-          "maxPosition": 0,
+          "maxPosition": 288,
           "questions": [
             {
               "id": "H07-01",
@@ -5639,7 +5639,7 @@ export const schema = {
           "title": "Limited policies and their notices",
           "version": 1,
           "key": "amg-health-lesson-08-v1",
-          "maxPosition": 0,
+          "maxPosition": 254,
           "questions": [
             {
               "id": "H08-01",
@@ -5688,7 +5688,7 @@ export const schema = {
           "title": "Common exclusions",
           "version": 1,
           "key": "amg-health-lesson-09-v1",
-          "maxPosition": 0,
+          "maxPosition": 270,
           "questions": [
             {
               "id": "H09-01",
@@ -5737,7 +5737,7 @@ export const schema = {
           "title": "Marketing, advertising and the guaranty corporation",
           "version": 1,
           "key": "amg-health-lesson-10-v1",
-          "maxPosition": 0,
+          "maxPosition": 264,
           "questions": [
             {
               "id": "H10-01",
@@ -5786,7 +5786,7 @@ export const schema = {
           "title": "Field underwriting, application and delivery",
           "version": 1,
           "key": "amg-health-lesson-11-v1",
-          "maxPosition": 0,
+          "maxPosition": 288,
           "questions": [
             {
               "id": "H11-01",
@@ -5835,7 +5835,7 @@ export const schema = {
           "title": "Insurer underwriting and sources of information",
           "version": 1,
           "key": "amg-health-lesson-12-v1",
-          "maxPosition": 0,
+          "maxPosition": 272,
           "questions": [
             {
               "id": "H12-01",
@@ -5884,7 +5884,7 @@ export const schema = {
           "title": "Risk classes and unlawful discrimination",
           "version": 1,
           "key": "amg-health-lesson-13-v1",
-          "maxPosition": 0,
+          "maxPosition": 252,
           "questions": [
             {
               "id": "H13-01",
@@ -5933,7 +5933,7 @@ export const schema = {
           "title": "Replacing health insurance",
           "version": 1,
           "key": "amg-health-lesson-14-v1",
-          "maxPosition": 0,
+          "maxPosition": 280,
           "questions": [
             {
               "id": "H14-01",
@@ -5982,7 +5982,7 @@ export const schema = {
           "title": "Required provisions: contract, defenses and premiums",
           "version": 1,
           "key": "amg-health-lesson-15-v1",
-          "maxPosition": 0,
+          "maxPosition": 256,
           "questions": [
             {
               "id": "H15-01",
@@ -6031,7 +6031,7 @@ export const schema = {
           "title": "Required provisions: the claim clocks",
           "version": 1,
           "key": "amg-health-lesson-16-v1",
-          "maxPosition": 0,
+          "maxPosition": 224,
           "questions": [
             {
               "id": "H16-01",
@@ -6080,7 +6080,7 @@ export const schema = {
           "title": "Optional provisions and renewability",
           "version": 1,
           "key": "amg-health-lesson-17-v1",
-          "maxPosition": 0,
+          "maxPosition": 268,
           "questions": [
             {
               "id": "H17-01",
@@ -6129,7 +6129,7 @@ export const schema = {
           "title": "Medical plan concepts",
           "version": 1,
           "key": "amg-health-lesson-18-v1",
-          "maxPosition": 0,
+          "maxPosition": 252,
           "questions": [
             {
               "id": "H18-01",
@@ -6178,7 +6178,7 @@ export const schema = {
           "title": "Major medical: deductibles, coinsurance and stop-loss",
           "version": 1,
           "key": "amg-health-lesson-19-v1",
-          "maxPosition": 0,
+          "maxPosition": 274,
           "questions": [
             {
               "id": "H19-01",
@@ -6227,7 +6227,7 @@ export const schema = {
           "title": "Health service plans and fixed indemnity",
           "version": 1,
           "key": "amg-health-lesson-20-v1",
-          "maxPosition": 0,
+          "maxPosition": 268,
           "questions": [
             {
               "id": "H20-01",
@@ -6276,7 +6276,7 @@ export const schema = {
           "title": "Health maintenance organizations",
           "version": 1,
           "key": "amg-health-lesson-21-v1",
-          "maxPosition": 0,
+          "maxPosition": 262,
           "questions": [
             {
               "id": "H21-01",
@@ -6325,7 +6325,7 @@ export const schema = {
           "title": "PPOs, point-of-service plans and TRICARE",
           "version": 1,
           "key": "amg-health-lesson-22-v1",
-          "maxPosition": 0,
+          "maxPosition": 268,
           "questions": [
             {
               "id": "H22-01",
@@ -6374,7 +6374,7 @@ export const schema = {
           "title": "Cost containment and coordination of benefits",
           "version": 1,
           "key": "amg-health-lesson-23-v1",
-          "maxPosition": 0,
+          "maxPosition": 274,
           "questions": [
             {
               "id": "H23-01",
@@ -6423,7 +6423,7 @@ export const schema = {
           "title": "HIPAA portability and renewability",
           "version": 1,
           "key": "amg-health-lesson-24-v1",
-          "maxPosition": 0,
+          "maxPosition": 300,
           "questions": [
             {
               "id": "H24-01",
@@ -6472,7 +6472,7 @@ export const schema = {
           "title": "HSAs, HRAs and high-deductible plans",
           "version": 1,
           "key": "amg-health-lesson-25-v1",
-          "maxPosition": 0,
+          "maxPosition": 300,
           "questions": [
             {
               "id": "H25-01",
@@ -6521,7 +6521,7 @@ export const schema = {
           "title": "The Affordable Care Act: coverage rules",
           "version": 1,
           "key": "amg-health-lesson-26-v1",
-          "maxPosition": 0,
+          "maxPosition": 292,
           "questions": [
             {
               "id": "H26-01",
@@ -6570,7 +6570,7 @@ export const schema = {
           "title": "The Affordable Care Act: plans, appeals and subsidies",
           "version": 1,
           "key": "amg-health-lesson-27-v1",
-          "maxPosition": 0,
+          "maxPosition": 292,
           "questions": [
             {
               "id": "H27-01",
@@ -6619,7 +6619,7 @@ export const schema = {
           "title": "Qualifying for disability benefits",
           "version": 1,
           "key": "amg-health-lesson-28-v1",
-          "maxPosition": 0,
+          "maxPosition": 244,
           "questions": [
             {
               "id": "H28-01",
@@ -6668,7 +6668,7 @@ export const schema = {
           "title": "Individual disability income: the basic plan",
           "version": 1,
           "key": "amg-health-lesson-29-v1",
-          "maxPosition": 0,
+          "maxPosition": 264,
           "questions": [
             {
               "id": "H29-01",
@@ -6717,7 +6717,7 @@ export const schema = {
           "title": "Partial, residual and social insurance coordination",
           "version": 1,
           "key": "amg-health-lesson-30-v1",
-          "maxPosition": 0,
+          "maxPosition": 272,
           "questions": [
             {
               "id": "H30-01",
@@ -6766,7 +6766,7 @@ export const schema = {
           "title": "Disability riders, cash benefits and refunds",
           "version": 1,
           "key": "amg-health-lesson-31-v1",
-          "maxPosition": 0,
+          "maxPosition": 258,
           "questions": [
             {
               "id": "H31-01",
@@ -6815,7 +6815,7 @@ export const schema = {
           "title": "Underwriting disability income",
           "version": 1,
           "key": "amg-health-lesson-32-v1",
-          "maxPosition": 0,
+          "maxPosition": 248,
           "questions": [
             {
               "id": "H32-01",
@@ -6864,7 +6864,7 @@ export const schema = {
           "title": "Group and business disability coverage",
           "version": 1,
           "key": "amg-health-lesson-33-v1",
-          "maxPosition": 0,
+          "maxPosition": 284,
           "questions": [
             {
               "id": "H33-01",
@@ -6913,7 +6913,7 @@ export const schema = {
           "title": "Social Security disability and workers compensation",
           "version": 1,
           "key": "amg-health-lesson-34-v1",
-          "maxPosition": 0,
+          "maxPosition": 270,
           "questions": [
             {
               "id": "H34-01",
@@ -6962,7 +6962,7 @@ export const schema = {
           "title": "Group contracts and eligible groups",
           "version": 1,
           "key": "amg-health-lesson-35-v1",
-          "maxPosition": 0,
+          "maxPosition": 268,
           "questions": [
             {
               "id": "H35-01",
@@ -7011,7 +7011,7 @@ export const schema = {
           "title": "Group marketing and employer underwriting",
           "version": 1,
           "key": "amg-health-lesson-36-v1",
-          "maxPosition": 0,
+          "maxPosition": 268,
           "questions": [
             {
               "id": "H36-01",
@@ -7060,7 +7060,7 @@ export const schema = {
           "title": "Group eligibility, enrollment and coordination",
           "version": 1,
           "key": "amg-health-lesson-37-v1",
-          "maxPosition": 0,
+          "maxPosition": 236,
           "questions": [
             {
               "id": "H37-01",
@@ -7109,7 +7109,7 @@ export const schema = {
           "title": "Changing carriers, continuation and conversion",
           "version": 1,
           "key": "amg-health-lesson-38-v1",
-          "maxPosition": 0,
+          "maxPosition": 290,
           "questions": [
             {
               "id": "H38-01",
@@ -7158,7 +7158,7 @@ export const schema = {
           "title": "Small employer plans in Maryland",
           "version": 1,
           "key": "amg-health-lesson-39-v1",
-          "maxPosition": 0,
+          "maxPosition": 280,
           "questions": [
             {
               "id": "H39-01",
@@ -7207,7 +7207,7 @@ export const schema = {
           "title": "Dental insurance",
           "version": 1,
           "key": "amg-health-lesson-40-v1",
-          "maxPosition": 0,
+          "maxPosition": 302,
           "questions": [
             {
               "id": "H40-01",
@@ -7256,7 +7256,7 @@ export const schema = {
           "title": "The Maryland Health Benefit Exchange",
           "version": 1,
           "key": "amg-health-lesson-41-v1",
-          "maxPosition": 0,
+          "maxPosition": 284,
           "questions": [
             {
               "id": "H41-01",
@@ -7305,7 +7305,7 @@ export const schema = {
           "title": "Medicare Parts A and B",
           "version": 1,
           "key": "amg-health-lesson-42-v1",
-          "maxPosition": 0,
+          "maxPosition": 294,
           "questions": [
             {
               "id": "H42-01",
@@ -7354,7 +7354,7 @@ export const schema = {
           "title": "Medicare Advantage and Part D",
           "version": 1,
           "key": "amg-health-lesson-43-v1",
-          "maxPosition": 0,
+          "maxPosition": 292,
           "questions": [
             {
               "id": "H43-01",
@@ -7403,7 +7403,7 @@ export const schema = {
           "title": "Medicare supplement insurance",
           "version": 1,
           "key": "amg-health-lesson-44-v1",
-          "maxPosition": 0,
+          "maxPosition": 280,
           "questions": [
             {
               "id": "H44-01",
@@ -7452,7 +7452,7 @@ export const schema = {
           "title": "Maryland Medigap protections",
           "version": 1,
           "key": "amg-health-lesson-45-v1",
-          "maxPosition": 0,
+          "maxPosition": 298,
           "questions": [
             {
               "id": "H45-01",
@@ -7501,7 +7501,7 @@ export const schema = {
           "title": "Medicare with employer plans and Medicaid",
           "version": 1,
           "key": "amg-health-lesson-46-v1",
-          "maxPosition": 0,
+          "maxPosition": 280,
           "questions": [
             {
               "id": "H46-01",
@@ -7550,7 +7550,7 @@ export const schema = {
           "title": "Long-term care insurance",
           "version": 1,
           "key": "amg-health-lesson-47-v1",
-          "maxPosition": 0,
+          "maxPosition": 296,
           "questions": [
             {
               "id": "H47-01",
@@ -7599,7 +7599,7 @@ export const schema = {
           "title": "Maryland long-term care rules and the tax credit",
           "version": 1,
           "key": "amg-health-lesson-48-v1",
-          "maxPosition": 0,
+          "maxPosition": 300,
           "questions": [
             {
               "id": "H48-01",
@@ -7648,7 +7648,7 @@ export const schema = {
           "title": "Who needs a Maryland license",
           "version": 1,
           "key": "amg-health-lesson-49-v1",
-          "maxPosition": 0,
+          "maxPosition": 276,
           "questions": [
             {
               "id": "H49-01",
@@ -7697,7 +7697,7 @@ export const schema = {
           "title": "Keeping the license: renewal, education and reporting",
           "version": 1,
           "key": "amg-health-lesson-50-v1",
-          "maxPosition": 0,
+          "maxPosition": 246,
           "questions": [
             {
               "id": "H50-01",
@@ -7746,7 +7746,7 @@ export const schema = {
           "title": "Appointments and solicitation",
           "version": 1,
           "key": "amg-health-lesson-51-v1",
-          "maxPosition": 0,
+          "maxPosition": 252,
           "questions": [
             {
               "id": "H51-01",
@@ -7795,7 +7795,7 @@ export const schema = {
           "title": "Discipline, hearings and fraud",
           "version": 1,
           "key": "amg-health-lesson-52-v1",
-          "maxPosition": 0,
+          "maxPosition": 288,
           "questions": [
             {
               "id": "H52-01",
@@ -7844,7 +7844,7 @@ export const schema = {
           "title": "MIA powers, records, fees and fiduciary duties",
           "version": 1,
           "key": "amg-health-lesson-53-v1",
-          "maxPosition": 0,
+          "maxPosition": 278,
           "questions": [
             {
               "id": "H53-01",
@@ -7893,7 +7893,7 @@ export const schema = {
           "title": "Unfair trade practices",
           "version": 1,
           "key": "amg-health-lesson-54-v1",
-          "maxPosition": 0,
+          "maxPosition": 328,
           "questions": [
             {
               "id": "H54-01",
@@ -7942,7 +7942,7 @@ export const schema = {
           "title": "Adverse underwriting notices and privacy",
           "version": 1,
           "key": "amg-health-lesson-55-v1",
-          "maxPosition": 0,
+          "maxPosition": 262,
           "questions": [
             {
               "id": "H55-01",
@@ -7991,7 +7991,7 @@ export const schema = {
           "title": "Maryland plan requirements and mandated benefits",
           "version": 1,
           "key": "amg-health-lesson-56-v1",
-          "maxPosition": 0,
+          "maxPosition": 320,
           "questions": [
             {
               "id": "H56-01",
@@ -8040,7 +8040,7 @@ export const schema = {
           "title": "Taxing personal coverage and health accounts",
           "version": 1,
           "key": "amg-health-lesson-57-v1",
-          "maxPosition": 0,
+          "maxPosition": 290,
           "questions": [
             {
               "id": "H57-01",
@@ -8089,7 +8089,7 @@ export const schema = {
           "title": "Taxing employer, self-employed and business coverage",
           "version": 1,
           "key": "amg-health-lesson-58-v1",
-          "maxPosition": 0,
+          "maxPosition": 284,
           "questions": [
             {
               "id": "H58-01",
@@ -8138,7 +8138,7 @@ export const schema = {
           "title": "Mixed cases: plans, claims and disability",
           "version": 1,
           "key": "amg-health-lesson-59-v1",
-          "maxPosition": 0,
+          "maxPosition": 302,
           "questions": [
             {
               "id": "H59-01",
@@ -8197,7 +8197,7 @@ export const schema = {
           "title": "Mixed cases: Maryland rules in practice",
           "version": 1,
           "key": "amg-health-lesson-60-v1",
-          "maxPosition": 0,
+          "maxPosition": 254,
           "questions": [
             {
               "id": "H60-01",
@@ -10203,66 +10203,66 @@ export const schema = {
         }
       ],
       "sourceHashes": {
-        "public/course/health/lesson-01/lesson-data.js": "3ce0db5a256237d8f39e0208bf6db97795763e24c220dcf8fe2ffea2407db84d",
-        "public/course/health/lesson-02/lesson-data.js": "b544034a9ac391167c972a6f2b9064b2d2362bd68d87460bbba80c780db14e22",
-        "public/course/health/lesson-03/lesson-data.js": "cd470c848fb675a0979a357fbcdbaa044f0d93a728f6c5d32e27b909dc169088",
-        "public/course/health/lesson-04/lesson-data.js": "a2eb8f30dbc3be3b3c049868409da9121fe306ee284d94549f578b8bd54ad042",
-        "public/course/health/lesson-05/lesson-data.js": "e108771e3fe94d9e550d0ede4ed65bcd0bfcd917fcd5d52ae76b29cf578a64eb",
-        "public/course/health/lesson-06/lesson-data.js": "a17d97a830e8e00d6747505786b71f479b9b284384cbc1912afe6a21dd8ccc63",
-        "public/course/health/lesson-07/lesson-data.js": "4fd63c49fa988d6d8173073e08b641496594becfc10b007f8f55932c0299d6c1",
-        "public/course/health/lesson-08/lesson-data.js": "4666a2490d795a7bc1be3801f187c462ac052e43f4d00f9fac9b26f32af1bdc7",
-        "public/course/health/lesson-09/lesson-data.js": "8edc83bbed80ec5fec32ccf134ba29d0f34bb47c58506443100bc74767f26b75",
-        "public/course/health/lesson-10/lesson-data.js": "8aa3a35851bf3548b66d3a0d5bc270199009098e874f538cdc5ef5fcedbbee01",
-        "public/course/health/lesson-11/lesson-data.js": "5138b2787dd8852a2e553500f87c2178bf02c5bc7795dfbe5430a597a84f2b83",
-        "public/course/health/lesson-12/lesson-data.js": "6c5c19c6e45baa6df396f6a2aef4808f2b2575f2345ddb59824f4279f0433660",
-        "public/course/health/lesson-13/lesson-data.js": "a0d3bed2b63b6d10286463ce8b48a890c83dbb0f7e3f0b9c396c1aab26ca8c53",
-        "public/course/health/lesson-14/lesson-data.js": "19939a00651ae5b234bc2e42b3f9868d8edc9274a2d923ebf04b9be21f80f61d",
-        "public/course/health/lesson-15/lesson-data.js": "e5f67c51bda0e84ee17d010573fa68cf719f82da896485363d7b597d597b0976",
-        "public/course/health/lesson-16/lesson-data.js": "c8ff0b0e7a3926e0320b4979aa5d530cf2ea9649192261b8e5d9fa3aa7f6f1e7",
-        "public/course/health/lesson-17/lesson-data.js": "dbf5ed83930ab5a983b66c294e404825806c4d2f00193b0b1d5e3f9c5ea5953c",
-        "public/course/health/lesson-18/lesson-data.js": "898a1e88554600f10027e6e232725a3a7a8508efa2087fa568608c7e4e4d77dd",
-        "public/course/health/lesson-19/lesson-data.js": "8fc66617c795996cd2f14d8756a1effd27b5b822b1b07b09b55c26750c35faec",
-        "public/course/health/lesson-20/lesson-data.js": "59171ea73a665864e0e697bcb824e6fa894460e6a74b015acd75726f3f4386f9",
-        "public/course/health/lesson-21/lesson-data.js": "043b35fe9a0117f37bea06508d3d9779048ba408334b3095f0e0f8fb55ab6a29",
-        "public/course/health/lesson-22/lesson-data.js": "928a2acebe4d8b50f1825cedb547e369f59c987cc70f99681af24f6d133ee69e",
-        "public/course/health/lesson-23/lesson-data.js": "1a4527fd96e2c40df01364e8686ab17fb3797b1147bed539adfa5966032a67cf",
-        "public/course/health/lesson-24/lesson-data.js": "8a65a2df0beae7ff447b83d83a18b5a7e450b2a3c94a9d6e52033a6337951141",
-        "public/course/health/lesson-25/lesson-data.js": "256d10cb031efcdd46e00c38f86def7a4f9314565e1a244bc40fbbcedc1233ed",
-        "public/course/health/lesson-26/lesson-data.js": "de8c80f8cb3fd96be4a868eab21c0fb5a2303417d6056666ee8f41651146f4b1",
-        "public/course/health/lesson-27/lesson-data.js": "e1417bb196f0ff7a6bc77245f86e71b44fa5827b28ab7b7077b5829c1db97bb2",
-        "public/course/health/lesson-28/lesson-data.js": "e42851579e21263fb21bf4fad765464cca7db59309e376ed85de5f86e1d7e636",
-        "public/course/health/lesson-29/lesson-data.js": "4f0717fcc18e2934200356af1a9f5ac37a50f013c665c259a64bafdbd77cd342",
-        "public/course/health/lesson-30/lesson-data.js": "2bf6ba584c5515238ecb499960532e71efd459fedc05e83221259ab6625b86e6",
-        "public/course/health/lesson-31/lesson-data.js": "4bb0960b3229b979631e40c2c22035c4e5a5102840d8d73da6f8c1008e8091fb",
-        "public/course/health/lesson-32/lesson-data.js": "6ef5002f9e29d6c536c615cce1da1832c1c76254871a3931f43f7241917de51d",
-        "public/course/health/lesson-33/lesson-data.js": "d1aa1aa2b92a200d8dd9c561d7c19f246ae5a7cb1e3e50dba9a570d480fd2657",
-        "public/course/health/lesson-34/lesson-data.js": "5daeac248518fa09cdb4a43e9ac8feea664c863550d38c404c06d2429de6a4b6",
-        "public/course/health/lesson-35/lesson-data.js": "4cd57f42f65a22d2c1d56e0f84b33aed76ef6925f7bddd1739dc8537bf7a7463",
-        "public/course/health/lesson-36/lesson-data.js": "7c667f293c2201bdaac323dfb908302464ebf234135549926f312ba613bb231c",
-        "public/course/health/lesson-37/lesson-data.js": "4aabe8488fd2dc637f26f08b438ee892f95b12c2cab1bc2460543652bf1d484b",
-        "public/course/health/lesson-38/lesson-data.js": "b2f2e85340694653534c541d59e318102dd0664801b6746d1dc00cb4df4abde9",
-        "public/course/health/lesson-39/lesson-data.js": "a30b36be902fbae26a104fd4a6e4686d9dc98be05cb8e72ff5e2e63704ce1350",
-        "public/course/health/lesson-40/lesson-data.js": "6da1c09dbdb2983f4cb0cacb3a5de45208f835f2ad4e79f6e0cb9a9ed62249e0",
-        "public/course/health/lesson-41/lesson-data.js": "89fe58befd6e70c41365280f77ecc5d069175e5f79748590f8a091799376f2bd",
-        "public/course/health/lesson-42/lesson-data.js": "2e78711aaafbc022aa8dd9d8d5365f31eca0324cb8e1482cce8bb40a480b4042",
-        "public/course/health/lesson-43/lesson-data.js": "5fc70ca641626c7a5843ca97e14004cd760c2fb817852737cce1ee8a08352648",
-        "public/course/health/lesson-44/lesson-data.js": "c17537170d3995623e26cda4c81e63930c14dc73cb703899d7026dfe78afac0e",
-        "public/course/health/lesson-45/lesson-data.js": "73d08aaace9b8581cf149bd14b6a9ad6b85abfc9605a372e38ce7aaafa0f757c",
-        "public/course/health/lesson-46/lesson-data.js": "acd43e0fba82bee96f1360dccfb394ea8de0874fc9ae242bb81b57c54a632310",
-        "public/course/health/lesson-47/lesson-data.js": "401f4d6e79c1b97e4e83ad1882d223ab9e7db531f5ab7e1599783cce3c3b45af",
-        "public/course/health/lesson-48/lesson-data.js": "dda7f6edc64cdba256f47d8e4040bc08c7a46d1b27369be6c873d0b8687ce1ce",
-        "public/course/health/lesson-49/lesson-data.js": "bd79b5e3b70cf5b64caa95d88d01da07ba5c89cfb106954a8cde8be284241888",
-        "public/course/health/lesson-50/lesson-data.js": "80f9a371e0cd4d9c04e6bed68329c1f9874b8a724c3e22f605f659c078ed49c9",
-        "public/course/health/lesson-51/lesson-data.js": "3476846c75dde9b2ff9bb8c70238749279948fd3a06c9e908ad0e67984569187",
-        "public/course/health/lesson-52/lesson-data.js": "eec641992809b1e8c2c89c9833b4f6dc5611d5b25c9fefd7e6b99fd50bcae179",
-        "public/course/health/lesson-53/lesson-data.js": "6f855074ef21f89d9c23091dfc343c3cb8d7df9ffd38f658023cd4c8125f84a6",
-        "public/course/health/lesson-54/lesson-data.js": "5e8c30d4eea4128d3eb19be47640f2a0228b63e414e8b769ac0284dd6621ad4c",
-        "public/course/health/lesson-55/lesson-data.js": "c5d9174b6bcdb1e083f5d22d9d4ce2b509af732ab60b85c6ac4e66d0d96b1ecf",
-        "public/course/health/lesson-56/lesson-data.js": "df9f6804ee30329b8ccef9f5f1976981417ae73f6dc3f538c29d26645423d3fd",
-        "public/course/health/lesson-57/lesson-data.js": "d0135da998304feba8be3a8cd4855ba23496edf408a3bd65e1bce88855dff360",
-        "public/course/health/lesson-58/lesson-data.js": "4c6e7494050f0caf938c557127456641cf634136b6627ef5d9938a5f86573bff",
-        "public/course/health/lesson-59/lesson-data.js": "663e9a0ae5d2c7edcf35ce507648262e9df28f26e915cccc95b8e6eb7ca8cf2b",
-        "public/course/health/lesson-60/lesson-data.js": "e2926b39e3efba3c1dc91653b818b860349a75e30855d481841b14526cd60cbb",
+        "public/course/health/lesson-01/lesson-data.js": "68f9d342f44302d76f53ced02c1bb432eea39106bcda4cd818a7803a7c7d7677",
+        "public/course/health/lesson-02/lesson-data.js": "414069fd530052ed49566256e000aaba297ae69a4e5195396a6e94d412f9fed0",
+        "public/course/health/lesson-03/lesson-data.js": "6abe13e080d580da89025c34cdb3794afbe9c3061f2fa433db565acea4991208",
+        "public/course/health/lesson-04/lesson-data.js": "09f675a9d8483c181afd8f03687dab815f0e18f43299ac9cf71da6c22cff7e48",
+        "public/course/health/lesson-05/lesson-data.js": "de5529d061b3ae72ac38df5eb186f67387bdaa444aefa9f40f30707f698d28ea",
+        "public/course/health/lesson-06/lesson-data.js": "c3cbae3982a667640097b07b9a4cf46ed6a0c1d0e6d30a6647d61fe5048e6d36",
+        "public/course/health/lesson-07/lesson-data.js": "2755ea14acbe54975b5fffe6cf6c5930dacf62406098b79efed848f9908bb68e",
+        "public/course/health/lesson-08/lesson-data.js": "04829c853656fab1ca331494fa36970a481b6d03777a7c51323cf10882b99812",
+        "public/course/health/lesson-09/lesson-data.js": "16e2641c3adf64d0457be5e3573910c5c30f0684c0fdcea6bb993345f1546dde",
+        "public/course/health/lesson-10/lesson-data.js": "0b6f8543d6426addb1e8cbfd27adaed272c596f1d3beede87cf5dc23fa262734",
+        "public/course/health/lesson-11/lesson-data.js": "c701eb1782c5dd86a88ee75ef4c435a312764af0a2814105e8d5eedbc3a185fe",
+        "public/course/health/lesson-12/lesson-data.js": "f068d87c90bffc74ca3f59d58d829db32ba905a58674e4eff5037c86f0ed8467",
+        "public/course/health/lesson-13/lesson-data.js": "51c6b23cfe8ec66fb59a3fb2fa33427a4fd40f4a130de35611a0778ea9ba9d64",
+        "public/course/health/lesson-14/lesson-data.js": "d40483e115518d6d4c0a8234819b3da871e8b91a8403013f55b0bdb51296770f",
+        "public/course/health/lesson-15/lesson-data.js": "df4b74d8f8ffc37cadb23f50b158d412346cf317baacdbc0aefe8682243378e6",
+        "public/course/health/lesson-16/lesson-data.js": "99db02f427e0b280d26e0b26e36514305a22220c3c90a9933ccd9122971658f0",
+        "public/course/health/lesson-17/lesson-data.js": "0514735f0b28f8238fff8808d15275906a88f752f0ac7dbd60999d40ce722864",
+        "public/course/health/lesson-18/lesson-data.js": "0c42c2d197ee6d8522448e9c88268541fa2588fe0098ede9f4fcc68f717095cc",
+        "public/course/health/lesson-19/lesson-data.js": "1dd400535aa670878a899800226341f2bc60e2abcb641f5d69b4e16a6f5c4aab",
+        "public/course/health/lesson-20/lesson-data.js": "94f5a15bc4e02886587b475e7b7f8c7807b82e1bbdab5fcb6623d4ce3bc648c3",
+        "public/course/health/lesson-21/lesson-data.js": "4e141e34f5b468f3edab44ffeed0da6aeb04da940100b1d3e5136ecbe715d570",
+        "public/course/health/lesson-22/lesson-data.js": "662e2c6f0f9d8c332fd3c3a8a2506e3e3b0a338c96627b4162fb7b04b05fc54e",
+        "public/course/health/lesson-23/lesson-data.js": "969b484c037077e97f42321a1b55a2e230cdd485a8910149fa76b5af3668e55f",
+        "public/course/health/lesson-24/lesson-data.js": "21c8283499b03c7acb0e6c1633a19e37e50e053abb204adf3f30d86fb77bcb4b",
+        "public/course/health/lesson-25/lesson-data.js": "f24064f7b25462d6f48ba4b1f6bfae9337a82c8a0aaf3667f5a4f6cd8c4ebaf7",
+        "public/course/health/lesson-26/lesson-data.js": "e6370aa3a54489f7b216726299ad689a366db59dc006b93f9e92f068e4279424",
+        "public/course/health/lesson-27/lesson-data.js": "742e02dd3d41608bac1ebb61310d3a44c6adb565e084d95554c2e02c8dc42e18",
+        "public/course/health/lesson-28/lesson-data.js": "4d9a069721f74adf7424792429f0faa10222c84e1e04c17361f5565e03662c26",
+        "public/course/health/lesson-29/lesson-data.js": "673610594bd5fa6b07e59db036e2f614b85b4fd70b8bcfc24008c4f6aa21ab36",
+        "public/course/health/lesson-30/lesson-data.js": "f6354920d7fac7b91fa1afe2d6336bc9587244498140de045aa70c65fa10b7d7",
+        "public/course/health/lesson-31/lesson-data.js": "c4aaacb01f1611591ad7b5aa96d17c94a2453c9d30d674c1fb68c88d38d7a276",
+        "public/course/health/lesson-32/lesson-data.js": "c558a4f2f1cafc4888a99c9fd63533c402538d041aef1b150ebe48de3f2557f6",
+        "public/course/health/lesson-33/lesson-data.js": "2e49251540231b3cc5bea959ea36bb82b39c98f3a5b4e3dc0b3a87a0991282de",
+        "public/course/health/lesson-34/lesson-data.js": "fa7aa11b967b3b337ab5d29bd83d460e10bbb7a31f656bb6bc6f0f9dd616f8f1",
+        "public/course/health/lesson-35/lesson-data.js": "6beecbe7cfea54c65ffdf9beabc6282d033203ebfc8a9e4cd41d74f4c7cf36bc",
+        "public/course/health/lesson-36/lesson-data.js": "0436528b444066d61bbbc8764b96dca91c57a89df4b14d4c791f9e126261c2f1",
+        "public/course/health/lesson-37/lesson-data.js": "354c5b51f7d5a8c7050f411b179f94050136c04aa2d5420f6f1ee2275a4f81b6",
+        "public/course/health/lesson-38/lesson-data.js": "e6861158dc94b7de2a1bf9a0a0b6c1babdfaa7b973f560b393147fdfa814e080",
+        "public/course/health/lesson-39/lesson-data.js": "fcb75a43ab1b6a467765226d1667b4ce2889e53fa6b7f2385f06ea3db7760cfd",
+        "public/course/health/lesson-40/lesson-data.js": "302ef45e2c0ba59f242989570e5e165a2bfb1207380be0819a47dd46226b086e",
+        "public/course/health/lesson-41/lesson-data.js": "3317b798e45882e83a88999737077cb912e1c3f5e9488edd352e030152260582",
+        "public/course/health/lesson-42/lesson-data.js": "69751b3641eafce791f26fae659130e7090aa1a1c8798e06f5f3922ea0362f81",
+        "public/course/health/lesson-43/lesson-data.js": "22b850cd6f280f4bb094bc88eb58d2fe4a77be49601f75e7841722c321f49218",
+        "public/course/health/lesson-44/lesson-data.js": "3efa5f2cca73c8755648757390863e42682ec8fd232973df23d54549aa0bdcc3",
+        "public/course/health/lesson-45/lesson-data.js": "cbf96b1e96e42785fcf25e72035d1438acf83ac25a0e041437b4494530cbd68f",
+        "public/course/health/lesson-46/lesson-data.js": "f6a0ac4e93d11a0aec6cf2bf9c1d806184e5f7937c6d29ea35150c08d747298a",
+        "public/course/health/lesson-47/lesson-data.js": "ce217ed29f2f606d274a39e6c707f951fb70303b44ca52b0e31e98ad8cfd6263",
+        "public/course/health/lesson-48/lesson-data.js": "c5a3093af24d9267dc02c997ac517a97c471ef8d79591b89e364f013c5064fdf",
+        "public/course/health/lesson-49/lesson-data.js": "2d3c5c8f53da375adafe487515fed3ff637eca01b239a04212f63ffa8015c0d5",
+        "public/course/health/lesson-50/lesson-data.js": "145354402a336466c00ebbda027d67bd21cb95be4b72369423bb88340cdaa918",
+        "public/course/health/lesson-51/lesson-data.js": "8fcb9d0e5340103b20ed3ebd7eca198d3434374939c659519b48377d764cc9c0",
+        "public/course/health/lesson-52/lesson-data.js": "fc8d025daab769a327fc8c6c9ac60e55820de678ec4eb2918542ef5f590592c8",
+        "public/course/health/lesson-53/lesson-data.js": "c4f2945467b5240bf037a92b33fb99175c9427bff2a4a2c110f3b4d607c8e241",
+        "public/course/health/lesson-54/lesson-data.js": "c2c398674cac3b8d9fcd8cc95f301b4e05ad80b69432921349c04b1130166001",
+        "public/course/health/lesson-55/lesson-data.js": "34598bfa7f1539b3cd4d9ae603473cda4a93d435cfc152ed7499480de690af1d",
+        "public/course/health/lesson-56/lesson-data.js": "b4cda5d1c9e09a746883bc327ab0c0fe499ded259c08fc89a72c986e0aae9d5a",
+        "public/course/health/lesson-57/lesson-data.js": "11d0697748e466375eec9762cf85496937301987d2ee8019abb14aca4c35385a",
+        "public/course/health/lesson-58/lesson-data.js": "3cfa4d1febb12770d282a28da2f64e409d39d457e3eaa8dd37c0d72720ca2245",
+        "public/course/health/lesson-59/lesson-data.js": "26e0d034df85b666c2947df9a093e75119b9591da9c7168dd0701eca8bac1f68",
+        "public/course/health/lesson-60/lesson-data.js": "567e601980221b1359464f3589e21bf508f38cc0ec4cdc6f80fec48a9284af8e",
         "public/course/health/assessments/assessment-data.js": "572652cf1d2bd1ca219313b07687c05479850f7838bac4c2d03c9411d564edbf"
       }
     }

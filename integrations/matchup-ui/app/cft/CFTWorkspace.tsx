@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
 import AccountBadge from "../AccountBadge";
 import { useAccountProfile } from "@/lib/use-account-profile";
+import { authorizeGoogleCalendar, calendarCallbackError, calendarConnectUserKey } from "@/lib/calendar-authorization";
 import { signInErrorMessage } from "@/lib/auth-message";
 import { buildAvailability } from "./availability";
 import { appointmentDateKey } from "@/lib/agent-flow";
@@ -128,11 +129,19 @@ export default function CFTWorkspace() {
   const [showGoogleEvents, setShowGoogleEvents] = useState(false);
   const [calendarPreferenceBusy, setCalendarPreferenceBusy] = useState(false);
   const [calendarMessage, setCalendarMessage] = useState("");
+  const [calendarCallbackMessage, setCalendarCallbackMessage] = useState("");
   const calendarSyncToken = useRef("");
 
   async function syncCalendarSession(session: Session) {
     const identity = session.user.identities?.find((item) => item.provider === "google");
     try {
+      const expectedUser = sessionStorage.getItem(calendarConnectUserKey);
+      if (expectedUser && expectedUser !== session.user.id) {
+        sessionStorage.removeItem(calendarConnectUserKey);
+        setAuthMessage("That Google account belongs to a different AMG login. Sign in to your trainer account and reconnect using its linked Google account.");
+        await supabase.auth.signOut({ scope: "local" });
+        return;
+      }
       if (session.provider_refresh_token && calendarSyncToken.current !== session.provider_refresh_token) {
         setCalendarBusy(true);
         const connectResponse = await fetch(AMG_BACKEND_URL, {
@@ -148,6 +157,7 @@ export default function CFTWorkspace() {
         const connectResult = await connectResponse.json();
         if (!connectResponse.ok) throw new Error(connectResult.error || "Google Calendar connection could not be saved.");
         calendarSyncToken.current = session.provider_refresh_token;
+        sessionStorage.removeItem(calendarConnectUserKey);
         setCalendarMessage("Google Calendar connection saved. Calendar checks depend on an active connection and successful sync.");
       }
 
@@ -172,6 +182,13 @@ export default function CFTWorkspace() {
 
   useEffect(() => {
     let mounted = true;
+    const callbackMessage = calendarCallbackError(window.location.search, window.location.hash);
+    if (callbackMessage) {
+      setCalendarCallbackMessage(callbackMessage);
+      setAuthMessage(callbackMessage);
+      sessionStorage.removeItem(calendarConnectUserKey);
+      window.history.replaceState(null, "", window.location.pathname);
+    }
     supabase.auth.getSession().then(({ data }) => {
       if (!mounted) return;
       setAccountUser(data.session?.user || null);
@@ -356,20 +373,15 @@ export default function CFTWorkspace() {
   async function connectGoogleCalendar() {
     setCalendarBusy(true);
     setCalendarMessage("");
+    setCalendarCallbackMessage("");
     try {
-    const { error: calendarError } = await supabase.auth.linkIdentity({
-      provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/matchups/cft/`,
-        scopes: "openid email profile https://www.googleapis.com/auth/calendar.events.freebusy https://www.googleapis.com/auth/calendar.events.owned",
-        queryParams: { access_type: "offline", prompt: "consent" },
-      },
-    });
-    if (calendarError) {
-      const needsSetup = calendarError.message.toLowerCase().includes("provider") || calendarError.message.toLowerCase().includes("unsupported");
-      setCalendarMessage(needsSetup ? "Google Calendar is awaiting AMG’s one-time Google connection setup." : "We couldn’t open Google Calendar. Please try again.");
-    }
+      const { data, error: userError } = await supabase.auth.getUser();
+      if (userError || !data.user) throw new Error("Your trainer login has expired. Sign in again.");
+      sessionStorage.setItem(calendarConnectUserKey, data.user.id);
+      const { error: calendarError } = await authorizeGoogleCalendar(supabase.auth, data.user, window.location.origin);
+      if (calendarError) throw calendarError;
     } catch {
+      sessionStorage.removeItem(calendarConnectUserKey);
       setCalendarMessage("We couldn’t open Google Calendar. Please try again.");
     } finally {
       setCalendarBusy(false);
@@ -539,6 +551,7 @@ export default function CFTWorkspace() {
         <div className="content" id="dashboard">
           <section className="welcome-row"><div><span className="eyebrow"><span />{new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</span><h1>Welcome, {(accountProfile?.name || name).split(" ")[0]}.</h1><p>Your live schedule and incoming agent requests are below.</p></div>{role === "admin" && trainers.length > 1 && <label className="trainer-switcher"><span>Viewing trainer</span><select disabled={mutationBusy || workspaceStale} value={selectedTrainerId} onChange={(event) => setSelectedTrainerId(event.target.value)}>{trainers.map((item) => <option key={item.id} value={item.id}>{item.display_name}</option>)}</select></label>}{trainer && <button className={`availability-pill ${trainer.is_available ? "" : "paused"}`} disabled={mutationBusy || loading || workspaceStale} onClick={toggleMatching}><span className="live-dot" />{trainer.is_available ? "Available for matchups" : "Matching paused"}</button>}</section>
           {error && <div className="workspace-alert" role="alert">{error}</div>}
+          {calendarCallbackMessage && <div className="workspace-alert" role="alert">{calendarCallbackMessage}</div>}
           {workspaceStale && <div className="workspace-alert" role="alert">Changes are paused until the latest schedule is loaded. <button type="button" onClick={() => window.location.reload()}>Reload workspace</button></div>}
           {loading && <div className="workspace-loading"><span className="spinner" />Loading live CFT data…</div>}
           {!loading && !trainer && <article className="cft-card empty-workspace glass-light"><Mark>◎</Mark><h2>No trainer profile is linked yet</h2><p>An AMG administrator needs to connect this login to a CFT directory profile.</p></article>}

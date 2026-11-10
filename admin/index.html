@@ -114,9 +114,11 @@
       </section>
       <section id="licensing-view" aria-labelledby="licensing-title" hidden>
         <header class="topbar licensing-topbar">
-          <div><p class="eyebrow">AMG Learning</p><h1 id="licensing-title">Licensing progress</h1><p class="muted">See every learner who starts the course or an exam, including unfinished attempts.</p></div>
-          <button id="refresh-licensing" class="secondary" type="button">Refresh progress</button>
+          <div><p class="eyebrow">AMG team development</p><h1 id="licensing-title">Licensing pipeline</h1><p class="muted">Follow each person from first study day through appointment and first check.</p></div>
+          <div class="licensing-head-actions"><button id="refresh-licensing" class="secondary" type="button">Refresh</button><button id="add-license-person" class="primary" type="button">Add person</button></div>
         </header>
+        <div id="licensing-metrics" class="licensing-metrics" aria-label="Pipeline overview"></div>
+        <div class="licensing-toolbar"><label>Find a person<input id="licensing-search" type="search" placeholder="Name, email, or recruiter" autocomplete="off"></label><label>Exam stage<select id="licensing-filter"><option value="">All stages</option><option value="studying">Studying</option><option value="scheduled">Scheduled</option><option value="rescheduled">Rescheduled</option><option value="failed">Retake needed</option><option value="passed">Passed exam</option></select></label></div>
         <p id="licensing-summary" class="inquiries-summary" role="status" aria-live="polite"></p>
         <p id="licensing-error" class="form-error" role="alert" hidden></p>
         <div id="licensing-list" class="licensing-list" aria-busy="false"></div>
@@ -125,9 +127,20 @@
           <span id="licensing-page"></span>
           <button id="next-licensing" class="secondary" type="button">Next</button>
         </nav>
+        <details class="licensing-course-activity"><summary>Course and mock exam activity</summary><p>Lesson completions and unfinished exam attempts appear here as soon as a learner enters AMG Learning.</p><div id="licensing-activity-list"></div></details>
       </section>
     </main>
   </div>
+
+  <dialog id="licensing-person-dialog" class="dialog">
+    <form id="licensing-person-form" class="dialog-card licensing-dialog">
+      <div class="dialog-heading"><div><p class="eyebrow">Licensing pipeline</p><h2 id="licensing-person-title">Add a person</h2></div><button type="button" class="close" data-close="licensing-person-dialog" aria-label="Close">×</button></div>
+      <input id="licensing-person-id" type="hidden"><input id="licensing-person-version" type="hidden">
+      <div class="licensing-form-grid"><label>Full name<input id="license-name" required maxlength="160"></label><label>Email <span class="optional">(add when known)</span><input id="license-email" type="email" maxlength="254"></label><label>Phone<input id="license-phone" type="tel" placeholder="(202) 555-0123"></label><label>Recruiter / upline<input id="license-recruiter" maxlength="160"></label><label>State<input id="license-state" maxlength="80" placeholder="Maryland"></label><label>Study track<select id="license-track"><option value="both">Life and Health</option><option value="life">Life</option><option value="health">Health</option></select></label><label>Exam status<select id="license-exam-status"><option value="studying">Studying</option><option value="scheduled">Scheduled</option><option value="rescheduled">Rescheduled</option><option value="failed">Retake needed</option><option value="passed">Passed</option></select></label><label>Exam date<input id="license-exam-date" type="date"></label><label>Follow up date<input id="license-follow-up" type="date"></label><label>First check date<input id="license-first-check" type="date"></label></div>
+      <label>Next action<input id="license-next-action" maxlength="500" placeholder="What happens next?"></label><label>Current blocker<input id="license-blocker" maxlength="500" placeholder="What is holding them up?"></label>
+      <p id="licensing-person-error" class="form-error" role="alert"></p><div class="dialog-actions"><button type="button" class="secondary" data-close="licensing-person-dialog">Cancel</button><button type="submit" class="primary">Save progress</button></div>
+    </form>
+  </dialog>
 
   <dialog id="composer" class="dialog">
     <form id="composer-form" method="dialog" class="dialog-card">

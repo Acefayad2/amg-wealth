@@ -21,3 +21,12 @@
 @media print{.app-header,.actions,.question-nav,.app-footer,.storage-status,.practice-about{display:none}.exam-bar{position:static;background:#fff;color:#000}.result-question{break-inside:avoid}.assessment-main{max-width:none;padding:0}.card,.status-panel{break-inside:avoid}}
 
 .practice-card .mock-result-link{background:transparent;color:var(--ink,#243629);border:0;padding:12px 0;text-decoration:underline}
+.practice-cards{grid-template-columns:minmax(0,1fr)}
+@media(min-width:741px){
+  .practice-cards .practice-card{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:2rem;align-items:start}
+  .practice-cards .practice-card-top{grid-column:1/-1}
+  .practice-cards .practice-card h2,.practice-cards .form-facts,.practice-cards .form-description{grid-column:1}
+  .practice-cards .form-description{max-width:65ch;margin-bottom:0}
+  .practice-cards .form-start{grid-column:2;grid-row:2/4;align-self:center}
+  .practice-cards .mock-result-link{grid-column:2;grid-row:4;justify-self:center}
+}

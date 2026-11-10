@@ -1,5 +1,5 @@
-import { licensingReminderLinks } from "../admin/licensing-reminders.mjs";
-import { licensingSteps, licensingProgress, selectedStepsForStage } from "../licensing-progress/steps.js";
+import { licensingReminderLinks, licensingGroupTextLink } from "../admin/licensing-reminders.mjs";
+import { licensingSteps, licensingProgress, selectedStepsForStage, taskDone } from "../licensing-progress/steps.js";
 import { normalizeUsPhone } from "../netlify/functions/_shared/us-phone.mjs";
 import { createClient } from "@supabase/supabase-js";
 import { STATUS_LABELS, contactsForGroupContext, defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, personalizationHint, recurringCalendarEntries, scheduleInputValue, weekCells, weekRangeLabel } from "../admin/core.mjs";
@@ -10,7 +10,7 @@ const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 let authClient = null;
 let startupBusy = false;
 const inquiryState = { records: [], total: 0, page: 1, pageSize: 25, loading: false, error: "", requestId: 0, controller: null, preview: false };
-const licensingState = { people: [], learners: [], total: 0, preLicense: 0, onboarding: 0, appointed: 0, overdue: 0, page: 1, pageSize: 25, query: "", status: "", loading: false, error: "", requestId: 0, controller: null, preview: false };
+const licensingState = { people: [], learners: [], total: 0, tracked: 0, unlicensed: 0, licensed: 0, eoCompleted: 0, appointed: 0, followUpsDue: 0, category: "all", page: 1, pageSize: 25, query: "", status: "", loading: false, error: "", requestId: 0, controller: null, preview: false };
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
 const initials = (name) => String(name || "?").split(/\s+/).map((part) => part[0]).join("").slice(0, 2).toUpperCase();
 const contactLabel = (contact) => contact.full_name || contact.phone;
@@ -61,7 +61,7 @@ function resetInquiries() {
 function resetLicensing() {
   licensingState.controller?.abort();
   licensingState.requestId += 1;
-  Object.assign(licensingState, { people: [], learners: [], total: 0, preLicense: 0, onboarding: 0, appointed: 0, overdue: 0, page: 1, loading: false, error: "", controller: null });
+  Object.assign(licensingState, { people: [], learners: [], total: 0, tracked: 0, unlicensed: 0, licensed: 0, eoCompleted: 0, appointed: 0, followUpsDue: 0, category: "all", page: 1, loading: false, error: "", controller: null });
   $("#licensing-activity-list").innerHTML = "";
   renderLicensing();
 }
@@ -143,6 +143,7 @@ async function licensingApi(body = null, page = 1) {
   const params = new URLSearchParams({ page: String(page) });
   if (licensingState.query) params.set("q", licensingState.query);
   if (licensingState.status) params.set("status", licensingState.status);
+  params.set("category", licensingState.category);
   const response = await fetch(`/api/licensing-pipeline?${params}`, { method: body ? "POST" : "GET", headers: { authorization: `Bearer ${token}`, ...(body ? { "content-type": "application/json" } : {}) }, body: body ? JSON.stringify(body) : undefined, cache: "no-store" });
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(payload.error || "Licensing could not be updated.");
@@ -165,10 +166,16 @@ function updateLicensingSlider(input) {
   box.querySelectorAll('li').forEach((item, index) => item.classList.toggle('selected', index + 1 === stage));
 }
 
+function licensingMembership(person) {
+  const appointed = taskDone(person, 'appointed');
+  const licensed = taskDone(person, 'license_uploaded');
+  const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+  return { all: true, unlicensed: !licensed, licensed, eo_completed: taskDone(person, 'eo_active'), appointed, follow_ups_due: !!person.follow_up_date && person.follow_up_date <= today && !appointed };
+}
 function renderLicensing() {
   const { people, total, page, pageSize, loading, error } = licensingState;
-  const metrics = [["People tracked", total], ["Before license", licensingState.preLicense], ["Onboarding", licensingState.onboarding], ["Appointed", licensingState.appointed], ["Follow ups overdue", licensingState.overdue]];
-  $("#licensing-metrics").innerHTML = metrics.map(([label, value], index) => `<div class="licensing-metric${index === 4 && value ? " urgent" : ""}"><strong>${Number(value).toLocaleString()}</strong><span>${label}</span></div>`).join("");
+  const metrics = [['all', 'People tracked', licensingState.tracked], ['unlicensed', 'Unlicensed', licensingState.unlicensed], ['licensed', 'Licensed', licensingState.licensed], ['eo_completed', 'E&O completed', licensingState.eoCompleted], ['appointed', 'Appointed', licensingState.appointed], ['follow_ups_due', 'Follow-ups due', licensingState.followUpsDue]];
+  $("#licensing-metrics").innerHTML = metrics.map(([key, label, value]) => `<button type="button" class="licensing-metric${key === 'follow_ups_due' && value ? ' urgent' : ''}" data-license-category="${key}" aria-pressed="${licensingState.category === key}" ${loading ? 'disabled' : ''}><strong>${Number(value || 0).toLocaleString()}</strong><span>${label}</span></button>`).join('');
   $("#licensing-list").setAttribute("aria-busy", String(loading));
   $("#licensing-summary").textContent = loading ? "Loading the pipeline…" : error ? "The pipeline could not be refreshed." : `${total.toLocaleString()} ${total === 1 ? "person" : "people"} in this view`;
   $("#licensing-error").hidden = !error;
@@ -180,10 +187,11 @@ function renderLicensing() {
   $("#licensing-page").textContent = `Page ${page} of ${Math.max(1, Math.ceil(total / pageSize))}`;
   $("#licensing-list").innerHTML = people.length ? people.map((person) => {
     const progress = licensingProgress(person);
-    const due = person.follow_up_date && person.follow_up_date < new Date().toISOString().slice(0, 10) && progress.current >= 0;
+    const due = licensingMembership(person).follow_ups_due;
     const stage = progress.label;
     const reminders = licensingReminderLinks(person, navigator);
-    return `<article class="licensing-person" data-person-id="${person.id}"><div class="licensing-person-main"><div class="licensing-avatar">${escapeHtml(initials(person.name))}</div><div class="licensing-person-title"><p class="eyebrow">${escapeHtml(stage)} · ${escapeHtml(person.track === "both" ? "Life + Health" : person.track)}</p><h2>${escapeHtml(person.name)}</h2><p>${person.email ? escapeHtml(person.email) : '<span class="licensing-missing">Add email to connect their checklist</span>'}${person.phone ? ` · ${escapeHtml(person.phone)}` : ""}${person.recruiter ? ` · Upline: ${escapeHtml(person.recruiter)}` : ""}</p></div><span class="licensing-due${due ? " overdue" : ""}">${person.follow_up_date ? `${due ? "Overdue · " : "Follow up · "}${escapeHtml(person.follow_up_date)}` : "No follow up date"}</span></div>${licensingSlider(person)}${person.next_action || person.blocker ? `<div class="licensing-notes">${person.next_action ? `<p><strong>Next:</strong> ${escapeHtml(person.next_action)}</p>` : ""}${person.blocker ? `<p><strong>Blocker:</strong> ${escapeHtml(person.blocker)}</p>` : ""}</div>` : ""}<div class="licensing-person-actions"><button class="secondary" type="button" data-license-edit="${person.id}">Edit person & progress</button>${reminders.text ? `<a class="secondary" data-license-text-link href="${escapeHtml(reminders.text)}" title="Open a personalized draft in your Messages app">Text reminder</a>` : '<button class="secondary" type="button" disabled title="Add a phone number first">Text reminder</button>'}${reminders.email ? `<a class="secondary" data-license-email-link href="${escapeHtml(reminders.email)}" title="Open a personalized draft in your email app">Email reminder</a>` : '<button type="button" class="secondary" disabled title="Add an email first">Email reminder</button>'}</div><p class="licensing-reminder-help">Reminders are written for this step. Open a draft in Messages or your email app, then review and send.</p></article>`;
+    const groupText = licensingGroupTextLink(person, navigator);
+    return `<article class="licensing-person" data-person-id="${person.id}"><div class="licensing-person-main"><div class="licensing-avatar">${escapeHtml(initials(person.name))}</div><div class="licensing-person-title"><p class="eyebrow">${escapeHtml(stage)} · ${escapeHtml(person.track === "both" ? "Life + Health" : person.track)}</p><h2>${escapeHtml(person.name)}</h2><p>${person.email ? escapeHtml(person.email) : '<span class="licensing-missing">Add email to connect their checklist</span>'}${person.phone ? ` · ${escapeHtml(person.phone)}` : ""}${person.recruiter ? ` · Upline: ${escapeHtml(person.recruiter)}${person.recruiter_phone ? ` (${escapeHtml(person.recruiter_phone)})` : ""}` : ""}</p></div><span class="licensing-due${due ? " overdue" : ""}">${person.follow_up_date ? `${due ? "Due · " : "Follow up · "}${escapeHtml(person.follow_up_date)}` : "No follow up date"}</span></div>${licensingSlider(person)}${person.next_action || person.blocker ? `<div class="licensing-notes">${person.next_action ? `<p><strong>Next:</strong> ${escapeHtml(person.next_action)}</p>` : ""}${person.blocker ? `<p><strong>Blocker:</strong> ${escapeHtml(person.blocker)}</p>` : ""}</div>` : ""}<div class="licensing-person-actions"><button class="secondary" type="button" data-license-edit="${person.id}">Edit person & progress</button>${reminders.text ? `<a class="secondary" data-license-text-link href="${escapeHtml(reminders.text)}" title="Open a personalized draft in your Messages app">Text reminder</a>` : '<button class="secondary" type="button" disabled title="Add a phone number first">Text reminder</button>'}${groupText ? `<a class="secondary" data-license-group-link href="${escapeHtml(groupText)}" title="Open a group draft with the agent and recruiter / upline">Group text</a>` : '<button class="secondary" type="button" disabled title="Add distinct phone numbers for the agent and recruiter / upline to group text">Group text</button>'}${reminders.email ? `<a class="secondary" data-license-email-link href="${escapeHtml(reminders.email)}" title="Open a personalized draft in your email app">Email reminder</a>` : '<button type="button" class="secondary" disabled title="Add an email first">Email reminder</button>'}</div><p class="licensing-reminder-help">Reminders are written for this step. Open a draft in Messages or your email app, then review and send.</p></article>`;
   }).join("") : loading ? '<p class="empty">Loading people…</p>' : error ? '<p class="empty">Refresh to try again.</p>' : '<div class="learner-empty"><h2>No one in this view yet</h2><p>Add a person to track their licensing steps, or clear the filters to see everyone.</p></div>';
 }
 
@@ -195,7 +203,7 @@ async function loadLicensing(page = 1) {
     const payload = await licensingApi(null, page);
     if (requestId !== licensingState.requestId) return;
     if (!Array.isArray(payload.people) || !Number.isInteger(payload.total)) throw new Error("Licensing data was incomplete.");
-    Object.assign(licensingState, { people: payload.people, total: payload.total, preLicense: payload.pre_license, onboarding: payload.onboarding, appointed: payload.appointed, overdue: payload.overdue, page, pageSize: payload.page_size });
+    Object.assign(licensingState, { people: payload.people, total: payload.total, tracked: payload.tracked, unlicensed: payload.unlicensed, licensed: payload.licensed, eoCompleted: payload.eo_completed, appointed: payload.appointed, followUpsDue: payload.follow_ups_due, page, pageSize: payload.page_size });
     if (page === 1 && !licensingState.query && !licensingState.status) void loadLicensingActivity(requestId);
   } catch (reason) {
     if (requestId !== licensingState.requestId) return;
@@ -227,7 +235,7 @@ function openLicensingPerson(person = null) {
   $("#licensing-person-title").textContent = person?.id ? "Edit licensing progress" : "Add a person";
   $("#licensing-person-id").value = person?.id || "";
   $("#licensing-person-version").value = person?.version || "";
-  for (const [id, key] of [["license-name", "name"], ["license-email", "email"], ["license-phone", "phone"], ["license-recruiter", "recruiter"], ["license-state", "state"], ["license-track", "track"], ["license-exam-status", "exam_status"], ["license-exam-date", "exam_date"], ["license-follow-up", "follow_up_date"], ["license-first-check", "first_check_date"], ["license-next-action", "next_action"], ["license-blocker", "blocker"]]) $("#" + id).value = person?.[key] || (id === "license-track" ? "both" : id === "license-exam-status" ? "studying" : "");
+  for (const [id, key] of [["license-name", "name"], ["license-email", "email"], ["license-phone", "phone"], ["license-recruiter", "recruiter"], ["license-recruiter-phone", "recruiter_phone"], ["license-state", "state"], ["license-track", "track"], ["license-exam-status", "exam_status"], ["license-exam-date", "exam_date"], ["license-follow-up", "follow_up_date"], ["license-first-check", "first_check_date"], ["license-next-action", "next_action"], ["license-blocker", "blocker"]]) $("#" + id).value = person?.[key] || (id === "license-track" ? "both" : id === "license-exam-status" ? "studying" : "");
   $("#license-steps").innerHTML = licensingSlider(person, true);
   $("#licensing-person-error").textContent = "";
   $("#licensing-person-dialog").showModal();
@@ -960,6 +968,12 @@ $("#next-licensing").addEventListener("click", () => loadLicensing(licensingStat
 $("#add-license-person").addEventListener("click", () => openLicensingPerson());
 let licensingSearchTimer;
 $("#licensing-search").addEventListener("input", (event) => { clearTimeout(licensingSearchTimer); licensingSearchTimer = setTimeout(() => { licensingState.query = event.target.value.trim(); void loadLicensing(1); }, 250); });
+$("#licensing-metrics").addEventListener('click', (event) => {
+  const button = event.target.closest('[data-license-category]');
+  if (!button || licensingState.loading) return;
+  licensingState.category = button.dataset.licenseCategory;
+  void loadLicensing(1);
+});
 $("#licensing-filter").addEventListener("change", (event) => { licensingState.status = event.target.value; void loadLicensing(1); });
 $("#license-exam-status").addEventListener("change", (event) => {
   const slider = $("#license-stage-editor");
@@ -983,7 +997,7 @@ $("#licensing-person-form").addEventListener("submit", async (event) => {
   try {
     await licensingApi({ action: "save_person", id: $("#licensing-person-id").value || null, expectedVersion: Number($("#licensing-person-version").value) || null,
       name: $("#license-name").value, email: $("#license-email").value, phone: $("#license-phone").value,
-      recruiter: $("#license-recruiter").value, state: $("#license-state").value, track: $("#license-track").value,
+      recruiter: $("#license-recruiter").value, recruiterPhone: $("#license-recruiter-phone").value, state: $("#license-state").value, track: $("#license-track").value,
       examStatus: $("#license-exam-status").value, examDate: $("#license-exam-date").value,
       followUpDate: $("#license-follow-up").value, firstCheckDate: $("#license-first-check").value,
       nextAction: $("#license-next-action").value, blocker: $("#license-blocker").value,
@@ -1007,14 +1021,13 @@ $("#licensing-list").addEventListener("change", async (event) => {
   try {
     const payload = await licensingApi({ action: "set_stage", id: person.id, expectedVersion: person.version, stage: Number(input.value) });
     const updated = payload.person;
-    const appointed = item => item.tasks?.appointed?.done === true;
-    const before = item => item.exam_status !== 'passed';
-    const onboard = item => !before(item) && !appointed(item);
-    const overdue = item => !!item.follow_up_date && item.follow_up_date < new Date().toISOString().slice(0,10) && !appointed(item);
-    for (const [key, match] of [['preLicense', before], ['onboarding', onboard], ['appointed', appointed], ['overdue', overdue]]) licensingState[key] += Number(match(updated)) - Number(match(person));
-    licensingState.people = licensingState.people.map(item => item.id === person.id ? updated : item);
+    const oldMembership = licensingMembership(person), newMembership = licensingMembership(updated);
+    for (const [key, category] of [['unlicensed', 'unlicensed'], ['licensed', 'licensed'], ['eoCompleted', 'eo_completed'], ['appointed', 'appointed'], ['followUpsDue', 'follow_ups_due']]) licensingState[key] += Number(newMembership[category]) - Number(oldMembership[category]);
+    if (oldMembership[licensingState.category] && !newMembership[licensingState.category]) licensingState.total -= 1;
+    licensingState.people = licensingState.people.map(item => item.id === person.id ? updated : item).filter(item => licensingMembership(item)[licensingState.category]);
     renderLicensing();
     const saved = document.getElementById(`license-stage-${person.id}`);
+    if (!saved) { toast('Saved. This person moved out of the current filter.'); return; }
     saved.closest('.licensing-slider').querySelector('[role="status"]').textContent = 'Saved. Earlier steps are marked complete.';
     saved.focus({ preventScroll: true });
   } catch (reason) {

@@ -17,7 +17,7 @@ const emailOf = (value: unknown) => {
   const email = clean(value, 254).toLowerCase();
   return /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(email) ? email : null;
 };
-const personFields = `id, full_name AS name, email, phone, recruiter, state, track, exam_date, exam_status,
+const personFields = `id, full_name AS name, email, phone, recruiter, recruiter_phone, state, track, exam_date, exam_status,
   blocker, next_action, follow_up_date, first_check_date, tasks, source, version, created_at, updated_at`;
 
 async function adminId(request: Request): Promise<string | null> {
@@ -52,19 +52,29 @@ export default async function licensingPipeline(request: Request): Promise<Respo
       const query = clean(new URL(request.url).searchParams.get('q'), 80);
       const status = new URL(request.url).searchParams.get('status') || '';
       if (status && !examStatuses.has(status)) return json({ error: 'Invalid filter.' }, 400);
+      const category = new URL(request.url).searchParams.get('category') || 'all';
+      const licensed = "coalesce((tasks->'license_uploaded'->>'done')::boolean,false)";
+      const eo = "coalesce((tasks->'eo_active'->>'done')::boolean,false)";
+      const appointed = "coalesce((tasks->'appointed'->>'done')::boolean,false)";
+      const due = `(follow_up_date <= (now() AT TIME ZONE 'America/New_York')::date AND NOT ${appointed})`;
+      const categories: Record<string, string> = { all: 'true', unlicensed: `NOT ${licensed}`, licensed, eo_completed: eo, appointed, follow_ups_due: due };
+      if (!Object.hasOwn(categories, category)) return json({ error: 'Invalid category.' }, 400);
+      const categoryWhere = categories[category];
       const pattern = query ? `%${query.replace(/[\\%_]/g, '\\$&')}%` : null;
       const where = `($1::text IS NULL OR full_name ILIKE $1 ESCAPE '\\' OR email ILIKE $1 ESCAPE '\\' OR recruiter ILIKE $1 ESCAPE '\\') AND ($2::text IS NULL OR exam_status=$2)`;
       const [{ rows: list }, { rows: summary }] = await Promise.all([
-        pool.query(`SELECT ${personFields} FROM amg_private.licensing_people WHERE ${where} ORDER BY updated_at DESC, id DESC LIMIT 25 OFFSET $3`, [pattern, status || null, (page - 1) * 25]),
-        pool.query(`SELECT count(*)::int AS total,
-          count(*) FILTER (WHERE exam_status IN ('studying','scheduled','rescheduled','failed'))::int AS pre_license,
-          count(*) FILTER (WHERE exam_status='passed' AND coalesce((tasks->'appointed'->>'done')::boolean,false)=false)::int AS onboarding,
-          count(*) FILTER (WHERE coalesce((tasks->'appointed'->>'done')::boolean,false)=true)::int AS appointed,
-          count(*) FILTER (WHERE follow_up_date < current_date AND coalesce((tasks->'appointed'->>'done')::boolean,false)=false)::int AS overdue
+        pool.query(`SELECT ${personFields} FROM amg_private.licensing_people WHERE ${where} AND (${categoryWhere}) ORDER BY updated_at DESC, id DESC LIMIT 25 OFFSET $3`, [pattern, status || null, (page - 1) * 25]),
+        pool.query(`SELECT count(*) FILTER (WHERE ${categoryWhere})::int AS total, count(*)::int AS tracked,
+          count(*) FILTER (WHERE NOT ${licensed})::int AS unlicensed,
+          count(*) FILTER (WHERE ${licensed})::int AS licensed,
+          count(*) FILTER (WHERE ${eo})::int AS eo_completed,
+          count(*) FILTER (WHERE ${appointed})::int AS appointed,
+          count(*) FILTER (WHERE ${due})::int AS follow_ups_due
           FROM amg_private.licensing_people WHERE ${where}`, [pattern, status || null]),
       ]);
-      return json({ people: list, ...summary[0], page, page_size: 25 });
+      return json({ people: list, ...summary[0], category, page, page_size: 25 });
     }
+
     if (request.method === 'GET' && learner) {
       await pool.query(`INSERT INTO amg_private.licensing_people (full_name, email, source)
         VALUES ($1, $2, 'course') ON CONFLICT (lower(email)) DO NOTHING`, [learner.name, learner.email]);
@@ -79,23 +89,26 @@ export default async function licensingPipeline(request: Request): Promise<Respo
       const phone = clean(body.phone, 40);
       const normalizedPhone = phone ? normalizeUsPhone(phone) : null;
       if (phone && !normalizedPhone) return json({ error: 'Enter a valid US phone number.' }, 400);
+      const recruiterPhone = clean(body.recruiterPhone, 40);
+      const normalizedRecruiterPhone = recruiterPhone ? normalizeUsPhone(recruiterPhone) : null;
+      if (recruiterPhone && !normalizedRecruiterPhone) return json({ error: 'Enter a valid US phone number for the recruiter / upline.' }, 400);
       const selected = body.completedSteps;
       if (selected !== undefined && (!Array.isArray(selected) || selected.some(id => !licensingSteps.some(step => step.id === id)))) return json({ error: 'Invalid licensing steps.' }, 400);
       const updates = selected === undefined ? {} : stepUpdates(selected as string[], 'admin');
       const examStatus = selected === undefined ? body.examStatus : (selected as string[]).includes('state_exam_passed') ? 'passed' : body.examStatus === 'passed' ? 'studying' : body.examStatus;
       const fields = [name, email, normalizedPhone, clean(body.recruiter), clean(body.state, 80), body.track,
-        date(body.examDate), examStatus, clean(body.blocker, 500), clean(body.nextAction, 500), date(body.followUpDate), date(body.firstCheckDate), JSON.stringify(updates)];
+        date(body.examDate), examStatus, clean(body.blocker, 500), clean(body.nextAction, 500), date(body.followUpDate), date(body.firstCheckDate), JSON.stringify(updates), normalizedRecruiterPhone, body.recruiterPhone !== undefined];
       let rows;
       if (body.id) {
         if (typeof body.id !== 'string' || !/^[0-9a-f-]{36}$/i.test(body.id) || !Number.isSafeInteger(body.expectedVersion)) return json({ error: 'Invalid person or version.' }, 400);
         ({ rows } = await pool.query(`UPDATE amg_private.licensing_people SET full_name=$1,email=$2,phone=$3,recruiter=$4,state=$5,track=$6,
-          exam_date=$7,exam_status=$8,blocker=$9,next_action=$10,follow_up_date=$11,first_check_date=$12,tasks=tasks || $13::jsonb,version=version+1,updated_at=now()
-          WHERE id=$14 AND version=$15 RETURNING ${personFields}`, [...fields, body.id, body.expectedVersion]));
+          exam_date=$7,exam_status=$8,blocker=$9,next_action=$10,follow_up_date=$11,first_check_date=$12,tasks=tasks || $13::jsonb,recruiter_phone=CASE WHEN $15::boolean THEN $14::text ELSE recruiter_phone END,version=version+1,updated_at=now()
+          WHERE id=$16 AND version=$17 RETURNING ${personFields}`, [...fields, body.id, body.expectedVersion]));
         if (!rows.length) return json({ error: 'This record changed. Refresh before saving.' }, 409);
       } else {
         ({ rows } = await pool.query(`INSERT INTO amg_private.licensing_people
-          (full_name,email,phone,recruiter,state,track,exam_date,exam_status,blocker,next_action,follow_up_date,first_check_date,tasks)
-          VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13::jsonb) RETURNING ${personFields}`, fields));
+          (full_name,email,phone,recruiter,state,track,exam_date,exam_status,blocker,next_action,follow_up_date,first_check_date,tasks,recruiter_phone)
+          VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13::jsonb,$14) RETURNING ${personFields}`, fields.slice(0,14)));
       }
       return json({ person: rows[0] });
     }

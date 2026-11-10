@@ -49,7 +49,7 @@ test('admin saves editable person fields and all five milestones atomically with
   admin = true; stale = false; calls.length = 0;
   assert.equal((await handler(request(save))).status, 200);
   const query = calls.at(-1);
-  assert.match(query.sql, /WHERE id=\$14 AND version=\$15/);
+  assert.match(query.sql, /WHERE id=\$16 AND version=\$17/);
   assert.equal(query.params[0], 'Edited Name');
   assert.equal(query.params[2], '+12025550123');
   assert.equal(query.params[7], 'passed');
@@ -110,4 +110,36 @@ test('admin slider saves a sequential stage with optimistic version protection',
   assert.equal((await handler(request({ ...move, stage: 7 }))).status, 400);
   admin = false;
   assert.equal((await handler(request(move))).status, 403);
+});
+
+
+test('admin saves a normalized recruiter phone, can clear it, and preserves it for older clients', async () => {
+  admin = true; stale = false;
+  assert.equal((await handler(request({ ...save, recruiterPhone: '(301) 555-0142' }))).status, 200);
+  assert.equal(calls.at(-1).params[13], '+13015550142');
+  assert.equal(calls.at(-1).params[14], true);
+  assert.match(calls.at(-1).sql, /ELSE recruiter_phone END/);
+  assert.equal((await handler(request({ ...save, recruiterPhone: '' }))).status, 200);
+  assert.equal(calls.at(-1).params[13], null);
+  assert.equal(calls.at(-1).params[14], true);
+  await handler(request(save));
+  assert.equal(calls.at(-1).params[14], false);
+  assert.equal((await handler(request({ ...save, recruiterPhone: '123' }))).status, 400);
+});
+test('category filters are allowlisted, use actual license/E&O milestones, and include today’s follow ups', async () => {
+  admin = true;
+  for (const category of ['all', 'unlicensed', 'licensed', 'eo_completed', 'appointed', 'follow_ups_due']) {
+    calls.length = 0;
+    const response = await handler(new Request('https://amg.example/api/licensing-pipeline?category=' + category, { headers: { authorization: 'Bearer test' } }));
+    assert.equal(response.status, 200);
+    const list = calls.find(call => call.sql.includes('LIMIT 25'));
+    const counts = calls.find(call => call.sql.includes('AS tracked'));
+    assert.match(counts.sql, /tasks->'license_uploaded'/);
+    assert.match(counts.sql, /tasks->'eo_active'/);
+    assert.match(counts.sql, /follow_up_date <= \(now\(\) AT TIME ZONE 'America\/New_York'\)::date/);
+    if (category === 'licensed') assert.match(list.sql, /AND \(coalesce\(\(tasks->'license_uploaded'/);
+    if (category === 'eo_completed') assert.match(list.sql, /AND \(coalesce\(\(tasks->'eo_active'/);
+  }
+  const invalid = await handler(new Request('https://amg.example/api/licensing-pipeline?category=unknown', { headers: { authorization: 'Bearer test' } }));
+  assert.equal(invalid.status, 400);
 });

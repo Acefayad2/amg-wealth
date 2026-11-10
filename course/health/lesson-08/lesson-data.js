@@ -20,6 +20,10 @@ window.AMG_LESSON = {
     {
       "title": "NAIC consumer glossary",
       "url": "https://content.naic.org/consumer_glossary"
+    },
+    {
+      "title": "42 U.S.C. §300gg–91(c), categories of excepted benefits",
+      "url": "https://uscode.house.gov/us/usc/119-124/t42/s300gg-91/"
     }
   ],
   "blocks": [
@@ -115,7 +119,7 @@ window.AMG_LESSON = {
     },
     {
       "title": "Prescription, vision and critical illness",
-      "narration": "Stand-alone prescription drug and vision care policies pay for those services on a schedule, with copayments or allowances, and exclude everything else. Critical illness policies pay a lump sum when the insured is diagnosed with a listed condition, commonly heart attack, stroke or cancer, often after a short survival period. The money is not tied to bills; the insured may spend it on mortgage payments or travel for treatment. These policies are excepted benefits, outside the Affordable Care Act’s rules, so they may keep lifetime maximums and health underwriting that comprehensive plans cannot.",
+      "narration": "Separate vision plans cover eye care, and drug plans cover the prescriptions they list. A critical illness policy pays a lump sum for a listed diagnosis after any required survival period. You can use that money for rent, travel or another expense. Some limited benefits qualify for an exception to federal coverage rules. Separate limited vision benefits can qualify. So can independent critical illness coverage that does not coordinate with another plan. The exam term is excepted benefits: E, as in exception. A drug policy does not qualify just because it covers only prescriptions.",
       "visual": {
         "type": "cards",
         "items": [
@@ -129,7 +133,7 @@ window.AMG_LESSON = {
           ],
           [
             "Excepted benefits",
-            "ACA rules do not apply"
+            "Certain federal requirements do not apply when the coverage meets the conditions"
           ]
         ]
       },
@@ -291,7 +295,7 @@ window.AMG_LESSON = {
     },
     {
       "id": "H08-06",
-      "prompt": "A critical illness policy pays a lump sum after a heart attack. Which statement is accurate?",
+      "prompt": "An independent critical illness policy pays a lump sum after a heart attack, without coordinating with other coverage. Which statement is accurate?",
       "options": [
         "The benefit must be used to pay hospital bills",
         "It is an excepted benefit not subject to the ACA’s essential health benefit rules",
@@ -301,7 +305,7 @@ window.AMG_LESSON = {
       "answer": 1,
       "explanations": [
         "Lump-sum benefits may be spent as the insured chooses.",
-        "Critical illness coverage is an excepted benefit outside the ACA’s comprehensive-plan rules.",
+        "Independent coverage for a specified illness can qualify for the federal exception when it does not coordinate benefits with another plan.",
         "It covers only listed conditions and does not substitute for medical insurance.",
         "No such age restriction applies."
       ],
@@ -359,5 +363,5 @@ window.AMG_LESSON = {
   "poster": "/course/assets/amg-mark.webp",
   "duration": 0,
   "pending": true,
-  "transcript": "Elena’s coworker shows her a brochure: two hundred dollars a day while in the hospital, for forty dollars a month. Is that health insurance? No. It is a limited policy. Limited policies restrict either the perils they cover, such as accidents only, or the amounts they pay, such as a fixed daily sum unrelated to the bill. They are useful supplements and poor substitutes. Because buyers so often mistake them for comprehensive coverage, the policy must carry a prominent notice, typically on the first page, stating that it is a limited policy and describing what it does not cover.\n\nAn accident-only policy pays for injuries from accidents and nothing for sickness. It may pay medical expenses, a disability income benefit, or AD and D sums, but the trigger is always an accident. A specified disease, or dread disease, policy pays only on diagnosis of the named illness, most often cancer, and usually pays scheduled or lump-sum amounts regardless of what other coverage pays. Rosa might buy a cancer policy to cover travel and lost income during treatment. She must still carry a medical plan for everything else, and Theo must say so plainly.\n\nA hospital indemnity policy pays a fixed amount for each day the insured is confined, regardless of the actual charges, which is why it is sometimes called hospital income. It helps with deductibles and lost pay but does not cover physician or outpatient bills. Credit disability insurance pays the installments on a specific loan while the borrower is disabled. The creditor is the beneficiary, the benefit cannot exceed the debt, and the premium is often added to the loan. When Dennis finances a car, he may be offered credit disability; he may decline it without losing the loan.\n\nPriya sponsors a softball team and buys blanket accident coverage. Blanket insurance covers a changing group of people exposed to a common hazard without naming each one: a team’s players, passengers on a bus, students at a school, campers at a summer camp. No individual certificates are issued because the members change. Benefits usually pay medical expenses from accidents during the covered activity. Blanket coverage is group coverage in form, but it insures a category of people rather than enrolled individuals, and that difference is the point the exam tests.\n\nStand-alone prescription drug and vision care policies pay for those services on a schedule, with copayments or allowances, and exclude everything else. Critical illness policies pay a lump sum when the insured is diagnosed with a listed condition, commonly heart attack, stroke or cancer, often after a short survival period. The money is not tied to bills; the insured may spend it on mortgage payments or travel for treatment. These policies are excepted benefits, outside the Affordable Care Act’s rules, so they may keep lifetime maximums and health underwriting that comprehensive plans cannot.\n\nShort-term limited duration policies bridge gaps, such as the weeks between jobs. They are medically underwritten, exclude pre-existing conditions and need not include essential health benefits. Federal rules allow longer terms, but Maryland is stricter: a short-term policy sold in Maryland may last less than three months and may not be renewed or extended. Theo’s client who leaves a job in May should compare a short-term plan with a special enrollment on Maryland Health Connection or Maryland continuation coverage, which provide comprehensive benefits. Short-term coverage is a stopgap, and the notice must say so."
+  "transcript": "Elena’s coworker shows her a brochure: two hundred dollars a day while in the hospital, for forty dollars a month. Is that health insurance? No. It is a limited policy. Limited policies restrict either the perils they cover, such as accidents only, or the amounts they pay, such as a fixed daily sum unrelated to the bill. They are useful supplements and poor substitutes. Because buyers so often mistake them for comprehensive coverage, the policy must carry a prominent notice, typically on the first page, stating that it is a limited policy and describing what it does not cover.\n\nAn accident-only policy pays for injuries from accidents and nothing for sickness. It may pay medical expenses, a disability income benefit, or AD and D sums, but the trigger is always an accident. A specified disease, or dread disease, policy pays only on diagnosis of the named illness, most often cancer, and usually pays scheduled or lump-sum amounts regardless of what other coverage pays. Rosa might buy a cancer policy to cover travel and lost income during treatment. She must still carry a medical plan for everything else, and Theo must say so plainly.\n\nA hospital indemnity policy pays a fixed amount for each day the insured is confined, regardless of the actual charges, which is why it is sometimes called hospital income. It helps with deductibles and lost pay but does not cover physician or outpatient bills. Credit disability insurance pays the installments on a specific loan while the borrower is disabled. The creditor is the beneficiary, the benefit cannot exceed the debt, and the premium is often added to the loan. When Dennis finances a car, he may be offered credit disability; he may decline it without losing the loan.\n\nPriya sponsors a softball team and buys blanket accident coverage. Blanket insurance covers a changing group of people exposed to a common hazard without naming each one: a team’s players, passengers on a bus, students at a school, campers at a summer camp. No individual certificates are issued because the members change. Benefits usually pay medical expenses from accidents during the covered activity. Blanket coverage is group coverage in form, but it insures a category of people rather than enrolled individuals, and that difference is the point the exam tests.\n\nSeparate vision plans cover eye care, and drug plans cover the prescriptions they list. A critical illness policy pays a lump sum for a listed diagnosis after any required survival period. You can use that money for rent, travel or another expense. Some limited benefits qualify for an exception to federal coverage rules. Separate limited vision benefits can qualify. So can independent critical illness coverage that does not coordinate with another plan. The exam term is excepted benefits: E, as in exception. A drug policy does not qualify just because it covers only prescriptions.\n\nShort-term limited duration policies bridge gaps, such as the weeks between jobs. They are medically underwritten, exclude pre-existing conditions and need not include essential health benefits. Federal rules allow longer terms, but Maryland is stricter: a short-term policy sold in Maryland may last less than three months and may not be renewed or extended. Theo’s client who leaves a job in May should compare a short-term plan with a special enrollment on Maryland Health Connection or Maryland continuation coverage, which provide comprehensive benefits. Short-term coverage is a stopgap, and the notice must say so."
 };

@@ -19,6 +19,10 @@ window.AMG_LESSON = {
       "url": "https://www.medicare.gov/basics/costs/medicare-costs/who-pays-first"
     },
     {
+      "title": "Medicare: skilled nursing facility care",
+      "url": "https://www.medicare.gov/coverage/skilled-nursing-facility-care"
+    },
+    {
       "title": "Maryland Department of Health: Medicaid",
       "url": "https://health.maryland.gov/mmcp/Pages/home.aspx"
     }
@@ -127,7 +131,7 @@ window.AMG_LESSON = {
     },
     {
       "title": "Long-term care: who pays",
-      "narration": "Gloria assumes Medicare will pay if she needs a nursing home. It will not, beyond a narrow window. Medicare covers skilled nursing care for up to 100 days after a three-day hospital stay, with coinsurance after day 20, and skilled home health care on an intermittent basis. It pays nothing for custodial care, the help with bathing, dressing and eating that most long stays require. Medical insurance and Medicare supplements exclude custodial care as well. Medicaid does pay for custodial nursing home care, but only after Gloria spends down her assets to the eligibility limit. Long-term care insurance is the private product designed for exactly this gap.",
+      "narration": "Gloria wants to know who will pay if she needs to live in a nursing home. First, ask what kind of care she needs. In Original Medicare, Part A can cover up to 100 days of skilled nursing care in a benefit period if she meets the requirements. That usually includes a hospital stay of at least three days as an inpatient. She shares the cost after day 20. Help with bathing, dressing or eating alone is different. Medicare generally does not cover that ongoing help. Maryland Medicaid can help if she meets its financial and medical requirements. A private long-term care policy may also pay.",
       "visual": {
         "type": "compare",
         "items": [
@@ -141,7 +145,7 @@ window.AMG_LESSON = {
           ],
           [
             "Medicaid",
-            "Custodial care after spend-down"
+            "Nursing facility care for eligible applicants"
           ],
           [
             "Long-term care insurance",
@@ -157,7 +161,7 @@ window.AMG_LESSON = {
     },
     {
       "title": "Three programs, one family",
-      "narration": "Dennis, 66 and working for a large employer, has his group plan primary and Medicare secondary; when he retires, Medicare becomes primary and a supplement fills the gaps. His brother, disabled at 58 and covered through a spouse’s 500-employee company, has the group plan primary. Gloria, 71 and on Medicare, has Part A for a hospital stay and 100 days of skilled rehabilitation, but a year of custodial care would fall to her savings and then to Medicaid, unless she holds a long-term care policy. Lesson 47 builds that policy, and Lesson 48 adds Maryland’s rules for it.",
+      "narration": "Dennis, 66 and working for a large employer, has his group plan primary and Medicare secondary; when he retires, Medicare becomes primary and a supplement fills the gaps. His brother, disabled at 58 and covered through a spouse’s 500-employee company, has the group plan primary. Gloria, 71 and on Medicare, can use Part A for a qualifying hospital stay and up to 100 days of skilled nursing care per benefit period. For a year of help with daily activities, she might use long-term care insurance, pay privately, or qualify for Medicaid. Lesson 47 builds that policy, and Lesson 48 adds Maryland’s rules for it.",
       "visual": {
         "type": "recap",
         "items": [
@@ -175,7 +179,7 @@ window.AMG_LESSON = {
           ],
           [
             "Custodial care",
-            "Private LTC or Medicaid after spend-down"
+            "Private long-term care insurance, personal funds or Medicaid if eligible"
           ]
         ]
       },
@@ -341,14 +345,14 @@ window.AMG_LESSON = {
       "options": [
         "Medicare Part A, for the full year",
         "Her Medicare supplement policy",
-        "Medicaid, once her assets are spent down to the eligibility limit",
+        "Medicaid, if she meets Maryland’s financial and medical eligibility requirements",
         "Part D"
       ],
       "answer": 2,
       "explanations": [
         "Medicare covers only skilled care, up to 100 days after a hospital stay.",
         "Medigap excludes custodial care.",
-        "Medicaid pays for custodial nursing home care for those who meet its income and asset tests.",
+        "Maryland Medicaid can pay for this care when the applicant meets the financial and medical eligibility rules.",
         "Part D covers prescription drugs."
       ],
       "topics": [
@@ -385,5 +389,5 @@ window.AMG_LESSON = {
   "poster": "/course/assets/amg-mark.webp",
   "duration": 0,
   "pending": true,
-  "transcript": "Dennis keeps his job at a 60-employee firm after turning 65. Under the Medicare secondary payer rules, when an active employee or spouse age 65 or older is covered by a group plan of an employer with 20 or more employees, the group plan pays first and Medicare pays second. If the employer has fewer than 20 employees, Medicare pays first and the group plan second. Retiree coverage is always secondary to Medicare. Because his employer is large, Dennis may delay Part B without penalty and enroll during the eight-month special enrollment period after he retires.\n\nTwo more rules. A person under 65 who has Medicare because of disability and is covered by a group plan of an employer with 100 or more employees, through her own or a family member’s current employment, has the group plan primary and Medicare secondary; under 100, Medicare pays first. For end-stage renal disease, the group plan is primary for a 30-month coordination period beginning with Medicare eligibility, regardless of employer size, after which Medicare becomes primary. Employers may not offer incentives to drop group coverage in favor of Medicare or treat Medicare-eligible employees differently.\n\nMedicaid is the joint federal and state program that pays for health care for people with limited income and resources. In Maryland it is called Medical Assistance and administered by the Department of Health, with federal rules and matching funds. Since the Affordable Care Act expansion, adults with household income up to 138 percent of the poverty level qualify on income alone; children, pregnant women and parents have higher thresholds, and the Maryland Children’s Health Program covers children in moderate-income families. Eligibility for long-term care coverage adds a resource test with a low asset limit and a five-year look-back on transfers of assets.\n\nMedicaid covers mandatory benefits in every state: inpatient and outpatient hospital care, physician services, laboratory and x-ray, nursing facility care, home health, family planning, transportation to care and comprehensive screening and treatment for children. Maryland adds optional benefits including prescription drugs, dental for adults and home and community-based services that help people stay out of nursing homes. Medicaid is the payer of last resort: every other coverage pays first. People eligible for both Medicare and Medicaid are dual eligibles, and Medicaid or a Medicare Savings Program may pay their Medicare premiums and cost sharing.\n\nGloria assumes Medicare will pay if she needs a nursing home. It will not, beyond a narrow window. Medicare covers skilled nursing care for up to 100 days after a three-day hospital stay, with coinsurance after day 20, and skilled home health care on an intermittent basis. It pays nothing for custodial care, the help with bathing, dressing and eating that most long stays require. Medical insurance and Medicare supplements exclude custodial care as well. Medicaid does pay for custodial nursing home care, but only after Gloria spends down her assets to the eligibility limit. Long-term care insurance is the private product designed for exactly this gap.\n\nDennis, 66 and working for a large employer, has his group plan primary and Medicare secondary; when he retires, Medicare becomes primary and a supplement fills the gaps. His brother, disabled at 58 and covered through a spouse’s 500-employee company, has the group plan primary. Gloria, 71 and on Medicare, has Part A for a hospital stay and 100 days of skilled rehabilitation, but a year of custodial care would fall to her savings and then to Medicaid, unless she holds a long-term care policy. Lesson 47 builds that policy, and Lesson 48 adds Maryland’s rules for it."
+  "transcript": "Dennis keeps his job at a 60-employee firm after turning 65. Under the Medicare secondary payer rules, when an active employee or spouse age 65 or older is covered by a group plan of an employer with 20 or more employees, the group plan pays first and Medicare pays second. If the employer has fewer than 20 employees, Medicare pays first and the group plan second. Retiree coverage is always secondary to Medicare. Because his employer is large, Dennis may delay Part B without penalty and enroll during the eight-month special enrollment period after he retires.\n\nTwo more rules. A person under 65 who has Medicare because of disability and is covered by a group plan of an employer with 100 or more employees, through her own or a family member’s current employment, has the group plan primary and Medicare secondary; under 100, Medicare pays first. For end-stage renal disease, the group plan is primary for a 30-month coordination period beginning with Medicare eligibility, regardless of employer size, after which Medicare becomes primary. Employers may not offer incentives to drop group coverage in favor of Medicare or treat Medicare-eligible employees differently.\n\nMedicaid is the joint federal and state program that pays for health care for people with limited income and resources. In Maryland it is called Medical Assistance and administered by the Department of Health, with federal rules and matching funds. Since the Affordable Care Act expansion, adults with household income up to 138 percent of the poverty level qualify on income alone; children, pregnant women and parents have higher thresholds, and the Maryland Children’s Health Program covers children in moderate-income families. Eligibility for long-term care coverage adds a resource test with a low asset limit and a five-year look-back on transfers of assets.\n\nMedicaid covers mandatory benefits in every state: inpatient and outpatient hospital care, physician services, laboratory and x-ray, nursing facility care, home health, family planning, transportation to care and comprehensive screening and treatment for children. Maryland adds optional benefits including prescription drugs, dental for adults and home and community-based services that help people stay out of nursing homes. Medicaid is the payer of last resort: every other coverage pays first. People eligible for both Medicare and Medicaid are dual eligibles, and Medicaid or a Medicare Savings Program may pay their Medicare premiums and cost sharing.\n\nGloria wants to know who will pay if she needs to live in a nursing home. First, ask what kind of care she needs. In Original Medicare, Part A can cover up to 100 days of skilled nursing care in a benefit period if she meets the requirements. That usually includes a hospital stay of at least three days as an inpatient. She shares the cost after day 20. Help with bathing, dressing or eating alone is different. Medicare generally does not cover that ongoing help. Maryland Medicaid can help if she meets its financial and medical requirements. A private long-term care policy may also pay.\n\nDennis, 66 and working for a large employer, has his group plan primary and Medicare secondary; when he retires, Medicare becomes primary and a supplement fills the gaps. His brother, disabled at 58 and covered through a spouse’s 500-employee company, has the group plan primary. Gloria, 71 and on Medicare, can use Part A for a qualifying hospital stay and up to 100 days of skilled nursing care per benefit period. For a year of help with daily activities, she might use long-term care insurance, pay privately, or qualify for Medicaid. Lesson 47 builds that policy, and Lesson 48 adds Maryland’s rules for it."
 };

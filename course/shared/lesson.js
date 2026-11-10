@@ -174,7 +174,7 @@
     const answered = state.firstAnswers.filter(a => a !== null).length;
     $('lesson-progress').max = total; $('lesson-progress').value = correct;
     $('progress-label').textContent = correct + ' of ' + total + ' questions understood';
-    $('watch-status').textContent = contentReady() ? (state.videoEnded ? 'Video finished' : textEdition ? 'Lesson read' : 'Transcript study recorded') + ' · Lesson questions unlocked' : textEdition ? (audio ? 'Read or listen, then open the lesson questions.' : 'Read the lesson above, then open the required questions.') : 'Watch the lesson, or study the full transcript, then complete the required questions.';
+    $('watch-status').textContent = contentReady() ? (state.videoEnded ? 'Video finished' : textEdition ? (audio ? 'Lesson studied' : 'Lesson read') : 'Transcript study recorded') + ' · Lesson questions unlocked' : textEdition ? (audio ? 'Read or listen, then open the lesson questions.' : 'Read the lesson above, then open the required questions.') : 'Watch the lesson, or study the full transcript, then complete the required questions.';
     $('open-check').disabled = !contentReady();
     document.body.classList.toggle('content-ready',contentReady());
     $('open-check').textContent = state.complete ? 'Review lesson answers' : (answered ? 'Continue lesson questions' : 'Open lesson questions');

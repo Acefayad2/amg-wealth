@@ -32,6 +32,7 @@
    $('continue-meta').textContent='PART '+next.dataset.lesson+' · '+(text?(next.dataset.audio?'TEXT + AUDIO':'TEXT EDITION'):next.dataset.duration+' VIDEO');$('continue-duration').textContent=next.dataset.duration;
    const poster=next.dataset.poster;if(poster)$('continue-poster').src=poster;
    preview.setAttribute('aria-label','Open lesson '+Number(next.dataset.lesson)+': '+next.dataset.title);
+   const note=document.querySelector('.continue-note');if(note)note.textContent=text?(next.dataset.audio?'Read or listen, then try the questions.':'Read the lesson. Answer the questions.'):'Watch the video. Answer the questions.';
    if(!initialized)selected=next.dataset.moduleIndex;
   }else{
    link.href=preview.href=document.body.dataset.assessments||'/course/assessments/';link.querySelector('span').textContent=document.body.dataset.track==='health'?'Find the Health practice exam':'Explore practice tests';$('continue-label').textContent='ALL LESSONS COMPLETED';$('continue-meta').textContent=rows.length+' OF '+rows.length+' COMPLETE';$('continue-title').textContent='Course complete. Keep your knowledge sharp.';preview.hidden=true;

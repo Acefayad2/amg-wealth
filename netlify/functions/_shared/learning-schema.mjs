@@ -3114,193 +3114,225 @@ export const schema = {
           "id": "D-3-4",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "D-1-1",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "D-1-2",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "D-6-4",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 5
         },
         {
           "id": "D-7-3",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 6
         },
         {
           "id": "D-7-1",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 6
         },
         {
           "id": "D-5-1",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "D-6-3",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 5
         },
         {
           "id": "D-4-1",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 3
         },
         {
           "id": "D-5-3",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "D-4-3",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 3
         },
         {
           "id": "D-2-4",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 1
         },
         {
           "id": "D-3-1",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "D-4-4",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 3
         },
         {
           "id": "D-3-2",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "D-7-4",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 6
         },
         {
           "id": "D-8-1",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 7
         },
         {
           "id": "D-5-4",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "D-1-4",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "D-2-2",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 1
         },
         {
           "id": "D-3-3",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "D-6-2",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 5
         },
         {
           "id": "D-2-3",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 1
         },
         {
           "id": "D-5-2",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "D-8-4",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 7
         },
         {
           "id": "D-4-2",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 3
         },
         {
           "id": "D-6-1",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 5
         },
         {
           "id": "D-7-2",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 6
         },
         {
           "id": "D-8-2",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 7
         },
         {
           "id": "D-1-3",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "D-2-1",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 1
         },
         {
           "id": "D-8-3",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 7
         }
       ]
     },
@@ -3313,541 +3345,631 @@ export const schema = {
           "id": "A-1-11",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "A-7-07",
           "answer": 0,
           "options": 4,
-          "scored": false
+          "scored": false,
+          "domain": 6
         },
         {
           "id": "A-6-08",
           "answer": 2,
           "options": 4,
-          "scored": false
+          "scored": false,
+          "domain": 5
         },
         {
           "id": "A-2-04",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 1
         },
         {
           "id": "A-1-06",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "A-1-01",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "A-5-06",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "A-1-25",
           "answer": 0,
           "options": 4,
-          "scored": false
+          "scored": false,
+          "domain": 0
         },
         {
           "id": "A-1-07",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "A-4-02",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 3
         },
         {
           "id": "A-5-08",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "A-2-05",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 1
         },
         {
           "id": "A-8-02",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 7
         },
         {
           "id": "A-4-03",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 3
         },
         {
           "id": "A-2-02",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 1
         },
         {
           "id": "A-1-16",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "A-1-12",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "A-1-15",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "A-3-06",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "A-6-03",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 5
         },
         {
           "id": "A-1-22",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "A-3-11",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "A-4-01",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 3
         },
         {
           "id": "A-3-04",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "A-1-14",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "A-3-02",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "A-3-14",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "A-2-06",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 1
         },
         {
           "id": "A-1-24",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "A-5-02",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "A-5-12",
           "answer": 2,
           "options": 4,
-          "scored": false
+          "scored": false,
+          "domain": 4
         },
         {
           "id": "A-5-03",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "A-3-07",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "A-6-07",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 5
         },
         {
           "id": "A-3-09",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "A-4-08",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 3
         },
         {
           "id": "A-5-07",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "A-7-04",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 6
         },
         {
           "id": "A-5-10",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "A-1-08",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "A-7-06",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 6
         },
         {
           "id": "A-6-05",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 5
         },
         {
           "id": "A-1-19",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "A-7-02",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 6
         },
         {
           "id": "A-7-05",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 6
         },
         {
           "id": "A-1-20",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "A-7-03",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 6
         },
         {
           "id": "A-1-17",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "A-5-05",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "A-2-03",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 1
         },
         {
           "id": "A-4-04",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 3
         },
         {
           "id": "A-3-13",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "A-5-01",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "A-1-18",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "A-3-12",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "A-1-23",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "A-2-07",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 1
         },
         {
           "id": "A-5-04",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "A-4-05",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 3
         },
         {
           "id": "A-2-10",
           "answer": 1,
           "options": 4,
-          "scored": false
+          "scored": false,
+          "domain": 1
         },
         {
           "id": "A-5-11",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "A-1-05",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "A-2-09",
           "answer": 0,
           "options": 4,
-          "scored": false
+          "scored": false,
+          "domain": 1
         },
         {
           "id": "A-6-06",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 5
         },
         {
           "id": "A-3-01",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "A-2-01",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 1
         },
         {
           "id": "A-1-09",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "A-7-01",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 6
         },
         {
           "id": "A-3-15",
           "answer": 1,
           "options": 4,
-          "scored": false
+          "scored": false,
+          "domain": 2
         },
         {
           "id": "A-1-21",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "A-4-06",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 3
         },
         {
           "id": "A-4-07",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 3
         },
         {
           "id": "A-1-02",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "A-6-02",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 5
         },
         {
           "id": "A-1-13",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "A-2-08",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 1
         },
         {
           "id": "A-4-09",
           "answer": 0,
           "options": 4,
-          "scored": false
+          "scored": false,
+          "domain": 3
         },
         {
           "id": "A-1-03",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "A-1-04",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "A-1-26",
           "answer": 0,
           "options": 4,
-          "scored": false
+          "scored": false,
+          "domain": 0
         },
         {
           "id": "A-5-09",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "A-8-01",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 7
         },
         {
           "id": "A-6-04",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 5
         },
         {
           "id": "A-3-05",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "A-3-10",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "A-1-10",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "A-6-01",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 5
         },
         {
           "id": "A-3-03",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "A-3-08",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "A-3-16",
           "answer": 0,
           "options": 4,
-          "scored": false
+          "scored": false,
+          "domain": 2
         }
       ]
     },
@@ -3860,541 +3982,631 @@ export const schema = {
           "id": "B-6-05",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 5
         },
         {
           "id": "B-3-15",
           "answer": 2,
           "options": 4,
-          "scored": false
+          "scored": false,
+          "domain": 2
         },
         {
           "id": "B-3-14",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "B-1-25",
           "answer": 2,
           "options": 4,
-          "scored": false
+          "scored": false,
+          "domain": 0
         },
         {
           "id": "B-4-07",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 3
         },
         {
           "id": "B-6-03",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 5
         },
         {
           "id": "B-1-14",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "B-7-01",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 6
         },
         {
           "id": "B-6-02",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 5
         },
         {
           "id": "B-5-12",
           "answer": 3,
           "options": 4,
-          "scored": false
+          "scored": false,
+          "domain": 4
         },
         {
           "id": "B-2-04",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 1
         },
         {
           "id": "B-2-05",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 1
         },
         {
           "id": "B-1-06",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "B-1-16",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "B-5-02",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "B-2-02",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 1
         },
         {
           "id": "B-6-04",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 5
         },
         {
           "id": "B-2-08",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 1
         },
         {
           "id": "B-5-10",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "B-2-03",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 1
         },
         {
           "id": "B-3-07",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "B-3-01",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "B-1-20",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "B-7-06",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 6
         },
         {
           "id": "B-1-26",
           "answer": 3,
           "options": 4,
-          "scored": false
+          "scored": false,
+          "domain": 0
         },
         {
           "id": "B-1-04",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "B-7-07",
           "answer": 3,
           "options": 4,
-          "scored": false
+          "scored": false,
+          "domain": 6
         },
         {
           "id": "B-6-08",
           "answer": 0,
           "options": 4,
-          "scored": false
+          "scored": false,
+          "domain": 5
         },
         {
           "id": "B-5-09",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "B-3-12",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "B-3-06",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "B-1-15",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "B-1-05",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "B-3-09",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "B-2-07",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 1
         },
         {
           "id": "B-1-17",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "B-6-06",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 5
         },
         {
           "id": "B-4-09",
           "answer": 1,
           "options": 4,
-          "scored": false
+          "scored": false,
+          "domain": 3
         },
         {
           "id": "B-3-05",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "B-5-05",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "B-5-08",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "B-5-03",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "B-1-19",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "B-6-07",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 5
         },
         {
           "id": "B-5-06",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "B-8-02",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 7
         },
         {
           "id": "B-4-01",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 3
         },
         {
           "id": "B-5-01",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "B-4-03",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 3
         },
         {
           "id": "B-1-10",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "B-7-04",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 6
         },
         {
           "id": "B-5-11",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "B-1-11",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "B-1-03",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "B-2-06",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 1
         },
         {
           "id": "B-1-12",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "B-3-02",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "B-3-03",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "B-5-04",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "B-3-11",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "B-8-01",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 7
         },
         {
           "id": "B-1-21",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "B-6-01",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 5
         },
         {
           "id": "B-2-09",
           "answer": 3,
           "options": 4,
-          "scored": false
+          "scored": false,
+          "domain": 1
         },
         {
           "id": "B-1-24",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "B-1-08",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "B-3-16",
           "answer": 2,
           "options": 4,
-          "scored": false
+          "scored": false,
+          "domain": 2
         },
         {
           "id": "B-4-04",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 3
         },
         {
           "id": "B-3-04",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "B-3-08",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "B-4-08",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 3
         },
         {
           "id": "B-1-01",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "B-7-03",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 6
         },
         {
           "id": "B-4-05",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 3
         },
         {
           "id": "B-1-07",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "B-7-02",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 6
         },
         {
           "id": "B-1-13",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "B-1-18",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "B-2-01",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 1
         },
         {
           "id": "B-4-06",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 3
         },
         {
           "id": "B-1-02",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "B-3-13",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "B-4-02",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 3
         },
         {
           "id": "B-5-07",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "B-1-23",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "B-3-10",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "B-1-22",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "B-1-09",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "B-2-10",
           "answer": 3,
           "options": 4,
-          "scored": false
+          "scored": false,
+          "domain": 1
         },
         {
           "id": "B-7-05",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 6
         }
       ]
     },
@@ -4407,543 +4619,670 @@ export const schema = {
           "id": "C-7-05",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 6
         },
         {
           "id": "C-5-03",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "C-1-18",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "C-5-07",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "C-2-06",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 1
         },
         {
           "id": "C-3-04",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "C-2-10",
           "answer": 3,
           "options": 4,
-          "scored": false
+          "scored": false,
+          "domain": 1
         },
         {
           "id": "C-1-21",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "C-4-09",
           "answer": 3,
           "options": 4,
-          "scored": false
+          "scored": false,
+          "domain": 3
         },
         {
           "id": "C-2-03",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 1
         },
         {
           "id": "C-6-05",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 5
         },
         {
           "id": "C-2-02",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 1
         },
         {
           "id": "C-3-08",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "C-5-05",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "C-2-04",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 1
         },
         {
           "id": "C-1-03",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "C-6-08",
           "answer": 0,
           "options": 4,
-          "scored": false
+          "scored": false,
+          "domain": 5
         },
         {
           "id": "C-1-04",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "C-1-06",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "C-2-05",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 1
         },
         {
           "id": "C-4-05",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 3
         },
         {
           "id": "C-5-06",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "C-6-07",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 5
         },
         {
           "id": "C-4-07",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 3
         },
         {
           "id": "C-1-22",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "C-5-04",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "C-6-01",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 5
         },
         {
           "id": "C-2-01",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 1
         },
         {
           "id": "C-4-02",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 3
         },
         {
           "id": "C-6-06",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 5
         },
         {
           "id": "C-7-01",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 6
         },
         {
           "id": "C-3-09",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "C-4-06",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 3
         },
         {
           "id": "C-1-05",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "C-1-11",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "C-4-08",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 3
         },
         {
           "id": "C-2-09",
           "answer": 1,
           "options": 4,
-          "scored": false
+          "scored": false,
+          "domain": 1
         },
         {
           "id": "C-6-02",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 5
         },
         {
           "id": "C-6-03",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 5
         },
         {
           "id": "C-3-06",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "C-7-02",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 6
         },
         {
           "id": "C-2-08",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 1
         },
         {
           "id": "C-8-02",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 7
         },
         {
           "id": "C-8-01",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 7
         },
         {
           "id": "C-1-14",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "C-3-13",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "C-1-23",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "C-4-03",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 3
         },
         {
           "id": "C-3-14",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "C-3-05",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "C-5-09",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "C-1-01",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "C-5-12",
           "answer": 1,
           "options": 4,
-          "scored": false
+          "scored": false,
+          "domain": 4
         },
         {
           "id": "C-3-11",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "C-1-25",
           "answer": 0,
           "options": 4,
-          "scored": false
+          "scored": false,
+          "domain": 0
         },
         {
           "id": "C-6-04",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 5
         },
         {
           "id": "C-3-01",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "C-7-03",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 6
         },
         {
           "id": "C-1-09",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "C-1-02",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "C-3-15",
           "answer": 0,
           "options": 4,
-          "scored": false
+          "scored": false,
+          "domain": 2
         },
         {
           "id": "C-1-08",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "C-1-16",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "C-3-03",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "C-2-07",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 1
         },
         {
           "id": "C-4-04",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 3
         },
         {
           "id": "C-1-26",
           "answer": 3,
           "options": 4,
-          "scored": false
+          "scored": false,
+          "domain": 0
         },
         {
           "id": "C-1-12",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "C-7-04",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 6
         },
         {
           "id": "C-3-07",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "C-1-13",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "C-1-10",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "C-3-16",
           "answer": 3,
           "options": 4,
-          "scored": false
+          "scored": false,
+          "domain": 2
         },
         {
           "id": "C-1-07",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "C-5-11",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "C-1-20",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "C-3-02",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "C-7-06",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 6
         },
         {
           "id": "C-3-12",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "C-1-17",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "C-7-07",
           "answer": 3,
           "options": 4,
-          "scored": false
+          "scored": false,
+          "domain": 6
         },
         {
           "id": "C-4-01",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 3
         },
         {
           "id": "C-1-24",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "C-5-08",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "C-1-15",
           "answer": 3,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "C-3-10",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 2
         },
         {
           "id": "C-1-19",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 0
         },
         {
           "id": "C-5-10",
           "answer": 0,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "C-5-01",
           "answer": 2,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         },
         {
           "id": "C-5-02",
           "answer": 1,
           "options": 4,
-          "scored": true
+          "scored": true,
+          "domain": 4
         }
       ]
+    }
+  ],
+  "extraQuestions": [
+    {
+      "id": "LM-delivery-participation",
+      "answer": 2,
+      "options": 4,
+      "scored": true,
+      "domain": 0
+    },
+    {
+      "id": "LM-application-correction",
+      "answer": 1,
+      "options": 4,
+      "scored": true,
+      "domain": 2
+    },
+    {
+      "id": "LM-drill-17",
+      "answer": 2,
+      "options": 4,
+      "scored": true,
+      "domain": 2
+    },
+    {
+      "id": "LM-drill-51",
+      "answer": 2,
+      "options": 4,
+      "scored": true,
+      "domain": 4
+    },
+    {
+      "id": "LM-drill-80",
+      "answer": 0,
+      "options": 4,
+      "scored": true,
+      "domain": 4
     }
   ],
   "tracks": {
@@ -7923,541 +8262,631 @@ export const schema = {
               "id": "HM-A-1-1",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-A-2-4",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 1
             },
             {
               "id": "HM-A-6-6",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-A-1-24",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-A-2-8",
               "answer": 1,
               "options": 4,
-              "scored": false
+              "scored": false,
+              "domain": 1
             },
             {
               "id": "HM-A-1-3",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-A-8-2",
               "answer": 2,
               "options": 4,
-              "scored": false
+              "scored": false,
+              "domain": 7
             },
             {
               "id": "HM-A-9-2",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 8
             },
             {
               "id": "HM-A-5-5",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 4
             },
             {
               "id": "HM-A-5-6",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 4
             },
             {
               "id": "HM-A-1-14",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-A-2-2",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 1
             },
             {
               "id": "HM-A-4-3",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 3
             },
             {
               "id": "HM-A-1-13",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-A-6-3",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-A-9-7",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 8
             },
             {
               "id": "HM-A-10-5",
               "answer": 0,
               "options": 4,
-              "scored": false
+              "scored": false,
+              "domain": 9
             },
             {
               "id": "HM-A-3-9",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 2
             },
             {
               "id": "HM-A-10-4",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 9
             },
             {
               "id": "HM-A-9-5",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 8
             },
             {
               "id": "HM-A-1-7",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-A-6-4",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-A-6-7",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-A-1-21",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-A-3-10",
               "answer": 2,
               "options": 4,
-              "scored": false
+              "scored": false,
+              "domain": 2
             },
             {
               "id": "HM-A-6-11",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-A-4-6",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 3
             },
             {
               "id": "HM-A-10-1",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 9
             },
             {
               "id": "HM-A-7-3",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 6
             },
             {
               "id": "HM-A-5-2",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 4
             },
             {
               "id": "HM-A-9-3",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 8
             },
             {
               "id": "HM-A-1-10",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-A-10-3",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 9
             },
             {
               "id": "HM-A-5-3",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 4
             },
             {
               "id": "HM-A-4-2",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 3
             },
             {
               "id": "HM-A-1-22",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-A-1-25",
               "answer": 1,
               "options": 4,
-              "scored": false
+              "scored": false,
+              "domain": 0
             },
             {
               "id": "HM-A-6-10",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-A-5-8",
               "answer": 3,
               "options": 4,
-              "scored": false
+              "scored": false,
+              "domain": 4
             },
             {
               "id": "HM-A-3-2",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 2
             },
             {
               "id": "HM-A-3-1",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 2
             },
             {
               "id": "HM-A-9-1",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 8
             },
             {
               "id": "HM-A-6-2",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-A-2-6",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 1
             },
             {
               "id": "HM-A-1-2",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-A-1-23",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-A-3-5",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 2
             },
             {
               "id": "HM-A-9-6",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 8
             },
             {
               "id": "HM-A-1-4",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-A-4-1",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 3
             },
             {
               "id": "HM-A-7-5",
               "answer": 2,
               "options": 4,
-              "scored": false
+              "scored": false,
+              "domain": 6
             },
             {
               "id": "HM-A-1-5",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-A-5-1",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 4
             },
             {
               "id": "HM-A-3-6",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 2
             },
             {
               "id": "HM-A-1-19",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-A-6-5",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-A-2-7",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 1
             },
             {
               "id": "HM-A-1-16",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-A-4-7",
               "answer": 3,
               "options": 4,
-              "scored": false
+              "scored": false,
+              "domain": 3
             },
             {
               "id": "HM-A-1-20",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-A-6-12",
               "answer": 1,
               "options": 4,
-              "scored": false
+              "scored": false,
+              "domain": 5
             },
             {
               "id": "HM-A-1-6",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-A-2-1",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 1
             },
             {
               "id": "HM-A-5-4",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 4
             },
             {
               "id": "HM-A-7-1",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 6
             },
             {
               "id": "HM-A-3-3",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 2
             },
             {
               "id": "HM-A-3-7",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 2
             },
             {
               "id": "HM-A-3-4",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 2
             },
             {
               "id": "HM-A-7-4",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 6
             },
             {
               "id": "HM-A-7-2",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 6
             },
             {
               "id": "HM-A-1-15",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-A-5-7",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 4
             },
             {
               "id": "HM-A-2-5",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 1
             },
             {
               "id": "HM-A-1-18",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-A-1-11",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-A-1-12",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-A-10-2",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 9
             },
             {
               "id": "HM-A-4-4",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 3
             },
             {
               "id": "HM-A-6-1",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-A-1-17",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-A-9-4",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 8
             },
             {
               "id": "HM-A-6-9",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-A-2-3",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 1
             },
             {
               "id": "HM-A-6-8",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-A-8-1",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 7
             },
             {
               "id": "HM-A-1-8",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-A-9-8",
               "answer": 0,
               "options": 4,
-              "scored": false
+              "scored": false,
+              "domain": 8
             },
             {
               "id": "HM-A-4-5",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 3
             },
             {
               "id": "HM-A-3-8",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 2
             },
             {
               "id": "HM-A-1-9",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             }
           ]
         },
@@ -8470,541 +8899,631 @@ export const schema = {
               "id": "HM-B-4-4",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 3
             },
             {
               "id": "HM-B-6-10",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-B-2-8",
               "answer": 1,
               "options": 4,
-              "scored": false
+              "scored": false,
+              "domain": 1
             },
             {
               "id": "HM-B-5-6",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 4
             },
             {
               "id": "HM-B-2-2",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 1
             },
             {
               "id": "HM-B-7-3",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 6
             },
             {
               "id": "HM-B-6-6",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-B-1-1",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-B-2-5",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 1
             },
             {
               "id": "HM-B-1-3",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-B-5-7",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 4
             },
             {
               "id": "HM-B-6-4",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-B-7-1",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 6
             },
             {
               "id": "HM-B-1-5",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-B-9-5",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 8
             },
             {
               "id": "HM-B-5-8",
               "answer": 0,
               "options": 4,
-              "scored": false
+              "scored": false,
+              "domain": 4
             },
             {
               "id": "HM-B-3-10",
               "answer": 3,
               "options": 4,
-              "scored": false
+              "scored": false,
+              "domain": 2
             },
             {
               "id": "HM-B-6-11",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-B-1-2",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-B-8-1",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 7
             },
             {
               "id": "HM-B-9-8",
               "answer": 3,
               "options": 4,
-              "scored": false
+              "scored": false,
+              "domain": 8
             },
             {
               "id": "HM-B-5-1",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 4
             },
             {
               "id": "HM-B-3-8",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 2
             },
             {
               "id": "HM-B-1-21",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-B-8-2",
               "answer": 2,
               "options": 4,
-              "scored": false
+              "scored": false,
+              "domain": 7
             },
             {
               "id": "HM-B-10-5",
               "answer": 2,
               "options": 4,
-              "scored": false
+              "scored": false,
+              "domain": 9
             },
             {
               "id": "HM-B-1-9",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-B-4-6",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 3
             },
             {
               "id": "HM-B-2-7",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 1
             },
             {
               "id": "HM-B-2-1",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 1
             },
             {
               "id": "HM-B-10-1",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 9
             },
             {
               "id": "HM-B-6-2",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-B-1-15",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-B-1-25",
               "answer": 0,
               "options": 4,
-              "scored": false
+              "scored": false,
+              "domain": 0
             },
             {
               "id": "HM-B-4-7",
               "answer": 3,
               "options": 4,
-              "scored": false
+              "scored": false,
+              "domain": 3
             },
             {
               "id": "HM-B-6-9",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-B-3-4",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 2
             },
             {
               "id": "HM-B-1-23",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-B-4-3",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 3
             },
             {
               "id": "HM-B-6-3",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-B-2-6",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 1
             },
             {
               "id": "HM-B-1-18",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-B-5-4",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 4
             },
             {
               "id": "HM-B-1-24",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-B-3-3",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 2
             },
             {
               "id": "HM-B-1-8",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-B-1-7",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-B-5-2",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 4
             },
             {
               "id": "HM-B-1-10",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-B-4-1",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 3
             },
             {
               "id": "HM-B-9-1",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 8
             },
             {
               "id": "HM-B-1-6",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-B-1-11",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-B-3-7",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 2
             },
             {
               "id": "HM-B-3-1",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 2
             },
             {
               "id": "HM-B-6-1",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-B-1-4",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-B-1-19",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-B-3-5",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 2
             },
             {
               "id": "HM-B-5-5",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 4
             },
             {
               "id": "HM-B-9-7",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 8
             },
             {
               "id": "HM-B-2-3",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 1
             },
             {
               "id": "HM-B-6-5",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-B-6-12",
               "answer": 2,
               "options": 4,
-              "scored": false
+              "scored": false,
+              "domain": 5
             },
             {
               "id": "HM-B-1-14",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-B-10-2",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 9
             },
             {
               "id": "HM-B-6-8",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-B-3-2",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 2
             },
             {
               "id": "HM-B-6-7",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-B-1-17",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-B-7-2",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 6
             },
             {
               "id": "HM-B-9-3",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 8
             },
             {
               "id": "HM-B-7-4",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 6
             },
             {
               "id": "HM-B-10-4",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 9
             },
             {
               "id": "HM-B-3-6",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 2
             },
             {
               "id": "HM-B-1-12",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-B-1-16",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-B-7-5",
               "answer": 1,
               "options": 4,
-              "scored": false
+              "scored": false,
+              "domain": 6
             },
             {
               "id": "HM-B-9-2",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 8
             },
             {
               "id": "HM-B-10-3",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 9
             },
             {
               "id": "HM-B-4-5",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 3
             },
             {
               "id": "HM-B-4-2",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 3
             },
             {
               "id": "HM-B-1-13",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-B-5-3",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 4
             },
             {
               "id": "HM-B-9-4",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 8
             },
             {
               "id": "HM-B-3-9",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 2
             },
             {
               "id": "HM-B-2-4",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 1
             },
             {
               "id": "HM-B-1-20",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-B-9-6",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 8
             },
             {
               "id": "HM-B-1-22",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             }
           ]
         },
@@ -9017,543 +9536,670 @@ export const schema = {
               "id": "HM-C-1-21",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-C-10-1",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 9
             },
             {
               "id": "HM-C-2-3",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 1
             },
             {
               "id": "HM-C-3-10",
               "answer": 2,
               "options": 4,
-              "scored": false
+              "scored": false,
+              "domain": 2
             },
             {
               "id": "HM-C-1-24",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-C-6-1",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-C-2-1",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 1
             },
             {
               "id": "HM-C-4-2",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 3
             },
             {
               "id": "HM-C-1-6",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-C-7-5",
               "answer": 1,
               "options": 4,
-              "scored": false
+              "scored": false,
+              "domain": 6
             },
             {
               "id": "HM-C-1-8",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-C-1-5",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-C-1-2",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-C-1-14",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-C-3-5",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 2
             },
             {
               "id": "HM-C-3-6",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 2
             },
             {
               "id": "HM-C-7-1",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 6
             },
             {
               "id": "HM-C-8-2",
               "answer": 2,
               "options": 4,
-              "scored": false
+              "scored": false,
+              "domain": 7
             },
             {
               "id": "HM-C-1-17",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-C-6-6",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-C-5-4",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 4
             },
             {
               "id": "HM-C-2-4",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 1
             },
             {
               "id": "HM-C-3-8",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 2
             },
             {
               "id": "HM-C-10-3",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 9
             },
             {
               "id": "HM-C-6-7",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-C-1-13",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-C-1-9",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-C-1-25",
               "answer": 1,
               "options": 4,
-              "scored": false
+              "scored": false,
+              "domain": 0
             },
             {
               "id": "HM-C-3-1",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 2
             },
             {
               "id": "HM-C-1-16",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-C-5-1",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 4
             },
             {
               "id": "HM-C-9-8",
               "answer": 1,
               "options": 4,
-              "scored": false
+              "scored": false,
+              "domain": 8
             },
             {
               "id": "HM-C-9-4",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 8
             },
             {
               "id": "HM-C-4-6",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 3
             },
             {
               "id": "HM-C-10-2",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 9
             },
             {
               "id": "HM-C-9-7",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 8
             },
             {
               "id": "HM-C-2-5",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 1
             },
             {
               "id": "HM-C-4-1",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 3
             },
             {
               "id": "HM-C-1-3",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-C-7-3",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 6
             },
             {
               "id": "HM-C-8-1",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 7
             },
             {
               "id": "HM-C-6-12",
               "answer": 1,
               "options": 4,
-              "scored": false
+              "scored": false,
+              "domain": 5
             },
             {
               "id": "HM-C-9-2",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 8
             },
             {
               "id": "HM-C-7-4",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 6
             },
             {
               "id": "HM-C-2-8",
               "answer": 1,
               "options": 4,
-              "scored": false
+              "scored": false,
+              "domain": 1
             },
             {
               "id": "HM-C-6-3",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-C-6-11",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-C-4-4",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 3
             },
             {
               "id": "HM-C-6-8",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-C-6-2",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-C-10-5",
               "answer": 2,
               "options": 4,
-              "scored": false
+              "scored": false,
+              "domain": 9
             },
             {
               "id": "HM-C-1-23",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-C-2-6",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 1
             },
             {
               "id": "HM-C-1-20",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-C-1-11",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-C-3-4",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 2
             },
             {
               "id": "HM-C-5-5",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 4
             },
             {
               "id": "HM-C-9-5",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 8
             },
             {
               "id": "HM-C-3-2",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 2
             },
             {
               "id": "HM-C-1-7",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-C-3-9",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 2
             },
             {
               "id": "HM-C-2-7",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 1
             },
             {
               "id": "HM-C-6-10",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-C-6-9",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-C-5-2",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 4
             },
             {
               "id": "HM-C-4-7",
               "answer": 0,
               "options": 4,
-              "scored": false
+              "scored": false,
+              "domain": 3
             },
             {
               "id": "HM-C-2-2",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 1
             },
             {
               "id": "HM-C-9-6",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 8
             },
             {
               "id": "HM-C-5-3",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 4
             },
             {
               "id": "HM-C-1-4",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-C-4-3",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 3
             },
             {
               "id": "HM-C-3-7",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 2
             },
             {
               "id": "HM-C-9-1",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 8
             },
             {
               "id": "HM-C-1-22",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-C-6-5",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-C-1-18",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-C-5-8",
               "answer": 3,
               "options": 4,
-              "scored": false
+              "scored": false,
+              "domain": 4
             },
             {
               "id": "HM-C-1-12",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-C-3-3",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 2
             },
             {
               "id": "HM-C-1-1",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-C-1-19",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-C-5-6",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 4
             },
             {
               "id": "HM-C-4-5",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 3
             },
             {
               "id": "HM-C-9-3",
               "answer": 1,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 8
             },
             {
               "id": "HM-C-10-4",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 9
             },
             {
               "id": "HM-C-7-2",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 6
             },
             {
               "id": "HM-C-1-15",
               "answer": 2,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             },
             {
               "id": "HM-C-5-7",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 4
             },
             {
               "id": "HM-C-6-4",
               "answer": 3,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 5
             },
             {
               "id": "HM-C-1-10",
               "answer": 0,
               "options": 4,
-              "scored": true
+              "scored": true,
+              "domain": 0
             }
           ]
+        }
+      ],
+      "extraQuestions": [
+        {
+          "id": "HM-lab-share",
+          "answer": 0,
+          "options": 4,
+          "scored": true,
+          "domain": 5
+        },
+        {
+          "id": "HM-remaining-limit",
+          "answer": 3,
+          "options": 4,
+          "scored": true,
+          "domain": 5
+        },
+        {
+          "id": "HM-drill-4",
+          "answer": 1,
+          "options": 4,
+          "scored": true,
+          "domain": 2
+        },
+        {
+          "id": "HM-drill-9",
+          "answer": 0,
+          "options": 4,
+          "scored": true,
+          "domain": 4
+        },
+        {
+          "id": "HM-drill-34",
+          "answer": 2,
+          "options": 4,
+          "scored": true,
+          "domain": 8
         }
       ],
       "sourceHashes": {
@@ -9617,12 +10263,12 @@ export const schema = {
         "public/course/health/lesson-58/lesson-data.js": "4c6e7494050f0caf938c557127456641cf634136b6627ef5d9938a5f86573bff",
         "public/course/health/lesson-59/lesson-data.js": "663e9a0ae5d2c7edcf35ce507648262e9df28f26e915cccc95b8e6eb7ca8cf2b",
         "public/course/health/lesson-60/lesson-data.js": "e2926b39e3efba3c1dc91653b818b860349a75e30855d481841b14526cd60cbb",
-        "public/course/health/assessments/assessment-data.js": "99186b0719c23251d7186300e6c334bba59862f27ddae0bdfc9f5b3cc201acb2"
+        "public/course/health/assessments/assessment-data.js": "836f668bcbc31462a4e3fa6d0cdd5767998108543e46530a4862515d76b7a405"
       }
     }
   },
   "sourceHashes": {
-    "public/course/assessments/assessment-data.js": "0bc2878d9ede3a8d7efe3e2fb05e5df8ef917de11c6bff79c2e6ea8adc0d516e",
+    "public/course/assessments/assessment-data.js": "a003ffe521f8294102ed9696b8d370f12398b606bc388013766817adf38335eb",
     "public/course/lesson-01/lesson-data.js": "b24f10cb9869c9c4db3bcd799d437b980d385412768522a366e350b3f8e08741",
     "public/course/lesson-02/lesson-data.js": "1f58275a57be5cb53da3172ce0d6d418de8983be64a462ff46f8e8571ac17b3e",
     "public/course/lesson-03/lesson-data.js": "2f9261be594f74062ed35841790b6da7630590ff332ec8dedf3868a3992762ee",

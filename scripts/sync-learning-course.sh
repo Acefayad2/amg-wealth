@@ -14,6 +14,8 @@ rm -rf "$site/course" "$site/login" "$site/practice" "$site/practice-assets"
 cp -R "$dist/course" "$site/course"
 # Learner answer validation and content hashes must match the lessons from this build.
 cp "$schema" "$site/netlify/functions/_shared/learning-schema.mjs"
+cp "$portal/netlify/functions/_shared/mock-rotation.mjs" "$site/netlify/functions/_shared/mock-rotation.mjs"
+cp "$portal/netlify/functions/_shared/learning-core.mjs" "$site/netlify/functions/_shared/learning-core.mjs"
 cp -R "$dist/login" "$site/login"
 mkdir "$site/practice" && cp "$dist/index.html" "$site/practice/index.html"
 cp -R "$dist/practice-assets" "$site/practice-assets"

@@ -70,3 +70,16 @@ test('admin preview contains no sample learner placeholders', () => {
   assert(!licensingPreview.includes('Taylor Agent'));
   assert(!licensingPreview.includes('learnerId'));
 });
+
+test('Licensing includes unfinished and completed Health mocks alongside Life attempts', () => {
+  const health = schema.tracks.health, form = health.forms[0];
+  const start = { id:'health-partial',form:form.id,startedAt:NOW-40000,submittedAt:null,answers:form.questions.map((q,i)=>i<4?q.answer:null) };
+  const finish = { ...start,id:'health-finished',startedAt:NOW-90000,submittedAt:NOW-50000,answers:form.questions.map(q=>q.scored?q.answer:null) };
+  const combined = {...records,[health.assessmentKey]:{updatedAt:new Date(NOW).toISOString(),value:{attempts:[finish,start]}}};
+  const snapshot = buildAdminLearningSnapshot(USER,combined,NOW);
+  const active = snapshot.attempts.find(a=>a.attemptId===start.id);
+  assert.equal(active.title,'Health Mock Exam A');
+  assert.equal(active.status,'in_progress'); assert.equal(active.answered,4); assert.equal(active.total,90); assert.equal(active.scorePercent,null);
+  assert.equal(snapshot.attempts.find(a=>a.attemptId===finish.id).scorePercent,100);
+  assert.equal(snapshot.attempts.length,3);
+});

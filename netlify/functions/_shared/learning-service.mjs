@@ -162,7 +162,7 @@ export function createLearningHandler({ getUser, getStore, saveAdminSnapshot = a
         return json({ record: publicRecord(entry.data), idempotent: true, reporting: await reporting(store, prefix, user, records, request, false) });
       }
       if (revision !== (entry?.data.revision || 0)) return json({ error: 'conflict', record: publicRecord(entry?.data) }, 409);
-      validateValue(key, value, now(), entry?.data.value);
+      validateValue(key, value, now(), entry?.data.value ?? null);
       const changed = reportingSignature(key, value) !== reportingSignature(key, entry?.data.value);
       const importantEvent = lessonByKey.has(key)
         ? !entry || (value.complete && !entry.data.value.complete)

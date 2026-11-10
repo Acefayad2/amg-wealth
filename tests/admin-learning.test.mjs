@@ -1,12 +1,18 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildAdminLearningSnapshot, createAdminLearningHandler, persistAdminLearningSnapshot, refreshAdminLearningSnapshot } from '../netlify/functions/_shared/admin-learning.mjs';
+import { buildAdminLearningSnapshot, createAdminLearningHandler, persistAdminLearningSnapshot, refreshAdminLearningSnapshot, reportableLearner } from '../netlify/functions/_shared/admin-learning.mjs';
 import { learnerProgressCard } from '../admin/licensing-learning.mjs';
 import { schema } from '../netlify/functions/_shared/learning-core.mjs';
 import fs from 'node:fs';
 
 const NOW = Date.parse('2026-11-09T18:42:00Z');
 const USER = { id: 'learner-001', name: 'Jordan Sample', email: 'jordan@example.test' };
+test('internal release-check accounts are excluded without hiding real learner accounts', () => {
+  assert.equal(reportableLearner({email:'qa-123@EXAMPLE.INVALID'}),false);
+  assert.equal(reportableLearner({email:'qa-team@gmail.com'}),true);
+  assert.equal(reportableLearner({email:'person@example.invalid.evil.com'}),true);
+  assert.equal(reportableLearner(null),false);
+});
 const form = schema.forms[1];
 const attempt = {
   id: 'attempt-in-progress', form: form.id, startedAt: NOW - 600000,

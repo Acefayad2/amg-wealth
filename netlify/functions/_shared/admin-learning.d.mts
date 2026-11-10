@@ -15,6 +15,7 @@ export type LearnerSnapshot = {
 export function buildAdminLearningSnapshot(user: { id: string; name?: string; email: string }, records: Record<string, unknown>, observedAt?: number): LearnerSnapshot;
 export function persistAdminLearningSnapshot(store: any, user: { id: string; name?: string; email: string }, records: Record<string, unknown>, observedAt?: number): Promise<LearnerSnapshot>;
 export function refreshAdminLearningSnapshot(store: any, learner: LearnerSnapshot): Promise<LearnerSnapshot>;
+export function reportableLearner(value: unknown): boolean;
 export function createAdminLearningHandler(deps: {
   authenticate: (request: Request) => Promise<{ id: string }>;
   isAdmin: (id: string) => Promise<boolean>;

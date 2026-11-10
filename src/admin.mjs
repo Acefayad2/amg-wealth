@@ -1,3 +1,4 @@
+import { licensingReminderLinks } from "../admin/licensing-reminders.mjs";
 import { licensingSteps, licensingProgress, selectedStepsForStage } from "../licensing-progress/steps.js";
 import { normalizeUsPhone } from "../netlify/functions/_shared/us-phone.mjs";
 import { createClient } from "@supabase/supabase-js";
@@ -134,9 +135,6 @@ async function loadInquiries(page = 1) {
   }
 }
 
-const licensingReminder = (person) => `Hi ${String(person.name || "there").trim().split(/\s+/)[0]}, this is AMG. ${person.next_action ? `Your next licensing step is: ${person.next_action}. ` : `Your next licensing step is: ${licensingProgress(person).current < 0 ? "check in with your AMG team" : licensingSteps[licensingProgress(person).current].label}. `}You can update your checklist at https://anointedmoneygroup.com/licensing-progress/ or reply if you need help.`;
-const licensingStatusLabel = { studying: "Studying", scheduled: "Exam scheduled", rescheduled: "Rescheduled", failed: "Retake needed", passed: "Exam passed" };
-
 async function licensingApi(body = null, page = 1) {
   const { data, error } = await authClient.auth.getSession();
   if (error) throw error;
@@ -184,7 +182,8 @@ function renderLicensing() {
     const progress = licensingProgress(person);
     const due = person.follow_up_date && person.follow_up_date < new Date().toISOString().slice(0, 10) && progress.current >= 0;
     const stage = progress.label;
-    return `<article class="licensing-person" data-person-id="${person.id}"><div class="licensing-person-main"><div class="licensing-avatar">${escapeHtml(initials(person.name))}</div><div class="licensing-person-title"><p class="eyebrow">${escapeHtml(stage)} · ${escapeHtml(person.track === "both" ? "Life + Health" : person.track)}</p><h2>${escapeHtml(person.name)}</h2><p>${person.email ? escapeHtml(person.email) : '<span class="licensing-missing">Add email to connect their checklist</span>'}${person.phone ? ` · ${escapeHtml(person.phone)}` : ""}${person.recruiter ? ` · Upline: ${escapeHtml(person.recruiter)}` : ""}</p></div><span class="licensing-due${due ? " overdue" : ""}">${person.follow_up_date ? `${due ? "Overdue · " : "Follow up · "}${escapeHtml(person.follow_up_date)}` : "No follow up date"}</span></div>${licensingSlider(person)}${person.next_action || person.blocker ? `<div class="licensing-notes">${person.next_action ? `<p><strong>Next:</strong> ${escapeHtml(person.next_action)}</p>` : ""}${person.blocker ? `<p><strong>Blocker:</strong> ${escapeHtml(person.blocker)}</p>` : ""}</div>` : ""}<div class="licensing-person-actions"><button class="secondary" type="button" data-license-edit="${person.id}">Edit person & progress</button><button class="secondary" type="button" data-license-text="${person.id}">Text reminder</button>${person.email ? `<a class="secondary" href="mailto:${encodeURIComponent(person.email)}?subject=${encodeURIComponent("Your AMG licensing next step")}&body=${encodeURIComponent(licensingReminder(person))}">Email reminder</a>` : '<button type="button" class="secondary" disabled title="Add an email first">Email reminder</button>'}</div></article>`;
+    const reminders = licensingReminderLinks(person, navigator);
+    return `<article class="licensing-person" data-person-id="${person.id}"><div class="licensing-person-main"><div class="licensing-avatar">${escapeHtml(initials(person.name))}</div><div class="licensing-person-title"><p class="eyebrow">${escapeHtml(stage)} · ${escapeHtml(person.track === "both" ? "Life + Health" : person.track)}</p><h2>${escapeHtml(person.name)}</h2><p>${person.email ? escapeHtml(person.email) : '<span class="licensing-missing">Add email to connect their checklist</span>'}${person.phone ? ` · ${escapeHtml(person.phone)}` : ""}${person.recruiter ? ` · Upline: ${escapeHtml(person.recruiter)}` : ""}</p></div><span class="licensing-due${due ? " overdue" : ""}">${person.follow_up_date ? `${due ? "Overdue · " : "Follow up · "}${escapeHtml(person.follow_up_date)}` : "No follow up date"}</span></div>${licensingSlider(person)}${person.next_action || person.blocker ? `<div class="licensing-notes">${person.next_action ? `<p><strong>Next:</strong> ${escapeHtml(person.next_action)}</p>` : ""}${person.blocker ? `<p><strong>Blocker:</strong> ${escapeHtml(person.blocker)}</p>` : ""}</div>` : ""}<div class="licensing-person-actions"><button class="secondary" type="button" data-license-edit="${person.id}">Edit person & progress</button>${reminders.text ? `<a class="secondary" data-license-text-link href="${escapeHtml(reminders.text)}" title="Open a personalized draft in your Messages app">Text reminder</a>` : '<button class="secondary" type="button" disabled title="Add a phone number first">Text reminder</button>'}${reminders.email ? `<a class="secondary" data-license-email-link href="${escapeHtml(reminders.email)}" title="Open a personalized draft in your email app">Email reminder</a>` : '<button type="button" class="secondary" disabled title="Add an email first">Email reminder</button>'}</div><p class="licensing-reminder-help">Reminders are written for this step. Open a draft in Messages or your email app, then review and send.</p></article>`;
   }).join("") : loading ? '<p class="empty">Loading people…</p>' : error ? '<p class="empty">Refresh to try again.</p>' : '<div class="learner-empty"><h2>No one in this view yet</h2><p>Add a person to track their licensing steps, or clear the filters to see everyone.</p></div>';
 }
 
@@ -1030,16 +1029,7 @@ $("#licensing-list").addEventListener("change", async (event) => {
 $("#licensing-list").addEventListener("click", (event) => {
   const edit = event.target.closest('[data-license-edit]');
   if (edit) { openLicensingPerson(licensingState.people.find((person) => person.id === edit.dataset.licenseEdit)); return; }
-  const textButton = event.target.closest('[data-license-text]');
-  if (!textButton) return;
-  const person = licensingState.people.find((item) => item.id === textButton.dataset.licenseText);
-  if (!person?.phone) { toast("Add a phone number first."); return; }
-  const contact = state.contacts.find((item) => item.phone === person.phone);
-  if (!contact) { openContact(); $("#contact-name").value = person.name; $("#contact-phone").value = person.phone; $("#contact-consent").value = "pending"; updateManualOptInConfirmation(); toast("Save this person in Contacts before texting."); return; }
-  if (contact.consent_status !== "opted_in") { toast("Text consent is needed before a reminder can be sent."); return; }
-  openComposer("individual", contact.id);
-  $("#message-body").value = licensingReminder(person);
-  $("#char-count").textContent = `${$("#message-body").value.length} / 1600`;
+
 });
 $("#licensing-activity-list").addEventListener("click", (event) => {
   const button = event.target.closest('[data-license-learner]');

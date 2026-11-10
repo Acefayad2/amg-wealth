@@ -3,6 +3,23 @@
   const account = await window.AMG_ACCOUNT?.ready; if (!account) return;
   const storage = account.storage;
   const data = window.AMG_LESSON, total = data.questions.length;
+  const audio = document.getElementById('lesson-audio');
+  if (audio) {
+    const picker = document.getElementById('audio-section');
+    const link = document.getElementById('audio-reading-link');
+    const error = document.getElementById('audio-error');
+    function switchSection(play) {
+      const i=picker.selectedIndex;
+      error.hidden=true; audio.src=picker.value;
+      audio.setAttribute('aria-label','Listen to '+picker.options[i].textContent.replace(/^\d+\. /,''));
+      link.href='#section-'+i;
+      if(play) audio.play().catch(()=>{}); // Native play remains available if autoplay is blocked.
+    }
+    picker.addEventListener('change',()=>switchSection(!audio.paused));
+    audio.addEventListener('ended',()=>{if(picker.selectedIndex+1<picker.length){picker.selectedIndex++;switchSection(true);}});
+    audio.addEventListener('error',()=>{error.hidden=false;});
+    audio.addEventListener('playing',()=>{error.hidden=true;});
+  }
   const key = data.key || 'amg-life-lesson-' + data.id + '-v' + data.version;
   // Text edition: the lesson has no video yet, so reading the lesson is the route to the questions.
   const textEdition = data.pending === true || !data.video;
@@ -157,11 +174,11 @@
     const answered = state.firstAnswers.filter(a => a !== null).length;
     $('lesson-progress').max = total; $('lesson-progress').value = correct;
     $('progress-label').textContent = correct + ' of ' + total + ' questions understood';
-    $('watch-status').textContent = contentReady() ? (state.videoEnded ? 'Video finished' : textEdition ? 'Lesson read' : 'Transcript study recorded') + ' · Lesson questions unlocked' : textEdition ? 'Read the lesson above, then open the required questions.' : 'Watch the lesson, or study the full transcript, then complete the required questions.';
+    $('watch-status').textContent = contentReady() ? (state.videoEnded ? 'Video finished' : textEdition ? 'Lesson read' : 'Transcript study recorded') + ' · Lesson questions unlocked' : textEdition ? (audio ? 'Read or listen, then open the lesson questions.' : 'Read the lesson above, then open the required questions.') : 'Watch the lesson, or study the full transcript, then complete the required questions.';
     $('open-check').disabled = !contentReady();
     document.body.classList.toggle('content-ready',contentReady());
     $('open-check').textContent = state.complete ? 'Review lesson answers' : (answered ? 'Continue lesson questions' : 'Open lesson questions');
-    $('result').textContent = contentReady() ? correct + ' of ' + total + ' questions correct after review. First answers: ' + first + ' of ' + answered + '.' : (textEdition ? 'Read the lesson to unlock the ' : 'Finish the video or transcript study to unlock the ') + total + ' lesson questions.';
+    $('result').textContent = contentReady() ? correct + ' of ' + total + ' questions correct after review. First answers: ' + first + ' of ' + answered + '.' : (textEdition ? (audio ? 'Study the lesson to unlock the ' : 'Read the lesson to unlock the ') : 'Finish the video or transcript study to unlock the ') + total + ' lesson questions.';
     $('complete').disabled = !contentReady() || !mastered() || state.complete;
     $('complete').textContent = state.complete ? 'Lesson finished' : 'Finish this lesson';
     $('completion-status').textContent = state.complete ? 'Part ' + data.number + ' is complete. Continue to the next lesson when you are ready.' : 'Answer every question correctly, using the explanations and retries as needed, to finish Part ' + data.number + '.';

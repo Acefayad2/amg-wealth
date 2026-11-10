@@ -35,3 +35,10 @@ html{scroll-behavior:smooth;scroll-padding-top:24px;scrollbar-gutter:stable}
 .reading-done .primary:hover:not(:disabled){background:#eedaa9;border-color:#eedaa9}
 .lesson-pending.content-ready .reading-done{display:none}
 @media(max-width:740px){.reading-done{padding:18px}.reading-done .primary{width:100%}}
+
+.lesson-audio{padding:clamp(18px,3vw,32px);border:1px solid var(--line,#dce2df);border-radius:20px;margin:0 0 22px;background:var(--card,#fff);display:grid;gap:10px;min-width:0}
+.lesson-audio .audio-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:4px}
+.lesson-audio h2{margin:2px 0;font-size:clamp(1.3rem,2vw,1.6rem);line-height:1.2}.lesson-audio .eyebrow{margin:0}
+.lesson-audio .audio-heading>span,.lesson-audio label,.lesson-audio>a{font-size:.82rem;font-weight:650}
+.lesson-audio select{max-width:100%;width:100%;min-height:44px;padding:8px 14px;border:1px solid var(--line,#dce2df);border-radius:8px;background:#fff;color:inherit;font:inherit}
+.lesson-audio audio{display:block;width:100%;min-width:0}.lesson-audio>a{width:fit-content;color:var(--green,#174e3d);text-underline-offset:3px}.lesson-audio :focus-visible{outline:2px solid #256652;outline-offset:3px}

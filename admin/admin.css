@@ -81,3 +81,5 @@
   .calendar .calendar-message.sent{color:#23704b!important}
   .calendar .calendar-message.failed{color:var(--red)!important}
 }
+
+.licensing-task small{display:block;margin-bottom:4px;color:var(--muted);font-size:9px;letter-spacing:.12em;font-weight:700}.licensing-task.current{border-color:var(--gold);background:#fbf7eb}.licensing-step-editor{margin:22px 0;padding:18px;border:1px solid var(--line);border-radius:12px}.licensing-step-editor legend{padding:0 7px;font-weight:700;color:var(--green)}.licensing-step-editor>p{margin:0 0 14px;color:var(--muted);font-size:12px;line-height:1.6}#license-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}#license-steps .licensing-task{display:flex;align-items:center;gap:10px;margin:0;padding:12px;background:#f7f8f4;border:1px solid var(--line);border-radius:9px}#license-steps input{width:18px;height:18px;flex:0 0 18px;margin:0;accent-color:var(--green)}@media(max-width:560px){#license-steps{grid-template-columns:1fr}}

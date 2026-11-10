@@ -1,3 +1,4 @@
+import { licensingSteps, stepUpdates } from '../../licensing-progress/steps.js';
 import type { Config } from '@netlify/functions';
 import { getInquiryPool } from './_shared/inquiry-db.mts';
 import { getAuthenticatedUser } from './_shared/supabase.mts';
@@ -59,7 +60,7 @@ export default async function licensingPipeline(request: Request): Promise<Respo
           count(*) FILTER (WHERE exam_status IN ('studying','scheduled','rescheduled','failed'))::int AS pre_license,
           count(*) FILTER (WHERE exam_status='passed' AND coalesce((tasks->'appointed'->>'done')::boolean,false)=false)::int AS onboarding,
           count(*) FILTER (WHERE coalesce((tasks->'appointed'->>'done')::boolean,false)=true)::int AS appointed,
-          count(*) FILTER (WHERE follow_up_date < current_date AND coalesce((tasks->'first_check'->>'done')::boolean,false)=false)::int AS overdue
+          count(*) FILTER (WHERE follow_up_date < current_date AND coalesce((tasks->'appointed'->>'done')::boolean,false)=false)::int AS overdue
           FROM amg_private.licensing_people WHERE ${where}`, [pattern, status || null]),
       ]);
       return json({ people: list, ...summary[0], page, page_size: 25 });
@@ -78,20 +79,43 @@ export default async function licensingPipeline(request: Request): Promise<Respo
       const phone = clean(body.phone, 40);
       const normalizedPhone = phone ? normalizeUsPhone(phone) : null;
       if (phone && !normalizedPhone) return json({ error: 'Enter a valid US phone number.' }, 400);
+      const selected = body.completedSteps;
+      if (selected !== undefined && (!Array.isArray(selected) || selected.some(id => !licensingSteps.some(step => step.id === id)))) return json({ error: 'Invalid licensing steps.' }, 400);
+      const updates = selected === undefined ? {} : stepUpdates(selected as string[], 'admin');
+      const examStatus = selected === undefined ? body.examStatus : (selected as string[]).includes('state_exam_passed') ? 'passed' : body.examStatus === 'passed' ? 'studying' : body.examStatus;
       const fields = [name, email, normalizedPhone, clean(body.recruiter), clean(body.state, 80), body.track,
-        date(body.examDate), body.examStatus, clean(body.blocker, 500), clean(body.nextAction, 500), date(body.followUpDate), date(body.firstCheckDate)];
+        date(body.examDate), examStatus, clean(body.blocker, 500), clean(body.nextAction, 500), date(body.followUpDate), date(body.firstCheckDate), JSON.stringify(updates)];
       let rows;
       if (body.id) {
         if (typeof body.id !== 'string' || !/^[0-9a-f-]{36}$/i.test(body.id) || !Number.isSafeInteger(body.expectedVersion)) return json({ error: 'Invalid person or version.' }, 400);
         ({ rows } = await pool.query(`UPDATE amg_private.licensing_people SET full_name=$1,email=$2,phone=$3,recruiter=$4,state=$5,track=$6,
-          exam_date=$7,exam_status=$8,blocker=$9,next_action=$10,follow_up_date=$11,first_check_date=$12,version=version+1,updated_at=now()
-          WHERE id=$13 AND version=$14 RETURNING ${personFields}`, [...fields, body.id, body.expectedVersion]));
+          exam_date=$7,exam_status=$8,blocker=$9,next_action=$10,follow_up_date=$11,first_check_date=$12,tasks=tasks || $13::jsonb,version=version+1,updated_at=now()
+          WHERE id=$14 AND version=$15 RETURNING ${personFields}`, [...fields, body.id, body.expectedVersion]));
         if (!rows.length) return json({ error: 'This record changed. Refresh before saving.' }, 409);
       } else {
         ({ rows } = await pool.query(`INSERT INTO amg_private.licensing_people
-          (full_name,email,phone,recruiter,state,track,exam_date,exam_status,blocker,next_action,follow_up_date,first_check_date)
-          VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING ${personFields}`, fields));
+          (full_name,email,phone,recruiter,state,track,exam_date,exam_status,blocker,next_action,follow_up_date,first_check_date,tasks)
+          VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13::jsonb) RETURNING ${personFields}`, fields));
       }
+      return json({ person: rows[0] });
+    }
+    if (body.action === 'set_step') {
+      const step = licensingSteps.find(item => item.id === body.task);
+      if (!step || typeof body.done !== 'boolean') return json({ error: 'Invalid licensing step.' }, 400);
+      if (!administrator && step.official) return json({ error: 'This milestone is confirmed by AMG.' }, 403);
+      const id = administrator ? body.id : null;
+      if (administrator && (typeof id !== 'string' || !/^[0-9a-f-]{36}$/i.test(id))) return json({ error: 'Invalid person.' }, 400);
+      const updatedAt = new Date().toISOString();
+      const updates = Object.fromEntries(step.tasks.map(key => [key, { done: body.done, updatedAt, source: administrator ? 'admin' : 'learner' }]));
+      const condition = administrator ? 'id=$3' : 'lower(email)=$3';
+      const { rows } = await pool.query(`UPDATE amg_private.licensing_people SET tasks=tasks || $1::jsonb,
+        exam_status=CASE WHEN $2='state_exam_passed' THEN CASE WHEN $4 THEN 'passed' WHEN exam_status='passed' THEN 'studying' ELSE exam_status END
+          WHEN $2='exam_booked' AND $4 AND exam_status='studying' THEN 'scheduled'
+          WHEN $2='exam_booked' AND NOT $4 AND exam_status IN ('scheduled','rescheduled') THEN 'studying' ELSE exam_status END,
+        version=version+1,updated_at=now() WHERE ${condition}
+        RETURNING ${administrator ? personFields : 'id, full_name AS name, track, exam_date, exam_status, tasks, version, created_at, updated_at'}`,
+        [JSON.stringify(updates), step.id, administrator ? id : learner!.email, body.done]);
+      if (!rows.length) return json({ error: 'Person not found.' }, 404);
       return json({ person: rows[0] });
     }
     if (body.action === 'set_task') {

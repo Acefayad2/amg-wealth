@@ -350,7 +350,7 @@ export default function CFTWorkspace() {
       const response = await fetch(AMG_BACKEND_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "cft-register", registration }),
+        body: JSON.stringify({ action: "cft-register", registration: { ...registration, verificationPassword: registration.verificationPassword.replace(/[\u200B-\u200D\uFEFF]/g, "").trim() } }),
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "We couldn’t create the CFT account.");
@@ -362,10 +362,10 @@ export default function CFTWorkspace() {
       setLoginEmail(registration.email.trim().toLowerCase());
       setLoginPassword("");
       setAuthMode("login");
+      setRegistration((current) => ({ ...current, password: "", verificationPassword: "" }));
     } catch (registrationError) {
       setAuthMessage(registrationError instanceof Error ? registrationError.message : "We couldn’t create the CFT account.");
     } finally {
-      setRegistration((current) => ({ ...current, password: "", verificationPassword: "" }));
       setAuthBusy(false);
     }
   }
@@ -523,7 +523,7 @@ export default function CFTWorkspace() {
                 <label><span>Work email</span><input type="email" value={registration.email} onChange={(event) => setRegistration({ ...registration, email: event.target.value })} autoComplete="email" required /></label>
                 <label><span>Phone number</span><input type="tel" value={registration.phone} onChange={(event) => setRegistration({ ...registration, phone: event.target.value })} autoComplete="tel" minLength={7} maxLength={30} required /></label>
                 <label><span>Create password</span><input type="password" value={registration.password} onChange={(event) => setRegistration({ ...registration, password: event.target.value })} autoComplete="new-password" minLength={8} maxLength={72} required /><small>Use at least 8 characters.</small></label>
-                <label><span>AMG verification password</span><input type="password" value={registration.verificationPassword} onChange={(event) => setRegistration({ ...registration, verificationPassword: event.target.value })} autoComplete="off" required /></label>
+                <label><span>AMG verification password</span><input type="password" value={registration.verificationPassword} onChange={(event) => setRegistration({ ...registration, verificationPassword: event.target.value })} autoComplete="off" autoCapitalize="none" autoCorrect="off" spellCheck={false} required /><small>Enter the shared signup code from AMG. This is separate from the personal password you choose above.</small></label>
                 <label className="registration-wide"><span>Trainer description</span><textarea value={registration.bio} onChange={(event) => setRegistration({ ...registration, bio: event.target.value })} rows={4} minLength={20} maxLength={800} required /><small>Describe the clients and appointments you work with best in at least 20 characters.</small></label>
                 <button className="confirm-button full registration-wide" disabled={authBusy}>{authBusy ? "Creating secure account…" : "Create CFT account →"}</button>
                 <div className="registration-calendar-note registration-wide"><span className="google-calendar-mark" aria-hidden="true">G</span><div><strong>Google Calendar comes next</strong><small>After account creation, connect your calendar from the workspace.</small></div></div>

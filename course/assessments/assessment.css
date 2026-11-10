@@ -21,6 +21,23 @@
 @media print{.app-header,.actions,.question-nav,.app-footer,.storage-status,.practice-about{display:none}.exam-bar{position:static;background:#fff;color:#000}.result-question{break-inside:avoid}.assessment-main{max-width:none;padding:0}.card,.status-panel{break-inside:avoid}}
 
 .practice-card .mock-result-link{background:transparent;color:var(--ink,#243629);border:0;padding:12px 0;text-decoration:underline}
+
+/* Life and Health exam cards follow the Matchup intake. */
+.assessment-hero h1{font-family:Georgia,'Times New Roman',serif;color:#103c30;font-weight:600}
+.card,.question-panel,.nav-panel,.result-question,dialog,#app>fieldset{background:#f2f0e9;border:1px solid #e5e1d4;border-radius:20px;box-shadow:0 12px 30px #1b271e14}
+.card h2,.practice-support h2,.nav-panel h2,.review-result h2,dialog h2,legend{font-family:Georgia,'Times New Roman',serif;color:#103c30;font-weight:600}
+.practice-support .card{background:#f2f0e9;border-color:#e5e1d4}
+.form-state.is-pending,.notice{background:#f6f0dc;color:#785c18}
+.form-start,.question-panel .actions button:nth-child(2),.question-panel .actions button:nth-child(2):hover:not(:disabled){background:#0d4a39;border-color:#0d4a39;color:#fff}
+.exam-bar{background:#f2f0e9;border:1px solid #e5e1d4;color:#103c30;box-shadow:0 8px 20px #1b271e14}
+.exam-bar>div>div{color:#66736c}
+.answer-option{background:#faf9f5;border-color:#dedacd;box-shadow:0 3px 8px #1b271e0a}
+.answer-option:hover{background:#fff;border-color:#c49a29}
+.answer-option:has(input:checked){background:#fffaf0;border-color:#c49a29}
+.question-nav .answered{background:#e4efe8;border-color:#afcdbb;color:#194e39}
+.question-nav .current{outline-color:#c49a29}
+.review-result{background:#e4efe8;border-color:#c7d9cc}
+@media print{.exam-bar{background:#fff;color:#000;box-shadow:none}}
 .practice-cards{grid-template-columns:minmax(0,1fr)}
 @media(min-width:741px){
   .practice-cards .practice-card{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:2rem;align-items:start}

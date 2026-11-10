@@ -2,6 +2,9 @@ import { getStore } from '@netlify/blobs';
 import { getInquiryPool } from './_shared/inquiry-db.mjs';
 import { getAuthenticatedUser } from './_shared/supabase.mjs';
 import { createAdminLearningHandler, refreshAdminLearningSnapshot, reportableLearner } from './_shared/admin-learning.mjs';
+import { learningIdentity } from './_shared/learning-deletion.mjs';
+import { createHash } from 'node:crypto';
+import { learnerId } from '../shared/access-session.ts';
 
 export default createAdminLearningHandler({
   authenticate: async request => (await getAuthenticatedUser(request)).user,
@@ -15,7 +18,10 @@ export default createAdminLearningHandler({
     const learners = [];
     for (let start = 0; start < blobs.length; start += 25) {
       const batch = await Promise.all(blobs.slice(start, start + 25).map(blob => store.get(blob.key, { type: 'json' })));
-      learners.push(...batch.filter(reportableLearner));
+      for (const learner of batch.filter(reportableLearner)) {
+        const identity = await learningIdentity(store, { id: await learnerId(learner.email.normalize('NFKC').trim().toLowerCase()), email: learner.email });
+        if (!identity.deletionPending && createHash('sha256').update(identity.id).digest('hex') === learner.learnerId) learners.push(learner);
+      }
     }
     learners.sort((a, b) => Date.parse(b.lastActiveAt || 0) - Date.parse(a.lastActiveAt || 0));
     const selected = learners.slice((page - 1) * pageSize, page * pageSize);

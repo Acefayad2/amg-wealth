@@ -123,7 +123,7 @@ export function createLearningHandler({ getUser, getStore, saveAdminSnapshot = a
       const authenticated = await getUser(request);
       if (!authenticated?.id) return json({ error: 'authentication_required' }, 401);
       if (!authenticated.email || authenticated.accessGranted !== true) return json({ error: 'course_access_required' }, 403);
-      const user = { id: authenticated.id, email: authenticated.email, name: typeof authenticated.name === 'string' ? authenticated.name.slice(0, 150) : '' };
+      const user = { id: authenticated.id, email: authenticated.email, name: typeof authenticated.name === 'string' ? authenticated.name.slice(0, 150) : '', ...(authenticated.accountId && authenticated.accountId !== authenticated.id ? { accountId: authenticated.accountId } : {}) };
       if (request.method === 'POST') {
         if (request.headers.get('origin') !== new URL(request.url).origin) return json({ error: 'invalid_origin' }, 403);
         if (request.headers.get('X-AMG-User') !== user.id) return json({ error: 'account_changed' }, 403);

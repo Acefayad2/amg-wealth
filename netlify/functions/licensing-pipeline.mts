@@ -4,6 +4,10 @@ import { getInquiryPool } from './_shared/inquiry-db.mts';
 import { getAuthenticatedUser } from './_shared/supabase.mts';
 import { getCourseUser } from '../shared/course-user.ts';
 import { normalizeUsPhone } from './_shared/us-phone.mjs';
+import { getStore } from '@netlify/blobs';
+import { learnerId } from '../shared/access-session.ts';
+import { deleteLicensingPerson } from './_shared/licensing-delete.mjs';
+import { learningIdentity } from './_shared/learning-deletion.mjs';
 
 const tasks = ['php_account', 'exam_booked', 'state_exam_passed', 'license_application', 'fingerprints', 'license_uploaded', 'aml_course', 'ce_courses', 'eo_active', 'carrier_request', 'appointed', 'first_check'] as const;
 const learnerTasks = new Set(['php_account', 'exam_booked', 'license_application', 'fingerprints', 'license_uploaded', 'aml_course', 'ce_courses', 'eo_active', 'carrier_request']);
@@ -83,19 +87,21 @@ export default async function licensingPipeline(request: Request): Promise<Respo
     }
 
     if (request.method === 'GET' && learner) {
-      await pool.query(`INSERT INTO amg_private.licensing_people (full_name, email, source)
+      const identity = await learningIdentity(getStore({ name: 'amg-learning-v1', consistency: 'strong' }), learner);
+      if (identity.deletionPending) return json({ error: 'Learning records are being removed. Enter the course again shortly.' }, 403);
+      if (!identity.resetGeneration) await pool.query(`INSERT INTO amg_private.licensing_people (full_name, email, source)
         VALUES ($1, $2, 'course') ON CONFLICT (lower(email)) DO NOTHING`, [learner.name, learner.email]);
       const { rows } = await pool.query(`SELECT id, full_name AS name, track, exam_date::text AS exam_date, exam_time::text AS exam_time, exam_status, tasks, version, created_at, updated_at
         FROM amg_private.licensing_people WHERE lower(email) = $1`, [learner.email]);
-      return json({ person: rows[0] });
+      return json({ person: rows[0] || null });
     }
     const body = await readBody(request);
     if (body.action === 'delete_person') {
       if (!administrator) return json({ error: 'AMG admin access required.' }, 403);
       if (typeof body.id !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(body.id) || !Number.isSafeInteger(body.expectedVersion) || (body.expectedVersion as number) < 1 || body.confirmDelete !== true) return json({ error: 'Confirm the person and current record before deleting.' }, 400);
-      const { rows } = await pool.query(`DELETE FROM amg_private.licensing_people WHERE id=$1 AND version=$2 RETURNING id`, [body.id, body.expectedVersion]);
-      if (!rows.length) return json({ error: 'This person was changed or deleted. Refresh before trying again.' }, 409);
-      return json({ deleted: true, id: rows[0].id });
+      const deleted = await deleteLicensingPerson(pool, getStore({ name: 'amg-learning-v1', consistency: 'strong' }), body.id, body.expectedVersion as number, learnerId);
+      if (!deleted) return json({ error: 'This person was changed or deleted. Refresh before trying again.' }, 409);
+      return json({ deleted: true, id: deleted.id });
     }
     if (body.action === 'save_person' && administrator) {
       const name = clean(body.name), email = clean(body.email) ? emailOf(body.email) : null;

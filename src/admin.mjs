@@ -1202,7 +1202,7 @@ $("#licensing-delete-form").addEventListener("submit", async (event) => {
     await loadLicensing(licensingState.page);
     if (!licensingState.people.length && licensingState.page > 1) await loadLicensing(licensingState.page - 1);
     void loadExamCalendar();
-    toast("Person and licensing records deleted.");
+    toast("Person, licensing records, and learning history deleted.");
   } catch (reason) { $("#licensing-delete-error").textContent = reason.message || "Could not delete this person. Try again."; }
   finally { button.disabled = false; button.textContent = "Delete person & records"; }
 });

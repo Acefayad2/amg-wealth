@@ -4,6 +4,7 @@ import Image from "next/image";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
+import { signInErrorMessage } from "@/lib/auth-message";
 import { buildAvailability } from "./availability";
 import { appointmentDateKey } from "@/lib/agent-flow";
 
@@ -276,8 +277,8 @@ export default function CFTWorkspace() {
       if (authError) throw authError;
       setLoginPassword("");
       setAuthMessage("Signed in securely.");
-    } catch {
-      setAuthMessage("That email or password was not accepted. Check it and try again.");
+    } catch (cause) {
+      setAuthMessage(signInErrorMessage(cause));
     } finally {
       setAuthBusy(false);
     }
@@ -292,7 +293,7 @@ export default function CFTWorkspace() {
     setAuthBusy(true);
     setAuthMessage("");
     const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/cft`,
+      redirectTo: `${window.location.origin}/matchups/cft/`,
     });
     setAuthMessage(resetError ? "We couldn’t send the reset email. Try again." : "Password reset email sent. Open it to choose your password.");
     setAuthBusy(false);
@@ -352,7 +353,7 @@ export default function CFTWorkspace() {
     const { error: calendarError } = await supabase.auth.linkIdentity({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/cft`,
+        redirectTo: `${window.location.origin}/matchups/cft/`,
         scopes: "openid email profile https://www.googleapis.com/auth/calendar.events.freebusy https://www.googleapis.com/auth/calendar.events.owned",
         queryParams: { access_type: "offline", prompt: "consent" },
       },

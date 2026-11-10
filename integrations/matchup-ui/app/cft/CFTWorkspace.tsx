@@ -11,6 +11,7 @@ import { authorizeGoogleCalendar, calendarCallbackError, calendarConnectUserKey 
 import { signInErrorMessage } from "@/lib/auth-message";
 import { buildAvailability } from "./availability";
 import { appointmentDateKey } from "@/lib/agent-flow";
+import { personalCftWorkspace } from "@/lib/personal-cft-workspace";
 
 const AMG_BACKEND_URL = "https://jkwhoisuhcbkokwntrfg.supabase.co/functions/v1/amg-matchup";
 
@@ -102,6 +103,7 @@ export default function CFTWorkspace() {
   const [newPassword, setNewPassword] = useState("");
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
   const [registration, setRegistration] = useState({ name: "", email: "", phone: "", password: "", verificationPassword: "", bio: "" });
+  const registrationPasswordRef = useRef<HTMLInputElement>(null);
   const [authBusy, setAuthBusy] = useState(false);
   const [authMessage, setAuthMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -215,12 +217,14 @@ export default function CFTWorkspace() {
     if (loadError) throw new Error(loadError.message || "We couldn’t refresh the workspace.");
     if (!data || !Array.isArray(data.trainers) || !Array.isArray(data.appointments) || !Array.isArray(data.slots)) throw new Error("The workspace returned an incomplete response. Refresh before making changes.");
     if (generation !== workspaceGeneration.current) return;
-    const trainerData = data.trainers as Trainer[];
+    const ownWorkspace = personalCftWorkspace(userId || "", data as { trainers: Trainer[]; appointments: Appointment[]; slots: Slot[] });
+    const trainerData = ownWorkspace.trainers;
+    if (!trainerData.length) throw new Error("Your account does not have an active trainer profile. Ask an AMG administrator to link your own profile.");
     setTrainers(trainerData);
     setSelectedTrainerId((current) => trainerData.some((item) => item.id === current) ? current : (trainerData.find((item) => item.user_id === userId)?.id || trainerData[0]?.id || ""));
     setWorkspaceStale(false);
-    setAppointments(data.appointments as Appointment[]);
-    setSlots(data.slots as Slot[]);
+    setAppointments(ownWorkspace.appointments);
+    setSlots(ownWorkspace.slots);
   }
 
   useEffect(() => {
@@ -353,7 +357,10 @@ export default function CFTWorkspace() {
         body: JSON.stringify({ action: "cft-register", registration: { ...registration, verificationPassword: registration.verificationPassword.replace(/[\u200B-\u200D\uFEFF]/g, "").trim() } }),
       });
       const result = await response.json();
-      if (!response.ok) throw new Error(result.error || "We couldn’t create the CFT account.");
+      if (!response.ok) {
+        if (result.field === "password") registrationPasswordRef.current?.focus();
+        throw new Error(result.error || "We couldn’t create the CFT account.");
+      }
       const { error: loginError } = await supabase.auth.signInWithPassword({
         email: registration.email.trim().toLowerCase(),
         password: registration.password,
@@ -522,7 +529,7 @@ export default function CFTWorkspace() {
                 <label><span>Full name</span><input type="text" value={registration.name} onChange={(event) => setRegistration({ ...registration, name: event.target.value })} autoComplete="name" minLength={3} maxLength={100} required /></label>
                 <label><span>Work email</span><input type="email" value={registration.email} onChange={(event) => setRegistration({ ...registration, email: event.target.value })} autoComplete="email" required /></label>
                 <label><span>Phone number</span><input type="tel" value={registration.phone} onChange={(event) => setRegistration({ ...registration, phone: event.target.value })} autoComplete="tel" minLength={7} maxLength={30} required /></label>
-                <label><span>Create password</span><input type="password" value={registration.password} onChange={(event) => setRegistration({ ...registration, password: event.target.value })} autoComplete="new-password" minLength={8} maxLength={72} required /><small>Use at least 8 characters.</small></label>
+                <label><span>Create password</span><input ref={registrationPasswordRef} type="password" value={registration.password} onChange={(event) => setRegistration({ ...registration, password: event.target.value })} autoComplete="new-password" minLength={8} maxLength={72} required /><small>Use 8–72 characters and choose a unique password. Common or breached passwords aren’t accepted.</small></label>
                 <label><span>AMG verification password</span><input type="password" value={registration.verificationPassword} onChange={(event) => setRegistration({ ...registration, verificationPassword: event.target.value })} autoComplete="off" autoCapitalize="none" autoCorrect="off" spellCheck={false} required /><small>Enter the shared signup code from AMG. This is separate from the personal password you choose above.</small></label>
                 <label className="registration-wide"><span>Trainer description</span><textarea value={registration.bio} onChange={(event) => setRegistration({ ...registration, bio: event.target.value })} rows={4} minLength={20} maxLength={800} required /><small>Describe the clients and appointments you work with best in at least 20 characters.</small></label>
                 <button className="confirm-button full registration-wide" disabled={authBusy}>{authBusy ? "Creating secure account…" : "Create CFT account →"}</button>
@@ -549,7 +556,7 @@ export default function CFTWorkspace() {
       <main>
         <header className="topbar glass-light"><button className="icon-button menu-button" aria-label="Open navigation" onClick={() => setMobileNav(true)}>☰</button><div className="mobile-brand">AMG <span>Matchup</span></div><div className="topbar-label"><span className="live-dot" />Live CFT workspace</div><button className="quick-book" onClick={() => document.getElementById("availability")?.scrollIntoView({ behavior: "smooth" })}>Availability</button></header>
         <div className="content" id="dashboard">
-          <section className="welcome-row"><div><span className="eyebrow"><span />{new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</span><h1>Welcome, {(accountProfile?.name || name).split(" ")[0]}.</h1><p>Your live schedule and incoming agent requests are below.</p></div>{role === "admin" && trainers.length > 1 && <label className="trainer-switcher"><span>Viewing trainer</span><select disabled={mutationBusy || workspaceStale} value={selectedTrainerId} onChange={(event) => setSelectedTrainerId(event.target.value)}>{trainers.map((item) => <option key={item.id} value={item.id}>{item.display_name}</option>)}</select></label>}{trainer && <button className={`availability-pill ${trainer.is_available ? "" : "paused"}`} disabled={mutationBusy || loading || workspaceStale} onClick={toggleMatching}><span className="live-dot" />{trainer.is_available ? "Available for matchups" : "Matching paused"}</button>}</section>
+          <section className="welcome-row"><div><span className="eyebrow"><span />{new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</span><h1>Welcome, {(accountProfile?.name || name).split(" ")[0]}.</h1><p>Your live schedule and incoming agent requests are below.</p></div>{trainer && <button className={`availability-pill ${trainer.is_available ? "" : "paused"}`} disabled={mutationBusy || loading || workspaceStale} onClick={toggleMatching}><span className="live-dot" />{trainer.is_available ? "Available for matchups" : "Matching paused"}</button>}</section>
           {error && <div className="workspace-alert" role="alert">{error}</div>}
           {calendarCallbackMessage && <div className="workspace-alert" role="alert">{calendarCallbackMessage}</div>}
           {workspaceStale && <div className="workspace-alert" role="alert">Changes are paused until the latest schedule is loaded. <button type="button" onClick={() => window.location.reload()}>Reload workspace</button></div>}

@@ -32,7 +32,7 @@ export default function PrivacyPolicy() {
         </section>
         <section>
           <h2>When information is shared</h2>
-          <p>AMG appointment details are shared with the agent, client, and trainer involved in that appointment. When calendar syncing is enabled, Google processes the appointment details needed to create the calendar event and invitations. Our hosting, authentication, database, and notification providers process information as needed to operate the portal. We do not share the contents of your unrelated calendar events with other agents or trainers.</p>
+          <p>AMG appointment details are shared with the agent, client, and trainer involved in that appointment. When calendar syncing is enabled, Google processes the appointment details needed to create the calendar event and meeting link. Our hosting, authentication, database, and notification providers process information as needed to operate the portal. We do not share the contents of your unrelated calendar events with other agents or trainers.</p>
         </section>
         <section>
           <h2>Storage and security</h2>

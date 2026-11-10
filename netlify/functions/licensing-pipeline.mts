@@ -17,8 +17,8 @@ const emailOf = (value: unknown) => {
   const email = clean(value, 254).toLowerCase();
   return /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(email) ? email : null;
 };
-const personFields = `id, full_name AS name, email, phone, recruiter, recruiter_phone, state, track, exam_date, exam_status,
-  blocker, next_action, follow_up_date, first_check_date, tasks, source, version, created_at, updated_at`;
+const personFields = `id, full_name AS name, email, phone, recruiter, recruiter_phone, state, track, exam_date::text AS exam_date, exam_time::text AS exam_time, exam_status,
+  blocker, next_action, follow_up_date::text AS follow_up_date, first_check_date::text AS first_check_date, tasks, source, version, created_at, updated_at`;
 
 async function adminId(request: Request): Promise<string | null> {
   if (!request.headers.get('authorization')?.startsWith('Bearer ')) return null;
@@ -46,6 +46,13 @@ export default async function licensingPipeline(request: Request): Promise<Respo
     if (!administrator && !learner) return json({ error: 'Sign in required.' }, 401);
     const pool = getInquiryPool();
     if (request.method === 'GET' && administrator) {
+      const week = new URL(request.url).searchParams.get('calendar_week');
+      if (week !== null) {
+        if (!date(week) || new Date(week + 'T12:00:00Z').toISOString().slice(0,10) !== week || new Date(week + 'T12:00:00Z').getUTCDay() !== 1) return json({ error: 'Choose a valid Monday for the exam week.' }, 400);
+        const { rows } = await pool.query(`SELECT ${personFields} FROM amg_private.licensing_people WHERE exam_date >= $1::date AND exam_date < $1::date + 7
+          AND coalesce((tasks->'exam_booked'->>'done')::boolean,true) ORDER BY exam_date,exam_time NULLS LAST,full_name,id`, [week]);
+        return json({ exams: rows, week, timezone: 'America/New_York' });
+      }
       const raw = new URL(request.url).searchParams.get('page') || '1';
       const page = Number(raw);
       if (!/^\d+$/.test(raw) || !Number.isSafeInteger(page) || page < 1 || page > 100000) return json({ error: 'Invalid page.' }, 400);
@@ -78,7 +85,7 @@ export default async function licensingPipeline(request: Request): Promise<Respo
     if (request.method === 'GET' && learner) {
       await pool.query(`INSERT INTO amg_private.licensing_people (full_name, email, source)
         VALUES ($1, $2, 'course') ON CONFLICT (lower(email)) DO NOTHING`, [learner.name, learner.email]);
-      const { rows } = await pool.query(`SELECT id, full_name AS name, track, exam_date, exam_status, tasks, version, created_at, updated_at
+      const { rows } = await pool.query(`SELECT id, full_name AS name, track, exam_date::text AS exam_date, exam_time::text AS exam_time, exam_status, tasks, version, created_at, updated_at
         FROM amg_private.licensing_people WHERE lower(email) = $1`, [learner.email]);
       return json({ person: rows[0] });
     }
@@ -92,23 +99,25 @@ export default async function licensingPipeline(request: Request): Promise<Respo
       const recruiterPhone = clean(body.recruiterPhone, 40);
       const normalizedRecruiterPhone = recruiterPhone ? normalizeUsPhone(recruiterPhone) : null;
       if (recruiterPhone && !normalizedRecruiterPhone) return json({ error: 'Enter a valid US phone number for the recruiter / upline.' }, 400);
+      const examTime = clean(body.examTime, 8);
+      if (examTime && (!/^([01]\d|2[0-3]):[0-5]\d(?::[0-5]\d)?$/.test(examTime) || !date(body.examDate))) return json({ error: 'Add an exam date and a valid exam time.' }, 400);
       const selected = body.completedSteps;
       if (selected !== undefined && (!Array.isArray(selected) || selected.some(id => !licensingSteps.some(step => step.id === id)))) return json({ error: 'Invalid licensing steps.' }, 400);
       const updates = selected === undefined ? {} : stepUpdates(selected as string[], 'admin');
       const examStatus = selected === undefined ? body.examStatus : (selected as string[]).includes('state_exam_passed') ? 'passed' : body.examStatus === 'passed' ? 'studying' : body.examStatus;
       const fields = [name, email, normalizedPhone, clean(body.recruiter), clean(body.state, 80), body.track,
-        date(body.examDate), examStatus, clean(body.blocker, 500), clean(body.nextAction, 500), date(body.followUpDate), date(body.firstCheckDate), JSON.stringify(updates), normalizedRecruiterPhone, body.recruiterPhone !== undefined];
+        date(body.examDate), examStatus, clean(body.blocker, 500), clean(body.nextAction, 500), date(body.followUpDate), date(body.firstCheckDate), JSON.stringify(updates), normalizedRecruiterPhone, body.recruiterPhone !== undefined, examTime || null, body.examTime !== undefined];
       let rows;
       if (body.id) {
         if (typeof body.id !== 'string' || !/^[0-9a-f-]{36}$/i.test(body.id) || !Number.isSafeInteger(body.expectedVersion)) return json({ error: 'Invalid person or version.' }, 400);
         ({ rows } = await pool.query(`UPDATE amg_private.licensing_people SET full_name=$1,email=$2,phone=$3,recruiter=$4,state=$5,track=$6,
-          exam_date=$7,exam_status=$8,blocker=$9,next_action=$10,follow_up_date=$11,first_check_date=$12,tasks=tasks || $13::jsonb,recruiter_phone=CASE WHEN $15::boolean THEN $14::text ELSE recruiter_phone END,version=version+1,updated_at=now()
-          WHERE id=$16 AND version=$17 RETURNING ${personFields}`, [...fields, body.id, body.expectedVersion]));
+          exam_date=$7,exam_status=$8,blocker=$9,next_action=$10,follow_up_date=$11,first_check_date=$12,tasks=tasks || $13::jsonb,recruiter_phone=CASE WHEN $15::boolean THEN $14::text ELSE recruiter_phone END,exam_time=CASE WHEN $17::boolean THEN $16::time ELSE exam_time END,version=version+1,updated_at=now()
+          WHERE id=$18 AND version=$19 RETURNING ${personFields}`, [...fields, body.id, body.expectedVersion]));
         if (!rows.length) return json({ error: 'This record changed. Refresh before saving.' }, 409);
       } else {
         ({ rows } = await pool.query(`INSERT INTO amg_private.licensing_people
-          (full_name,email,phone,recruiter,state,track,exam_date,exam_status,blocker,next_action,follow_up_date,first_check_date,tasks,recruiter_phone)
-          VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13::jsonb,$14) RETURNING ${personFields}`, fields.slice(0,14)));
+          (full_name,email,phone,recruiter,state,track,exam_date,exam_status,blocker,next_action,follow_up_date,first_check_date,tasks,recruiter_phone,exam_time)
+          VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13::jsonb,$14,$15::time) RETURNING ${personFields}`, [...fields.slice(0,14), fields[15]]));
       }
       return json({ person: rows[0] });
     }
@@ -139,7 +148,7 @@ export default async function licensingPipeline(request: Request): Promise<Respo
           WHEN $2='exam_booked' AND $4 AND exam_status='studying' THEN 'scheduled'
           WHEN $2='exam_booked' AND NOT $4 AND exam_status IN ('scheduled','rescheduled') THEN 'studying' ELSE exam_status END,
         version=version+1,updated_at=now() WHERE ${condition}
-        RETURNING ${administrator ? personFields : 'id, full_name AS name, track, exam_date, exam_status, tasks, version, created_at, updated_at'}`,
+        RETURNING ${administrator ? personFields : 'id, full_name AS name, track, exam_date::text AS exam_date, exam_time::text AS exam_time, exam_status, tasks, version, created_at, updated_at'}`,
         [JSON.stringify(updates), step.id, administrator ? id : learner!.email, body.done]);
       if (!rows.length) return json({ error: 'Person not found.' }, 404);
       return json({ person: rows[0] });
@@ -153,7 +162,7 @@ export default async function licensingPipeline(request: Request): Promise<Respo
       const target = administrator ? id : learner!.email;
       const value = JSON.stringify({ done: body.done, updatedAt: new Date().toISOString(), source: administrator ? 'admin' : 'learner' });
       const { rows } = await pool.query(`UPDATE amg_private.licensing_people SET tasks=jsonb_set(tasks, ARRAY[$1::text], $2::jsonb, true), version=version+1, updated_at=now()
-        WHERE ${condition} RETURNING ${administrator ? personFields : 'id, full_name AS name, track, exam_date, exam_status, tasks, version, created_at, updated_at'}`,
+        WHERE ${condition} RETURNING ${administrator ? personFields : 'id, full_name AS name, track, exam_date::text AS exam_date, exam_time::text AS exam_time, exam_status, tasks, version, created_at, updated_at'}`,
         [body.task, value, target]);
       if (!rows.length) return json({ error: 'Person not found.' }, 404);
       return json({ person: rows[0] });

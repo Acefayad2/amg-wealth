@@ -8,7 +8,7 @@ const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 let authClient = null;
 let startupBusy = false;
 const inquiryState = { records: [], total: 0, page: 1, pageSize: 25, loading: false, error: "", requestId: 0, controller: null, preview: false };
-const licensingState = { learners: [], total: 0, page: 1, pageSize: 25, loading: false, error: "", requestId: 0, controller: null, preview: false };
+const licensingState = { people: [], learners: [], total: 0, preLicense: 0, onboarding: 0, appointed: 0, overdue: 0, page: 1, pageSize: 25, query: "", status: "", loading: false, error: "", requestId: 0, controller: null, preview: false };
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
 const initials = (name) => String(name || "?").split(/\s+/).map((part) => part[0]).join("").slice(0, 2).toUpperCase();
 const contactLabel = (contact) => contact.full_name || contact.phone;
@@ -59,7 +59,8 @@ function resetInquiries() {
 function resetLicensing() {
   licensingState.controller?.abort();
   licensingState.requestId += 1;
-  Object.assign(licensingState, { learners: [], total: 0, page: 1, loading: false, error: "", controller: null });
+  Object.assign(licensingState, { people: [], learners: [], total: 0, preLicense: 0, onboarding: 0, appointed: 0, overdue: 0, page: 1, loading: false, error: "", controller: null });
+  $("#licensing-activity-list").innerHTML = "";
   renderLicensing();
 }
 
@@ -132,59 +133,97 @@ async function loadInquiries(page = 1) {
   }
 }
 
+const licensingTasks = [
+  ["php_account", "PHP account active"], ["exam_booked", "State exam booked"], ["state_exam_passed", "State exam passed"],
+  ["license_application", "License application submitted"], ["fingerprints", "Fingerprints cleared or not required"],
+  ["license_uploaded", "License uploaded"], ["aml_course", "AML course complete"], ["ce_courses", "Required courses complete"],
+  ["eo_active", "E&O coverage active"], ["carrier_request", "Carrier request submitted"],
+  ["appointed", "Carrier appointment confirmed"], ["first_check", "First check received"],
+];
+const licensingDone = (person, key) => person.tasks?.[key]?.done === true;
+const licensingReminder = (person) => `Hi ${String(person.name || "there").trim().split(/\s+/)[0]}, this is AMG. ${person.next_action ? `Your next licensing step is: ${person.next_action}. ` : "Please check your licensing steps. "}You can update your checklist at https://anointedmoneygroup.com/licensing-progress/ or reply if you need help.`;
+const licensingStatusLabel = { studying: "Studying", scheduled: "Exam scheduled", rescheduled: "Rescheduled", failed: "Retake needed", passed: "Exam passed" };
+
+async function licensingApi(body = null, page = 1) {
+  const { data, error } = await authClient.auth.getSession();
+  if (error) throw error;
+  const token = data.session?.access_token;
+  if (!token) throw new Error("Sign in again to manage licensing.");
+  const params = new URLSearchParams({ page: String(page) });
+  if (licensingState.query) params.set("q", licensingState.query);
+  if (licensingState.status) params.set("status", licensingState.status);
+  const response = await fetch(`/api/licensing-pipeline?${params}`, { method: body ? "POST" : "GET", headers: { authorization: `Bearer ${token}`, ...(body ? { "content-type": "application/json" } : {}) }, body: body ? JSON.stringify(body) : undefined, cache: "no-store" });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(payload.error || "Licensing could not be updated.");
+  return payload;
+}
+
 function renderLicensing() {
-  const { learners, total, page, pageSize, loading, error } = licensingState;
-  const pages = Math.max(1, Math.ceil(total / pageSize));
+  const { people, total, page, pageSize, loading, error } = licensingState;
+  const metrics = [["People tracked", total], ["Before license", licensingState.preLicense], ["Onboarding", licensingState.onboarding], ["Appointed", licensingState.appointed], ["Follow ups overdue", licensingState.overdue]];
+  $("#licensing-metrics").innerHTML = metrics.map(([label, value], index) => `<div class="licensing-metric${index === 4 && value ? " urgent" : ""}"><strong>${Number(value).toLocaleString()}</strong><span>${label}</span></div>`).join("");
   $("#licensing-list").setAttribute("aria-busy", String(loading));
-  $("#licensing-summary").textContent = loading ? "Loading licensing progress…" : error ? "Licensing progress could not be refreshed." : `${total.toLocaleString()} ${total === 1 ? "learner" : "learners"} tracked`;
+  $("#licensing-summary").textContent = loading ? "Loading the pipeline…" : error ? "The pipeline could not be refreshed." : `${total.toLocaleString()} ${total === 1 ? "person" : "people"} in this view`;
   $("#licensing-error").hidden = !error;
   $("#licensing-error").textContent = error;
   $("#refresh-licensing").disabled = loading;
   $("#previous-licensing").disabled = loading || page <= 1;
-  $("#next-licensing").disabled = loading || page >= pages;
-  $("#licensing-pagination").hidden = pages <= 1;
-  $("#licensing-page").textContent = `Page ${page} of ${pages}`;
-  $("#licensing-list").innerHTML = learners.length ? learners.map((learner) => {
-    const attempts = Array.isArray(learner.attempts) ? learner.attempts : [];
-    const inProgress = attempts.filter((attempt) => attempt.status === "in_progress").length;
-    const completed = attempts.length - inProgress;
-    const lastActive = Number.isFinite(Date.parse(learner.lastActiveAt)) ? formatDateTime(learner.lastActiveAt) : "Activity time unavailable";
-    const attemptRows = attempts.length ? `<div class="attempt-list"><h3>Exam attempts</h3>${attempts.map((attempt) => {
-      const isComplete = attempt.status === "completed";
-      const detail = isComplete
-        ? `${Number(attempt.scorePercent).toFixed(2).replace(/\.00$/, "")}% score · ${attempt.answered} of ${attempt.total} answered`
-        : `${attempt.answered} of ${attempt.total} answered · ${Math.round(attempt.progressPercent)}% through attempt`;
-      return `<article class="attempt-row"><div><strong>${escapeHtml(attempt.title)}</strong><span>${escapeHtml(detail)}</span></div><span class="attempt-status${isComplete ? " completed" : ""}">${isComplete ? "Completed" : "In progress"}</span><div class="attempt-progress" aria-label="${escapeHtml(String(Math.round(attempt.progressPercent)))}% answered"><span style="width:${Math.max(0, Math.min(100, Number(attempt.progressPercent) || 0))}%"></span></div></article>`;
-    }).join("")}</div>` : '<div class="attempt-list"><h3>Exam attempts</h3><p class="muted">No exam attempt started yet.</p></div>';
-    return `<article class="learner-card"><header><div><p class="eyebrow">AMG learner</p><h2>${escapeHtml(learner.name || "Name not provided")}</h2><a class="learner-email" href="mailto:${encodeURIComponent(learner.email)}">${escapeHtml(learner.email)}</a></div><span class="learner-active">Last active ${escapeHtml(lastActive)}</span></header><div class="learner-stats"><div class="learner-stat"><strong>${escapeHtml(learner.completedLessons)} / ${escapeHtml(learner.totalLessons)}</strong><span>Lessons completed</span></div><div class="learner-stat"><strong>${completed}</strong><span>Completed exams</span></div><div class="learner-stat"><strong>${inProgress}</strong><span>Unfinished exams</span></div></div>${attemptRows}</article>`;
-  }).join("") : loading ? '<p class="empty">Retrieving learner progress…</p>' : error ? '<p class="empty">Use Refresh progress to try again.</p>' : '<div class="learner-empty"><h2>No learner activity yet</h2><p>People will appear here as soon as they enter AMG Learning. Their saved course and exam progress will remain visible even if an exam is unfinished.</p></div>';
+  $("#next-licensing").disabled = loading || page * pageSize >= total;
+  $("#licensing-pagination").hidden = total <= pageSize;
+  $("#licensing-page").textContent = `Page ${page} of ${Math.max(1, Math.ceil(total / pageSize))}`;
+  $("#licensing-list").innerHTML = people.length ? people.map((person) => {
+    const count = licensingTasks.filter(([key]) => licensingDone(person, key)).length;
+    const percent = Math.round(count / licensingTasks.length * 100);
+    const due = person.follow_up_date && person.follow_up_date < new Date().toISOString().slice(0, 10) && !licensingDone(person, "first_check");
+    const stage = licensingDone(person, "first_check") ? "First check received" : licensingDone(person, "appointed") ? "Appointed" : person.exam_status === "passed" ? "Post-license onboarding" : licensingStatusLabel[person.exam_status] || "Studying";
+    const checklist = licensingTasks.map(([key, label]) => `<label class="licensing-task"><input type="checkbox" data-license-task="${key}" data-person-id="${person.id}" ${licensingDone(person, key) ? "checked" : ""}><span>${label}</span></label>`).join("");
+    return `<article class="licensing-person" data-person-id="${person.id}"><div class="licensing-person-main"><div class="licensing-avatar">${escapeHtml(initials(person.name))}</div><div class="licensing-person-title"><p class="eyebrow">${escapeHtml(stage)} · ${escapeHtml(person.track === "both" ? "Life + Health" : person.track)}</p><h2>${escapeHtml(person.name)}</h2><p>${person.email ? escapeHtml(person.email) : '<span class="licensing-missing">Add email to connect their checklist</span>'}${person.phone ? ` · ${escapeHtml(person.phone)}` : ""}${person.recruiter ? ` · Upline: ${escapeHtml(person.recruiter)}` : ""}</p></div><span class="licensing-due${due ? " overdue" : ""}">${person.follow_up_date ? `${due ? "Overdue · " : "Follow up · "}${escapeHtml(person.follow_up_date)}` : "No follow up date"}</span></div><div class="licensing-progress"><div><strong>${count} of ${licensingTasks.length} steps</strong><span>${percent}% complete</span></div><div class="licensing-progress-track"><span style="width:${percent}%"></span></div></div>${person.next_action || person.blocker ? `<div class="licensing-notes">${person.next_action ? `<p><strong>Next:</strong> ${escapeHtml(person.next_action)}</p>` : ""}${person.blocker ? `<p><strong>Blocker:</strong> ${escapeHtml(person.blocker)}</p>` : ""}</div>` : ""}<details class="licensing-checklist"><summary>View checklist</summary><div>${checklist}</div></details><div class="licensing-person-actions"><button class="secondary" type="button" data-license-edit="${person.id}">Edit progress</button><button class="secondary" type="button" data-license-text="${person.id}">Text reminder</button>${person.email ? `<a class="secondary" href="mailto:${encodeURIComponent(person.email)}?subject=${encodeURIComponent("Your AMG licensing next step")}&body=${encodeURIComponent(licensingReminder(person))}">Email reminder</a>` : '<button type="button" class="secondary" disabled title="Add an email first">Email reminder</button>'}</div></article>`;
+  }).join("") : loading ? '<p class="empty">Loading people…</p>' : error ? '<p class="empty">Refresh to try again.</p>' : '<div class="learner-empty"><h2>No one in this view yet</h2><p>Add a person to track their licensing steps, or clear the filters to see everyone.</p></div>';
 }
 
 async function loadLicensing(page = 1) {
-  if (licensingState.loading) return;
   if (licensingState.preview) { renderLicensing(); return; }
   const requestId = ++licensingState.requestId;
-  const controller = new AbortController();
-  Object.assign(licensingState, { loading: true, error: "", controller });
-  renderLicensing();
+  licensingState.loading = true; licensingState.error = ""; renderLicensing();
   try {
-    const { data, error } = await authClient.auth.getSession();
-    if (error) throw error;
+    const payload = await licensingApi(null, page);
     if (requestId !== licensingState.requestId) return;
-    const token = data.session?.access_token;
-    if (!token) throw new Error("Sign in again to view licensing progress.");
-    const response = await fetch(`/.netlify/functions/admin-learning?page=${page}`, { headers: { accept: "application/json", authorization: `Bearer ${token}` }, cache: "no-store", signal: controller.signal });
-    const payload = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(payload.error || "Unable to load licensing progress. Try refreshing again.");
+    if (!Array.isArray(payload.people) || !Number.isInteger(payload.total)) throw new Error("Licensing data was incomplete.");
+    Object.assign(licensingState, { people: payload.people, total: payload.total, preLicense: payload.pre_license, onboarding: payload.onboarding, appointed: payload.appointed, overdue: payload.overdue, page, pageSize: payload.page_size });
+    if (page === 1 && !licensingState.query && !licensingState.status) void loadLicensingActivity(requestId);
+  } catch (reason) {
     if (requestId !== licensingState.requestId) return;
-    if (!Array.isArray(payload.learners) || !Number.isInteger(payload.total) || payload.total < 0 || !Number.isInteger(payload.page) || payload.page < 1 || !Number.isInteger(payload.page_size) || payload.page_size < 1) throw new Error("The licensing progress response was incomplete. Try refreshing again.");
-    Object.assign(licensingState, { learners: payload.learners, total: payload.total, page: payload.page, pageSize: payload.page_size });
-  } catch (error) {
-    if (requestId !== licensingState.requestId || error.name === "AbortError") return;
-    licensingState.error = error.message || "Unable to load licensing progress. Try refreshing again.";
+    licensingState.error = reason.message || "Licensing progress could not be loaded.";
   } finally {
-    if (requestId === licensingState.requestId) { licensingState.loading = false; licensingState.controller = null; renderLicensing(); }
+    if (requestId === licensingState.requestId) { licensingState.loading = false; renderLicensing(); }
   }
+}
+
+async function loadLicensingActivity(requestId) {
+  try {
+    const { data } = await authClient.auth.getSession();
+    const token = data.session?.access_token;
+    if (!token) return;
+    const response = await fetch('/.netlify/functions/admin-learning?page=1', { headers: { authorization: `Bearer ${token}` }, cache: 'no-store' });
+    if (!response.ok) return;
+    const payload = await response.json();
+    if (requestId !== licensingState.requestId) return;
+    $("#licensing-activity-list").innerHTML = (payload.learners || []).map((learner) => {
+      const unfinished = (learner.attempts || []).filter((item) => item.status === 'in_progress').length;
+      const completed = (learner.attempts || []).filter((item) => item.status === 'completed').length;
+      return `<div class="licensing-activity-row"><strong>${escapeHtml(learner.name || learner.email)}</strong><span>${escapeHtml(learner.email)} · ${learner.completedLessons} lessons · ${completed} finished exams · ${unfinished} unfinished</span><button type="button" class="secondary" data-license-learner="${encodeURIComponent(JSON.stringify({ name: learner.name, email: learner.email }))}">Track person</button></div>`;
+    }).join('') || '<p>No course activity yet.</p>';
+  } catch { if (requestId === licensingState.requestId) $("#licensing-activity-list").textContent = 'Course activity could not load. Refresh to try again.'; }
+}
+
+function openLicensingPerson(person = null) {
+  $("#licensing-person-form").reset();
+  $("#licensing-person-title").textContent = person?.id ? "Edit licensing progress" : "Add a person";
+  $("#licensing-person-id").value = person?.id || "";
+  $("#licensing-person-version").value = person?.version || "";
+  for (const [id, key] of [["license-name", "name"], ["license-email", "email"], ["license-phone", "phone"], ["license-recruiter", "recruiter"], ["license-state", "state"], ["license-track", "track"], ["license-exam-status", "exam_status"], ["license-exam-date", "exam_date"], ["license-follow-up", "follow_up_date"], ["license-first-check", "first_check_date"], ["license-next-action", "next_action"], ["license-blocker", "blocker"]]) $("#" + id).value = person?.[key] || (id === "license-track" ? "both" : id === "license-exam-status" ? "studying" : "");
+  $("#licensing-person-error").textContent = "";
+  $("#licensing-person-dialog").showModal();
 }
 
 function showAdminView(view) {
@@ -911,6 +950,56 @@ $("#next-inquiries").addEventListener("click", () => loadInquiries(inquiryState.
 $("#refresh-licensing").addEventListener("click", () => loadLicensing(1));
 $("#previous-licensing").addEventListener("click", () => loadLicensing(licensingState.page - 1));
 $("#next-licensing").addEventListener("click", () => loadLicensing(licensingState.page + 1));
+$("#add-license-person").addEventListener("click", () => openLicensingPerson());
+let licensingSearchTimer;
+$("#licensing-search").addEventListener("input", (event) => { clearTimeout(licensingSearchTimer); licensingSearchTimer = setTimeout(() => { licensingState.query = event.target.value.trim(); void loadLicensing(1); }, 250); });
+$("#licensing-filter").addEventListener("change", (event) => { licensingState.status = event.target.value; void loadLicensing(1); });
+$("#licensing-person-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const button = event.currentTarget.querySelector('[type="submit"]');
+  button.disabled = true;
+  $("#licensing-person-error").textContent = "";
+  try {
+    await licensingApi({ action: "save_person", id: $("#licensing-person-id").value || null, expectedVersion: Number($("#licensing-person-version").value) || null,
+      name: $("#license-name").value, email: $("#license-email").value, phone: $("#license-phone").value,
+      recruiter: $("#license-recruiter").value, state: $("#license-state").value, track: $("#license-track").value,
+      examStatus: $("#license-exam-status").value, examDate: $("#license-exam-date").value,
+      followUpDate: $("#license-follow-up").value, firstCheckDate: $("#license-first-check").value,
+      nextAction: $("#license-next-action").value, blocker: $("#license-blocker").value });
+    $("#licensing-person-dialog").close();
+    await loadLicensing(1);
+    toast("Licensing progress saved.");
+  } catch (reason) { $("#licensing-person-error").textContent = reason.message; } finally { button.disabled = false; }
+});
+$("#licensing-list").addEventListener("change", async (event) => {
+  const input = event.target.closest('[data-license-task]');
+  if (!input) return;
+  input.disabled = true;
+  try {
+    await licensingApi({ action: "set_task", id: input.dataset.personId, task: input.dataset.licenseTask, done: input.checked });
+    await loadLicensing(licensingState.page);
+    toast("Checklist updated.");
+  } catch (reason) { input.checked = !input.checked; toast(reason.message || "Could not update checklist."); input.disabled = false; }
+});
+$("#licensing-list").addEventListener("click", (event) => {
+  const edit = event.target.closest('[data-license-edit]');
+  if (edit) { openLicensingPerson(licensingState.people.find((person) => person.id === edit.dataset.licenseEdit)); return; }
+  const textButton = event.target.closest('[data-license-text]');
+  if (!textButton) return;
+  const person = licensingState.people.find((item) => item.id === textButton.dataset.licenseText);
+  if (!person?.phone) { toast("Add a phone number first."); return; }
+  const contact = state.contacts.find((item) => item.phone === person.phone);
+  if (!contact) { openContact(); $("#contact-name").value = person.name; $("#contact-phone").value = person.phone; $("#contact-consent").value = "pending"; updateManualOptInConfirmation(); toast("Save this person in Contacts before texting."); return; }
+  if (contact.consent_status !== "opted_in") { toast("Text consent is needed before a reminder can be sent."); return; }
+  openComposer("individual", contact.id);
+  $("#message-body").value = licensingReminder(person);
+  $("#char-count").textContent = `${$("#message-body").value.length} / 1600`;
+});
+$("#licensing-activity-list").addEventListener("click", (event) => {
+  const button = event.target.closest('[data-license-learner]');
+  if (!button) return;
+  try { openLicensingPerson(JSON.parse(decodeURIComponent(button.dataset.licenseLearner))); } catch { toast("Could not open learner."); }
+});
 $("#new-message").addEventListener("click", () => openComposer());
 $("#group-new-message").addEventListener("click", composeSelectedGroup);
 $("#add-contact").addEventListener("click", () => openContact());
@@ -1024,7 +1113,7 @@ async function init() {
       });
       showAdminView("inquiries");
     } else if (previewMode === "licensing") {
-      Object.assign(licensingState, { preview: true, total: 0, learners: [] });
+      Object.assign(licensingState, { preview: true, total: 0, people: [], learners: [] });
       showAdminView("licensing");
     }
     return;

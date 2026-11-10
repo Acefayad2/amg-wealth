@@ -75,7 +75,7 @@ export async function verifyAccessToken(token: string | null, purpose: 'gate' | 
   try {
     const parts = token.split('.'); if (parts.length !== 2) return null;
     const signature = decode64url(parts[1]); if (signature.length !== 32) return null;
-    if (!await crypto.subtle.verify('HMAC', await keyFor(secret), signature, encoder.encode('amg-access-v1:' + parts[0]))) return null;
+    if (!await crypto.subtle.verify('HMAC', await keyFor(secret), Uint8Array.from(signature), encoder.encode('amg-access-v1:' + parts[0]))) return null;
     const payload = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(decode64url(parts[0])));
     if (!object(payload) || payload.v !== 1 || payload.purpose !== purpose || !Number.isSafeInteger(payload.iat) || !Number.isSafeInteger(payload.exp)) return null;
     const iat = payload.iat as number, exp = payload.exp as number, seconds = Math.floor(now / 1000);

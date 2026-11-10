@@ -4,13 +4,16 @@
 set -eu
 portal="${1:?path to the amg-practice-exam checkout}"
 dist="$portal/dist"
+schema="$portal/netlify/functions/_shared/learning-schema.mjs"
 site="$(cd "$(dirname "$0")/.." && pwd)"
-for need in "$dist/index.html" "$dist/course/index.html" "$dist/login/index.html" "$dist/practice-assets"; do
+for need in "$dist/index.html" "$dist/course/index.html" "$dist/login/index.html" "$dist/practice-assets" "$schema"; do
   [ -e "$need" ] || { echo "Missing $need. Run npm run build in $portal first." >&2; exit 1; }
 done
 # rm + cp, not rsync: macOS is case-insensitive and some names differ only by case.
 rm -rf "$site/course" "$site/login" "$site/practice" "$site/practice-assets"
 cp -R "$dist/course" "$site/course"
+# Learner answer validation and content hashes must match the lessons from this build.
+cp "$schema" "$site/netlify/functions/_shared/learning-schema.mjs"
 cp -R "$dist/login" "$site/login"
 mkdir "$site/practice" && cp "$dist/index.html" "$site/practice/index.html"
 cp -R "$dist/practice-assets" "$site/practice-assets"

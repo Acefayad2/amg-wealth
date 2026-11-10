@@ -19,7 +19,7 @@ export default function PrivacyPolicy() {
 
         <section>
           <h2>Information we collect</h2>
-          <p>AMG Matchup Portal collects the agent and client contact information entered for an appointment, appointment preferences, and Certified Field Trainer profile and availability information. When a trainer connects Google Calendar, Google provides authorization tokens and calendar availability needed to operate the scheduling service.</p>
+          <p>AMG Matchup Portal collects the agent and client contact information entered for an appointment, appointment preferences, and Certified Field Trainer profile and availability information. When a trainer connects Google Calendar, Google provides their account email, basic profile information such as their name and profile image, authorization tokens, and calendar availability needed to operate the scheduling service.</p>
         </section>
         <section>
           <h2>How we use information</h2>

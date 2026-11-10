@@ -4,6 +4,9 @@ import Image from "next/image";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
+import type { User } from "@supabase/supabase-js";
+import AccountBadge from "../AccountBadge";
+import { useAccountProfile } from "@/lib/use-account-profile";
 import { signInErrorMessage } from "@/lib/auth-message";
 import { buildAvailability } from "./availability";
 import { appointmentDateKey } from "@/lib/agent-flow";
@@ -87,6 +90,8 @@ function Mark({ children }: { children: string }) {
 }
 
 export default function CFTWorkspace() {
+  const [accountUser, setAccountUser] = useState<User | null>(null);
+  const accountProfile = useAccountProfile(accountUser);
   const [sessionChecked, setSessionChecked] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [role, setRole] = useState("");
@@ -169,6 +174,7 @@ export default function CFTWorkspace() {
     let mounted = true;
     supabase.auth.getSession().then(({ data }) => {
       if (!mounted) return;
+      setAccountUser(data.session?.user || null);
       setUserId(data.session?.user.id || null);
       if (data.session) void syncCalendarSession(data.session);
       setSessionChecked(true);
@@ -176,6 +182,7 @@ export default function CFTWorkspace() {
     const { data } = supabase.auth.onAuthStateChange((event, session) => {
       if (!mounted) return;
       if (event === "PASSWORD_RECOVERY") setRecoveryMode(true);
+      setAccountUser(session?.user || null);
       setUserId(session?.user.id || null);
       if (session) window.setTimeout(() => void syncCalendarSession(session), 0);
       else setCalendarConnected(false);
@@ -524,13 +531,13 @@ export default function CFTWorkspace() {
         <div className="brand"><div className="logo-wrap"><Image src="/matchups/amg-logo.webp" alt="AMG Wealth logo" width={44} height={44} priority unoptimized /></div><div><strong>AMG</strong><span>Matchup Portal</span></div><button className="icon-button close-nav" aria-label="Close navigation" onClick={() => setMobileNav(false)}>×</button></div>
         <nav><a className="nav-item active" href="#dashboard"><Mark>⌂</Mark>Overview</a><a className="nav-item" href="#today"><Mark>◷</Mark>My schedule</a><a className="nav-item" href="#requests"><Mark>●</Mark>Match requests{requests.length > 0 && <span className="nav-count">{requests.length}</span>}</a><a className="nav-item" href="#profile"><Mark>◎</Mark>My profile</a></nav>
         <a className="role-switch" href="/matchups/"><Mark>✦</Mark>Go to Agent Matchup</a>
-        <div className="user-chip"><span className={`avatar mini ${trainer?.avatar_tone || "plum"}`}>{trainer?.initials || "AM"}</span><div><strong>{name}</strong><small>{role === "admin" ? "Portal administrator" : "Certified Field Trainer"}</small></div><button className="chip-signout" onClick={() => supabase.auth.signOut()}>Sign out</button></div>
+        <AccountBadge profile={accountProfile} onSignOut={() => { void supabase.auth.signOut({ scope: "local" }); }} />
       </aside>
       {mobileNav && <button className="nav-scrim" aria-label="Close navigation" onClick={() => setMobileNav(false)} />}
       <main>
         <header className="topbar glass-light"><button className="icon-button menu-button" aria-label="Open navigation" onClick={() => setMobileNav(true)}>☰</button><div className="mobile-brand">AMG <span>Matchup</span></div><div className="topbar-label"><span className="live-dot" />Live CFT workspace</div><button className="quick-book" onClick={() => document.getElementById("availability")?.scrollIntoView({ behavior: "smooth" })}>Availability</button></header>
         <div className="content" id="dashboard">
-          <section className="welcome-row"><div><span className="eyebrow"><span />{new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</span><h1>Welcome, {name.split(" ")[0]}.</h1><p>Your live schedule and incoming agent requests are below.</p></div>{role === "admin" && trainers.length > 1 && <label className="trainer-switcher"><span>Viewing trainer</span><select disabled={mutationBusy || workspaceStale} value={selectedTrainerId} onChange={(event) => setSelectedTrainerId(event.target.value)}>{trainers.map((item) => <option key={item.id} value={item.id}>{item.display_name}</option>)}</select></label>}{trainer && <button className={`availability-pill ${trainer.is_available ? "" : "paused"}`} disabled={mutationBusy || loading || workspaceStale} onClick={toggleMatching}><span className="live-dot" />{trainer.is_available ? "Available for matchups" : "Matching paused"}</button>}</section>
+          <section className="welcome-row"><div><span className="eyebrow"><span />{new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</span><h1>Welcome, {(accountProfile?.name || name).split(" ")[0]}.</h1><p>Your live schedule and incoming agent requests are below.</p></div>{role === "admin" && trainers.length > 1 && <label className="trainer-switcher"><span>Viewing trainer</span><select disabled={mutationBusy || workspaceStale} value={selectedTrainerId} onChange={(event) => setSelectedTrainerId(event.target.value)}>{trainers.map((item) => <option key={item.id} value={item.id}>{item.display_name}</option>)}</select></label>}{trainer && <button className={`availability-pill ${trainer.is_available ? "" : "paused"}`} disabled={mutationBusy || loading || workspaceStale} onClick={toggleMatching}><span className="live-dot" />{trainer.is_available ? "Available for matchups" : "Matching paused"}</button>}</section>
           {error && <div className="workspace-alert" role="alert">{error}</div>}
           {workspaceStale && <div className="workspace-alert" role="alert">Changes are paused until the latest schedule is loaded. <button type="button" onClick={() => window.location.reload()}>Reload workspace</button></div>}
           {loading && <div className="workspace-loading"><span className="spinner" />Loading live CFT data…</div>}

@@ -3,6 +3,9 @@
 import Image from "next/image";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import type { User } from "@supabase/supabase-js";
+import AccountBadge from "../AccountBadge";
+import { useAccountProfile } from "@/lib/use-account-profile";
 import { signInErrorMessage } from "@/lib/auth-message";
 
 type Organization = { id: string; name: string; slug: string; parentId: string | null };
@@ -35,6 +38,8 @@ function activityLabel(activity: Activity) {
 
 export default function BrokerWorkspace() {
   const initialStart = useMemo(() => { const value = new Date(); value.setDate(value.getDate() - 29); return dateKey(value); }, []);
+  const [accountUser, setAccountUser] = useState<User | null>(null);
+  const accountProfile = useAccountProfile(accountUser);
   const [sessionChecked, setSessionChecked] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
   const [email, setEmail] = useState("");
@@ -54,11 +59,13 @@ export default function BrokerWorkspace() {
     let active = true;
     void supabase.auth.getSession().then(({ data }) => {
       if (!active) return;
+      setAccountUser(data.session?.user || null);
       setSignedIn(Boolean(data.session));
       setSessionChecked(true);
     });
     const { data } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!active) return;
+      setAccountUser(session?.user || null);
       setSignedIn(Boolean(session));
       setSessionChecked(true);
     });
@@ -122,7 +129,7 @@ export default function BrokerWorkspace() {
         <a href="/matchups/" className="broker-brand"><Image src="/matchups/amg-logo.webp" alt="AMG logo" width={42} height={42} priority unoptimized /><span><strong>AMG</strong><small>Organizations</small></span></a>
         <nav><a className="active" href="#overview">Overview</a><a href="#agents">Agents</a><a href="#activity">Activity</a><a href="#meetings">Meetings</a></nav>
         <div className="broker-sidebar-note"><span>Secure view</span><p>You only see organizations assigned to your AMG account.</p></div>
-        <button className="broker-signout" onClick={() => supabase.auth.signOut()}>Sign out</button>
+        <AccountBadge profile={accountProfile} onSignOut={() => { void supabase.auth.signOut({ scope: "local" }); }} />
       </aside>
       {mobileNav && <button className="broker-scrim" aria-label="Close navigation" onClick={() => setMobileNav(false)} />}
       <main className="broker-main">

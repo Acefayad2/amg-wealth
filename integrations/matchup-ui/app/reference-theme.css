@@ -204,3 +204,6 @@ body:has(#licensing-view:not([hidden])) :is(.licensing-due,.licensing-avatar){ba
 .amg-learning-theme .question-nav button.answered{background:#e0e9dc!important;color:#1b503d!important;border-color:#b2c7a8!important;box-shadow:var(--amg-inset)!important}
 .amg-learning-theme .option.correct{background:#e3eadf;border-color:#7b9b70;color:var(--amg-ink)}
 .amg-learning-theme .primary:hover:not(:disabled){background:linear-gradient(120deg,#1c6249,#103e2f);color:#f4eac2}
+
+body:has(#licensing-view:not([hidden])) .account-profile{color:var(--amg-ink)}
+body:has(#licensing-view:not([hidden])) .account-profile>div>span{color:var(--amg-muted)}

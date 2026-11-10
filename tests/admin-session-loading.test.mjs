@@ -8,16 +8,24 @@ const source = fs.readFileSync(new URL("../src/admin.mjs", import.meta.url), "ut
 const start = source.indexOf("function showStartup(");
 const end = source.indexOf("\nfunction render()", start);
 assert.ok(start >= 0 && end > start, "session-loading production functions must be present");
-const production = `let authClient=this.authClient;let startupBusy=false;const $=this.lookup;const load=this.load;${source.slice(start, end)}\nthis.verifyAdminSession=verifyAdminSession;`;
+const profileStart = source.indexOf("function renderAccountProfile(");
+const profileEnd = source.indexOf("\nconst inquiryState", profileStart);
+const production = `let authClient=this.authClient;let startupBusy=false;let accountUserId=null;const $=this.lookup;const load=this.load;const initials=(name)=>name.split(/\\s+/).map(part=>part[0]).join("").slice(0,2).toUpperCase();${source.slice(profileStart, profileEnd)}${source.slice(start, end)}\nthis.verifyAdminSession=verifyAdminSession;this.showLogin=showLogin;`;
 
-function setup({ user = { id: "admin" }, authError = null, loadImpl = async () => {} } = {}) {
+function setup({ user = { id: "admin" }, profile = null, profileResult = null, authError = null, loadImpl = async () => {} } = {}) {
   let signOutCalls = 0;
   const fields = Object.fromEntries([
     "#startup-view", "#auth-view", "#app", "#startup-title", "#startup-status",
-    "#startup-error-actions", "#login-error",
+    "#startup-error-actions", "#login-error", "#account-profile", "#account-name", "#account-email", "#account-avatar",
   ].map((selector) => [selector, { hidden: selector !== "#startup-view", textContent: "" }]));
   const context = {
-    authClient: { auth: {
+    authClient: { from: () => ({ select: () => {
+      const query = { eq: (field, id) => {
+        if (field !== "is_active") assert.equal(id, user.id, "profile query must target the authenticated user");
+        return query;
+      }, limit: () => query, maybeSingle: () => profileResult || Promise.resolve({ data: profile }) };
+      return query;
+    } }), auth: {
       getUser: async () => ({ data: { user }, error: authError }),
       signOut: async () => { signOutCalls += 1; return { error: null }; },
     } },
@@ -82,4 +90,25 @@ test("invalid stored refresh token is cleared and returns to sign in", async () 
   assert.equal(app.fields["#auth-view"].hidden, false);
   assert.equal(app.fields["#app"].hidden, true);
   assert.equal(app.fields["#login-error"].textContent, "Your saved session expired. Sign in again.");
+});
+
+test("the account badge shows the signed-in admin’s saved name and auth email", async () => {
+  const app = setup({ user: { id: "admin", email: "admin@example.com", user_metadata: { full_name: "Old Name" } }, profile: { first_name: "Natasha", last_name: "Brown" } });
+  await app.verifyAdminSession();
+  assert.equal(app.fields["#account-name"].textContent, "Natasha Brown");
+  assert.equal(app.fields["#account-email"].textContent, "admin@example.com");
+  assert.equal(app.fields["#account-profile"].hidden, false);
+});
+
+test("a late profile response cannot restore another account’s details after sign-out", async () => {
+  let resolve;
+  const profileResult = new Promise((done) => { resolve = done; });
+  const app = setup({ user: { id: "admin", email: "admin@example.com", user_metadata: { full_name: "Natasha Brown" } }, profileResult });
+  await app.verifyAdminSession();
+  app.showLogin();
+  resolve({ data: { first_name: "Natasha", last_name: "Brown" } });
+  await profileResult;
+  assert.equal(app.fields["#account-profile"].hidden, true);
+  assert.equal(app.fields["#account-name"].textContent, "");
+  assert.equal(app.fields["#account-email"].textContent, "");
 });

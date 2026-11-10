@@ -49,7 +49,10 @@
       <nav id="groups" class="groups" aria-label="Contact groups"></nav>
       <div class="list-heading"><span>All contacts</span><span id="contact-count">0</span></div>
       <div id="contacts" class="contacts"></div>
-      <div class="sidebar-footer"><button id="sign-out" class="text-button">Sign out</button><a href="/">Back to website</a></div>
+      <div class="sidebar-footer">
+        <section id="account-profile" class="account-profile" aria-label="Signed-in account" hidden><span id="account-avatar" class="account-avatar" aria-hidden="true"></span><div><strong id="account-name"></strong><span id="account-email"></span></div></section>
+        <div class="sidebar-footer-actions"><button id="sign-out" class="text-button">Sign out</button><a href="/">Back to website</a></div>
+      </div>
     </aside>
 
     <main id="main-content" class="main" tabindex="-1">

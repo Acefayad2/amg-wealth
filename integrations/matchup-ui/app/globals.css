@@ -1353,3 +1353,5 @@ main { margin-left: 236px; }
 .account-badge>button:hover{text-decoration:underline}
 .broker-sidebar .account-badge{margin-top:18px;color:#f4f0df;border-color:rgba(255,255,255,.14)}
 .broker-sidebar .account-badge-identity>div>span{color:#c2cfc5}
+
+.portal-google-summary{max-width:560px;margin:24px auto 0;padding:0 20px;color:#607168;font-size:13px;line-height:1.7;text-align:center}

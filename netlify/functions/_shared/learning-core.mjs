@@ -1,13 +1,18 @@
 import { createHash } from 'node:crypto';
+import { createMockBank } from './mock-rotation.mjs';
 import { schema } from './learning-schema.mjs';
 
 export { schema };
 // Tracks (for example Health) share the lesson rules and, once they have forms, the assessment rules.
 export const tracks = Object.values(schema.tracks || {});
 export const lessonByKey = new Map([...schema.lessons, ...tracks.flatMap(track => track.lessons)].map(lesson => [lesson.key, lesson]));
-const assessmentSchema = (key, version, lessons, forms) => ({ key, version, forms, lessonKeys: new Set(lessons.map(l => l.key)), formById: new Map(forms.map(form => [form.id, form])), questionIds: new Set([...lessons, ...forms].flatMap(item => item.questions.map(q => q.id))) });
-const lifeAssessment = assessmentSchema(schema.assessmentKey, schema.assessmentVersion, schema.lessons, schema.forms);
-export const assessmentSchemas = new Map([lifeAssessment, ...tracks.filter(track => track.forms.length).map(track => assessmentSchema(track.assessmentKey, track.assessmentVersion, track.lessons, track.forms))].map(item => [item.key, item]));
+function assessmentSchema(track,key,version,lessons,forms,extras) {
+  const bank=createMockBank(track,forms,extras);
+  return {key,version,forms,bank,lessonKeys:new Set(lessons.map(l=>l.key)),formById:new Map(forms.map(f=>[f.id,f])),
+    questionIds:new Set([...lessons.flatMap(l=>l.questions),...forms.flatMap(f=>f.questions),...extras].map(q=>q.id))};
+}
+const lifeAssessment = assessmentSchema('life',schema.assessmentKey,schema.assessmentVersion,schema.lessons,schema.forms,schema.extraQuestions);
+export const assessmentSchemas = new Map([lifeAssessment,...tracks.filter(t=>t.forms.length).map(t=>assessmentSchema(t.id,t.assessmentKey,t.assessmentVersion,t.lessons,t.forms,t.extraQuestions))].map(s=>[s.key,s]));
 export const formById = lifeAssessment.formById;
 export const allowedKeys = [...lessonByKey.keys(), ...assessmentSchemas.keys()];
 const MAX_ATTEMPTS = 500;
@@ -53,17 +58,17 @@ export function validateLesson(value, lesson, now) {
 }
 
 export function validateAssessment(value, now, previous = null, assessment = lifeAssessment) {
-  const { formById, questionIds } = assessment;
+  const { formById, questionIds, bank } = assessment;
   fields(value, ['version', 'attempts', 'seen', 'reviews', 'lessonImports']);
   assert(value.version === assessment.version, 'Unsupported assessment version');
   assert(Array.isArray(value.attempts) && value.attempts.length <= MAX_ATTEMPTS, 'Too many assessment attempts');
-  assert(Array.isArray(value.seen) && value.seen.length <= assessment.forms.length && new Set(value.seen).size === value.seen.length && value.seen.every(id => formById.has(id)), 'Invalid form history');
+  assert(Array.isArray(value.seen) && value.seen.length <= assessment.forms.length + 1 && new Set(value.seen).size === value.seen.length && value.seen.every(id => id === bank.id || formById.has(id)), 'Invalid form history');
   const used = new Set();
   for (const attempt of value.attempts) {
-    fields(attempt, ['id', 'form', 'startedAt', 'deadline', 'submittedAt', 'expired', 'fresh', 'answers', 'flags', 'uncertain', 'reviewed', 'current']);
+    fields(attempt, ['id', 'form', 'startedAt', 'deadline', 'submittedAt', 'expired', 'fresh', 'answers', 'flags', 'uncertain', 'reviewed', 'current', ...(attempt?.form === bank.id ? ['questionIds'] : [])]);
     string(attempt.id);
     assert(!used.has(attempt.id), 'Duplicate attempt ID'); used.add(attempt.id);
-    const form = formById.get(attempt.form); assert(form, 'Unknown assessment form');
+    const form = bank.formFor(attempt); assert(form, 'Unknown assessment form or invalid track question set');
     numericTime(attempt.startedAt, now);
     assert(attempt.deadline === (form.minutes ? attempt.startedAt + form.minutes * 60000 : null), 'Timer deadline cannot change');
     if (attempt.submittedAt !== null) {
@@ -85,6 +90,7 @@ export function validateAssessment(value, now, previous = null, assessment = lif
       const next = nextById.get(old.id);
       assert(next, 'Saved attempt history cannot be removed');
       for (const key of ['form', 'startedAt', 'deadline', 'fresh']) assert(next[key] === old[key], 'Saved attempt identity cannot change');
+      if (old.questionIds) assert(canonical(next.questionIds) === canonical(old.questionIds), 'Saved mock questions cannot change');
       if (old.submittedAt !== null) {
         for (const key of ['answers', 'submittedAt', 'expired']) assert(canonical(next[key]) === canonical(old[key]), 'Submitted answers and result cannot change');
       }
@@ -128,7 +134,7 @@ const percent = (correct, total) => total ? Math.round(correct / total * 10000) 
 const iso = value => value === null || value === undefined ? null : new Date(value).toISOString();
 
 export function scoreAttempt(attempt, assessment = lifeAssessment) {
-  const form = assessment.formById.get(attempt.form);
+  const form = assessment.bank.formFor(attempt);
   const scored = form.questions.map((q, i) => ({ q, i })).filter(({ q }) => q.scored);
   const unscored = form.questions.map((q, i) => ({ q, i })).filter(({ q }) => !q.scored);
   const correct = scored.filter(({ q, i }) => attempt.answers[i] === q.answer).length;
@@ -141,11 +147,12 @@ function submittedAttempts(records, assessment) {
   const seen = new Set();
   const results = [];
   for (const attempt of saved) {
-    const fresh = !seen.has(attempt.form);
-    seen.add(attempt.form);
+    const form = assessment.bank.formFor(attempt);
+    const fresh = form.questions.every(q=>!seen.has(q.id));
+    for (const q of form.questions) seen.add(q.id);
     if (attempt.submittedAt === null) continue;
     results.push({
-      attemptId: attempt.id, formId: attempt.form, title: assessment.formById.get(attempt.form).title,
+      attemptId: attempt.id, formId: attempt.form, title: form.title,
       startedAt: iso(attempt.startedAt), submittedAt: iso(attempt.submittedAt), expired: attempt.expired,
       fresh, ...scoreAttempt(attempt, assessment),
     });

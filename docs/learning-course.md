@@ -10,7 +10,7 @@ this site. They used to live on the separate `amg-exam-portal` Netlify site
 | `/login/` | Shared AMG access code, then name + email | `login/` |
 | `/course/` | Maryland Life course and assessments (gated) | `course/` |
 | `/course/health/` | Maryland Accident & Health: 60 narrated lessons and 484 lesson questions (gated) | `course/health/` |
-| `/course/health/assessments/` | Three 105-minute Health mock exams, saved attempts and results (gated) | `course/health/assessments/` |
+| `/course/health/assessments/` | One 105-minute Health mock exam, rotating questions, saved attempts and results (gated) | `course/health/assessments/` |
 | `/practice/`, `/practice/health/` | Practice test app (single-page app) | `practice/index.html`, `practice-assets/` |
 | `/guides/*.docx` | Life and A&H study guides | `guides/` |
 | `/api/access` | Code check, learner session cookies | `netlify/functions/learning-access.mts` |

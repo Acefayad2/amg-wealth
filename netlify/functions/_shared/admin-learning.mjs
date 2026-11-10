@@ -10,7 +10,7 @@ export function buildAdminLearningSnapshot(user, records, observedAt = Date.now(
   const attempts = [];
   for (const [key, assessment] of assessmentSchemas) {
     for (const attempt of records[key]?.value?.attempts || []) {
-      const form = assessment.formById.get(attempt.form);
+      const form = assessment.bank.formFor(attempt);
       if (!form) continue;
       const answered = attempt.answers.filter(answer => answer !== null).length;
       const submitted = attempt.submittedAt !== null;

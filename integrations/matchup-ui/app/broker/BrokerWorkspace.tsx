@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { signInErrorMessage } from "@/lib/auth-message";
 
 type Organization = { id: string; name: string; slug: string; parentId: string | null };
 type Metrics = { activeAgents: number; calls: number; answeredCalls: number; talkSeconds: number; meetingsBooked: number; meetingsHeld: number };
@@ -95,7 +96,7 @@ export default function BrokerWorkspace() {
     setAuthMessage("");
     const { error: signInError } = await supabase.auth.signInWithPassword({ email: email.trim().toLowerCase(), password });
     setPassword("");
-    setAuthMessage(signInError ? "That email or password was not accepted. Check it and try again." : "Signed in securely.");
+    setAuthMessage(signInError ? signInErrorMessage(signInError) : "Signed in securely.");
     setAuthBusy(false);
   }
 

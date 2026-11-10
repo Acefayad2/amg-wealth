@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildAdminLearningSnapshot, createAdminLearningHandler, persistAdminLearningSnapshot } from '../netlify/functions/_shared/admin-learning.mjs';
+import { buildAdminLearningSnapshot, createAdminLearningHandler, persistAdminLearningSnapshot, refreshAdminLearningSnapshot } from '../netlify/functions/_shared/admin-learning.mjs';
+import { learnerProgressCard } from '../admin/licensing-learning.mjs';
 import { schema } from '../netlify/functions/_shared/learning-core.mjs';
 import fs from 'node:fs';
 
@@ -82,4 +83,36 @@ test('Licensing includes unfinished and completed Health mocks alongside Life at
   assert.equal(active.status,'in_progress'); assert.equal(active.answered,4); assert.equal(active.total,90); assert.equal(active.scorePercent,null);
   assert.equal(snapshot.attempts.find(a=>a.attemptId===finish.id).scorePercent,100);
   assert.equal(snapshot.attempts.length,3);
+});
+
+test('saved Life and Health coursework stay separate, including for older learner snapshots', async () => {
+  const healthLesson = schema.tracks.health.lessons[0];
+  const lifeLesson = schema.lessons[0];
+  const completed = lesson => ({ updatedAt:new Date(NOW).toISOString(), value:{ videoEnded:true, complete:true, answers:lesson.questions.map(q=>q.answer), firstAnswers:lesson.questions.map(q=>q.answer) } });
+  const saved = { ...records, [healthLesson.key]:completed(healthLesson), [lifeLesson.key]:completed(lifeLesson) };
+  const old = buildAdminLearningSnapshot(USER, records, NOW);
+  delete old.courses;
+  const prefix = `users/${old.learnerId}/records/`;
+  const store = { list:async ({prefix:requested}) => { assert.equal(requested,prefix); return {blobs:Object.keys(saved).map(key=>({key:prefix+key}))}; }, get:async key=>saved[key.slice(prefix.length)] };
+  const refreshed = await refreshAdminLearningSnapshot(store,old);
+  assert.equal(refreshed.learnerId,old.learnerId);
+  assert.equal(refreshed.courses.find(c=>c.id==='life').completedLessons,1);
+  assert.equal(refreshed.courses.find(c=>c.id==='health').completedLessons,1);
+  assert.equal(refreshed.courses.find(c=>c.id==='health').totalLessons,schema.tracks.health.lessons.length);
+  assert.equal(refreshed.attempts[0].answered,37);
+});
+
+test('coordinator cards distinguish unfinished work from exam scores and escape learner content', () => {
+  const snapshot = buildAdminLearningSnapshot({ ...USER,name:'<script>unsafe</script>' },records,NOW);
+  const health = schema.tracks.health, healthForm=health.forms[0];
+  snapshot.attempts.push({attemptId:'h',track:'health',kind:'mock',title:healthForm.title,status:'completed',answered:90,total:90,scorePercent:80,submittedAt:new Date(NOW).toISOString()});
+  const html = learnerProgressCard(snapshot);
+  assert(html.includes('&lt;script&gt;unsafe&lt;/script&gt;'));
+  assert(!html.includes('<script>'));
+  assert(html.includes('37 of '));
+  assert(html.includes('In progress'));
+  assert(html.includes('Score 80%'));
+  assert(!html.includes('Score 0%'));
+  assert(html.includes('Life insurance'));
+  assert(html.includes('Accident &amp; health'));
 });

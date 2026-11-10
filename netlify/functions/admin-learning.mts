@@ -1,7 +1,7 @@
 import { getStore } from '@netlify/blobs';
 import { getInquiryPool } from './_shared/inquiry-db.mjs';
 import { getAuthenticatedUser } from './_shared/supabase.mjs';
-import { createAdminLearningHandler } from './_shared/admin-learning.mjs';
+import { createAdminLearningHandler, refreshAdminLearningSnapshot } from './_shared/admin-learning.mjs';
 
 export default createAdminLearningHandler({
   authenticate: async request => (await getAuthenticatedUser(request)).user,
@@ -18,6 +18,11 @@ export default createAdminLearningHandler({
       learners.push(...batch.filter(value => value && typeof value === 'object' && typeof value.email === 'string'));
     }
     learners.sort((a, b) => Date.parse(b.lastActiveAt || 0) - Date.parse(a.lastActiveAt || 0));
-    return { learners: learners.slice((page - 1) * pageSize, page * pageSize), total: learners.length };
+    const selected = learners.slice((page - 1) * pageSize, page * pageSize);
+    const current = [];
+    for (let start = 0; start < selected.length; start += 5) {
+      current.push(...await Promise.all(selected.slice(start, start + 5).map(learner => refreshAdminLearningSnapshot(store, learner))));
+    }
+    return { learners: current, total: learners.length };
   },
 });

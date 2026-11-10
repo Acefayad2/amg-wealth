@@ -1,4 +1,4 @@
-import { licensingSteps, stepUpdates } from '../../licensing-progress/steps.js';
+import { licensingSteps, stepUpdates, selectedStepsForStage } from '../../licensing-progress/steps.js';
 import type { Config } from '@netlify/functions';
 import { getInquiryPool } from './_shared/inquiry-db.mts';
 import { getAuthenticatedUser } from './_shared/supabase.mts';
@@ -97,6 +97,19 @@ export default async function licensingPipeline(request: Request): Promise<Respo
           (full_name,email,phone,recruiter,state,track,exam_date,exam_status,blocker,next_action,follow_up_date,first_check_date,tasks)
           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13::jsonb) RETURNING ${personFields}`, fields));
       }
+      return json({ person: rows[0] });
+    }
+    if (body.action === 'set_stage') {
+      if (!administrator) return json({ error: 'AMG admin access required.' }, 403);
+      const stage = body.stage;
+      if (!Number.isInteger(stage) || (stage as number) < 1 || (stage as number) > 6 || typeof body.id !== 'string' || !/^[0-9a-f-]{36}$/i.test(body.id) || !Number.isSafeInteger(body.expectedVersion)) return json({ error: 'Invalid person, step, or version.' }, 400);
+      const updates = stepUpdates(selectedStepsForStage(stage as number), 'admin');
+      const { rows } = await pool.query(`UPDATE amg_private.licensing_people SET tasks=tasks || $1::jsonb,
+        exam_status=CASE WHEN $2::integer>=3 THEN 'passed' WHEN $2::integer=1 THEN 'studying'
+          WHEN exam_status IN ('failed','rescheduled') THEN exam_status ELSE 'scheduled' END,
+        version=version+1,updated_at=now() WHERE id=$3 AND version=$4 RETURNING ${personFields}`,
+        [JSON.stringify(updates), stage, body.id, body.expectedVersion]);
+      if (!rows.length) return json({ error: 'This record changed. Refresh before moving the slider.' }, 409);
       return json({ person: rows[0] });
     }
     if (body.action === 'set_step') {

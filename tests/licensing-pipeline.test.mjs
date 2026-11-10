@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { transform } from 'esbuild';
-import { licensingSteps, licensingProgress, stepDone, stepUpdates } from '../licensing-progress/steps.js';
+import { licensingSteps, licensingProgress, stepDone, stepUpdates, selectedStepsForStage } from '../licensing-progress/steps.js';
 
 test('five milestones require both license items and both CE/E&O items', () => {
   const person = { tasks: stepUpdates(['exam_booked', 'state_exam_passed'], 'admin') };
@@ -28,7 +28,7 @@ test('imported exam status is honored until an explicit correction is stored', (
 let source = await fs.readFile(new URL('../netlify/functions/licensing-pipeline.mts', import.meta.url), 'utf8');
 source = source.replace(/^import .*?;\n/gm, '').replace('export const config: Config', 'export const config');
 const helpers = new URL('../licensing-progress/steps.js', import.meta.url).href;
-source = `import { licensingSteps, stepUpdates } from ${JSON.stringify(helpers)};\nconst { getInquiryPool, getAuthenticatedUser, getCourseUser, normalizeUsPhone } = globalThis.__amgLicensingTest;\n` + source;
+source = `import { licensingSteps, stepUpdates, selectedStepsForStage } from ${JSON.stringify(helpers)};\nconst { getInquiryPool, getAuthenticatedUser, getCourseUser, normalizeUsPhone } = globalThis.__amgLicensingTest;\n` + source;
 const calls = [];
 let admin = true, stale = false;
 globalThis.__amgLicensingTest = {
@@ -80,4 +80,34 @@ test('invalid milestones and foreign origin cannot change a person', async () =>
   assert.equal((await handler(request({ ...save, completedSteps: ['not-a-step'] }))).status, 400);
   const foreign = new Request('https://amg.example/api/licensing-pipeline', { method: 'POST', headers: { origin: 'https://elsewhere.example' } });
   assert.equal((await handler(foreign)).status, 403);
+});
+
+
+test('slider positions complete earlier steps and reject non-discrete positions', () => {
+  assert.deepEqual(selectedStepsForStage(1), []);
+  assert.deepEqual(selectedStepsForStage(4), ['exam_booked', 'state_exam_passed', 'license_uploaded']);
+  assert.equal(selectedStepsForStage(6).length, 5);
+  for (const value of [0, 7, 2.5, '3', null]) assert.throws(() => selectedStepsForStage(value));
+});
+test('admin slider saves a sequential stage with optimistic version protection', async () => {
+  admin = true; stale = false; calls.length = 0;
+  const move = { action: 'set_stage', id: save.id, expectedVersion: 3, stage: 4 };
+  assert.equal((await handler(request(move))).status, 200);
+  const query = calls.at(-1);
+  assert.match(query.sql, /WHERE id=\$3 AND version=\$4/);
+  assert.match(query.sql, /tasks=tasks \|\| \$1::jsonb/);
+  const tasks = JSON.parse(query.params[0]);
+  assert.equal(tasks.state_exam_passed.done, true);
+  assert.equal(tasks.license_application.done, true);
+  assert.equal(tasks.license_uploaded.done, true);
+  assert.equal(tasks.ce_courses.done, false);
+  assert.equal(tasks.eo_active.done, false);
+  assert.equal(tasks.appointed.done, false);
+  assert.equal(query.params[3], 3);
+  stale = true;
+  assert.equal((await handler(request(move))).status, 409);
+  stale = false;
+  assert.equal((await handler(request({ ...move, stage: 7 }))).status, 400);
+  admin = false;
+  assert.equal((await handler(request(move))).status, 403);
 });

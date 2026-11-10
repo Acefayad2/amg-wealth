@@ -24,6 +24,7 @@ function renderAccountProfile(user, profile = null) {
   $("#account-avatar").textContent = initials(name);
 }
 const inquiryState = { records: [], total: 0, page: 1, pageSize: 25, loading: false, error: "", requestId: 0, controller: null, preview: false };
+let licensingDeletePerson = null;
 const licensingState = { people: [], learners: [], total: 0, tracked: 0, unlicensed: 0, licensed: 0, eoCompleted: 0, appointed: 0, followUpsDue: 0, category: "all", page: 1, pageSize: 25, query: "", status: "", loading: false, error: "", requestId: 0, controller: null, preview: false };
 const learningProgressState = { learners: [], total: 0, page: 1, pageSize: 25, loading: false, error: "", requestId: 0, controller: null };
 let learningProgressTimer = null;
@@ -83,6 +84,8 @@ function resetLicensing() {
   learningProgressState.requestId += 1;
   Object.assign(learningProgressState, { learners: [], total: 0, page: 1, loading: false, error: "", controller: null });
   $("#licensing-learning-dialog").close();
+  $("#licensing-delete-dialog").close();
+  licensingDeletePerson = null;
   renderLearningProgress();
   examCalendarState.requestId += 1; examCalendarState.exams = []; examCalendarState.loading = false;
   lockCalendarSettings();
@@ -266,7 +269,7 @@ function renderLicensing() {
     const stage = progress.label;
     const reminders = licensingReminderLinks(person, navigator);
     const groupText = licensingGroupTextLink(person, navigator);
-    return `<article class="licensing-person" data-person-id="${person.id}"><div class="licensing-person-main"><div class="licensing-avatar">${escapeHtml(initials(person.name))}</div><div class="licensing-person-title"><p class="eyebrow">${escapeHtml(stage)} · ${escapeHtml(person.track === "both" ? "Life + Health" : person.track)}</p><h2>${escapeHtml(person.name)}</h2><p>${person.email ? escapeHtml(person.email) : '<span class="licensing-missing">Add email to connect their checklist</span>'}${person.phone ? ` · ${escapeHtml(person.phone)}` : ""}${person.recruiter ? ` · Upline: ${escapeHtml(person.recruiter)}${person.recruiter_phone ? ` (${escapeHtml(person.recruiter_phone)})` : ""}` : ""}</p></div><span class="licensing-due${due ? " overdue" : ""}">${person.follow_up_date ? `${due ? "Due · " : "Follow up · "}${escapeHtml(person.follow_up_date)}` : "No follow up date"}</span></div>${licensingSlider(person)}${person.next_action || person.blocker ? `<div class="licensing-notes">${person.next_action ? `<p><strong>Next:</strong> ${escapeHtml(person.next_action)}</p>` : ""}${person.blocker ? `<p><strong>Blocker:</strong> ${escapeHtml(person.blocker)}</p>` : ""}</div>` : ""}<div class="licensing-person-actions"><button class="secondary" type="button" data-license-edit="${person.id}">Edit person & progress</button>${reminders.text ? `<a class="secondary" data-license-text-link href="${escapeHtml(reminders.text)}" title="Open a personalized draft in your Messages app">Text reminder</a>` : '<button class="secondary" type="button" disabled title="Add a phone number first">Text reminder</button>'}${groupText ? `<a class="secondary" data-license-group-link href="${escapeHtml(groupText)}" title="Open a group draft with the agent and recruiter / upline">Group text</a>` : '<button class="secondary" type="button" disabled title="Add distinct phone numbers for the agent and recruiter / upline to group text">Group text</button>'}${reminders.email ? `<a class="secondary" data-license-email-link href="${escapeHtml(reminders.email)}" title="Open a personalized draft in your email app">Email reminder</a>` : '<button type="button" class="secondary" disabled title="Add an email first">Email reminder</button>'}</div><p class="licensing-reminder-help">Reminders are written for this step. Open a draft in Messages or your email app, then review and send.</p></article>`;
+    return `<article class="licensing-person" data-person-id="${person.id}"><div class="licensing-person-main"><div class="licensing-avatar">${escapeHtml(initials(person.name))}</div><div class="licensing-person-title"><p class="eyebrow">${escapeHtml(stage)} · ${escapeHtml(person.track === "both" ? "Life + Health" : person.track)}</p><h2>${escapeHtml(person.name)}</h2><p>${person.email ? escapeHtml(person.email) : '<span class="licensing-missing">Add email to connect their checklist</span>'}${person.phone ? ` · ${escapeHtml(person.phone)}` : ""}${person.recruiter ? ` · Upline: ${escapeHtml(person.recruiter)}${person.recruiter_phone ? ` (${escapeHtml(person.recruiter_phone)})` : ""}` : ""}</p></div><span class="licensing-due${due ? " overdue" : ""}">${person.follow_up_date ? `${due ? "Due · " : "Follow up · "}${escapeHtml(person.follow_up_date)}` : "No follow up date"}</span></div>${licensingSlider(person)}${person.next_action || person.blocker ? `<div class="licensing-notes">${person.next_action ? `<p><strong>Next:</strong> ${escapeHtml(person.next_action)}</p>` : ""}${person.blocker ? `<p><strong>Blocker:</strong> ${escapeHtml(person.blocker)}</p>` : ""}</div>` : ""}<div class="licensing-person-actions"><button class="secondary" type="button" data-license-edit="${person.id}">Edit person & progress</button>${reminders.text ? `<a class="secondary" data-license-text-link href="${escapeHtml(reminders.text)}" title="Open a personalized draft in your Messages app">Text reminder</a>` : '<button class="secondary" type="button" disabled title="Add a phone number first">Text reminder</button>'}${groupText ? `<a class="secondary" data-license-group-link href="${escapeHtml(groupText)}" title="Open a group draft with the agent and recruiter / upline">Group text</a>` : '<button class="secondary" type="button" disabled title="Add distinct phone numbers for the agent and recruiter / upline to group text">Group text</button>'}${reminders.email ? `<a class="secondary" data-license-email-link href="${escapeHtml(reminders.email)}" title="Open a personalized draft in your email app">Email reminder</a>` : '<button type="button" class="secondary" disabled title="Add an email first">Email reminder</button>'}<button class="secondary licensing-delete-button" type="button" data-license-delete="${person.id}">Delete person</button></div><p class="licensing-reminder-help">Reminders are written for this step. Open a draft in Messages or your email app, then review and send.</p></article>`;
   }).join("") : loading ? '<p class="empty">Loading people…</p>' : error ? '<p class="empty">Refresh to try again.</p>' : '<div class="learner-empty"><h2>No one in this view yet</h2><p>Add a person to track their licensing steps, or clear the filters to see everyone.</p></div>';
 }
 
@@ -1183,7 +1186,40 @@ $("#licensing-list").addEventListener("change", async (event) => {
     toast(reason.message || 'Could not update step.');
   }
 });
+$("#licensing-delete-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  if (!licensingDeletePerson) return;
+  const person = licensingDeletePerson;
+  const button = $("#licensing-delete-confirm");
+  if (button.disabled) return;
+  button.disabled = true; button.textContent = "Deleting…";
+  $("#licensing-delete-error").textContent = "";
+  try {
+    const result = await licensingApi({ action: "delete_person", id: person.id, expectedVersion: person.version, confirmDelete: true });
+    if (result.deleted !== true || result.id !== person.id) throw new Error("Deletion was not confirmed. Refresh to check this person's status.");
+    $("#licensing-delete-dialog").close();
+    licensingDeletePerson = null;
+    await loadLicensing(licensingState.page);
+    if (!licensingState.people.length && licensingState.page > 1) await loadLicensing(licensingState.page - 1);
+    void loadExamCalendar();
+    toast("Person and licensing records deleted.");
+  } catch (reason) { $("#licensing-delete-error").textContent = reason.message || "Could not delete this person. Try again."; }
+  finally { button.disabled = false; button.textContent = "Delete person & records"; }
+});
+$("#licensing-delete-dialog").addEventListener("close", () => { licensingDeletePerson = null; });
 $("#licensing-list").addEventListener("click", (event) => {
+  const remove = event.target.closest('[data-license-delete]');
+  if (remove) {
+    const person = licensingState.people.find(item => item.id === remove.dataset.licenseDelete);
+    if (!person || licensingState.preview) return;
+    licensingDeletePerson = { ...person };
+    $("#licensing-delete-name").textContent = person.name;
+    $("#licensing-delete-email").textContent = person.email || "No email on file";
+    $("#licensing-delete-error").textContent = "";
+    $("#licensing-delete-dialog").showModal();
+    $("#licensing-delete-dialog [data-close]").focus();
+    return;
+  }
   const edit = event.target.closest('[data-license-edit]');
   if (edit) { openLicensingPerson(licensingState.people.find((person) => person.id === edit.dataset.licenseEdit)); return; }
 

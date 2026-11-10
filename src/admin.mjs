@@ -26,6 +26,7 @@ function renderAccountProfile(user, profile = null) {
 const inquiryState = { records: [], total: 0, page: 1, pageSize: 25, loading: false, error: "", requestId: 0, controller: null, preview: false };
 const licensingState = { people: [], learners: [], total: 0, tracked: 0, unlicensed: 0, licensed: 0, eoCompleted: 0, appointed: 0, followUpsDue: 0, category: "all", page: 1, pageSize: 25, query: "", status: "", loading: false, error: "", requestId: 0, controller: null, preview: false };
 const learningProgressState = { learners: [], total: 0, page: 1, pageSize: 25, loading: false, error: "", requestId: 0, controller: null };
+let learningProgressTimer = null;
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
 const initials = (name) => String(name || "?").split(/\s+/).map((part) => part[0]).join("").slice(0, 2).toUpperCase();
 const contactLabel = (contact) => contact.full_name || contact.phone;
@@ -78,6 +79,7 @@ function resetLicensing() {
   licensingState.requestId += 1;
   Object.assign(licensingState, { people: [], learners: [], total: 0, tracked: 0, unlicensed: 0, licensed: 0, eoCompleted: 0, appointed: 0, followUpsDue: 0, category: "all", page: 1, loading: false, error: "", controller: null });
   learningProgressState.controller?.abort();
+  clearTimeout(learningProgressTimer);
   learningProgressState.requestId += 1;
   Object.assign(learningProgressState, { learners: [], total: 0, page: 1, loading: false, error: "", controller: null });
   $("#licensing-learning-dialog").close();
@@ -285,27 +287,41 @@ async function loadLicensing(page = 1) {
   }
 }
 
-function renderLearningProgress() {
+function renderLearningProgress(updateList = true) {
   const { learners, total, page, pageSize, loading, error } = learningProgressState;
   const pages = Math.max(1, Math.ceil(total / pageSize));
   $("#licensing-activity-list").setAttribute('aria-busy', String(loading));
-  $("#learning-progress-summary").textContent = loading ? 'Loading saved progress…' : error ? 'Progress could not be refreshed.' : `${total.toLocaleString()} ${total === 1 ? 'learner' : 'learners'} · Page ${page} of ${pages}`;
+  $("#learning-progress-summary").textContent = loading ? 'Loading saved progress…' : `${total.toLocaleString()} ${total === 1 ? 'learner' : 'learners'} · Page ${page} of ${pages}`;
   $("#learning-progress-error").hidden = !error;
   $("#learning-progress-error").textContent = error;
-  $("#refresh-learning-progress").disabled = loading;
+  $("#learning-progress-connection").textContent = error ? 'Reconnecting automatically…' : 'Updates automatically';
+  $("#learning-progress-connection").classList.toggle('reconnecting', Boolean(error));
   $("#previous-learning-progress").disabled = loading || page <= 1;
   $("#next-learning-progress").disabled = loading || page >= pages;
   $("#learning-progress-pagination").hidden = pages <= 1;
   $("#learning-progress-page").textContent = `Page ${page} of ${pages}`;
-  $("#licensing-activity-list").innerHTML = loading ? '<p class="empty">Retrieving learner progress…</p>' : error ? '<p class="empty">Use Refresh progress to try again.</p>' : learners.length ? learners.map(learnerProgressCard).join('') : '<div class="learner-empty"><h3>No saved learner activity yet</h3><p>People appear here after signing in to AMG Learning. Completed lessons and saved exam attempts, including unfinished attempts, will appear with their account.</p></div>';
+  if (!updateList) return;
+  const detailState = new Map([...document.querySelectorAll('#licensing-activity-list [data-progress-detail]')].map(detail => [detail.dataset.progressDetail, detail.open]));
+  $("#licensing-activity-list").innerHTML = loading ? '<p class="empty">Retrieving learner progress…</p>' : learners.length ? learners.map(learnerProgressCard).join('') : error ? '<p class="empty">Reconnecting to saved progress automatically…</p>' : '<div class="learner-empty"><h3>No saved learner activity yet</h3><p>People appear here after signing in to AMG Learning. Completed lessons and saved exam attempts, including unfinished attempts, will appear with their account.</p></div>';
+  document.querySelectorAll('#licensing-activity-list [data-progress-detail]').forEach(detail => { if (detailState.has(detail.dataset.progressDetail)) detail.open = detailState.get(detail.dataset.progressDetail); });
 }
 
-async function loadLearningProgress(page = 1) {
+function scheduleLearningProgress() {
+  clearTimeout(learningProgressTimer);
+  if (!$('#licensing-learning-dialog').open) return;
+  learningProgressTimer = setTimeout(() => {
+    if (document.visibilityState === 'visible' && !learningProgressState.loading) void loadLearningProgress(learningProgressState.page, true);
+    else scheduleLearningProgress();
+  }, 15000);
+}
+
+async function loadLearningProgress(page = 1, silent = false) {
   learningProgressState.controller?.abort();
   const requestId = ++learningProgressState.requestId;
   const controller = new AbortController();
-  Object.assign(learningProgressState, { loading: true, error: "", controller });
-  renderLearningProgress();
+  Object.assign(learningProgressState, { loading: true, error: silent ? learningProgressState.error : "", controller });
+  if (!silent) renderLearningProgress();
+  let changed = !silent;
   try {
     if (licensingState.preview) { Object.assign(learningProgressState, { learners: [], total: 0, page: 1 }); return; }
     const { data } = await authClient.auth.getSession();
@@ -316,11 +332,12 @@ async function loadLearningProgress(page = 1) {
     if (requestId !== learningProgressState.requestId) return;
     if (!response.ok) throw new Error(payload.error || 'Course activity could not load.');
     if (!Array.isArray(payload.learners) || !Number.isInteger(payload.total)) throw new Error('Learner progress was incomplete.');
-    Object.assign(learningProgressState, { learners: payload.learners, total: payload.total, page, pageSize: payload.page_size || 25 });
+    changed ||= JSON.stringify(payload.learners) !== JSON.stringify(learningProgressState.learners) || payload.total !== learningProgressState.total;
+    Object.assign(learningProgressState, { learners: payload.learners, total: payload.total, page, pageSize: payload.page_size || 25, error: "" });
   } catch (reason) {
     if (requestId === learningProgressState.requestId) learningProgressState.error = reason.message || 'Course activity could not load.';
   } finally {
-    if (requestId === learningProgressState.requestId) { learningProgressState.loading = false; renderLearningProgress(); }
+    if (requestId === learningProgressState.requestId) { learningProgressState.loading = false; renderLearningProgress(changed); scheduleLearningProgress(); }
   }
 }
 
@@ -1074,7 +1091,8 @@ $('#license-exam-date').addEventListener('change', event => { if (!event.target.
 $('#licensing-settings').addEventListener('click', () => { lockCalendarSettings(); $('#licensing-settings-dialog').showModal(); });
 $('#licensing-settings-dialog').addEventListener('close', lockCalendarSettings);
 $('#licensing-learning').addEventListener('click', () => { $('#licensing-learning-dialog').showModal(); void loadLearningProgress(); });
-$('#refresh-learning-progress').addEventListener('click', () => loadLearningProgress(learningProgressState.page));
+$('#licensing-learning-dialog').addEventListener('close', () => { clearTimeout(learningProgressTimer); learningProgressState.controller?.abort(); learningProgressState.requestId += 1; learningProgressState.loading = false; });
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && $('#licensing-learning-dialog').open) void loadLearningProgress(learningProgressState.page, true); });
 $('#previous-learning-progress').addEventListener('click', () => loadLearningProgress(learningProgressState.page - 1));
 $('#next-learning-progress').addEventListener('click', () => loadLearningProgress(learningProgressState.page + 1));
 $('#calendar-settings-lock').addEventListener('click', lockCalendarSettings);

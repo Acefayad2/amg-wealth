@@ -9,7 +9,7 @@ export default createLearningHandler({
   getUser: getCourseUser,
   getStore: () => getStore({ name: 'amg-learning-v1', consistency: 'strong' }),
   saveAdminSnapshot: persistAdminLearningSnapshot,
-  appsScriptURL: () => Netlify.env.get('AMG_APPS_SCRIPT_URL') || '',
+  reportingTarget: 'dashboard',
   getToken: request => readAccessCookie(request, SESSION_COOKIE),
 });
 

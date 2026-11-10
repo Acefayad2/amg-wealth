@@ -103,6 +103,30 @@ test('every learner visit and unfinished assessment save refreshes the private a
   assert.equal(snapshots[1].records[schema.assessmentKey].value.attempts[0].answers[0], 0);
 });
 
+test('live dashboard reporting uses saved course records without contacting the old spreadsheet', async () => {
+  const s = setup({ reportingTarget:'dashboard', appsScriptURL:()=>SCRIPT, saveAdminSnapshot:async()=>{} });
+  assert.equal((await send(s)).data.reporting.status,'live');
+  const saved = await send(s,envelope());
+  assert.equal(saved.data.record.revision,1);
+  assert.equal(saved.data.reporting.target,'dashboard');
+  assert.equal(saved.data.reporting.status,'live');
+  assert.equal(s.calls.length,0);
+  assert.equal(s.probes.length,0);
+});
+
+test('a temporary coordinator index failure keeps progress saved and automatically retryable', async () => {
+  let failing=true;
+  const s=setup({ reportingTarget:'dashboard', saveAdminSnapshot:async()=>{if(failing)throw Error('temporary');} });
+  const saved=await send(s,envelope());
+  assert.equal(saved.response.status,200);
+  assert.equal(saved.data.record.revision,1);
+  assert.equal(saved.data.reporting.status,'pending');
+  assert.equal(saved.data.reporting.target,'dashboard');
+  failing=false;
+  assert.equal((await send(s,{action:'sync-report'})).data.reporting.status,'live');
+  assert.equal(s.calls.length,0);
+});
+
 test('every current lesson state and all four assessment forms validate', () => {
   for (const lesson of schema.lessons) {
     assert.deepEqual(validateValue(lesson.key, lessonValue(lesson), NOW), lessonValue(lesson));
@@ -327,11 +351,12 @@ test('storage failures are explicit503 and never disclose provider details or cr
   const result = await send(s, envelope()); assert.equal(result.response.status, 503); assert.deepEqual(result.data, { error: 'progress_service_unavailable' });
 });
 
-test('source adapter uses signed server session, strong store and Netlify environment', () => {
+test('production adapter uses signed sessions, strong storage and direct dashboard reporting', () => {
   const source = fs.readFileSync(new URL('../netlify/functions/learning.mts', import.meta.url), 'utf8');
   assert.match(source, /import \{ getCourseUser \} from '\.\.\/shared\/course-user\.ts'/);
   assert.match(source, /getUser: getCourseUser/);
-  assert.match(source, /consistency: 'strong'/); assert.match(source, /Netlify\.env\.get\('AMG_APPS_SCRIPT_URL'\)/);
+  assert.match(source, /consistency: 'strong'/); assert.match(source, /reportingTarget: 'dashboard'/);
+  assert(!source.includes('AMG_APPS_SCRIPT_URL'));
   assert(!source.includes('process.env'));
   assert.match(source, /readAccessCookie\(request, SESSION_COOKIE\)/);
   assert.match(source, /saveAdminSnapshot: persistAdminLearningSnapshot/);

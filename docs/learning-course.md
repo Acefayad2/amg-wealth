@@ -25,9 +25,15 @@ Shared server code is in `netlify/shared/` and `netlify/functions/_shared/learni
   (records were copied over from the exam portal site when the course moved).
 - Environment variables (copied from the exam portal): `AMG_REGISTRATION_CODE`
   (shared access code), `AMG_SESSION_SECRET` (signs sessions and derives learner
-  IDs from email; changing it orphans every saved record), `AMG_APPS_SCRIPT_URL`
-  (Google Sheets reporting, still `pending_authorization`).
+  IDs from email; changing it orphans every saved record). The former
+  `AMG_APPS_SCRIPT_URL` spreadsheet connection is not used by the live course.
 - Session cookies use the `__Host-` prefix, so they belong to this domain only.
+- Lesson saves and unfinished exam attempts update the private learner index
+  automatically. The Licensing coursework view reads those saved records and
+  refreshes every 15 seconds while open and visible, preserving expanded
+  checklists. No learner or coordinator sync button is required. Failed uploads
+  retain pending work and retry automatically; a true save failure is never
+  presented as a successful cloud save.
 
 ## Updating course content
 
@@ -40,7 +46,6 @@ Lesson content and the practice app are still authored and built in
    (`access.mts` is `learning-access.mts` here).
 4. `npm test`, open a pull request, check the deploy preview, merge.
 
-The Google Apps Script reporting source (`scripts/google-sheets/Code.gs` in the
-portal repo) still names `https://amg-exam-portal.netlify.app/api/learning` as its
-fixed endpoint. Point it at `https://anointedmoneygroup.com/api/learning` before
-reporting is enabled.
+The historical Google Apps Script integration remains in the source repository
+for compatibility. Production `/api/learning` explicitly selects dashboard
+reporting and does not call it or send learner tokens to it.

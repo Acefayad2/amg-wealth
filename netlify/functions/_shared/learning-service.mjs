@@ -37,8 +37,9 @@ async function readBody(request) {
 
 async function readRecords(store, prefix) {
   const records = {};
-  for (let start = 0; start < allowedKeys.length; start += 10) {
-    await Promise.all(allowedKeys.slice(start, start + 10).map(async key => {
+  // Two courses share one store: read 20 keys at a time so a second track adds no extra round trips.
+  for (let start = 0; start < allowedKeys.length; start += 20) {
+    await Promise.all(allowedKeys.slice(start, start + 20).map(async key => {
       const entry = await store.getWithMetadata(prefix + 'records/' + key, { type: 'json' });
       if (entry) records[key] = entry.data;
     }));

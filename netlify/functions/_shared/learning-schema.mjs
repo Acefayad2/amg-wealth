@@ -4946,6 +4946,3038 @@ export const schema = {
       ]
     }
   ],
+  "tracks": {
+    "health": {
+      "id": "health",
+      "assessmentKey": "amg-health-assessments-v1",
+      "assessmentVersion": 1,
+      "lessons": [
+        {
+          "id": "01",
+          "title": "Risk, perils and the health peril",
+          "version": 1,
+          "key": "amg-health-lesson-01-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H01-01",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H01-02",
+              "answer": 0,
+              "options": 4
+            },
+            {
+              "id": "H01-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H01-04",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H01-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H01-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H01-07",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H01-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "02",
+          "title": "Handling risk, pooling and insurability",
+          "version": 1,
+          "key": "amg-health-lesson-02-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H02-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H02-02",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H02-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H02-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H02-05",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H02-06",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H02-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H02-08",
+              "answer": 2,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "03",
+          "title": "Insurers, nonprofit plans and HMOs",
+          "version": 1,
+          "key": "amg-health-lesson-03-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H03-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H03-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H03-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H03-04",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H03-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H03-06",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H03-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H03-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "04",
+          "title": "Agency and producer authority",
+          "version": 1,
+          "key": "amg-health-lesson-04-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H04-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H04-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H04-03",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H04-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H04-05",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H04-06",
+              "answer": 0,
+              "options": 4
+            },
+            {
+              "id": "H04-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H04-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "05",
+          "title": "Building and interpreting the contract",
+          "version": 1,
+          "key": "amg-health-lesson-05-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H05-01",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H05-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H05-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H05-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H05-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H05-06",
+              "answer": 0,
+              "options": 4
+            },
+            {
+              "id": "H05-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H05-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "06",
+          "title": "Health losses, benefits and policy classes",
+          "version": 1,
+          "key": "amg-health-lesson-06-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H06-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H06-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H06-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H06-04",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H06-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H06-06",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H06-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H06-08",
+              "answer": 2,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "07",
+          "title": "Federal rules and industry organizations",
+          "version": 1,
+          "key": "amg-health-lesson-07-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H07-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H07-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H07-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H07-04",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H07-05",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H07-06",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H07-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H07-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "08",
+          "title": "Limited policies and their notices",
+          "version": 1,
+          "key": "amg-health-lesson-08-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H08-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H08-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H08-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H08-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H08-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H08-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H08-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H08-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "09",
+          "title": "Common exclusions",
+          "version": 1,
+          "key": "amg-health-lesson-09-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H09-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H09-02",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H09-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H09-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H09-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H09-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H09-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H09-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "10",
+          "title": "Marketing, advertising and the guaranty corporation",
+          "version": 1,
+          "key": "amg-health-lesson-10-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H10-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H10-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H10-03",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H10-04",
+              "answer": 3,
+              "options": 4
+            },
+            {
+              "id": "H10-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H10-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H10-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H10-08",
+              "answer": 2,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "11",
+          "title": "Field underwriting, application and delivery",
+          "version": 1,
+          "key": "amg-health-lesson-11-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H11-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H11-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H11-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H11-04",
+              "answer": 0,
+              "options": 4
+            },
+            {
+              "id": "H11-05",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H11-06",
+              "answer": 0,
+              "options": 4
+            },
+            {
+              "id": "H11-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H11-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "title": "Insurer underwriting and sources of information",
+          "version": 1,
+          "key": "amg-health-lesson-12-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H12-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H12-02",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H12-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H12-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H12-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H12-06",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H12-07",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H12-08",
+              "answer": 0,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "13",
+          "title": "Risk classes and unlawful discrimination",
+          "version": 1,
+          "key": "amg-health-lesson-13-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H13-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H13-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H13-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H13-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H13-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H13-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H13-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H13-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "14",
+          "title": "Replacing health insurance",
+          "version": 1,
+          "key": "amg-health-lesson-14-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H14-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H14-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H14-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H14-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H14-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H14-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H14-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H14-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "15",
+          "title": "Required provisions: contract, defenses and premiums",
+          "version": 1,
+          "key": "amg-health-lesson-15-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H15-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H15-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H15-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H15-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H15-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H15-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H15-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H15-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "16",
+          "title": "Required provisions: the claim clocks",
+          "version": 1,
+          "key": "amg-health-lesson-16-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H16-01",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H16-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H16-03",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H16-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H16-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H16-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H16-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H16-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "17",
+          "title": "Optional provisions and renewability",
+          "version": 1,
+          "key": "amg-health-lesson-17-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H17-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H17-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H17-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H17-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H17-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H17-06",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H17-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H17-08",
+              "answer": 2,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "18",
+          "title": "Medical plan concepts",
+          "version": 1,
+          "key": "amg-health-lesson-18-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H18-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H18-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H18-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H18-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H18-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H18-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H18-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H18-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "19",
+          "title": "Major medical: deductibles, coinsurance and stop-loss",
+          "version": 1,
+          "key": "amg-health-lesson-19-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H19-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H19-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H19-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H19-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H19-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H19-06",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H19-07",
+              "answer": 3,
+              "options": 4
+            },
+            {
+              "id": "H19-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "20",
+          "title": "Health service plans and fixed indemnity",
+          "version": 1,
+          "key": "amg-health-lesson-20-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H20-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H20-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H20-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H20-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H20-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H20-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H20-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H20-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "21",
+          "title": "Health maintenance organizations",
+          "version": 1,
+          "key": "amg-health-lesson-21-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H21-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H21-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H21-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H21-04",
+              "answer": 0,
+              "options": 4
+            },
+            {
+              "id": "H21-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H21-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H21-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H21-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "22",
+          "title": "PPOs, point-of-service plans and TRICARE",
+          "version": 1,
+          "key": "amg-health-lesson-22-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H22-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H22-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H22-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H22-04",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H22-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H22-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H22-07",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H22-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "23",
+          "title": "Cost containment and coordination of benefits",
+          "version": 1,
+          "key": "amg-health-lesson-23-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H23-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H23-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H23-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H23-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H23-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H23-06",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H23-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H23-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "24",
+          "title": "HIPAA portability and renewability",
+          "version": 1,
+          "key": "amg-health-lesson-24-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H24-01",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H24-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H24-03",
+              "answer": 0,
+              "options": 4
+            },
+            {
+              "id": "H24-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H24-05",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H24-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H24-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H24-08",
+              "answer": 2,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "25",
+          "title": "HSAs, HRAs and high-deductible plans",
+          "version": 1,
+          "key": "amg-health-lesson-25-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H25-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H25-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H25-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H25-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H25-05",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H25-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H25-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H25-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "26",
+          "title": "The Affordable Care Act: coverage rules",
+          "version": 1,
+          "key": "amg-health-lesson-26-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H26-01",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H26-02",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H26-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H26-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H26-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H26-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H26-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H26-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "27",
+          "title": "The Affordable Care Act: plans, appeals and subsidies",
+          "version": 1,
+          "key": "amg-health-lesson-27-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H27-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H27-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H27-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H27-04",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H27-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H27-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H27-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H27-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "28",
+          "title": "Qualifying for disability benefits",
+          "version": 1,
+          "key": "amg-health-lesson-28-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H28-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H28-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H28-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H28-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H28-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H28-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H28-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H28-08",
+              "answer": 2,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "29",
+          "title": "Individual disability income: the basic plan",
+          "version": 1,
+          "key": "amg-health-lesson-29-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H29-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H29-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H29-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H29-04",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H29-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H29-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H29-07",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H29-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "30",
+          "title": "Partial, residual and social insurance coordination",
+          "version": 1,
+          "key": "amg-health-lesson-30-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H30-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H30-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H30-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H30-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H30-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H30-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H30-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H30-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "31",
+          "title": "Disability riders, cash benefits and refunds",
+          "version": 1,
+          "key": "amg-health-lesson-31-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H31-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H31-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H31-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H31-04",
+              "answer": 0,
+              "options": 4
+            },
+            {
+              "id": "H31-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H31-06",
+              "answer": 0,
+              "options": 4
+            },
+            {
+              "id": "H31-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H31-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "32",
+          "title": "Underwriting disability income",
+          "version": 1,
+          "key": "amg-health-lesson-32-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H32-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H32-02",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H32-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H32-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H32-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H32-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H32-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H32-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "33",
+          "title": "Group and business disability coverage",
+          "version": 1,
+          "key": "amg-health-lesson-33-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H33-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H33-02",
+              "answer": 0,
+              "options": 4
+            },
+            {
+              "id": "H33-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H33-04",
+              "answer": 3,
+              "options": 4
+            },
+            {
+              "id": "H33-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H33-06",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H33-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H33-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "34",
+          "title": "Social Security disability and workers compensation",
+          "version": 1,
+          "key": "amg-health-lesson-34-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H34-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H34-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H34-03",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H34-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H34-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H34-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H34-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H34-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "35",
+          "title": "Group contracts and eligible groups",
+          "version": 1,
+          "key": "amg-health-lesson-35-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H35-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H35-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H35-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H35-04",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H35-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H35-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H35-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H35-08",
+              "answer": 3,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "36",
+          "title": "Group marketing and employer underwriting",
+          "version": 1,
+          "key": "amg-health-lesson-36-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H36-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H36-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H36-03",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H36-04",
+              "answer": 0,
+              "options": 4
+            },
+            {
+              "id": "H36-05",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H36-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H36-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H36-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "37",
+          "title": "Group eligibility, enrollment and coordination",
+          "version": 1,
+          "key": "amg-health-lesson-37-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H37-01",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H37-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H37-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H37-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H37-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H37-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H37-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H37-08",
+              "answer": 2,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "38",
+          "title": "Changing carriers, continuation and conversion",
+          "version": 1,
+          "key": "amg-health-lesson-38-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H38-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H38-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H38-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H38-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H38-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H38-06",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H38-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H38-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "39",
+          "title": "Small employer plans in Maryland",
+          "version": 1,
+          "key": "amg-health-lesson-39-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H39-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H39-02",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H39-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H39-04",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H39-05",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H39-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H39-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H39-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "40",
+          "title": "Dental insurance",
+          "version": 1,
+          "key": "amg-health-lesson-40-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H40-01",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H40-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H40-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H40-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H40-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H40-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H40-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H40-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "41",
+          "title": "The Maryland Health Benefit Exchange",
+          "version": 1,
+          "key": "amg-health-lesson-41-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H41-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H41-02",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H41-03",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H41-04",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H41-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H41-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H41-07",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H41-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "42",
+          "title": "Medicare Parts A and B",
+          "version": 1,
+          "key": "amg-health-lesson-42-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H42-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H42-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H42-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H42-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H42-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H42-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H42-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H42-08",
+              "answer": 2,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "43",
+          "title": "Medicare Advantage and Part D",
+          "version": 1,
+          "key": "amg-health-lesson-43-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H43-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H43-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H43-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H43-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H43-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H43-06",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H43-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H43-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "44",
+          "title": "Medicare supplement insurance",
+          "version": 1,
+          "key": "amg-health-lesson-44-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H44-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H44-02",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H44-03",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H44-04",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H44-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H44-06",
+              "answer": 3,
+              "options": 4
+            },
+            {
+              "id": "H44-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H44-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "45",
+          "title": "Maryland Medigap protections",
+          "version": 1,
+          "key": "amg-health-lesson-45-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H45-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H45-02",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H45-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H45-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H45-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H45-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H45-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H45-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "46",
+          "title": "Medicare with employer plans and Medicaid",
+          "version": 1,
+          "key": "amg-health-lesson-46-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H46-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H46-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H46-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H46-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H46-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H46-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H46-07",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H46-08",
+              "answer": 2,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "47",
+          "title": "Long-term care insurance",
+          "version": 1,
+          "key": "amg-health-lesson-47-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H47-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H47-02",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H47-03",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H47-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H47-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H47-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H47-07",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H47-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "48",
+          "title": "Maryland long-term care rules and the tax credit",
+          "version": 1,
+          "key": "amg-health-lesson-48-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H48-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H48-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H48-03",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H48-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H48-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H48-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H48-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H48-08",
+              "answer": 2,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "49",
+          "title": "Who needs a Maryland license",
+          "version": 1,
+          "key": "amg-health-lesson-49-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H49-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H49-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H49-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H49-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H49-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H49-06",
+              "answer": 0,
+              "options": 4
+            },
+            {
+              "id": "H49-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H49-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "50",
+          "title": "Keeping the license: renewal, education and reporting",
+          "version": 1,
+          "key": "amg-health-lesson-50-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H50-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H50-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H50-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H50-04",
+              "answer": 3,
+              "options": 4
+            },
+            {
+              "id": "H50-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H50-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H50-07",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H50-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "51",
+          "title": "Appointments and solicitation",
+          "version": 1,
+          "key": "amg-health-lesson-51-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H51-01",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H51-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H51-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H51-04",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H51-05",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H51-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H51-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H51-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "52",
+          "title": "Discipline, hearings and fraud",
+          "version": 1,
+          "key": "amg-health-lesson-52-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H52-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H52-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H52-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H52-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H52-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H52-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H52-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H52-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "53",
+          "title": "MIA powers, records, fees and fiduciary duties",
+          "version": 1,
+          "key": "amg-health-lesson-53-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H53-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H53-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H53-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H53-04",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H53-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H53-06",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H53-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H53-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "54",
+          "title": "Unfair trade practices",
+          "version": 1,
+          "key": "amg-health-lesson-54-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H54-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H54-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H54-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H54-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H54-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H54-06",
+              "answer": 0,
+              "options": 4
+            },
+            {
+              "id": "H54-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H54-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "55",
+          "title": "Adverse underwriting notices and privacy",
+          "version": 1,
+          "key": "amg-health-lesson-55-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H55-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H55-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H55-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H55-04",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H55-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H55-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H55-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H55-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "56",
+          "title": "Maryland plan requirements and mandated benefits",
+          "version": 1,
+          "key": "amg-health-lesson-56-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H56-01",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H56-02",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H56-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H56-04",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H56-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H56-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H56-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H56-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "57",
+          "title": "Taxing personal coverage and health accounts",
+          "version": 1,
+          "key": "amg-health-lesson-57-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H57-01",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H57-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H57-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H57-04",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H57-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H57-06",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H57-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H57-08",
+              "answer": 2,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "58",
+          "title": "Taxing employer, self-employed and business coverage",
+          "version": 1,
+          "key": "amg-health-lesson-58-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H58-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H58-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H58-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H58-04",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H58-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H58-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H58-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H58-08",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "59",
+          "title": "Mixed cases: plans, claims and disability",
+          "version": 1,
+          "key": "amg-health-lesson-59-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H59-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H59-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H59-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H59-04",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H59-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H59-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H59-07",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H59-08",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H59-09",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H59-10",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        },
+        {
+          "id": "60",
+          "title": "Mixed cases: Maryland rules in practice",
+          "version": 1,
+          "key": "amg-health-lesson-60-v1",
+          "maxPosition": 0,
+          "questions": [
+            {
+              "id": "H60-01",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H60-02",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H60-03",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H60-04",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H60-05",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H60-06",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H60-07",
+              "answer": 2,
+              "options": 4
+            },
+            {
+              "id": "H60-08",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H60-09",
+              "answer": 1,
+              "options": 4
+            },
+            {
+              "id": "H60-10",
+              "answer": 1,
+              "options": 4
+            }
+          ]
+        }
+      ],
+      "forms": [],
+      "sourceHashes": {
+        "public/course/health/lesson-01/lesson-data.js": "3ce0db5a256237d8f39e0208bf6db97795763e24c220dcf8fe2ffea2407db84d",
+        "public/course/health/lesson-02/lesson-data.js": "b544034a9ac391167c972a6f2b9064b2d2362bd68d87460bbba80c780db14e22",
+        "public/course/health/lesson-03/lesson-data.js": "cd470c848fb675a0979a357fbcdbaa044f0d93a728f6c5d32e27b909dc169088",
+        "public/course/health/lesson-04/lesson-data.js": "a2eb8f30dbc3be3b3c049868409da9121fe306ee284d94549f578b8bd54ad042",
+        "public/course/health/lesson-05/lesson-data.js": "a76d8053c8720f262f3753fa5c69e315f0d932c05b68ea3e086d516cfdcdf37d",
+        "public/course/health/lesson-06/lesson-data.js": "a17d97a830e8e00d6747505786b71f479b9b284384cbc1912afe6a21dd8ccc63",
+        "public/course/health/lesson-07/lesson-data.js": "4fd63c49fa988d6d8173073e08b641496594becfc10b007f8f55932c0299d6c1",
+        "public/course/health/lesson-08/lesson-data.js": "b267741d19d13137f6c15f26555165b85d31b8f6e851279596610ed2fa56ead1",
+        "public/course/health/lesson-09/lesson-data.js": "e3c1886808bd3aaa13ce14272b9c22b7074a6aa7d677a4183ba67411f8632b20",
+        "public/course/health/lesson-10/lesson-data.js": "8aa3a35851bf3548b66d3a0d5bc270199009098e874f538cdc5ef5fcedbbee01",
+        "public/course/health/lesson-11/lesson-data.js": "5138b2787dd8852a2e553500f87c2178bf02c5bc7795dfbe5430a597a84f2b83",
+        "public/course/health/lesson-12/lesson-data.js": "f2bedf610312ad369415684c01c2cdceb912c59bf0e21fff53417900a59d4cde",
+        "public/course/health/lesson-13/lesson-data.js": "a0d3bed2b63b6d10286463ce8b48a890c83dbb0f7e3f0b9c396c1aab26ca8c53",
+        "public/course/health/lesson-14/lesson-data.js": "19939a00651ae5b234bc2e42b3f9868d8edc9274a2d923ebf04b9be21f80f61d",
+        "public/course/health/lesson-15/lesson-data.js": "e5f67c51bda0e84ee17d010573fa68cf719f82da896485363d7b597d597b0976",
+        "public/course/health/lesson-16/lesson-data.js": "c8ff0b0e7a3926e0320b4979aa5d530cf2ea9649192261b8e5d9fa3aa7f6f1e7",
+        "public/course/health/lesson-17/lesson-data.js": "dbf5ed83930ab5a983b66c294e404825806c4d2f00193b0b1d5e3f9c5ea5953c",
+        "public/course/health/lesson-18/lesson-data.js": "898a1e88554600f10027e6e232725a3a7a8508efa2087fa568608c7e4e4d77dd",
+        "public/course/health/lesson-19/lesson-data.js": "df3a0eabe0cedbb175bda27abac2156c25f5ba155a4da56869c434d409f88914",
+        "public/course/health/lesson-20/lesson-data.js": "c030f6b2c7501663adf9cd912e2bb55c9016f3b6eedc4fad7223f9e1199fbb7a",
+        "public/course/health/lesson-21/lesson-data.js": "043b35fe9a0117f37bea06508d3d9779048ba408334b3095f0e0f8fb55ab6a29",
+        "public/course/health/lesson-22/lesson-data.js": "928a2acebe4d8b50f1825cedb547e369f59c987cc70f99681af24f6d133ee69e",
+        "public/course/health/lesson-23/lesson-data.js": "1a4527fd96e2c40df01364e8686ab17fb3797b1147bed539adfa5966032a67cf",
+        "public/course/health/lesson-24/lesson-data.js": "61e704be047369fc826919902208f5a5a83be69e6c2a3e2aed0680065993e13b",
+        "public/course/health/lesson-25/lesson-data.js": "256d10cb031efcdd46e00c38f86def7a4f9314565e1a244bc40fbbcedc1233ed",
+        "public/course/health/lesson-26/lesson-data.js": "de8c80f8cb3fd96be4a868eab21c0fb5a2303417d6056666ee8f41651146f4b1",
+        "public/course/health/lesson-27/lesson-data.js": "e1417bb196f0ff7a6bc77245f86e71b44fa5827b28ab7b7077b5829c1db97bb2",
+        "public/course/health/lesson-28/lesson-data.js": "e42851579e21263fb21bf4fad765464cca7db59309e376ed85de5f86e1d7e636",
+        "public/course/health/lesson-29/lesson-data.js": "4f0717fcc18e2934200356af1a9f5ac37a50f013c665c259a64bafdbd77cd342",
+        "public/course/health/lesson-30/lesson-data.js": "2bf6ba584c5515238ecb499960532e71efd459fedc05e83221259ab6625b86e6",
+        "public/course/health/lesson-31/lesson-data.js": "4bb0960b3229b979631e40c2c22035c4e5a5102840d8d73da6f8c1008e8091fb",
+        "public/course/health/lesson-32/lesson-data.js": "6ca2f8f54edf556fb2301e48af94ea3b1b63d706644490e6336bc6d58018cbaa",
+        "public/course/health/lesson-33/lesson-data.js": "d1aa1aa2b92a200d8dd9c561d7c19f246ae5a7cb1e3e50dba9a570d480fd2657",
+        "public/course/health/lesson-34/lesson-data.js": "5daeac248518fa09cdb4a43e9ac8feea664c863550d38c404c06d2429de6a4b6",
+        "public/course/health/lesson-35/lesson-data.js": "4cd57f42f65a22d2c1d56e0f84b33aed76ef6925f7bddd1739dc8537bf7a7463",
+        "public/course/health/lesson-36/lesson-data.js": "7c667f293c2201bdaac323dfb908302464ebf234135549926f312ba613bb231c",
+        "public/course/health/lesson-37/lesson-data.js": "ec03e10ca82445db49da5ca594dffc8816e0d339176fd971d6bc3eba19820657",
+        "public/course/health/lesson-38/lesson-data.js": "b2f2e85340694653534c541d59e318102dd0664801b6746d1dc00cb4df4abde9",
+        "public/course/health/lesson-39/lesson-data.js": "a30b36be902fbae26a104fd4a6e4686d9dc98be05cb8e72ff5e2e63704ce1350",
+        "public/course/health/lesson-40/lesson-data.js": "040f1017db39ab40fb9342e53aa86997923de57094f4133eafdfe6757dc9c450",
+        "public/course/health/lesson-41/lesson-data.js": "89fe58befd6e70c41365280f77ecc5d069175e5f79748590f8a091799376f2bd",
+        "public/course/health/lesson-42/lesson-data.js": "2e78711aaafbc022aa8dd9d8d5365f31eca0324cb8e1482cce8bb40a480b4042",
+        "public/course/health/lesson-43/lesson-data.js": "7c80d8e065923fdaf0481d49b23dcff6d90a67837161c965e8afa9ed94616548",
+        "public/course/health/lesson-44/lesson-data.js": "c17537170d3995623e26cda4c81e63930c14dc73cb703899d7026dfe78afac0e",
+        "public/course/health/lesson-45/lesson-data.js": "99dc34678710c2f7c2fcccc02f15b0626694b1ff74c7b488e944ada6b929291d",
+        "public/course/health/lesson-46/lesson-data.js": "6e09b36dae782014893cffcad54f35045c2d8a2fcd0f0a38dc4eb690267cfdf2",
+        "public/course/health/lesson-47/lesson-data.js": "e3ee278d0d2e413b8f767213365b512d64181a1e00b600b22d0fbfff1e4a7839",
+        "public/course/health/lesson-48/lesson-data.js": "dda7f6edc64cdba256f47d8e4040bc08c7a46d1b27369be6c873d0b8687ce1ce",
+        "public/course/health/lesson-49/lesson-data.js": "bd79b5e3b70cf5b64caa95d88d01da07ba5c89cfb106954a8cde8be284241888",
+        "public/course/health/lesson-50/lesson-data.js": "80f9a371e0cd4d9c04e6bed68329c1f9874b8a724c3e22f605f659c078ed49c9",
+        "public/course/health/lesson-51/lesson-data.js": "3476846c75dde9b2ff9bb8c70238749279948fd3a06c9e908ad0e67984569187",
+        "public/course/health/lesson-52/lesson-data.js": "54f656e1b959d60ae0417a98a399df2d9ccbd984a7e7220980c69ec014807273",
+        "public/course/health/lesson-53/lesson-data.js": "6f855074ef21f89d9c23091dfc343c3cb8d7df9ffd38f658023cd4c8125f84a6",
+        "public/course/health/lesson-54/lesson-data.js": "5e8c30d4eea4128d3eb19be47640f2a0228b63e414e8b769ac0284dd6621ad4c",
+        "public/course/health/lesson-55/lesson-data.js": "c5d9174b6bcdb1e083f5d22d9d4ce2b509af732ab60b85c6ac4e66d0d96b1ecf",
+        "public/course/health/lesson-56/lesson-data.js": "2a5ae23ea27747c260340a219567149a63c03fac4d39e016184c6fd9155a4cfa",
+        "public/course/health/lesson-57/lesson-data.js": "d0135da998304feba8be3a8cd4855ba23496edf408a3bd65e1bce88855dff360",
+        "public/course/health/lesson-58/lesson-data.js": "4c6e7494050f0caf938c557127456641cf634136b6627ef5d9938a5f86573bff",
+        "public/course/health/lesson-59/lesson-data.js": "663e9a0ae5d2c7edcf35ce507648262e9df28f26e915cccc95b8e6eb7ca8cf2b",
+        "public/course/health/lesson-60/lesson-data.js": "e2926b39e3efba3c1dc91653b818b860349a75e30855d481841b14526cd60cbb"
+      }
+    }
+  },
   "sourceHashes": {
     "public/course/assessments/assessment-data.js": "0bc2878d9ede3a8d7efe3e2fb05e5df8ef917de11c6bff79c2e6ea8adc0d516e",
     "public/course/lesson-01/lesson-data.js": "b24f10cb9869c9c4db3bcd799d437b980d385412768522a366e350b3f8e08741",

@@ -3,7 +3,9 @@
   const account = await window.AMG_ACCOUNT?.ready; if (!account) return;
   const storage = account.storage;
   const data = window.AMG_LESSON, total = data.questions.length;
-  const key = 'amg-life-lesson-' + data.id + '-v' + data.version;
+  const key = data.key || 'amg-life-lesson-' + data.id + '-v' + data.version;
+  // Text edition: the lesson has no video yet, so reading the lesson is the route to the questions.
+  const textEdition = data.pending === true || !data.video;
   const $ = id => document.getElementById(id);
   const newAttemptId = () => window.crypto?.randomUUID?.() || 'attempt-' + Date.now() + '-' + Math.random().toString(36).slice(2);
   const blank = (practiceAttemptId = newAttemptId()) => ({practiceAttemptId, answers:Array(total).fill(null), firstAnswers:Array(total).fill(null), firstAnswerAt:Array(total).fill(null), attempts:Array(total).fill(0), videoEnded:false, transcriptRead:false, complete:false, position:0, completedAt:null});
@@ -94,7 +96,8 @@
   if (data.video) video.src = data.video;
   if (data.poster) video.poster = data.poster;
   const track = document.createElement('track');
-  Object.assign(track,{kind:'captions',label:'English',srclang:'en',src:'scene-captions.vtt',default:true});
+  Object.assign(track,{kind:'captions',label:'English',srclang:'en',default:true});
+  if (!textEdition) track.src = 'scene-captions.vtt';
   video.append(track);
   // Optional reference material stays closed until a learner follows its anchor.
   function revealReference(hash, focus = false) {
@@ -154,10 +157,11 @@
     const answered = state.firstAnswers.filter(a => a !== null).length;
     $('lesson-progress').max = total; $('lesson-progress').value = correct;
     $('progress-label').textContent = correct + ' of ' + total + ' questions understood';
-    $('watch-status').textContent = contentReady() ? (state.videoEnded ? 'Video finished' : 'Transcript study recorded') + ' · Lesson questions unlocked' : 'Watch the lesson, or study the full transcript, then complete the required questions.';
+    $('watch-status').textContent = contentReady() ? (state.videoEnded ? 'Video finished' : textEdition ? 'Lesson read' : 'Transcript study recorded') + ' · Lesson questions unlocked' : textEdition ? 'Read the lesson above, then open the required questions.' : 'Watch the lesson, or study the full transcript, then complete the required questions.';
     $('open-check').disabled = !contentReady();
+    document.body.classList.toggle('content-ready',contentReady());
     $('open-check').textContent = state.complete ? 'Review lesson answers' : (answered ? 'Continue lesson questions' : 'Open lesson questions');
-    $('result').textContent = contentReady() ? correct + ' of ' + total + ' questions correct after review. First answers: ' + first + ' of ' + answered + '.' : 'Finish the video or transcript study to unlock the ' + total + ' lesson questions.';
+    $('result').textContent = contentReady() ? correct + ' of ' + total + ' questions correct after review. First answers: ' + first + ' of ' + answered + '.' : (textEdition ? 'Read the lesson to unlock the ' : 'Finish the video or transcript study to unlock the ') + total + ' lesson questions.';
     $('complete').disabled = !contentReady() || !mastered() || state.complete;
     $('complete').textContent = state.complete ? 'Lesson finished' : 'Finish this lesson';
     $('completion-status').textContent = state.complete ? 'Part ' + data.number + ' is complete. Continue to the next lesson when you are ready.' : 'Answer every question correctly, using the explanations and retries as needed, to finish Part ' + data.number + '.';
@@ -275,7 +279,7 @@
   video.addEventListener('ended',async () => { const applied = await mutate(() => { state.videoEnded = true; }); if (applied && !state.complete) openCheck(); });
   $('open-check').addEventListener('click',openCheck);
   $('transcript-ready').addEventListener('click',async () => { if (await mutate(() => { state.transcriptRead = true; })) openCheck(); });
-  const savePosition = () => { if (Number.isFinite(video.currentTime)) { const position = video.currentTime; mutate(() => { state.position = position; }); } };
+  const savePosition = () => { if (!textEdition && Number.isFinite(video.currentTime)) { const position = video.currentTime; mutate(() => { state.position = position; }); } };
   video.addEventListener('pause',savePosition);
   window.addEventListener('pagehide',savePosition);
   $('close-check').addEventListener('click',() => dialog.close());

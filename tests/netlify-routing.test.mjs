@@ -40,7 +40,7 @@ test('AMG Learning is served from this site, not proxied to the old exam portal'
 })
 
 test('AMG Learning pages, practice bundle and study guides ship with the site', () => {
-  for (const file of ['course/index.html', 'course/assessments/index.html', 'course/lesson-01/index.html', 'course/lesson-60/index.html', 'login/index.html', 'practice/index.html', 'guides/accident-health.docx', 'guides/life-producer.docx']) {
+  for (const file of ['course/index.html', 'course/assessments/index.html', 'course/lesson-01/index.html', 'course/lesson-60/index.html', 'course/health/index.html', 'course/health/lesson-01/index.html', 'course/health/lesson-60/index.html', 'login/index.html', 'practice/index.html', 'guides/accident-health.docx', 'guides/life-producer.docx']) {
     assert.ok(fs.existsSync(new URL('../' + file, import.meta.url)), file)
   }
   const practice = fs.readFileSync(new URL('../practice/index.html', import.meta.url), 'utf8')

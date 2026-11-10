@@ -2,10 +2,14 @@ import { createHash } from 'node:crypto';
 import { schema } from './learning-schema.mjs';
 
 export { schema };
-export const lessonByKey = new Map(schema.lessons.map(lesson => [lesson.key, lesson]));
-export const formById = new Map(schema.forms.map(form => [form.id, form]));
-export const allowedKeys = [...lessonByKey.keys(), schema.assessmentKey];
-const questionIds = new Set([...schema.lessons, ...schema.forms].flatMap(item => item.questions.map(q => q.id)));
+// Tracks (for example Health) share the lesson rules and, once they have forms, the assessment rules.
+export const tracks = Object.values(schema.tracks || {});
+export const lessonByKey = new Map([...schema.lessons, ...tracks.flatMap(track => track.lessons)].map(lesson => [lesson.key, lesson]));
+const assessmentSchema = (key, version, lessons, forms) => ({ key, version, forms, formById: new Map(forms.map(form => [form.id, form])), questionIds: new Set([...lessons, ...forms].flatMap(item => item.questions.map(q => q.id))) });
+const lifeAssessment = assessmentSchema(schema.assessmentKey, schema.assessmentVersion, schema.lessons, schema.forms);
+export const assessmentSchemas = new Map([lifeAssessment, ...tracks.filter(track => track.forms.length).map(track => assessmentSchema(track.assessmentKey, track.assessmentVersion, track.lessons, track.forms))].map(item => [item.key, item]));
+export const formById = lifeAssessment.formById;
+export const allowedKeys = [...lessonByKey.keys(), ...assessmentSchemas.keys()];
 const MAX_ATTEMPTS = 500;
 const DAY = 86400000;
 
@@ -48,11 +52,12 @@ export function validateLesson(value, lesson, now) {
   return value;
 }
 
-export function validateAssessment(value, now, previous = null) {
+export function validateAssessment(value, now, previous = null, assessment = lifeAssessment) {
+  const { formById, questionIds } = assessment;
   fields(value, ['version', 'attempts', 'seen', 'reviews', 'lessonImports']);
-  assert(value.version === schema.assessmentVersion, 'Unsupported assessment version');
+  assert(value.version === assessment.version, 'Unsupported assessment version');
   assert(Array.isArray(value.attempts) && value.attempts.length <= MAX_ATTEMPTS, 'Too many assessment attempts');
-  assert(Array.isArray(value.seen) && value.seen.length <= schema.forms.length && new Set(value.seen).size === value.seen.length && value.seen.every(id => formById.has(id)), 'Invalid form history');
+  assert(Array.isArray(value.seen) && value.seen.length <= assessment.forms.length && new Set(value.seen).size === value.seen.length && value.seen.every(id => formById.has(id)), 'Invalid form history');
   const used = new Set();
   for (const attempt of value.attempts) {
     fields(attempt, ['id', 'form', 'startedAt', 'deadline', 'submittedAt', 'expired', 'fresh', 'answers', 'flags', 'uncertain', 'reviewed', 'current']);
@@ -101,14 +106,15 @@ export function validateAssessment(value, now, previous = null) {
       numericTime(entry.at, now);
     }
   }
-  assert(object(value.lessonImports) && Object.keys(value.lessonImports).length <= 60, 'Invalid lesson review imports');
+  assert(object(value.lessonImports) && Object.keys(value.lessonImports).length <= lessonByKey.size, 'Invalid lesson review imports');
   for (const [key, fingerprint] of Object.entries(value.lessonImports)) { assert(lessonByKey.has(key), 'Unknown imported lesson'); string(fingerprint, 6000); }
   return value;
 }
 
 export function validateValue(key, value, now, previous) {
   assert(allowedKeys.includes(key), 'Unknown progress key');
-  return key === schema.assessmentKey ? validateAssessment(value, now, previous) : validateLesson(value, lessonByKey.get(key), now);
+  const assessment = assessmentSchemas.get(key);
+  return assessment ? validateAssessment(value, now, previous, assessment) : validateLesson(value, lessonByKey.get(key), now);
 }
 
 export function canonical(value) {
@@ -148,12 +154,16 @@ export function buildReport(user, records) {
   const mocks = attempts.filter(attempt => attempt.formId !== 'D');
   const active = lessons.filter(lesson => lesson.lastActiveAt).sort((a, b) => b.lastActiveAt.localeCompare(a.lastActiveAt))[0];
   const timestamps = Object.values(records).map(record => record.updatedAt).filter(Boolean).sort();
-  return { summary: { uid: user.id, name: user.name || '', email: user.email, completedLessons, totalLessons: 60, progressPercent: percent(completedLessons, 60), currentLesson: active?.lessonId || null, lastActiveAt: timestamps.at(-1) || null, questionMastery: percent(lessons.reduce((count, lesson) => count + lesson.correct, 0), lessons.reduce((count, lesson) => count + lesson.total, 0)), diagnosticScore: diagnostic?.percentage ?? null, bestMockScore: mocks.length ? Math.max(...mocks.map(attempt => attempt.percentage)) : null, latestMockScore: mocks.at(-1)?.percentage ?? null, practiceAttempts: attempts.length, courseCompletedAt: completedLessons === 60 ? lessons.map(lesson => lesson.completedAt).sort().at(-1) : null }, lessons, attempts };
+  const trackReports = Object.fromEntries(tracks.map(track => {
+    const items = track.lessons.map(lesson => { const value = records[lesson.key]?.value; const ready = value?.videoEnded === true || value?.transcriptRead === true; const correct = ready ? lesson.questions.filter((q, i) => value.answers[i] === q.answer).length : 0; return { lessonId: lesson.id, title: lesson.title, complete: Boolean(ready && value?.complete === true && correct === lesson.questions.length), correct, total: lesson.questions.length, lastActiveAt: records[lesson.key]?.updatedAt || null }; });
+    return [track.id, { completedLessons: items.filter(item => item.complete).length, totalLessons: items.length, lessons: items }];
+  }));
+  return { summary: { uid: user.id, name: user.name || '', email: user.email, completedLessons, totalLessons: 60, progressPercent: percent(completedLessons, 60), currentLesson: active?.lessonId || null, lastActiveAt: timestamps.at(-1) || null, questionMastery: percent(lessons.reduce((count, lesson) => count + lesson.correct, 0), lessons.reduce((count, lesson) => count + lesson.total, 0)), diagnosticScore: diagnostic?.percentage ?? null, bestMockScore: mocks.length ? Math.max(...mocks.map(attempt => attempt.percentage)) : null, latestMockScore: mocks.at(-1)?.percentage ?? null, practiceAttempts: attempts.length, courseCompletedAt: completedLessons === 60 ? lessons.map(lesson => lesson.completedAt).sort().at(-1) : null }, lessons, attempts, tracks: trackReports };
 }
 
 // Position and active-question navigation remain cloud-saved without a Sheets write.
 export function reportingSignature(key, value) {
-  if (key === schema.assessmentKey) return hash((value?.attempts || []).filter(attempt => attempt.submittedAt !== null).map(({ id, form, startedAt, submittedAt, expired, answers }) => ({ id, form, startedAt, submittedAt, expired, answers })));
+  if (assessmentSchemas.has(key)) return hash((value?.attempts || []).filter(attempt => attempt.submittedAt !== null).map(({ id, form, startedAt, submittedAt, expired, answers }) => ({ id, form, startedAt, submittedAt, expired, answers })));
   const empty = Array(lessonByKey.get(key).questions.length).fill(null);
   return hash({ answers: value?.answers || empty, firstAnswers: value?.firstAnswers || empty, complete: value?.complete === true, videoEnded: value?.videoEnded === true, transcriptRead: value?.transcriptRead === true });
 }

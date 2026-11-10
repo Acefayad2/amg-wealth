@@ -166,6 +166,28 @@ test('weekly exam query spans seven days and includes all bookings beyond list p
   assert.equal((await handler(new Request('https://amg.example/api/licensing-pipeline?calendar_week=2026-11-10',{headers:{authorization:'Bearer test'}}))).status,400);
 });
 
+test('only an administrator can delete a person, with explicit confirmation and their current version', async () => {
+  const deletion = { action: 'delete_person', id: save.id, expectedVersion: 3, confirmDelete: true };
+  admin = false; calls.length = 0;
+  assert.equal((await handler(request(deletion))).status, 403);
+  assert.equal(calls.length, 0);
+  admin = true;
+  for (const patch of [{ confirmDelete: false }, { expectedVersion: null }, { expectedVersion: 0 }, { id: 'bad-id' }]) {
+    calls.length = 0;
+    assert.equal((await handler(request({ ...deletion, ...patch }))).status, 400);
+    assert(!calls.some(call => call.sql.startsWith('DELETE')));
+  }
+  calls.length = 0; stale = false;
+  const result = await handler(request(deletion));
+  assert.equal(result.status, 200);
+  assert.deepEqual(await result.json(), { deleted: true, id: save.id });
+  const query = calls.at(-1);
+  assert.match(query.sql, /^DELETE FROM amg_private\.licensing_people WHERE id=\$1 AND version=\$2 RETURNING id$/);
+  assert.deepEqual(query.params, [save.id, 3]);
+  stale = true;
+  assert.equal((await handler(request(deletion))).status, 409);
+  stale = false;
+});
 
 
 test('malformed JSON and non-object bodies return 400 without writes', async () => {

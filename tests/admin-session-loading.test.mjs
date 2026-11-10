@@ -16,7 +16,7 @@ function setup({ user = { id: "admin" }, profile = null, profileResult = null, a
   let signOutCalls = 0;
   const fields = Object.fromEntries([
     "#startup-view", "#auth-view", "#app", "#startup-title", "#startup-status",
-    "#startup-error-actions", "#login-error", "#delivery-loading", "#confirm-schedule-save", "#login-submit", "#login-email", "#login-password", "#account-profile", "#account-name", "#account-email", "#account-avatar",
+    "#startup-error-actions", "#login-error", "#delivery-loading", "#confirm-schedule-save", "#licensing-delete-confirm", "#login-submit", "#login-email", "#login-password", "#account-profile", "#account-name", "#account-email", "#account-avatar",
   ].map((selector) => [selector, { hidden: selector !== "#startup-view", textContent: "", removeAttribute() {} }]));
   const context = {
     state: { contacts: [{ full_name: "Private contact" }], messages: [{ body: "Private text" }] },

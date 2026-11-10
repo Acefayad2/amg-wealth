@@ -148,4 +148,3 @@ export function recurringCalendarEntries(reminder, dates) {
     }];
   });
 }
-

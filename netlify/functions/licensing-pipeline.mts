@@ -92,6 +92,13 @@ export default async function licensingPipeline(request: Request): Promise<Respo
       return json({ person: rows[0] });
     }
     const body = await readBody(request);
+    if (body.action === 'delete_person') {
+      if (!administrator) return json({ error: 'AMG admin access required.' }, 403);
+      if (typeof body.id !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(body.id) || !Number.isSafeInteger(body.expectedVersion) || (body.expectedVersion as number) < 1 || body.confirmDelete !== true) return json({ error: 'Confirm the person and current record before deleting.' }, 400);
+      const { rows } = await pool.query(`DELETE FROM amg_private.licensing_people WHERE id=$1 AND version=$2 RETURNING id`, [body.id, body.expectedVersion]);
+      if (!rows.length) return json({ error: 'This person was changed or deleted. Refresh before trying again.' }, 409);
+      return json({ deleted: true, id: rows[0].id });
+    }
     if (body.action === 'save_person' && administrator) {
       const name = clean(body.name), email = clean(body.email) ? emailOf(body.email) : null;
       if (!name || (clean(body.email) && !email) || !tracks.has(body.track as string) || !examStatuses.has(body.examStatus as string)) return json({ error: 'Name, email, track, or exam status is invalid.' }, 400);
@@ -179,4 +186,3 @@ export default async function licensingPipeline(request: Request): Promise<Respo
 }
 
 export const config: Config = { path: '/api/licensing-pipeline' };
-

@@ -354,12 +354,13 @@ test('storage failures are explicit503 and never disclose provider details or cr
 test('production adapter uses signed sessions, strong storage and direct dashboard reporting', () => {
   const source = fs.readFileSync(new URL('../netlify/functions/learning.mts', import.meta.url), 'utf8');
   assert.match(source, /import \{ getCourseUser \} from '\.\.\/shared\/course-user\.ts'/);
-  assert.match(source, /getUser: getCourseUser/);
+  assert.match(source, /const baseUser = await getCourseUser\(request\)/);
+  assert.match(source, /withLearningIdentity\(store, baseUser/);
   assert.match(source, /consistency: 'strong'/); assert.match(source, /reportingTarget: 'dashboard'/);
   assert(!source.includes('AMG_APPS_SCRIPT_URL'));
   assert(!source.includes('process.env'));
   assert.match(source, /readAccessCookie\(request, SESSION_COOKIE\)/);
-  assert.match(source, /saveAdminSnapshot: persistAdminLearningSnapshot/);
+  assert.match(source, /await persistAdminLearningSnapshot\(target, profile, records\)/);
   assert(!source.includes('@netlify/identity'));
   assert(!source.includes('nf_jwt'));
   assert(!source.includes('VITE_APPS_SCRIPT_URL'), 'Legacy build-time endpoint must never become a reporting destination');
@@ -434,4 +435,21 @@ test('Health mocks resume and score against their own key, including when Life u
   assert.equal(report.tracks.health.latestMockScore, 100);
   const wrongKey = { ...assessmentValue([finished]), lessonImports:{[schema.lessons[0].key]:'a'} };
   assert.throws(() => validateValue(health.assessmentKey, wrongKey, NOW), /imported lesson/);
+});
+
+test('reset learning identities expose their verified account binding and reject stale browser writes', async () => {
+  const identity = { ...USER, id: USER.id + ':new-generation', accountId: USER.id };
+  const s = setup({ getUser: async () => identity });
+  const loaded = await send(s);
+  assert.equal(loaded.response.status, 200);
+  assert.equal(loaded.data.user.accountId, USER.id);
+  assert.equal(loaded.data.user.id, identity.id);
+  assert.deepEqual(loaded.data.records, {});
+  const stale = await send(s, envelope());
+  assert.equal(stale.response.status, 403);
+  assert.equal(s.store.writes.length, 0);
+  const fresh = await send(s, envelope(), { headers: { 'X-AMG-User': identity.id } });
+  assert.equal(fresh.response.status, 200);
+  assert(s.store.data.has(userPrefix(identity.id) + 'records/' + schema.lessons[0].key));
+  assert(!s.store.data.has(userPrefix(USER.id) + 'records/' + schema.lessons[0].key));
 });

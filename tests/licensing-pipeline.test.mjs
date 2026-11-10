@@ -28,10 +28,14 @@ test('imported exam status is honored until an explicit correction is stored', (
 let source = await fs.readFile(new URL('../netlify/functions/licensing-pipeline.mts', import.meta.url), 'utf8');
 source = source.replace(/^import .*?;\n/gm, '').replace('export const config: Config', 'export const config');
 const helpers = new URL('../licensing-progress/steps.js', import.meta.url).href;
-source = `import { licensingSteps, stepUpdates, selectedStepsForStage } from ${JSON.stringify(helpers)};\nconst { getInquiryPool, getAuthenticatedUser, getCourseUser, normalizeUsPhone } = globalThis.__amgLicensingTest;\n` + source;
+source = `import { licensingSteps, stepUpdates, selectedStepsForStage } from ${JSON.stringify(helpers)};\nconst { getInquiryPool, getAuthenticatedUser, getCourseUser, normalizeUsPhone, getStore, learnerId, learningIdentity, deleteLicensingPerson } = globalThis.__amgLicensingTest;\n` + source;
 const calls = [];
 let admin = true, stale = false;
 globalThis.__amgLicensingTest = {
+  getStore: () => ({}),
+  learnerId: async email => 'test-base-user',
+  learningIdentity: async (store,user) => ({ ...user, resetGeneration:false }),
+  deleteLicensingPerson: async (pool,store,id,version) => { calls.push({sql:'ERASE_LEARNING_AND_DELETE',params:[id,version]}); return stale ? null : {id}; },
   getInquiryPool: () => ({ query: async (sql, params) => {
     calls.push({ sql, params });
     if (sql.startsWith('SELECT 1')) return { rows: [{ exists: 1 }] };
@@ -182,7 +186,7 @@ test('only an administrator can delete a person, with explicit confirmation and 
   assert.equal(result.status, 200);
   assert.deepEqual(await result.json(), { deleted: true, id: save.id });
   const query = calls.at(-1);
-  assert.match(query.sql, /^DELETE FROM amg_private\.licensing_people WHERE id=\$1 AND version=\$2 RETURNING id$/);
+  assert.equal(query.sql, 'ERASE_LEARNING_AND_DELETE');
   assert.deepEqual(query.params, [save.id, 3]);
   stale = true;
   assert.equal((await handler(request(deletion))).status, 409);

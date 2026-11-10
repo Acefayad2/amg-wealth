@@ -49,3 +49,11 @@ Lesson content and the practice app are still authored and built in
 The historical Google Apps Script integration remains in the source repository
 for compatibility. Production `/api/learning` explicitly selects dashboard
 reporting and does not call it or send learner tokens to it.
+
+## Deleting a person and their learning history
+
+The Licensing card's **Delete person** action removes the version-checked pipeline row and all linked saved Life/Health lesson records, diagnostic/mock attempts (finished or unfinished), reporting state, and coordinator snapshot. Learning records are linked by the person's saved email. The action holds the pipeline row lock until the storage purge succeeds; failures keep the row available for retry.
+
+A small hashed reset marker rotates that learner's storage namespace. Open pages cannot upload the erased generation again. Returning learners receive an empty namespace, and the browser adapter does not load their old local cache. Simply refreshing an old checklist or empty classroom does not recreate the deleted pipeline row or coordinator snapshot; admins can explicitly add the person again, and new course activity is tracked as new progress.
+
+Production identity/reset guards live in this repository's `learning.mts` and `learning-deletion.mjs`. Preserve them when importing future lesson builds. The source account adapter in `amg-practice-exam` also supports the server's stable `accountId` binding when the storage namespace changes.

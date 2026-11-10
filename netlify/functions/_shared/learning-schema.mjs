@@ -3338,8 +3338,8 @@ export const schema = {
     },
     {
       "id": "A",
-      "title": "Timed Form A",
-      "minutes": 105,
+      "title": "Life practice set A",
+      "minutes": 0,
       "questions": [
         {
           "id": "A-1-11",
@@ -3975,8 +3975,8 @@ export const schema = {
     },
     {
       "id": "B",
-      "title": "Timed Form B",
-      "minutes": 105,
+      "title": "Life practice set B",
+      "minutes": 0,
       "questions": [
         {
           "id": "B-6-05",
@@ -4612,8 +4612,8 @@ export const schema = {
     },
     {
       "id": "C",
-      "title": "Timed Form C",
-      "minutes": 105,
+      "title": "Life practice set C",
+      "minutes": 0,
       "questions": [
         {
           "id": "C-7-05",
@@ -8256,7 +8256,7 @@ export const schema = {
         {
           "id": "A",
           "title": "Health Mock Exam A",
-          "minutes": 105,
+          "minutes": 0,
           "questions": [
             {
               "id": "HM-A-1-1",
@@ -8893,7 +8893,7 @@ export const schema = {
         {
           "id": "B",
           "title": "Health Mock Exam B",
-          "minutes": 105,
+          "minutes": 0,
           "questions": [
             {
               "id": "HM-B-4-4",
@@ -9530,7 +9530,7 @@ export const schema = {
         {
           "id": "C",
           "title": "Health Mock Exam C",
-          "minutes": 105,
+          "minutes": 0,
           "questions": [
             {
               "id": "HM-C-1-21",
@@ -10263,12 +10263,12 @@ export const schema = {
         "public/course/health/lesson-58/lesson-data.js": "4c6e7494050f0caf938c557127456641cf634136b6627ef5d9938a5f86573bff",
         "public/course/health/lesson-59/lesson-data.js": "663e9a0ae5d2c7edcf35ce507648262e9df28f26e915cccc95b8e6eb7ca8cf2b",
         "public/course/health/lesson-60/lesson-data.js": "e2926b39e3efba3c1dc91653b818b860349a75e30855d481841b14526cd60cbb",
-        "public/course/health/assessments/assessment-data.js": "836f668bcbc31462a4e3fa6d0cdd5767998108543e46530a4862515d76b7a405"
+        "public/course/health/assessments/assessment-data.js": "572652cf1d2bd1ca219313b07687c05479850f7838bac4c2d03c9411d564edbf"
       }
     }
   },
   "sourceHashes": {
-    "public/course/assessments/assessment-data.js": "a003ffe521f8294102ed9696b8d370f12398b606bc388013766817adf38335eb",
+    "public/course/assessments/assessment-data.js": "0aa4f382cd30fbd1eea5c412815c1797763d01361e2bdc66b21e77caef0d757e",
     "public/course/lesson-01/lesson-data.js": "b24f10cb9869c9c4db3bcd799d437b980d385412768522a366e350b3f8e08741",
     "public/course/lesson-02/lesson-data.js": "1f58275a57be5cb53da3172ce0d6d418de8983be64a462ff46f8e8571ac17b3e",
     "public/course/lesson-03/lesson-data.js": "2f9261be594f74062ed35841790b6da7630590ff332ec8dedf3868a3992762ee",

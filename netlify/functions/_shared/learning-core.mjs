@@ -15,6 +15,8 @@ const lifeAssessment = assessmentSchema('life',schema.assessmentKey,schema.asses
 export const assessmentSchemas = new Map([lifeAssessment,...tracks.filter(t=>t.forms.length).map(t=>assessmentSchema(t.id,t.assessmentKey,t.assessmentVersion,t.lessons,t.forms,t.extraQuestions))].map(s=>[s.key,s]));
 export const formById = lifeAssessment.formById;
 export const allowedKeys = [...lessonByKey.keys(), ...assessmentSchemas.keys()];
+// Used only to recognize records saved before the mocks became untimed.
+const LEGACY_MOCK_DURATION_MS = 105 * 60_000;
 const MAX_ATTEMPTS = 500;
 const DAY = 86400000;
 
@@ -57,12 +59,17 @@ export function validateLesson(value, lesson, now) {
   return value;
 }
 
-export function validateAssessment(value, now, previous = null, assessment = lifeAssessment) {
+export function validateAssessment(value, now, previous, assessment = lifeAssessment) {
   const { formById, questionIds, bank } = assessment;
   fields(value, ['version', 'attempts', 'seen', 'reviews', 'lessonImports']);
   assert(value.version === assessment.version, 'Unsupported assessment version');
   assert(Array.isArray(value.attempts) && value.attempts.length <= MAX_ATTEMPTS, 'Too many assessment attempts');
   assert(Array.isArray(value.seen) && value.seen.length <= assessment.forms.length + 1 && new Set(value.seen).size === value.seen.length && value.seen.every(id => id === bank.id || formById.has(id)), 'Invalid form history');
+  // The first validation checks the request shape before looking up idempotent retries.
+  // The commit-time validation also receives the stored history (null on a first write).
+  const savedAttempts = previous === undefined
+    ? null
+    : new Map((previous?.attempts || []).map(attempt => [attempt.id, attempt]));
   const used = new Set();
   for (const attempt of value.attempts) {
     fields(attempt, ['id', 'form', 'startedAt', 'deadline', 'submittedAt', 'expired', 'fresh', 'answers', 'flags', 'uncertain', 'reviewed', 'current', ...(attempt?.form === bank.id ? ['questionIds'] : [])]);
@@ -70,11 +77,18 @@ export function validateAssessment(value, now, previous = null, assessment = lif
     assert(!used.has(attempt.id), 'Duplicate attempt ID'); used.add(attempt.id);
     const form = bank.formFor(attempt); assert(form, 'Unknown assessment form or invalid track question set');
     numericTime(attempt.startedAt, now);
-    assert(attempt.deadline === (form.minutes ? attempt.startedAt + form.minutes * 60000 : null), 'Timer deadline cannot change');
+    if (attempt.deadline !== null) {
+      assert(form.id !== 'D' && attempt.deadline === attempt.startedAt + LEGACY_MOCK_DURATION_MS, 'Invalid historical deadline');
+      if (savedAttempts) {
+        const saved = savedAttempts.get(attempt.id);
+        if (saved?.deadline !== attempt.deadline || (attempt.expired && !saved.expired)) {
+          throw new InputError('Reload this exam to continue without a timer.', 409);
+        }
+      }
+    }
     if (attempt.submittedAt !== null) {
       numericTime(attempt.submittedAt, now);
       assert(attempt.submittedAt >= attempt.startedAt, 'Submission precedes attempt');
-      assert(!attempt.deadline || attempt.submittedAt <= attempt.deadline, 'Submission exceeds timer deadline');
     }
     assert([attempt.expired, attempt.fresh].every(bool), 'Invalid attempt flags');
     assert(!attempt.expired || (attempt.deadline !== null && attempt.submittedAt === attempt.deadline), 'Invalid expired attempt');
@@ -89,7 +103,10 @@ export function validateAssessment(value, now, previous = null, assessment = lif
     for (const old of previous.attempts) {
       const next = nextById.get(old.id);
       assert(next, 'Saved attempt history cannot be removed');
-      for (const key of ['form', 'startedAt', 'deadline', 'fresh']) assert(next[key] === old[key], 'Saved attempt identity cannot change');
+      for (const key of ['form', 'startedAt', 'fresh']) assert(next[key] === old[key], 'Saved attempt identity cannot change');
+      if (old.submittedAt !== null || next.deadline !== null) {
+        assert(next.deadline === old.deadline, 'Saved deadline cannot change');
+      }
       if (old.questionIds) assert(canonical(next.questionIds) === canonical(old.questionIds), 'Saved mock questions cannot change');
       if (old.submittedAt !== null) {
         for (const key of ['answers', 'submittedAt', 'expired']) assert(canonical(next[key]) === canonical(old[key]), 'Submitted answers and result cannot change');

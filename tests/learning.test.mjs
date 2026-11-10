@@ -188,7 +188,7 @@ test('bounded idempotency history cannot allow an evicted ancient retry to overw
   assert.equal((await send(s, envelope(lessonValue(), 0, 'mutation-0000'))).response.status, 409);
 });
 
-test('timer deadlines, duplicate attempt IDs and submitted answer/result mutations are rejected', async () => {
+test('invalid deadlines, duplicate attempt IDs and submitted result changes are rejected', async () => {
   const form = schema.forms[1], initial = attempt(form, true), s = setup();
   const value = assessmentValue([initial]);
   assert.equal((await send(s, envelope(value, 0, 'mutation-0001', schema.assessmentKey))).response.status, 200);
@@ -224,7 +224,7 @@ test('summaries derive all60 completions,512 mastery and real scores, with serve
   const records = Object.fromEntries(schema.lessons.map(lesson => [lesson.key, { value: lessonValue(lesson, true), firstCompletedAt: new Date(NOW).toISOString(), updatedAt: new Date(NOW).toISOString() }]));
   const diagnostic = attempt(schema.forms[0], true, 'diagnostic-1'); diagnostic.answers[0] = null;
   const mock = attempt(schema.forms[1], true, 'mock-1');
-  const retake = attempt(schema.forms[1], true, 'mock-2'); retake.startedAt += 1000; retake.deadline += 1000; retake.submittedAt += 1000; retake.answers[0] = null;
+  const retake = attempt(schema.forms[1], true, 'mock-2'); retake.startedAt += 1000; retake.submittedAt += 1000; retake.answers[0] = null;
   records[schema.assessmentKey] = { value: assessmentValue([diagnostic, mock, retake]), updatedAt: new Date(NOW).toISOString() };
   const report = buildReport(USER, records);
   assert.equal(report.summary.completedLessons, 60); assert.equal(report.summary.progressPercent, 100); assert.equal(report.summary.questionMastery, 100);

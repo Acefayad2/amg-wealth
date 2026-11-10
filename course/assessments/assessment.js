@@ -36,7 +36,7 @@
    if(!a||typeof a!=='object'){corrupt=true;continue;}
    const f=bank.formFor(a);if(!f||typeof a.id!=='string'||used.has(a.id)||!Number.isFinite(a.startedAt)||!Array.isArray(a.answers)||a.answers.length!==f.questions.length||!a.answers.every(validChoice)){corrupt=true;continue;}
    const n=f.questions.length;used.add(a.id);
-   state.attempts.push({id:a.id,form:f.id,...(a.questionIds ? {questionIds:a.questionIds} : {}),startedAt:a.startedAt,deadline:f.minutes?a.startedAt+f.minutes*60000:null,submittedAt:Number.isFinite(a.submittedAt)?a.submittedAt:null,expired:a.expired===true,fresh:a.fresh===true,answers:a.answers,flags:Array.from({length:n},(_,i)=>a.flags?.[i]===true),uncertain:Array.from({length:n},(_,i)=>a.uncertain?.[i]===true),reviewed:Array.from({length:n},(_,i)=>a.reviewed?.[i]===true),current:Number.isInteger(a.current)&&a.current>=0&&a.current<n?a.current:0});
+   state.attempts.push({id:a.id,form:f.id,...(a.questionIds ? {questionIds:a.questionIds} : {}),startedAt:a.startedAt,deadline:Number.isFinite(a.submittedAt) ? a.deadline ?? null : null,submittedAt:Number.isFinite(a.submittedAt)?a.submittedAt:null,expired:a.expired===true,fresh:a.fresh===true,answers:a.answers,flags:Array.from({length:n},(_,i)=>a.flags?.[i]===true),uncertain:Array.from({length:n},(_,i)=>a.uncertain?.[i]===true),reviewed:Array.from({length:n},(_,i)=>a.reviewed?.[i]===true),current:Number.isInteger(a.current)&&a.current>=0&&a.current<n?a.current:0});
    if(!state.seen.includes(f.id))state.seen.push(f.id);
   }
  }
@@ -84,20 +84,26 @@
  function route(params={}){const u=new URL(location.href);u.search='';for(const[k,v]of Object.entries(params))u.searchParams.set(k,v);history.pushState({},'',u);render();window.scrollTo({top:0,behavior:'instant'});}
  function heading(kicker,title,text){const h=node('section',undefined,'assessment-hero');h.append(node('p',kicker,'eyebrow'),node('h1',title),node('p',text));return h;}
  function focusHeading(){const h=app.querySelector('h1,legend,h2');if(h){h.tabIndex=-1;h.focus({preventScroll:true});}}
- function submit(a,expired=false){
-  if(!account.canWrite()||a.submittedAt)return;
-  a.submittedAt=expired&&a.deadline?a.deadline:Date.now();a.expired=expired;
-  bank.formFor(a).questions.forEach((q,i)=>{if(a.answers[i]!==q.answer||a.uncertain[i])queue(q.id,a.submittedAt,'attempt:'+a.id);});save();
+ function active(attempt) {
+  return account.canWrite() && attempt.submittedAt === null;
  }
- function expire(){if(!account.canWrite())return false;let changed=false;for(const a of state.attempts)if(!a.submittedAt&&a.deadline&&Date.now()>=a.deadline){submit(a,true);changed=true;}return changed;}
- function active(a){if(!account.canWrite())return false;if(a.submittedAt)return false;if(a.deadline&&Date.now()>=a.deadline){submit(a,true);render();window.scrollTo({top:0,behavior:'instant'});return false;}return true;}
+ function submit(attempt) {
+  if (!active(attempt)) return;
+  attempt.submittedAt = Date.now();
+  bank.formFor(attempt).questions.forEach((question, index) => {
+   if (attempt.answers[index] !== question.answer || attempt.uncertain[index]) {
+    queue(question.id, attempt.submittedAt, 'attempt:' + attempt.id);
+   }
+  });
+  save();
+ }
  function pendingMock(){return state.attempts.find(a=>a.form!=='D' && !a.submittedAt);}
  function start(){
   if(!account.canWrite())return;
   const pending=pendingMock();
   if(pending){route({attempt:pending.id});return;}
   const now=Date.now(),n=bank.size;
-  const a={id:crypto.randomUUID(),...bank.draw(state.attempts),startedAt:now,deadline:now+bank.minutes*60000,
+  const a={id:crypto.randomUUID(),...bank.draw(state.attempts),startedAt:now,deadline:null,
    submittedAt:null,expired:false,answers:Array(n).fill(null),flags:Array(n).fill(false),uncertain:Array(n).fill(false),reviewed:Array(n).fill(false),current:0};
   state.attempts.push(a);if(!state.seen.includes(bank.id))state.seen.push(bank.id);save();route({attempt:a.id});
  }
@@ -109,10 +115,10 @@
   const cards=node('div',undefined,'cards practice-cards');
   const card=node('section',undefined,'card practice-card');card.dataset.practice=track;
   const top=node('div',undefined,'practice-card-top');
-  top.append(node('span','TIMED PRACTICE','eyebrow'),node('span',pending?'In progress':last?'Ready for another attempt':'Ready to start','form-state'+(pending?' is-pending':'')));
+  top.append(node('span',pending?'In progress':last?'Ready for another attempt':'Ready to start','form-state'+(pending?' is-pending':'')));
   card.append(top,node('h2',pending?'Pick up where you left off':last?'Try another set':'Before you begin'));
-  const facts=node('div',undefined,'form-facts');facts.append(node('span',bank.size+' questions'),node('span',bank.minutes+' minutes'));card.append(facts);
-  card.append(node('p',pending?pending.answers.filter(v=>v!==null).length+' of '+bank.size+' answered. Your questions stay in order and your timer keeps running.':'80 questions count toward your score. You’ll see which 10 were unscored and why each answer fits after you submit.','form-description'));
+  const facts=node('div',undefined,'form-facts');facts.append(node('span',bank.size+' questions'),node('span','No time limit'));card.append(facts);
+  card.append(node('p',pending?pending.answers.filter(v=>v!==null).length+' of '+bank.size+' answered. Pick up where you left off.':'80 questions count toward your score. You’ll see which 10 were unscored and why each answer fits after you submit.','form-description'));
   const label=(pending?'Resume ':last?'Retake ':'Start ')+bank.title;
   const action=button(label,start,'primary form-start');action.setAttribute('aria-label',label);card.append(action);
   if(last)card.append(button('Review last result',()=>route({attempt:last.id}),'mock-result-link'));
@@ -132,7 +138,7 @@
    const s=score(a),li=node('li');li.append(node('span',testTitle(bank.formFor(a))+' · '+dateText(a.startedAt)+' · '+(a.submittedAt?s.correct+'/'+s.total+' ('+Math.round(s.percent)+'%)'+(a.expired?' · Time expired':''):'In progress')+' · '+(a.fresh?'First exposure':'Repeat practice')),button(a.submittedAt?'Review result':'Resume',()=>route({attempt:a.id})));list.append(li);
   }
   historySection.append(list.children.length?list:node('p','Your completed and in-progress tests will appear here.','empty'));app.append(historySection);renderEvidence(complete);
-  const guide=node('details',undefined,'practice-disclosure');guide.append(node('summary','How this mock exam works'),node('p','Each attempt covers the same mix of subjects. Retakes draw from the same track, use unseen questions first, and rotate older questions back in once needed.'),node('p','Answer without hints. You can skip, flag and change answers before submitting. Feedback appears afterward. A started attempt keeps the same questions and its timer continues while you are away.'),node('p','First exposure and repeat practice remain separate in your study record. These original AMG questions are not an official exam or a promise of passing.'));app.append(guide);
+  const guide=node('details',undefined,'practice-disclosure');guide.append(node('summary','How this mock exam works'),node('p','Each attempt covers the same mix of subjects. Retakes draw from the same track, use unseen questions first, and rotate older questions back in once needed.'),node('p','Answer without hints. You can skip, flag and change answers before submitting. Feedback appears afterward. Your answers are saved when you leave. Return when you’re ready to finish.'),node('p','First exposure and repeat practice remain separate in your study record. These original AMG questions are not an official exam or a promise of passing.'));app.append(guide);
   const exportBox=node('section',undefined,'export-panel');exportBox.append(node('div',undefined,'export-copy'));exportBox.firstChild.append(node('h2','Keep your study record'),node('p','Download your progress for your backup or coordinator.','export-note'));exportBox.append(button('Download study record',()=>{
    const exportData={exportedAt:new Date().toISOString(),course:health?'AMG Maryland Accident & Health':'AMG Maryland Life',lessonProgress:progress.map(p=>({id:p.lesson.id,title:p.lesson.title,complete:p.complete,completedAt:p.completedAt})),assessmentProgress:state};
    const url=URL.createObjectURL(new Blob([JSON.stringify(exportData,null,2)],{type:'application/json'})),a=link('Download',url);a.download='amg-'+track+'-study-record.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
@@ -150,19 +156,22 @@
  }
  function exam(a){
   currentAttempt=a;const f=bank.formFor(a),q=f.questions[a.current];
-  const bar=node('div',undefined,'exam-bar'),left=node('div');left.append(node('strong',testTitle(f)),node('div','Question '+(a.current+1)+' of '+f.questions.length));bar.append(left);const timer=node('span',f.minutes?'':'Untimed','timer');timer.id='timer';timer.setAttribute('role','timer');timer.setAttribute('aria-label','Time remaining');bar.append(timer);app.append(bar);
+  const bar = node('div', undefined, 'exam-bar');
+  const position = node('div');
+  position.append(node('strong', testTitle(f)), node('div', 'Question ' + (a.current+1) + ' of ' + f.questions.length));
+  bar.append(position);
+  app.append(bar);
   const layout=node('div',undefined,'exam-layout'),panel=node('section',undefined,'question-panel'),fieldset=node('fieldset');fieldset.append(node('legend',q.prompt));
   q.options.forEach((text,i)=>{const label=node('label',undefined,'answer-option'),input=document.createElement('input');Object.assign(input,{type:'radio',name:'exam-answer',value:String(i),checked:a.answers[a.current]===i});input.addEventListener('change',()=>{if(!active(a))return;a.answers[a.current]=i;save();updateNav(a);});label.append(input,node('span',String.fromCharCode(65+i)+'. '+text));fieldset.append(label);});panel.append(fieldset);
   const unsure=node('label',undefined,'confidence'),cb=document.createElement('input');cb.type='checkbox';cb.checked=a.uncertain[a.current];cb.addEventListener('change',()=>{if(!active(a))return;a.uncertain[a.current]=cb.checked;save();});unsure.append(cb,node('span','I’m uncertain about this answer — include it in later review'));panel.append(unsure);
   const actions=node('div',undefined,'actions'),prev=button('Previous',()=>move(a,a.current-1)),next=button('Next',()=>move(a,a.current+1));prev.disabled=a.current===0;next.disabled=a.current===f.questions.length-1;
   const flag=button(a.flags[a.current]?'Unmark question':'Mark for review',()=>{if(!active(a))return;a.flags[a.current]=!a.flags[a.current];save();examRender(a);});flag.setAttribute('aria-pressed',String(a.flags[a.current]));actions.append(prev,next,flag,button('Clear answer',()=>{if(!active(a))return;a.answers[a.current]=null;save();examRender(a);}));panel.append(actions,node('p','You can change answers, skip questions and return to marked items. No explanations are shown until submission.','fine'));
   panel.append(button('Review & submit',()=>{if(!active(a))return;pendingSubmit=a;const unanswered=a.answers.filter(x=>x===null).length;$('submit-detail').textContent=unanswered+' unanswered · '+a.flags.filter(Boolean).length+' marked. Unanswered scored questions count as incorrect. Submitting locks this attempt and reveals the explanations.';$('submit-dialog').showModal();},'primary'));
-  const nav=node('aside',undefined,'nav-panel');nav.append(node('h2','Question navigator'));const status=node('p',undefined,'question-status');status.id='answered-status';nav.append(status);const grid=node('div',undefined,'question-nav');grid.id='question-nav';grid.setAttribute('aria-label','Jump to a question');f.questions.forEach((_,i)=>{const b=button(String(i+1),()=>move(a,i));b.dataset.index=String(i);grid.append(b);});nav.append(grid,node('p','Filled: answered · Gold line: marked · Outline: current','fine'),button('Return to dashboard',()=>route()),node('p',f.minutes?'The timer keeps running while you are away.':'This saved attempt has no time limit.','fine'));layout.append(panel,nav);app.append(layout);updateNav(a);updateTimer();
+  const nav=node('aside',undefined,'nav-panel');nav.append(node('h2','Question navigator'));const status=node('p',undefined,'question-status');status.id='answered-status';nav.append(status);const grid=node('div',undefined,'question-nav');grid.id='question-nav';grid.setAttribute('aria-label','Jump to a question');f.questions.forEach((_,i)=>{const b=button(String(i+1),()=>move(a,i));b.dataset.index=String(i);grid.append(b);});nav.append(grid,node('p','Filled: answered · Gold line: marked · Outline: current','fine'),button('Return to dashboard',()=>route()),node('p','You can leave and resume this attempt later.','fine'));layout.append(panel,nav);app.append(layout);updateNav(a);
  }
  function updateNav(a){const f=bank.formFor(a);$('answered-status').textContent=a.answers.filter(x=>x!==null).length+' of '+f.questions.length+' answered';document.querySelectorAll('#question-nav button').forEach((b,i)=>{b.classList.toggle('answered',a.answers[i]!==null);b.classList.toggle('marked',a.flags[i]);b.classList.toggle('current',a.current===i);b.setAttribute('aria-label','Question '+(i+1)+(a.answers[i]!==null?', answered':', unanswered')+(a.flags[i]?', marked':''));if(a.current===i)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');});}
  function move(a,i){if(!active(a))return;if(i<0||i>=a.answers.length)return;a.current=i;save();examRender(a);focusHeading();window.scrollTo({top:0,behavior:'instant'});}
  function examRender(a){app.replaceChildren();exam(a);focusHeading();}
- function updateTimer(){if(!currentAttempt||currentAttempt.submittedAt||!$('timer')||!currentAttempt.deadline)return;const seconds=Math.max(0,Math.ceil((currentAttempt.deadline-Date.now())/1000)),m=Math.floor(seconds/60),s=seconds%60;$('timer').textContent=m+':'+String(s).padStart(2,'0');$('timer').classList.toggle('urgent',seconds<=300);}
  function results(a){
   const f=bank.formFor(a),s=score(a);app.append(heading(a.fresh?'FIRST-EXPOSURE RESULT':'REPEAT-PRACTICE RESULT',testTitle(f),a.expired?'Time expired. This attempt was submitted using the answers saved before the deadline.':'This attempt is submitted. Review why each answer fits before starting another attempt.'));
   app.append(node('p',s.correct+' / '+s.total+' · '+Math.round(s.percent)+'%','score'),node('p',(a.fresh?'First exposure':'Repeat practice — excluded from fresh-question-set evidence')+' · '+dateText(a.submittedAt)+' · '+(f.id==='D'?'Archived attempt; not a pass/fail decision':'AMG study target: 85%; not the official exam cut score'),'fine'));
@@ -195,13 +204,11 @@
    save();feedback.append(link('Read the lesson',lessonUrl(q.lesson)),button('Back to dashboard',()=>route(),'primary'));app.append(feedback);feedback.tabIndex=-1;feedback.focus();
   },'primary');check.disabled=true;field.addEventListener('change',()=>check.disabled=false);app.append(check);
  }
- function render(){currentAttempt=null;app.replaceChildren();expire();const params=new URLSearchParams(location.search),a=state.attempts.find(x=>x.id===params.get('attempt'));if(a){a.submittedAt?results(a):exam(a);}else if(params.has('review'))review(params.get('review'));else dashboard();storageStatus();focusHeading();}
+ function render(){currentAttempt=null;app.replaceChildren();const params=new URLSearchParams(location.search),a=state.attempts.find(x=>x.id===params.get('attempt'));if(a){a.submittedAt?results(a):exam(a);}else if(params.has('review'))review(params.get('review'));else dashboard();storageStatus();focusHeading();}
  $('confirm-submit').addEventListener('click',()=>{if(pendingSubmit){if(active(pendingSubmit))submit(pendingSubmit);pendingSubmit=null;$('submit-dialog').close();render();window.scrollTo({top:0,behavior:'instant'});}});
  $('cancel-submit').addEventListener('click',()=>{$('submit-dialog').close();pendingSubmit=null;});
  $('submit-dialog').addEventListener('cancel',()=>pendingSubmit=null);
  window.addEventListener('popstate',render);
  account.subscribe(e=>{if(e.source==='local'){storageStatus();return;}if(e.key===KEY){state=blank();restore();render();}else if(e.key===null){storageStatus();}else if(e.key?.startsWith(lessonPrefix)&&!currentAttempt)render();});
- document.addEventListener('visibilitychange',()=>{if(!document.hidden){const visibleAttempt=currentAttempt;if(expire()){if($('submit-dialog').open)$('submit-dialog').close();render();if(visibleAttempt?.submittedAt)window.scrollTo({top:0,behavior:'instant'});}else updateTimer();}});
- setInterval(()=>{const visibleAttempt=currentAttempt;if(expire()){pendingSubmit=null;if($('submit-dialog').open)$('submit-dialog').close();render();if(visibleAttempt?.submittedAt)window.scrollTo({top:0,behavior:'instant'});}else updateTimer();},1000);
  render();
 })();

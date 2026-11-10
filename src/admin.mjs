@@ -1,3 +1,4 @@
+import { licensingSteps, stepDone, licensingProgress } from "../licensing-progress/steps.js";
 import { normalizeUsPhone } from "../netlify/functions/_shared/us-phone.mjs";
 import { createClient } from "@supabase/supabase-js";
 import { STATUS_LABELS, contactsForGroupContext, defaultScheduleValue, eligibleTarget, filterContacts, localDayKey, personalizationHint, recurringCalendarEntries, scheduleInputValue, weekCells, weekRangeLabel } from "../admin/core.mjs";
@@ -133,15 +134,7 @@ async function loadInquiries(page = 1) {
   }
 }
 
-const licensingTasks = [
-  ["php_account", "PHP account active"], ["exam_booked", "State exam booked"], ["state_exam_passed", "State exam passed"],
-  ["license_application", "License application submitted"], ["fingerprints", "Fingerprints cleared or not required"],
-  ["license_uploaded", "License uploaded"], ["aml_course", "AML course complete"], ["ce_courses", "Required courses complete"],
-  ["eo_active", "E&O coverage active"], ["carrier_request", "Carrier request submitted"],
-  ["appointed", "Carrier appointment confirmed"], ["first_check", "First check received"],
-];
-const licensingDone = (person, key) => person.tasks?.[key]?.done === true;
-const licensingReminder = (person) => `Hi ${String(person.name || "there").trim().split(/\s+/)[0]}, this is AMG. ${person.next_action ? `Your next licensing step is: ${person.next_action}. ` : "Please check your licensing steps. "}You can update your checklist at https://anointedmoneygroup.com/licensing-progress/ or reply if you need help.`;
+const licensingReminder = (person) => `Hi ${String(person.name || "there").trim().split(/\s+/)[0]}, this is AMG. ${person.next_action ? `Your next licensing step is: ${person.next_action}. ` : `Your next licensing step is: ${licensingProgress(person).current < 0 ? "check in with your AMG team" : licensingSteps[licensingProgress(person).current].label}. `}You can update your checklist at https://anointedmoneygroup.com/licensing-progress/ or reply if you need help.`;
 const licensingStatusLabel = { studying: "Studying", scheduled: "Exam scheduled", rescheduled: "Rescheduled", failed: "Retake needed", passed: "Exam passed" };
 
 async function licensingApi(body = null, page = 1) {
@@ -172,12 +165,12 @@ function renderLicensing() {
   $("#licensing-pagination").hidden = total <= pageSize;
   $("#licensing-page").textContent = `Page ${page} of ${Math.max(1, Math.ceil(total / pageSize))}`;
   $("#licensing-list").innerHTML = people.length ? people.map((person) => {
-    const count = licensingTasks.filter(([key]) => licensingDone(person, key)).length;
-    const percent = Math.round(count / licensingTasks.length * 100);
-    const due = person.follow_up_date && person.follow_up_date < new Date().toISOString().slice(0, 10) && !licensingDone(person, "first_check");
-    const stage = licensingDone(person, "first_check") ? "First check received" : licensingDone(person, "appointed") ? "Appointed" : person.exam_status === "passed" ? "Post-license onboarding" : licensingStatusLabel[person.exam_status] || "Studying";
-    const checklist = licensingTasks.map(([key, label]) => `<label class="licensing-task"><input type="checkbox" data-license-task="${key}" data-person-id="${person.id}" ${licensingDone(person, key) ? "checked" : ""}><span>${label}</span></label>`).join("");
-    return `<article class="licensing-person" data-person-id="${person.id}"><div class="licensing-person-main"><div class="licensing-avatar">${escapeHtml(initials(person.name))}</div><div class="licensing-person-title"><p class="eyebrow">${escapeHtml(stage)} · ${escapeHtml(person.track === "both" ? "Life + Health" : person.track)}</p><h2>${escapeHtml(person.name)}</h2><p>${person.email ? escapeHtml(person.email) : '<span class="licensing-missing">Add email to connect their checklist</span>'}${person.phone ? ` · ${escapeHtml(person.phone)}` : ""}${person.recruiter ? ` · Upline: ${escapeHtml(person.recruiter)}` : ""}</p></div><span class="licensing-due${due ? " overdue" : ""}">${person.follow_up_date ? `${due ? "Overdue · " : "Follow up · "}${escapeHtml(person.follow_up_date)}` : "No follow up date"}</span></div><div class="licensing-progress"><div><strong>${count} of ${licensingTasks.length} steps</strong><span>${percent}% complete</span></div><div class="licensing-progress-track"><span style="width:${percent}%"></span></div></div>${person.next_action || person.blocker ? `<div class="licensing-notes">${person.next_action ? `<p><strong>Next:</strong> ${escapeHtml(person.next_action)}</p>` : ""}${person.blocker ? `<p><strong>Blocker:</strong> ${escapeHtml(person.blocker)}</p>` : ""}</div>` : ""}<details class="licensing-checklist"><summary>View checklist</summary><div>${checklist}</div></details><div class="licensing-person-actions"><button class="secondary" type="button" data-license-edit="${person.id}">Edit progress</button><button class="secondary" type="button" data-license-text="${person.id}">Text reminder</button>${person.email ? `<a class="secondary" href="mailto:${encodeURIComponent(person.email)}?subject=${encodeURIComponent("Your AMG licensing next step")}&body=${encodeURIComponent(licensingReminder(person))}">Email reminder</a>` : '<button type="button" class="secondary" disabled title="Add an email first">Email reminder</button>'}</div></article>`;
+    const progress = licensingProgress(person);
+    const count = progress.completed, percent = progress.percent;
+    const due = person.follow_up_date && person.follow_up_date < new Date().toISOString().slice(0, 10) && progress.current >= 0;
+    const stage = progress.label;
+    const checklist = licensingSteps.map((step, index) => `<label class="licensing-task${index === progress.current ? ' current' : ''}"><input type="checkbox" data-license-task="${step.id}" data-person-id="${person.id}" ${stepDone(person, step) ? "checked" : ""}><span><small>STEP ${index + 1}</small>${step.label}</span></label>`).join("");
+    return `<article class="licensing-person" data-person-id="${person.id}"><div class="licensing-person-main"><div class="licensing-avatar">${escapeHtml(initials(person.name))}</div><div class="licensing-person-title"><p class="eyebrow">${escapeHtml(stage)} · ${escapeHtml(person.track === "both" ? "Life + Health" : person.track)}</p><h2>${escapeHtml(person.name)}</h2><p>${person.email ? escapeHtml(person.email) : '<span class="licensing-missing">Add email to connect their checklist</span>'}${person.phone ? ` · ${escapeHtml(person.phone)}` : ""}${person.recruiter ? ` · Upline: ${escapeHtml(person.recruiter)}` : ""}</p></div><span class="licensing-due${due ? " overdue" : ""}">${person.follow_up_date ? `${due ? "Overdue · " : "Follow up · "}${escapeHtml(person.follow_up_date)}` : "No follow up date"}</span></div><div class="licensing-progress"><div><strong>${count} of 5 steps</strong><span>${percent}% complete</span></div><div class="licensing-progress-track"><span style="width:${percent}%"></span></div></div>${person.next_action || person.blocker ? `<div class="licensing-notes">${person.next_action ? `<p><strong>Next:</strong> ${escapeHtml(person.next_action)}</p>` : ""}${person.blocker ? `<p><strong>Blocker:</strong> ${escapeHtml(person.blocker)}</p>` : ""}</div>` : ""}<details class="licensing-checklist" open><summary>Licensing steps</summary><div>${checklist}</div></details><div class="licensing-person-actions"><button class="secondary" type="button" data-license-edit="${person.id}">Edit person & progress</button><button class="secondary" type="button" data-license-text="${person.id}">Text reminder</button>${person.email ? `<a class="secondary" href="mailto:${encodeURIComponent(person.email)}?subject=${encodeURIComponent("Your AMG licensing next step")}&body=${encodeURIComponent(licensingReminder(person))}">Email reminder</a>` : '<button type="button" class="secondary" disabled title="Add an email first">Email reminder</button>'}</div></article>`;
   }).join("") : loading ? '<p class="empty">Loading people…</p>' : error ? '<p class="empty">Refresh to try again.</p>' : '<div class="learner-empty"><h2>No one in this view yet</h2><p>Add a person to track their licensing steps, or clear the filters to see everyone.</p></div>';
 }
 
@@ -222,6 +215,7 @@ function openLicensingPerson(person = null) {
   $("#licensing-person-id").value = person?.id || "";
   $("#licensing-person-version").value = person?.version || "";
   for (const [id, key] of [["license-name", "name"], ["license-email", "email"], ["license-phone", "phone"], ["license-recruiter", "recruiter"], ["license-state", "state"], ["license-track", "track"], ["license-exam-status", "exam_status"], ["license-exam-date", "exam_date"], ["license-follow-up", "follow_up_date"], ["license-first-check", "first_check_date"], ["license-next-action", "next_action"], ["license-blocker", "blocker"]]) $("#" + id).value = person?.[key] || (id === "license-track" ? "both" : id === "license-exam-status" ? "studying" : "");
+  $("#license-steps").innerHTML = licensingSteps.map((step, index) => `<label class="licensing-task"><input type="checkbox" name="completed-step" value="${step.id}" ${person && stepDone(person, step) ? 'checked' : ''}><span><small>STEP ${index + 1}</small>${step.label}</span></label>`).join('');
   $("#licensing-person-error").textContent = "";
   $("#licensing-person-dialog").showModal();
 }
@@ -954,6 +948,14 @@ $("#add-license-person").addEventListener("click", () => openLicensingPerson());
 let licensingSearchTimer;
 $("#licensing-search").addEventListener("input", (event) => { clearTimeout(licensingSearchTimer); licensingSearchTimer = setTimeout(() => { licensingState.query = event.target.value.trim(); void loadLicensing(1); }, 250); });
 $("#licensing-filter").addEventListener("change", (event) => { licensingState.status = event.target.value; void loadLicensing(1); });
+$("#license-exam-status").addEventListener("change", (event) => {
+  const passed = $("#license-steps input[value='state_exam_passed']");
+  passed.checked = event.target.value === 'passed';
+  if (['scheduled', 'rescheduled', 'passed'].includes(event.target.value)) $("#license-steps input[value='exam_booked']").checked = true;
+});
+$("#license-steps").addEventListener("change", (event) => {
+  if (event.target.value === 'state_exam_passed') $("#license-exam-status").value = event.target.checked ? 'passed' : ($("#license-exam-date").value ? 'scheduled' : 'studying');
+});
 $("#licensing-person-form").addEventListener("submit", async (event) => {
   event.preventDefault();
   const button = event.currentTarget.querySelector('[type="submit"]');
@@ -965,7 +967,8 @@ $("#licensing-person-form").addEventListener("submit", async (event) => {
       recruiter: $("#license-recruiter").value, state: $("#license-state").value, track: $("#license-track").value,
       examStatus: $("#license-exam-status").value, examDate: $("#license-exam-date").value,
       followUpDate: $("#license-follow-up").value, firstCheckDate: $("#license-first-check").value,
-      nextAction: $("#license-next-action").value, blocker: $("#license-blocker").value });
+      nextAction: $("#license-next-action").value, blocker: $("#license-blocker").value,
+      completedSteps: [...document.querySelectorAll('#license-steps input:checked')].map(input => input.value) });
     $("#licensing-person-dialog").close();
     await loadLicensing(1);
     toast("Licensing progress saved.");
@@ -976,7 +979,7 @@ $("#licensing-list").addEventListener("change", async (event) => {
   if (!input) return;
   input.disabled = true;
   try {
-    await licensingApi({ action: "set_task", id: input.dataset.personId, task: input.dataset.licenseTask, done: input.checked });
+    await licensingApi({ action: "set_step", id: input.dataset.personId, task: input.dataset.licenseTask, done: input.checked });
     await loadLicensing(licensingState.page);
     toast("Checklist updated.");
   } catch (reason) { input.checked = !input.checked; toast(reason.message || "Could not update checklist."); input.disabled = false; }

@@ -138,3 +138,6 @@
 .learner-course .attempt-status{font-size:10px;white-space:nowrap}
 .learner-course .attempt-row progress{grid-column:1/-1;margin:2px 0}
 @media(max-width:760px){.learner-courses{grid-template-columns:1fr}.learning-progress-content{padding:20px}.learning-progress-list .learner-card{padding:18px}.learning-progress-toolbar{align-items:flex-start;flex-direction:column}.learner-course .attempt-row{grid-template-columns:minmax(0,1fr) auto}.learner-course .attempt-status{grid-column:2;grid-row:1}}
+
+/* Deletion stays secondary to progress and reminder actions. */
+.licensing-person-actions .licensing-delete-button{color:#a5372c;margin-left:auto;border-color:#e4cbc7}.licensing-delete-button:hover{background:#fff2ef}.danger-button{padding:12px 18px;border:1px solid #a5372c;border-radius:12px;background:#a5372c;color:#fff;font:inherit;font-weight:700;cursor:pointer}.danger-button:hover{background:#892a21}.danger-button:disabled{opacity:.55;cursor:wait}

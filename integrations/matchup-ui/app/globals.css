@@ -1340,3 +1340,16 @@ main { margin-left: 236px; }
   .guided-heading h2 { font-size: 29px; }
   .guided-form .guided-option { padding: 14px; }
 }
+
+/* Signed-in identity stays independent of the trainer/organization being viewed. */
+.account-badge{flex-shrink:0;padding:18px 4px 0;border-top:1px solid rgba(18,61,47,.14);color:#123d2f}
+.account-badge-identity{display:flex;align-items:center;gap:10px;min-width:0}
+.account-badge-avatar{display:grid;place-items:center;flex:0 0 36px;height:36px;border-radius:50%;background:#e5dfcd;color:#123d2f;font-size:12px;font-weight:800}
+.account-badge-identity>div{min-width:0}
+.account-badge strong,.account-badge-identity>div>span{display:block;overflow-wrap:anywhere;line-height:1.45}
+.account-badge strong{font-size:13px;font-weight:750}
+.account-badge-identity>div>span{margin-top:3px;font-size:11px;color:#5f7068}
+.account-badge>button{margin-top:12px;padding:4px 0;border:0;background:none;color:inherit;font:inherit;font-size:12px;font-weight:650;cursor:pointer}
+.account-badge>button:hover{text-decoration:underline}
+.broker-sidebar .account-badge{margin-top:18px;color:#f4f0df;border-color:rgba(255,255,255,.14)}
+.broker-sidebar .account-badge-identity>div>span{color:#c2cfc5}

@@ -10,6 +10,18 @@ const state = { contacts: [], groups: [], messages: [], recurring_reminders: [],
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 let authClient = null;
 let startupBusy = false;
+let accountUserId = null;
+
+function renderAccountProfile(user, profile = null) {
+  accountUserId = user?.id || null;
+  $("#account-profile").hidden = !user;
+  const metadata = user?.user_metadata || {};
+  const savedName = profile?.display_name || [profile?.first_name, profile?.last_name].filter(Boolean).join(" ").trim();
+  const name = user ? savedName || metadata.full_name || [metadata.first_name, metadata.last_name].filter(Boolean).join(" ") || metadata.name || user.email || "AMG account" : "";
+  $("#account-name").textContent = name;
+  $("#account-email").textContent = user?.email || "";
+  $("#account-avatar").textContent = initials(name);
+}
 const inquiryState = { records: [], total: 0, page: 1, pageSize: 25, loading: false, error: "", requestId: 0, controller: null, preview: false };
 const licensingState = { people: [], learners: [], total: 0, tracked: 0, unlicensed: 0, licensed: 0, eoCompleted: 0, appointed: 0, followUpsDue: 0, category: "all", page: 1, pageSize: 25, query: "", status: "", loading: false, error: "", requestId: 0, controller: null, preview: false };
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
@@ -326,6 +338,7 @@ function showStartupError(message) {
 }
 
 function showLogin(message = "") {
+  renderAccountProfile(null);
   $("#startup-view").hidden = true;
   $("#app").hidden = true;
   $("#auth-view").hidden = false;
@@ -351,6 +364,15 @@ async function verifyAdminSession() {
       return;
     }
     await load();
+    renderAccountProfile(data.user);
+    const user = data.user;
+    void authClient.from("profiles").select("first_name,last_name").eq("id", user.id).maybeSingle().then(async ({ data: profile }) => {
+      if (!profile?.first_name && !profile?.last_name && accountUserId === user.id) {
+        const membership = await authClient.from("amg_organization_memberships").select("display_name").eq("user_id", user.id).eq("is_active", true).limit(1).maybeSingle();
+        profile = membership.data;
+      }
+      if (accountUserId === user.id) renderAccountProfile(user, profile);
+    });
     $("#startup-view").hidden = true;
     $("#auth-view").hidden = true;
     $("#app").hidden = false;
@@ -1007,7 +1029,7 @@ $("#sign-out").addEventListener("click", async () => {
   resetInquiries();
   resetLicensing();
   showStartup("Signing out securely…");
-  await authClient.auth.signOut();
+  await authClient.auth.signOut({ scope: "local" });
   showLogin();
 });
 $("#startup-retry").addEventListener("click", () => authClient ? verifyAdminSession() : init());
@@ -1247,7 +1269,7 @@ async function init() {
     authClient = createClient(config.url, config.key, {
       auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
     });
-    authClient.auth.onAuthStateChange((event) => { if (event === "SIGNED_OUT") { resetInquiries(); resetLicensing(); } });
+    authClient.auth.onAuthStateChange((event) => { if (event === "SIGNED_OUT") { renderAccountProfile(null); resetInquiries(); resetLicensing(); showLogin(); } });
     $("#login-submit").disabled = false;
     await verifyAdminSession();
   } catch (error) {

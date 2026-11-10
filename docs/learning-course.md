@@ -8,7 +8,8 @@ this site. They used to live on the separate `amg-exam-portal` Netlify site
 | --- | --- | --- |
 | `/licensing` | Public licensing support page | `licensing.html` |
 | `/login/` | Shared AMG access code, then name + email | `login/` |
-| `/course/` | 60-lesson course + assessments (gated) | `course/` |
+| `/course/` | Maryland Life course and assessments (gated) | `course/` |
+| `/course/health/` | Maryland Accident & Health: 60 narrated lessons and 484 lesson questions (gated) | `course/health/` |
 | `/practice/`, `/practice/health/` | Practice test app (single-page app) | `practice/index.html`, `practice-assets/` |
 | `/guides/*.docx` | Life and A&H study guides | `guides/` |
 | `/api/access` | Code check, learner session cookies | `netlify/functions/learning-access.mts` |
@@ -32,8 +33,8 @@ Shared server code is in `netlify/shared/` and `netlify/functions/_shared/learni
 Lesson content and the practice app are still authored and built in
 `Acefayad2/amg-practice-exam`. To publish a change:
 
-1. In that repo: `npm ci && VITE_APPS_SCRIPT_URL=... npm run build`.
-2. Here: `scripts/sync-learning-course.sh /path/to/amg-practice-exam`.
+1. In that repo: `npm ci && npm run build`. The Health build verifies the checksum of every selected MP3.
+2. Here: `scripts/sync-learning-course.sh /path/to/amg-practice-exam`. The script also copies the matching server answer keys and lesson hashes.
 3. If you changed server code in the portal repo, copy it over by hand too
    (`access.mts` is `learning-access.mts` here).
 4. `npm test`, open a pull request, check the deploy preview, merge.

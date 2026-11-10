@@ -16,10 +16,10 @@
  function refresh(){
   let count=0,next=null,available=true;const completedByModule={};
   for(const row of rows){
-   let saved=null;try{saved=JSON.parse(storage.getItem('amg-life-lesson-'+row.dataset.lesson+'-v'+row.dataset.version)||'null');}catch(_){available=false;}
+   let saved=null;try{saved=JSON.parse(storage.getItem((document.body.dataset.keyPrefix||'amg-life-lesson-')+row.dataset.lesson+'-v'+row.dataset.version)||'null');}catch(_){available=false;}
    const keys=row.dataset.answers.split(',').map(Number),complete=saved?.complete===true&&(saved.videoEnded===true||saved.transcriptRead===true)&&Array.isArray(saved.answers)&&saved.answers.length===keys.length&&saved.answers.every((a,i)=>a===keys[i]);
    row.classList.toggle('is-complete',complete);row.querySelector('.lesson-state').textContent=complete?'Completed':'Start';
-   row.querySelector('.lesson-play').innerHTML=complete?'<svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>':'<svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 11 7-11 7Z"/></svg>';
+   row.querySelector('.lesson-play').innerHTML=complete?'<svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>':(row.dataset.duration==='Read'?'<svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5c-3-2-7-2-10-1v15c3-1 7-1 10 1 3-2 7-2 10-1V4c-3-1-7-1-10 1Zm0 0v15"/></svg>':'<svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 11 7-11 7Z"/></svg>');
    if(complete){count++;completedByModule[row.dataset.moduleIndex]=(completedByModule[row.dataset.moduleIndex]||0)+1;}else next ||= row;
   }
   $('course-progress').textContent=count+' of '+rows.length+' lessons completed'+(available?'':' · Storage unavailable');
@@ -27,14 +27,15 @@
   document.querySelectorAll('[data-module-progress]').forEach(x=>{const n=x.dataset.moduleProgress;x.textContent=(completedByModule[n]||0)+' / '+rows.filter(r=>r.dataset.moduleIndex===n).length;});
   const link=$('continue-course'),preview=$('continue-preview-link');
   if(next){
-   preview.hidden=false;link.href=preview.href=next.querySelector('a').getAttribute('href');link.querySelector('span').textContent=count?'Continue lesson':'Start lesson';
+   const text=next.dataset.duration==='Read';preview.hidden=text;link.href=preview.href=next.querySelector('a').getAttribute('href');link.querySelector('span').textContent=count?'Continue lesson':'Start lesson';
    $('continue-label').textContent=count?'PICK UP WHERE YOU LEFT OFF':'LET’S GET STARTED';$('continue-title').textContent=next.dataset.title;
-   $('continue-meta').textContent='PART '+next.dataset.lesson+' · '+next.dataset.duration+' VIDEO';$('continue-duration').textContent=next.dataset.duration;
+   $('continue-meta').textContent='PART '+next.dataset.lesson+' · '+(text?(next.dataset.audio?'TEXT + AUDIO':'TEXT EDITION'):next.dataset.duration+' VIDEO');$('continue-duration').textContent=next.dataset.duration;
    const poster=next.dataset.poster;if(poster)$('continue-poster').src=poster;
    preview.setAttribute('aria-label','Open lesson '+Number(next.dataset.lesson)+': '+next.dataset.title);
+   const note=document.querySelector('.continue-note');if(note)note.textContent=text?(next.dataset.audio?'Read or listen, then try the questions.':'Read the lesson. Answer the questions.'):'Watch the video. Answer the questions.';
    if(!initialized)selected=next.dataset.moduleIndex;
   }else{
-   link.href=preview.href='/course/assessments/';link.querySelector('span').textContent='Explore practice tests';$('continue-label').textContent='ALL LESSONS COMPLETED';$('continue-meta').textContent=rows.length+' OF '+rows.length+' COMPLETE';$('continue-title').textContent='Course complete. Keep your knowledge sharp.';preview.hidden=true;
+   link.href=preview.href=document.body.dataset.assessments||'/course/assessments/';link.querySelector('span').textContent=document.body.dataset.track==='health'?'Find the Health practice exam':'Explore practice tests';$('continue-label').textContent='ALL LESSONS COMPLETED';$('continue-meta').textContent=rows.length+' OF '+rows.length+' COMPLETE';$('continue-title').textContent='Course complete. Keep your knowledge sharp.';preview.hidden=true;
   }
   initialized=true;filter();
  }

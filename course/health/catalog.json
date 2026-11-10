@@ -1,0 +1,990 @@
+{
+  "version": 1,
+  "track": "health",
+  "planned": 60,
+  "lessons": [
+    {
+      "id": "01",
+      "number": 1,
+      "version": 1,
+      "title": "Risk, perils and the health peril",
+      "subtitle": "Learn the five words every health question is built on, then meet the two perils health insurance covers.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Foundations",
+      "outline": [
+        "2.1",
+        "3.1"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "02",
+      "number": 2,
+      "version": 1,
+      "title": "Handling risk, pooling and insurability",
+      "subtitle": "Five ways to handle a risk, why pooling works, and what makes a risk insurable.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Foundations",
+      "outline": [
+        "2.1"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "03",
+      "number": 3,
+      "version": 1,
+      "title": "Insurers, nonprofit plans and HMOs",
+      "subtitle": "Who is allowed to sell health coverage in Maryland, how they are organized, and how they reach you.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Foundations",
+      "outline": [
+        "2.2",
+        "1.3"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "04",
+      "number": 4,
+      "version": 1,
+      "title": "Agency and producer authority",
+      "subtitle": "Whom the producer represents, how far that authority reaches, and what the producer owes the client.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Foundations",
+      "outline": [
+        "2.3"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "05",
+      "number": 5,
+      "version": 1,
+      "title": "Building and interpreting the contract",
+      "subtitle": "What makes a health policy a binding contract, what kind of contract it is, and how courts read it.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Foundations",
+      "outline": [
+        "2.4"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "06",
+      "number": 6,
+      "version": 1,
+      "title": "Health losses, benefits and policy classes",
+      "subtitle": "Match every family need to the benefit that addresses it, then classify the policy three ways.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Foundations",
+      "outline": [
+        "3.2",
+        "3.3"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "07",
+      "number": 7,
+      "version": 1,
+      "title": "Federal rules and industry organizations",
+      "subtitle": "The federal laws that reach into every health sale, and what the NAIC does and does not do.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Foundations",
+      "outline": [
+        "2.5",
+        "2.6"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "08",
+      "number": 8,
+      "version": 1,
+      "title": "Limited policies and their notices",
+      "subtitle": "Policies that cover one peril or pay one fixed amount, and the disclosure that keeps buyers from confusing them with health insurance.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Policies and provisions",
+      "outline": [
+        "3.4"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "09",
+      "number": 9,
+      "version": 1,
+      "title": "Common exclusions",
+      "subtitle": "The losses most health policies refuse to pay, and the facts that move a claim in or out of each exclusion.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Policies and provisions",
+      "outline": [
+        "3.5"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "10",
+      "number": 10,
+      "version": 1,
+      "title": "Marketing, advertising and the guaranty corporation",
+      "subtitle": "What a producer may say in an ad and a sales talk, and the one safety net that may never be used as a sales pitch.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Policies and provisions",
+      "outline": [
+        "3.6"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "11",
+      "number": 11,
+      "version": 1,
+      "title": "Field underwriting, application and delivery",
+      "subtitle": "The producer as the first underwriter: taking the application, delivering the policy and protecting the client at each step.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Policies and provisions",
+      "outline": [
+        "3.6"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "12",
+      "number": 12,
+      "version": 1,
+      "title": "Insurer underwriting and sources of information",
+      "subtitle": "What the home office looks at after the application arrives, and the limits on each source.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Policies and provisions",
+      "outline": [
+        "3.7"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "13",
+      "number": 13,
+      "version": 1,
+      "title": "Risk classes and unlawful discrimination",
+      "subtitle": "How an underwriting file becomes a rate class, and the distinctions Maryland forbids.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Policies and provisions",
+      "outline": [
+        "3.7"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "14",
+      "number": 14,
+      "version": 1,
+      "title": "Replacing health insurance",
+      "subtitle": "What a client can lose by switching policies, and the checks a producer makes before recommending it.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Policies and provisions",
+      "outline": [
+        "3.8"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "15",
+      "number": 15,
+      "version": 1,
+      "title": "Required provisions: contract, defenses and premiums",
+      "subtitle": "The uniform provisions every individual health policy must contain, starting with the ones about the contract itself and keeping it in force.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Policies and provisions",
+      "outline": [
+        "4.1"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "16",
+      "number": 16,
+      "version": 1,
+      "title": "Required provisions: the claim clocks",
+      "subtitle": "From the day of loss to the day of payment, each required provision sets a deadline. Learn them in order.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Policies and provisions",
+      "outline": [
+        "4.1"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "17",
+      "number": 17,
+      "version": 1,
+      "title": "Optional provisions and renewability",
+      "subtitle": "The provisions an insurer may add, and the five renewability clauses that decide who controls the policy’s future.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Policies and provisions",
+      "outline": [
+        "4.2",
+        "4.3"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "18",
+      "number": 18,
+      "version": 1,
+      "title": "Medical plan concepts",
+      "subtitle": "Five pairs of opposites that explain every medical plan design before you learn the plan names.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Medical plans",
+      "outline": [
+        "6.1"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "19",
+      "number": 19,
+      "version": 1,
+      "title": "Major medical: deductibles, coinsurance and stop-loss",
+      "subtitle": "How a comprehensive plan splits a bill between the insured and the insurer, and where the splitting stops.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Medical plans",
+      "outline": [
+        "6.2"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "20",
+      "number": 20,
+      "version": 1,
+      "title": "Health service plans and fixed indemnity",
+      "subtitle": "Nonprofit service plans that pay providers directly, and indemnity plans that pay you a fixed amount.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Medical plans",
+      "outline": [
+        "6.2"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "21",
+      "number": 21,
+      "version": 1,
+      "title": "Health maintenance organizations",
+      "subtitle": "Prepaid care inside a service area, with a primary care gatekeeper and copayments instead of bills.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Medical plans",
+      "outline": [
+        "6.2"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "22",
+      "number": 22,
+      "version": 1,
+      "title": "PPOs, point-of-service plans and TRICARE",
+      "subtitle": "Networks without gatekeepers, hybrids that let you leave the network for a price, and the military’s health program.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Medical plans",
+      "outline": [
+        "6.2"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "23",
+      "number": 23,
+      "version": 1,
+      "title": "Cost containment and coordination of benefits",
+      "subtitle": "How plans hold down the cost of care, and how two plans covering one person decide who pays first.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Medical plans",
+      "outline": [
+        "6.3"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "24",
+      "number": 24,
+      "version": 1,
+      "title": "HIPAA portability and renewability",
+      "subtitle": "The 1996 federal law that made group coverage portable, limited pre-existing condition exclusions and guaranteed renewal.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Medical plans",
+      "outline": [
+        "6.4"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "25",
+      "number": 25,
+      "version": 1,
+      "title": "HSAs, HRAs and high-deductible plans",
+      "subtitle": "Tax-favored accounts that pay the cost sharing a modern plan leaves behind, and who may use each.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Medical plans",
+      "outline": [
+        "6.5"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "26",
+      "number": 26,
+      "version": 1,
+      "title": "The Affordable Care Act: coverage rules",
+      "subtitle": "What every comprehensive plan must now do: cover young adults, preventive care and essential benefits, and never turn away or drop the sick.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Medical plans",
+      "outline": [
+        "6.6"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "27",
+      "number": 27,
+      "version": 1,
+      "title": "The Affordable Care Act: plans, appeals and subsidies",
+      "subtitle": "Metal levels, the small business marketplace, the two-step appeal, premium help and the penalties that remain.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Medical plans",
+      "outline": [
+        "6.6"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "28",
+      "number": 28,
+      "version": 1,
+      "title": "Qualifying for disability benefits",
+      "subtitle": "The definition of disability decides everything. Learn the four ways policies define it and the care requirement attached.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Disability income",
+      "outline": [
+        "5.1"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "29",
+      "number": 29,
+      "version": 1,
+      "title": "Individual disability income: the basic plan",
+      "subtitle": "Benefit amount, waiting period, benefit period and waiver of premium: the four settings of every disability policy.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Disability income",
+      "outline": [
+        "5.2"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "30",
+      "number": 30,
+      "version": 1,
+      "title": "Partial, residual and social insurance coordination",
+      "subtitle": "Benefits for the disability that is not total, and the provisions that fit private benefits around Social Security.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Disability income",
+      "outline": [
+        "5.2"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "31",
+      "number": 31,
+      "version": 1,
+      "title": "Disability riders, cash benefits and refunds",
+      "subtitle": "The add-ons that keep a benefit current, grow it over a career, and pay for the losses a monthly check does not cover.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Disability income",
+      "outline": [
+        "5.2"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "32",
+      "number": 32,
+      "version": 1,
+      "title": "Underwriting disability income",
+      "subtitle": "Why occupation and income drive the decision, how much benefit an insurer will issue, and the offers short of a decline.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Disability income",
+      "outline": [
+        "5.3"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "33",
+      "number": 33,
+      "version": 1,
+      "title": "Group and business disability coverage",
+      "subtitle": "Short-term and long-term disability through an employer, and the three policies that protect a business when an owner or key person is disabled.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Disability income",
+      "outline": [
+        "5.4",
+        "5.5"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "34",
+      "number": 34,
+      "version": 1,
+      "title": "Social Security disability and workers compensation",
+      "subtitle": "The two government programs private disability coverage is built around: one strict and slow, one fast and job-related.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Disability income",
+      "outline": [
+        "5.6",
+        "5.7"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "35",
+      "number": 35,
+      "version": 1,
+      "title": "Group contracts and eligible groups",
+      "subtitle": "One contract, many certificates: how group insurance is structured, priced and limited to true groups.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Group, dental and small employer",
+      "outline": [
+        "7.1",
+        "7.2"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "36",
+      "number": 36,
+      "version": 1,
+      "title": "Group marketing and employer underwriting",
+      "subtitle": "Selling to a group, deciding which state’s law governs, and how an insurer underwrites an employer instead of a person.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Group, dental and small employer",
+      "outline": [
+        "7.3",
+        "7.4"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "37",
+      "number": 37,
+      "version": 1,
+      "title": "Group eligibility, enrollment and coordination",
+      "subtitle": "Who gets in, when they may join, and how the plan keeps adverse selection out.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Group, dental and small employer",
+      "outline": [
+        "7.4"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "38",
+      "number": 38,
+      "version": 1,
+      "title": "Changing carriers, continuation and conversion",
+      "subtitle": "What happens to coverage when the employer switches insurers, when coverage ends, and when an employee or family member leaves the group.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Group, dental and small employer",
+      "outline": [
+        "7.4"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "39",
+      "number": 39,
+      "version": 1,
+      "title": "Small employer plans in Maryland",
+      "subtitle": "Who counts as a small employer, what carriers must offer them, and the rules that keep their premiums fair.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Group, dental and small employer",
+      "outline": [
+        "7.5",
+        "1.4"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "40",
+      "number": 40,
+      "version": 1,
+      "title": "Dental insurance",
+      "subtitle": "Categories of treatment, how indemnity dental plans split the bill, and the design choices that keep voluntary dental affordable.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Group, dental and small employer",
+      "outline": [
+        "8.1",
+        "8.2",
+        "8.3"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "41",
+      "number": 41,
+      "version": 1,
+      "title": "The Maryland Health Benefit Exchange",
+      "subtitle": "Maryland Health Connection: the individual marketplace, the small business marketplace, enrollment windows and who may help.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Group, dental and small employer",
+      "outline": [
+        "1.4"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "42",
+      "number": 42,
+      "version": 1,
+      "title": "Medicare Parts A and B",
+      "subtitle": "How Medicare is built, who gets in and when, and what Original Medicare pays for a hospital stay and a doctor visit.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Seniors and special needs",
+      "outline": [
+        "9.1"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "43",
+      "number": 43,
+      "version": 1,
+      "title": "Medicare Advantage and Part D",
+      "subtitle": "The private-plan alternative to Original Medicare, and the drug benefit that comes with it or stands alone.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Seniors and special needs",
+      "outline": [
+        "9.1"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "44",
+      "number": 44,
+      "version": 1,
+      "title": "Medicare supplement insurance",
+      "subtitle": "Standardized plans that fill Original Medicare’s gaps, the six-month window to buy one without health questions, and three ways insurers price them.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Seniors and special needs",
+      "outline": [
+        "9.2"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "45",
+      "number": 45,
+      "version": 1,
+      "title": "Maryland Medigap protections",
+      "subtitle": "The state rules that govern how Medicare supplement policies are sold, priced, replaced and kept in Maryland.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Seniors and special needs",
+      "outline": [
+        "1.5",
+        "1.4"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "46",
+      "number": 46,
+      "version": 1,
+      "title": "Medicare with employer plans and Medicaid",
+      "subtitle": "Who pays first when a worker has both Medicare and a group plan, what Medicaid is, and what each program pays toward long-term care.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Seniors and special needs",
+      "outline": [
+        "9.3",
+        "9.5"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "47",
+      "number": 47,
+      "version": 1,
+      "title": "Long-term care insurance",
+      "subtitle": "Benefit triggers, levels of care, how benefits are measured, the optional features worth buying, and the tax-qualified and Partnership rules.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Seniors and special needs",
+      "outline": [
+        "9.4"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "48",
+      "number": 48,
+      "version": 1,
+      "title": "Maryland long-term care rules and the tax credit",
+      "subtitle": "How Maryland regulates the sale and terms of long-term care insurance, and the state income tax credit for premiums.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Seniors and special needs",
+      "outline": [
+        "1.5"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "49",
+      "number": 49,
+      "version": 1,
+      "title": "Who needs a Maryland license",
+      "subtitle": "What licensing is for, how to qualify, the kinds of licenses Maryland issues and the people who do not need one.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Maryland regulation",
+      "outline": [
+        "1.1"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "50",
+      "number": 50,
+      "version": 1,
+      "title": "Keeping the license: renewal, education and reporting",
+      "subtitle": "The clocks a Maryland producer must keep: renewal, continuing education, changes of address and the reports the law requires.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Maryland regulation",
+      "outline": [
+        "1.1"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "51",
+      "number": 51,
+      "version": 1,
+      "title": "Appointments and solicitation",
+      "subtitle": "The insurer’s side of the relationship: contracts, appointments, the register and what happens when the relationship ends.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Maryland regulation",
+      "outline": [
+        "1.1"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "52",
+      "number": 52,
+      "version": 1,
+      "title": "Discipline, hearings and fraud",
+      "subtitle": "What can cost a producer the license, how the Commissioner acts, the producer’s right to a hearing and the duty to report fraud.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Maryland regulation",
+      "outline": [
+        "1.1"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "53",
+      "number": 53,
+      "version": 1,
+      "title": "MIA powers, records, fees and fiduciary duties",
+      "subtitle": "What the Maryland Insurance Administration does, and the money and paperwork rules every producer lives under.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Maryland regulation",
+      "outline": [
+        "1.2"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "54",
+      "number": 54,
+      "version": 1,
+      "title": "Unfair trade practices",
+      "subtitle": "Misrepresentation, false advertising, defamation, false entries, rebating, twisting and referral abuses: how to recognize each from the facts.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Maryland regulation",
+      "outline": [
+        "1.2"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "55",
+      "number": 55,
+      "version": 1,
+      "title": "Adverse underwriting notices and privacy",
+      "subtitle": "What an applicant must be told when coverage is declined or rated, and how personal and health information must be protected.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Maryland regulation",
+      "outline": [
+        "1.2"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "56",
+      "number": 56,
+      "version": 1,
+      "title": "Maryland plan requirements and mandated benefits",
+      "subtitle": "Who a Maryland policy must cover, what it must offer and what it must pay for, section by section.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Maryland regulation",
+      "outline": [
+        "1.4"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "57",
+      "number": 57,
+      "version": 1,
+      "title": "Taxing personal coverage and health accounts",
+      "subtitle": "Who paid the premium decides whether the benefit is taxed. Apply that rule to individually owned policies and the three health accounts.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Tax and mixed application",
+      "outline": [
+        "10.1",
+        "10.5"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "58",
+      "number": 58,
+      "version": 1,
+      "title": "Taxing employer, self-employed and business coverage",
+      "subtitle": "The same master rule applied to group plans, the self-employed health insurance deduction and the three business disability policies.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 8,
+      "module": "Tax and mixed application",
+      "outline": [
+        "10.2",
+        "10.3",
+        "10.4"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "59",
+      "number": 59,
+      "version": 1,
+      "title": "Mixed cases: plans, claims and disability",
+      "subtitle": "Six client situations that each cross several lessons. Practice finding the rule before touching the numbers.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 10,
+      "module": "Tax and mixed application",
+      "outline": [
+        "6.2",
+        "4.1",
+        "5.2",
+        "7.4"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    },
+    {
+      "id": "60",
+      "number": 60,
+      "version": 1,
+      "title": "Mixed cases: Maryland rules in practice",
+      "subtitle": "Theo’s first year as a Maryland producer, told as six situations that test the regulation chapter together.",
+      "duration": 0,
+      "poster": "/course/assets/amg-mark.webp",
+      "questions": 10,
+      "module": "Tax and mixed application",
+      "outline": [
+        "1.1",
+        "1.2",
+        "1.4",
+        "1.5"
+      ],
+      "audioSections": 6,
+      "status": "text"
+    }
+  ]
+}

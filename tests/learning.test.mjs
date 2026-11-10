@@ -368,14 +368,16 @@ test('health track binds 60 lessons, 484 answers and exact current source files'
   assert.equal([...ids].filter(id => lifeIds.has(id)).length, 0, 'Health question ids never collide with Life ids');
 });
 
-test('health lessons validate, save through the reading path and report per track without touching Life totals', async () => {
+test('health lessons validate video progress and report per track without touching Life totals', async () => {
   const health = schema.tracks.health, lesson = health.lessons[0];
   for (const item of health.lessons) {
     assert.deepEqual(validateValue(item.key, lessonValue(item), NOW), lessonValue(item));
     const done = lessonValue(item, true); done.videoEnded = false; done.transcriptRead = true; validateValue(item.key, done, NOW);
   }
   const playing = lessonValue(lesson); playing.position = 5;
-  assert.throws(() => validateValue(lesson.key, playing, NOW), /position/i, 'a text-edition lesson has no playback position');
+  assert.deepEqual(validateValue(lesson.key, playing, NOW), playing, 'a video lesson saves playback position');
+  const pastEnd = {...playing, position: lesson.maxPosition + 1};
+  assert.throws(() => validateValue(lesson.key, pastEnd, NOW), /position/i);
   const system = setup(), value = lessonValue(lesson, true); value.videoEnded = false; value.transcriptRead = true;
   const saved = await send(system, envelope(value, 0, 'mutation-h001', lesson.key));
   assert.equal(saved.response.status, 200); assert.equal(saved.data.record.revision, 1);

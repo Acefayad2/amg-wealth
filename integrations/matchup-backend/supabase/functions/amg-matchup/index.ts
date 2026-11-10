@@ -1,4 +1,5 @@
 import { normalizeRegistrationCode } from "./registration-code.ts";
+import { registrationAuthFailure } from "./registration-errors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.112.4";
 import { appointmentInstant, databaseTime, notificationConsent, slotIsFree } from "./appointment.ts";
 
@@ -299,8 +300,8 @@ Deno.serve(async (request) => {
         app_metadata: { role: "cft" },
       });
       if (createUserError || !created.user) {
-        const duplicate = createUserError?.message.toLowerCase().includes("already") || createUserError?.message.toLowerCase().includes("registered");
-        return json({ error: duplicate ? "A CFT account already exists for this email. Use trainer login instead." : "We couldn’t create the CFT login. Please try again." }, duplicate ? 409 : 500, origin);
+        const failure = registrationAuthFailure(createUserError);
+        return json({ error: failure.error, field: failure.field }, failure.status, origin);
       }
 
       let trainerId = "";

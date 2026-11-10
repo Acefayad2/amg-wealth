@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { licensingReminder, licensingReminderLinks } from '../admin/licensing-reminders.mjs';
+import { licensingReminder, licensingReminderLinks, licensingGroupTextLink } from '../admin/licensing-reminders.mjs';
 import { selectedStepsForStage, stepUpdates } from '../licensing-progress/steps.js';
 const now = new Date('2026-11-10T18:00:00Z');
 const person = stage => ({ name: 'Jordan Sample', track: 'health', phone: '(202) 555-0123', email: 'jordan@example.test', tasks: stepUpdates(selectedStepsForStage(stage), 'admin') });
@@ -48,4 +48,16 @@ test('email link fills recipient, subject and full body; missing contacts do not
   assert.equal(uri.searchParams.get('body'), licensingReminder(value, now).email);
   assert.deepEqual(licensingReminderLinks({ name: 'Jordan', phone: '', email: '' }, {}, now), { text: null, email: null });
   assert.equal(licensingReminderLinks({ ...value, phone: 'not a number' }, {}, now).text, null);
+});
+
+
+test('group draft addresses both normalized numbers and greets the upline for the same licensing step', () => {
+  const agent = { ...person(4), recruiter: 'Danielle Sample', recruiter_phone: '(301) 555-0142' };
+  const apple = licensingGroupTextLink(agent, { userAgent: 'iPhone' }, now);
+  assert.match(apple, /^sms:\+12025550123,\+13015550142&body=/);
+  assert.match(decodeURIComponent(apple), /Hi Jordan and Danielle/);
+  assert.match(decodeURIComponent(apple), /CE and E&O/);
+  assert.match(licensingGroupTextLink(agent, { userAgent: 'Android' }, now), /\?body=/);
+  assert.equal(licensingGroupTextLink(person(4)), null);
+  assert.equal(licensingGroupTextLink({ ...agent, recruiter_phone: agent.phone }), null);
 });

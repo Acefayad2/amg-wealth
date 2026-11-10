@@ -43,3 +43,14 @@ export function licensingReminderLinks(person, platform = {}, now = new Date()) 
     email: person.email ? `mailto:${encodeURIComponent(person.email)}?subject=${encodeURIComponent(draft.subject)}&body=${encodeURIComponent(draft.email)}` : null,
   };
 }
+
+export function licensingGroupTextLink(person, platform = {}, now = new Date()) {
+  const agent = normalizeUsPhone(person.phone);
+  const upline = normalizeUsPhone(person.recruiter_phone);
+  if (!agent || !upline || agent === upline) return null;
+  const draft = licensingReminder(person, now);
+  const name = String(person.recruiter || '').trim().split(/\s+/)[0];
+  const text = name ? draft.text.replace(', it’s the AMG licensing team.', ` and ${name}, it’s the AMG licensing team.`) : draft.text;
+  const apple = /iPhone|iPad|iPod|Mac/i.test(`${platform.userAgent || ''} ${platform.platform || ''}`);
+  return `sms:${agent},${upline}${apple ? '&' : '?'}body=${encodeURIComponent(text)}`;
+}

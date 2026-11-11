@@ -396,10 +396,12 @@ input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 4px rgba(
 .facts b{font-weight:600;color:var(--emerald-deep);text-align:right}
 
 /* ── stats band ─────────────────────────────────── */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem}
-.stat{border-radius:var(--r-lg);padding:2rem 1.6rem;background:rgba(255,255,255,.05);border:1px solid rgba(232,199,102,.22)}
-.stat .num{font-family:'Bodoni Moda',serif;font-size:clamp(2.4rem,4vw,3.2rem);font-weight:600;color:var(--gold-bright);line-height:1}
-.stat .lbl{font-size:.95rem;color:rgba(248,245,238,.78);margin-top:.6rem}
+#stats{padding:1.25rem 6vw}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;background:var(--white);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.stat{min-width:0;padding:1rem 1.25rem;text-align:center}
+.stat+.stat{border-left:1px solid var(--line)}
+.stat .num{font-family:'Bodoni Moda',serif;font-size:clamp(1.7rem,2.5vw,2.1rem);font-weight:600;color:var(--gold-bright);line-height:1}
+.stat .lbl{font-size:.8rem;line-height:1.35;color:rgba(248,245,238,.78);margin-top:.35rem}
 
 /* ── leadership ─────────────────────────────────── */
 .lead-card{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(2rem,5vw,4.5rem);align-items:center;background:var(--white);border:1px solid var(--line);border-radius:28px;padding:clamp(1.4rem,3vw,2.6rem)}
@@ -529,7 +531,6 @@ body>footer{background:#050807;color:var(--cream);padding:4.5rem 6vw 2.5rem}
   .est-grid,.contact-grid,.faq-grid,.lead-card{grid-template-columns:1fr}
   .faq-grid .sec-head{position:static}
   .panel{grid-template-columns:1fr}
-  .stats{grid-template-columns:repeat(2,1fr)}
   .foot-grid{grid-template-columns:1fr 1fr}
 }
 @media(max-width:768px){
@@ -553,8 +554,15 @@ body>footer{background:#050807;color:var(--cream);padding:4.5rem 6vw 2.5rem}
   .faq .ans{padding-right:.2rem}
   .carrier-logo{width:148px;height:72px}
 }
+@media(max-width:640px){
+  #stats{padding:1rem 1.2rem}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stat{padding:.85rem .65rem}
+  .stat:nth-child(3){border-left:0}
+  .stat:nth-child(n+3){border-top:1px solid var(--line)}
+}
 @media(max-width:560px){
-  .benefits,.stats{grid-template-columns:1fr}
+  .benefits{grid-template-columns:1fr}
   .legend{grid-template-columns:1fr}
   .calc-head{flex-direction:column;align-items:flex-start}
   .foot-grid{grid-template-columns:1fr}
@@ -577,7 +585,7 @@ body>footer{background:#050807;color:var(--cream);padding:4.5rem 6vw 2.5rem}
 #compare .opt[aria-selected="true"] .opt-check svg{stroke:var(--gold-bright)}
 #compare .panel{border-color:transparent;box-shadow:0 40px 80px -50px rgba(0,0,0,.7)}
 /* stats (cream) */
-#stats .stat{background:#fff;border:1px solid var(--line);box-shadow:0 20px 40px -34px rgba(11,46,36,.5)}
+#stats .stats{box-shadow:0 8px 22px -20px rgba(11,46,36,.25)}
 #stats .stat .num{color:var(--emerald-deep)}
 #stats .stat .lbl{color:var(--muted)}
 /* leadership (green): white card stays, its kicker keeps the light-card color */
@@ -710,9 +718,7 @@ body>footer{background:#050807;color:var(--cream);padding:4.5rem 6vw 2.5rem}
 <!-- ══ STATS ══ -->
 <section class="bg-paper" id="stats" aria-labelledby="stats-title">
   <div class="wrap">
-    <div class="sec-head reveal">
-      <h2 class="serif" id="stats-title">A growing family of professionals.</h2>
-    </div>
+    <h2 class="sr-only" id="stats-title">A growing family of professionals.</h2>
     <div class="stats">
       <div class="stat reveal"><div class="num" data-count="400" data-suffix="+">400+</div><div class="lbl">Licensed agents</div></div>
       <div class="stat reveal" data-d="1"><div class="num" data-count="2200" data-suffix="+">2,200+</div><div class="lbl">Submitted applications</div></div>

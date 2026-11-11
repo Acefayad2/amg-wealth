@@ -181,7 +181,7 @@ section{padding:7rem 6vw}
 .trust-row svg{width:18px;height:18px;stroke:var(--gold-bright);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
 
 /* ── carrier strip ──────────────────────────────── */
-.carriers{background:var(--white);padding:2.4rem 0;border-bottom:1px solid var(--line)}
+.carriers{background:var(--white);padding:1rem 0;border-bottom:1px solid var(--line)}
 .strip-label{text-align:center;font-size:.72rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:1.3rem}
 .marquee-viewport{overflow-x:auto;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
 .marquee-viewport::-webkit-scrollbar{display:none}
@@ -189,7 +189,9 @@ section{padding:7rem 6vw}
 .marquee-viewport:hover .marquee-track,.marquee-viewport:focus-within .marquee-track{animation-play-state:paused}
 @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .logo-group{display:flex;flex:none;align-items:center;gap:1rem;padding-right:1rem}
-.carrier-logo{display:flex;align-items:center;justify-content:center;flex:none;width:168px;height:80px;padding:14px 18px;background:#fff;border:1px solid var(--line);border-radius:var(--r-sm)}
+.carriers .strip-label{margin:0 1.2rem .55rem;font-size:.65rem;letter-spacing:.16em}
+.carriers .logo-group{gap:.5rem;padding-right:.5rem}
+.carrier-logo{display:flex;align-items:center;justify-content:center;flex:none;width:150px;height:56px;padding:6px 12px;background:#fff;border:1px solid var(--line);border-radius:var(--r-sm)}
 .carrier-logo img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain}
 
 /* ── benefit cards (icon-led, interactive) ────── */
@@ -553,7 +555,7 @@ body>footer{background:#050807;color:var(--cream);padding:4.5rem 6vw 2.5rem}
   .spotlight-caption{flex-direction:column;align-items:flex-start;gap:1rem;padding:1.2rem}
   .final{padding:0 1.2rem 4rem}
   .faq .ans{padding-right:.2rem}
-  .carrier-logo{width:148px;height:72px}
+  .carrier-logo{width:136px;height:52px;padding:6px 10px}
 }
 @media(max-width:640px){
   #stats{padding:1rem 1.2rem}

@@ -112,7 +112,7 @@
 .amg-learning-theme :is(.question-options label,.options label):has(input:checked),.amg-learning-theme .option.selected{border-color:var(--amg-gold);background:var(--amg-cream)}
 .amg-learning-theme .login-layout{max-width:1020px;margin:auto;gap:65px}
 .amg-learning-theme .auth-card{padding:30px;max-width:460px}
-.amg-learning-theme .auth-heading::before{content:'↗';display:grid;place-items:center;width:52px;height:52px;margin-bottom:25px;border-radius:50%;box-shadow:var(--amg-soft);color:var(--amg-ink);font-size:23px}
+.amg-learning-theme .auth-heading::before{content:'';display:block;width:52px;height:52px;margin-bottom:25px;border-radius:50%;box-shadow:var(--amg-soft);background:#080907 url('/course/assets/amg-mark.webp') center/cover no-repeat}
 .amg-learning-theme .auth-heading h2{font-size:32px;line-height:1.15}
 .amg-learning-theme .password-field{background:transparent;border:0;box-shadow:none}
 .amg-learning-theme .password-field input{padding-right:65px}

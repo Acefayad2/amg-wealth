@@ -397,6 +397,7 @@ input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 4px rgba(
 
 /* ── stats band ─────────────────────────────────── */
 #stats{padding:1.25rem 6vw}
+.stats-heading{font-size:clamp(.9rem,2.1vw,1.5rem);text-align:center;white-space:nowrap;margin:0 0 .65rem}
 .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;background:var(--white);border:1px solid var(--line);border-radius:16px;overflow:hidden}
 .stat{min-width:0;padding:1rem 1.25rem;text-align:center}
 .stat+.stat{border-left:1px solid var(--line)}
@@ -718,7 +719,7 @@ body>footer{background:#050807;color:var(--cream);padding:4.5rem 6vw 2.5rem}
 <!-- ══ STATS ══ -->
 <section class="bg-paper" id="stats" aria-labelledby="stats-title">
   <div class="wrap">
-    <h2 class="sr-only" id="stats-title">A growing family of professionals.</h2>
+    <h2 class="serif stats-heading" id="stats-title">A growing family of professionals.</h2>
     <div class="stats">
       <div class="stat reveal"><div class="num" data-count="400" data-suffix="+">400+</div><div class="lbl">Licensed agents</div></div>
       <div class="stat reveal" data-d="1"><div class="num" data-count="2200" data-suffix="+">2,200+</div><div class="lbl">Submitted applications</div></div>

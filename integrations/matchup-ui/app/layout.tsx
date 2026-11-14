@@ -5,6 +5,13 @@ import "./reference-theme.css";
 export const metadata: Metadata = {
   title: "AMG Matchup Portal",
   description: "Connect agents with the right Certified Field Trainer.",
+  icons: {
+    icon: [
+      { url: "/favicon-circle.png?v=20261114", type: "image/png", sizes: "512x512" },
+      { url: "/favicon.svg?v=20261114", type: "image/svg+xml", sizes: "any" },
+    ],
+    apple: "/apple-touch-icon.png?v=20261114",
+  },
 };
 
 export const viewport: Viewport = {

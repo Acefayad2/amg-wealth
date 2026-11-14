@@ -157,6 +157,8 @@ body:has(#licensing-view:not([hidden])) .exam-week-day.today{background:#e9e5d9}
 body:has(#licensing-view:not([hidden])) .exam-week-event{border:0;border-left:2px solid var(--amg-gold);background:var(--amg-cream);box-shadow:var(--amg-soft);border-radius:13px}
 body:has(#licensing-view:not([hidden])) :is(.licensing-due,.licensing-avatar){background:var(--amg-cream);box-shadow:var(--amg-soft);color:var(--amg-ink)}
 @media(max-width:680px){
+ .amg-matchup-theme :is(input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea,select){font-size:16px}
+ .amg-matchup-theme .guided-form :is(input:not([type=radio]):not([type=checkbox]),textarea){font-size:16px}
  .amg-matchup-theme :is(.agent-match-header,.cft-auth-header){padding:15px 19px;min-height:74px;gap:10px}
  .amg-matchup-theme .agent-header-actions{gap:8px}
  .amg-matchup-theme .agent-header-note{font-size:9px;padding:8px 9px;gap:5px}

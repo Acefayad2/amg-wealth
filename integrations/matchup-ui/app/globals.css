@@ -599,12 +599,9 @@ main { margin-left: 236px; }
 .week-navigation button:hover:not(:disabled) { background: #edf4f0; }
 .week-navigation button:disabled { color: #b9c2bd; cursor: not-allowed; }
 .availability-legend { margin: 20px 0 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.availability-legend > span { padding: 5px 8px; border-radius: 999px; font-size: 11px; font-weight: 800; }
-.availability-legend > span::before { content: ""; width: 7px; height: 7px; margin-right: 5px; display: inline-block; border-radius: 50%; background: currentColor; }
-.availability-legend .open { color: #1c6548; background: #e2f3e9; }
-.availability-legend .busy { color: #8b6324; background: #f8edc9; }
-.availability-legend .blocked { color: #6d6670; background: #ece9ee; }
-.availability-legend .booked { color: #315d83; background: #e5eef6; }
+.availability-legend > span { padding: 6px 10px; border-radius: 2px; font-size: 11px; font-weight: 800; }
+.availability-legend .open { color: #1f5a38; background: #c3e9ce; }
+.availability-legend .busy,.availability-legend .blocked,.availability-legend .booked { color: #7e2824; background: #f4c7c4; }
 .availability-legend small { margin-left: auto; color: #698176; font-size: 11px; }
 .week-grid { display: grid; grid-template-columns: repeat(7,minmax(96px,1fr)); border: 1px solid #dfe6e2; border-radius: 13px; overflow-x: auto; background: rgba(255,255,255,.62); }
 .week-day { min-width: 96px; border-right: 1px solid #e3e9e5; }
@@ -614,14 +611,12 @@ main { margin-left: 236px; }
 .week-day > header strong { width: 28px; height: 28px; display: grid; place-items: center; color: var(--emerald-900); border-radius: 8px; background: #fff; font-size: 13px; }
 .week-day-slots { min-height: 132px; padding: 7px; display: flex; flex-direction: column; gap: 7px; }
 .week-day-slots > small { padding: 13px 3px; color: #9aa59f; font-size: 11px; text-align: center; }
-.week-slot { padding: 9px 8px; border: 1px solid #cfe5d8; border-radius: 9px; background: #eff8f3; }
-.week-slot.busy { border-color: #ecd898; background: #fff7dc; }
-.week-slot.google-only { box-shadow: inset 3px 0 #d0a43b; }
-.week-slot.blocked { border-color: #dcd6df; background: #f3f1f4; }
-.week-slot.booked { border-color: #cbdceb; background: #edf4fa; }
+.week-slot { padding: 9px 8px; color: #1f5a38; border: 1px solid #8fc7a0; border-radius: 2px; background: #c3e9ce; }
+.week-slot.busy,.week-slot.blocked,.week-slot.booked { color: #7e2824; border-color: #d89892; background: #f4c7c4; }
+.week-slot.google-only { box-shadow: none; }
 .week-slot > div:first-child { display: flex; align-items: flex-start; justify-content: space-between; gap: 5px; }
-.week-slot strong { color: #244639; font-size: 11px; white-space: nowrap; }
-.week-slot > div:first-child span { color: #638072; font-size: 9px; font-weight: 800; text-transform: capitalize; text-align: right; }
+.week-slot strong { color: inherit; font-size: 11px; white-space: nowrap; }
+.week-slot > div:first-child span { color: inherit; font-size: 9px; font-weight: 800; text-transform: capitalize; text-align: right; }
 .slot-actions { margin-top: 7px; display: flex; gap: 4px; }
 .slot-actions button { min-height: 28px; padding: 0 6px; flex: 1; color: #3a6151; border: 1px solid #d6e0da; border-radius: 6px; background: rgba(255,255,255,.8); font-size: 9px; font-weight: 800; }
 .slot-actions button:hover { background: #fff; border-color: #aebfb6; }
@@ -680,6 +675,8 @@ main { margin-left: 236px; }
   .week-navigation strong { min-width: 0; flex: 1; }
   .availability-legend small { width: 100%; margin: 3px 0 0; }
   .week-grid { grid-template-columns: repeat(7,112px); margin-inline: -4px; }
+  .week-slot > div:first-child { flex-direction: column; gap: 4px; }
+  .week-slot > div:first-child span { text-align: left; }
   .weekly-builder { padding: 15px 12px; }
   .builder-heading { align-items: flex-start; flex-direction: column; gap: 4px; }
   .day-picker { grid-template-columns: repeat(4,1fr); }

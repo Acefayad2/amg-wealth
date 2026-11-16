@@ -1,0 +1,5 @@
+# Flat availability blocks
+
+Replace rounded planner tiles and pill legends with simple filled rectangles. Open slots are green; Google busy, blocked and booked slots are red. Preserve each status label, time, slot action and all appointment behavior. Remove the Google-only inset stripe. Mobile labels sit beneath their time to prevent overlap in narrow day columns.
+
+Validation: 26 portal tests and280 website tests pass, portal/site type checks and builds pass. All13 portal app JavaScript chunks are byte-identical to the published baseline; the export refresh changes stylesheet references, build metadata and generated icon references only. Green/red text contrast is6.16:1/6.23:1. Isolated existing-markup/production-CSS visual checks at1280px and390px show square2px corners, status text and no page overflow; the week itself retains horizontal scrolling. Fictional visual fixture only, no live accounts or records accessed. New synthetic markup and screenshots remain in ignored output/playwright and are excluded from deployment.

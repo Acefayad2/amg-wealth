@@ -5,6 +5,7 @@ import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
 import AccountBadge from "../AccountBadge";
+import CftApprovals from "./CftApprovals";
 import { useAccountProfile } from "@/lib/use-account-profile";
 import { signInErrorMessage } from "@/lib/auth-message";
 
@@ -127,7 +128,7 @@ export default function BrokerWorkspace() {
     <div className="broker-shell">
       <aside className={`broker-sidebar ${mobileNav ? "open" : ""}`}>
         <a href="/matchups/" className="broker-brand"><Image src="/matchups/amg-logo.webp" alt="AMG logo" width={42} height={42} priority unoptimized /><span><strong>AMG</strong><small>Organizations</small></span></a>
-        <nav><a className="active" href="#overview">Overview</a><a href="#agents">Agents</a><a href="#activity">Activity</a><a href="#meetings">Meetings</a></nav>
+        <nav><a className="active" href="#overview">Overview</a><a href="#cft-approvals" onClick={() => setMobileNav(false)}>CFT approvals</a><a href="#agents">Agents</a><a href="#activity">Activity</a><a href="#meetings">Meetings</a></nav>
         <div className="broker-sidebar-note"><span>Secure view</span><p>You only see organizations assigned to your AMG account.</p></div>
         <AccountBadge profile={accountProfile} onSignOut={() => { void supabase.auth.signOut({ scope: "local" }); }} />
       </aside>
@@ -142,6 +143,7 @@ export default function BrokerWorkspace() {
           {loading && <div className="broker-loading">Refreshing organization metrics…</div>}
 
           {!loading && workspace && <>
+            <CftApprovals key={accountUser?.id} />
             <section className="broker-kpis" aria-label="Organization metrics">
               <article><span>Active agents</span><strong>{metrics.activeAgents}</strong><small>in this organization</small></article>
               <article><span>Total calls</span><strong>{metrics.calls}</strong><small>{metrics.answeredCalls} answered</small></article>

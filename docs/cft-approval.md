@@ -1,0 +1,11 @@
+# CFT signup approval
+
+AMG account `acefayad@gmail.com` is the designated CFT application reviewer. Its existing admin/platform-admin roles are preserved; no other account receives approval access. Review new applications at `/matchups/broker/#cft-approvals`, also linked from the admin's CFT workspace.
+
+New registrations still require the existing AMG verification password. The Edge Function sets trusted Auth app metadata requiring approval, creates inactive profile/directory/organization records, and records a pending application. The applicant can sign in to see pending/declined status but cannot activate themselves, change their role, publish availability, connect a calendar, or receive bookings before approval. Profile guards apply from the initial Auth profile insert, before the application row exists. Direct scheduling/booking writes are also guarded. Existing active trainers remain unchanged.
+
+Approval and decline run through an authenticated RPC with an explicit private reviewer allowlist, active profile and organization checks, scoped row locking and a reviewer audit. Repeating the same decision is idempotent; an opposite stale decision is rejected. Approval activates the CFT's existing records, retaining personal workspace isolation. The trainer remains unavailable to agents until they choose to publish availability. A declined application stays inactive. No notification email or SMS is added.
+
+The broker UI shows the oldest 100 pending applications and the total count; review these then refresh for additional entries. Unconfirmed decisions withhold further actions until a fresh list is loaded. Database procedures are the authority; browser state does not grant access.
+
+Verification: 288 site tests, 26 portal tests, portal production build, root typecheck/build; `database/tests/cft-signup-approval.sql` and the existing individual-CFT isolation test run on the deployed database and roll back all synthetic fixtures. Browser tests use explicitly synthetic intercepted Auth/API replies for signup, queue approval/decline, uncertain-reply recovery and applicant states; these are UI verification, not a claim of real hosted Auth signup or owner-session acceptance. Final real-session verification requires the owner to sign in and an authorized test registration using the current AMG verification password.

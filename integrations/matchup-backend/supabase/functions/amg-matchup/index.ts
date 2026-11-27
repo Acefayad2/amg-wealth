@@ -293,7 +293,7 @@ Deno.serve(async (request) => {
         password,
         email_confirm: true,
         user_metadata: { first_name: firstName, last_name: lastName, full_name: displayName },
-        app_metadata: { role: "cft" },
+        app_metadata: { role: "cft", cft_approval_required: true },
       });
       if (createUserError || !created.user) {
         const failure = registrationAuthFailure(createUserError);
@@ -308,7 +308,7 @@ Deno.serve(async (request) => {
           first_name: firstName,
           last_name: lastName || null,
           role: "cft",
-          is_active: true,
+          is_active: false,
         });
         if (profileError) throw profileError;
 
@@ -322,7 +322,7 @@ Deno.serve(async (request) => {
           specialties: [],
           match_keywords: matchKeywords,
           avatar_tone: "green",
-          active: true,
+          active: false,
           is_available: false,
           is_demo: false,
         }).select("id").single();
@@ -342,17 +342,19 @@ Deno.serve(async (request) => {
           display_name: displayName,
           email,
           phone,
-          is_active: true,
+          is_active: false,
           updated_at: new Date().toISOString(),
         }, { onConflict: "organization_id,user_id" });
         if (membershipError) throw membershipError;
+        const { error: applicationError } = await supabase.rpc("amg_record_cft_application", { p_user_id: created.user.id, p_trainer_id: trainerId });
+        if (applicationError) throw applicationError;
       } catch (registrationError) {
         if (trainerId) await supabase.from("cft_directory").delete().eq("id", trainerId);
         await supabase.auth.admin.deleteUser(created.user.id);
         throw registrationError;
       }
 
-      return json({ ok: true, message: "CFT account created. Sign in with the password you chose." }, 201, origin);
+      return json({ ok: true, approvalStatus: "pending", message: "Your CFT application was received. Sign in to check its status. AMG must approve your account before you can manage availability or receive bookings." }, 201, origin);
     }
 
     // A random booking reference is a receipt capability, not a user identity.

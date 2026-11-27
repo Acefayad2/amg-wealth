@@ -97,6 +97,9 @@ export default function CFTWorkspace() {
   const [sessionChecked, setSessionChecked] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [role, setRole] = useState("");
+  const [applicationStatus, setApplicationStatus] = useState<string | null>(null);
+  const [approvalChecked, setApprovalChecked] = useState(false);
+  const [approvalRefresh, setApprovalRefresh] = useState(0);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [recoveryMode, setRecoveryMode] = useState(false);
@@ -230,10 +233,16 @@ export default function CFTWorkspace() {
   useEffect(() => {
     const generation = ++workspaceGeneration.current;
     setTrainers([]); setAppointments([]); setSlots([]); setSelectedTrainerId(""); setRole("");
+    setApplicationStatus(null); setApprovalChecked(false);
     if (!userId) return;
     async function loadWorkspace() {
       setLoading(true); setError("");
       try {
+        const approval = await supabase.rpc("amg_cft_applications", { action: "status", payload: {} });
+        if (approval.error) throw new Error("We couldn’t check your account approval. Please try again.");
+        if (generation !== workspaceGeneration.current) return;
+        setApplicationStatus(approval.data?.status || null);
+        if (approval.data?.status === "pending" || approval.data?.status === "declined") return;
         const profile = await supabase.from("profiles").select("role,is_active").eq("id", userId).single();
         if (profile.error || !profile.data?.is_active || !["admin", "cft"].includes(profile.data.role)) throw new Error("This login is not connected to an active CFT workspace. Ask an AMG administrator to link your trainer profile.");
         if (generation !== workspaceGeneration.current) return;
@@ -242,14 +251,14 @@ export default function CFTWorkspace() {
       } catch (cause) {
         if (generation === workspaceGeneration.current) setError(cause instanceof Error ? cause.message : "We couldn’t load the workspace. Please refresh and try again.");
       } finally {
-        if (generation === workspaceGeneration.current) setLoading(false);
+        if (generation === workspaceGeneration.current) { setLoading(false); setApprovalChecked(true); }
       }
     }
     void loadWorkspace();
     return () => { workspaceGeneration.current++; };
     // The workspace is reloaded when the authenticated user changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId]);
+  }, [userId, approvalRefresh]);
 
   async function mutateWorkspace(action: string, payload: Record<string, unknown>, message: (value: string) => void, success: string) {
     if (mutationLock.current || workspaceStale) return;
@@ -361,11 +370,12 @@ export default function CFTWorkspace() {
         if (result.field === "password") registrationPasswordRef.current?.focus();
         throw new Error(result.error || "We couldn’t create the CFT account.");
       }
+      if (result.ok !== true || result.approvalStatus !== "pending") throw new Error("We couldn’t confirm your application receipt. Use Trainer login to check its status before submitting again.");
       const { error: loginError } = await supabase.auth.signInWithPassword({
         email: registration.email.trim().toLowerCase(),
         password: registration.password,
       });
-      setAuthMessage(loginError ? "Your account was created. Use Trainer login with the password you chose." : "Account created. You are signed in.");
+      setAuthMessage(loginError ? "Application received. Use Trainer login to check your approval status." : "Application received. Your account is waiting for AMG approval.");
       setLoginEmail(registration.email.trim().toLowerCase());
       setLoginPassword("");
       setAuthMode("login");
@@ -522,7 +532,7 @@ export default function CFTWorkspace() {
           <article className={`cft-auth-card liquid-glass-card ${authMode === "register" ? "registration-card" : ""}`}>
             <span className="auth-shield"><Mark>✓</Mark></span><span className="eyebrow"><span />CFT workspace</span>
             <h1>{authMode === "login" ? "Trainer login" : "Create CFT account"}</h1>
-            <p>{authMode === "login" ? "Sign in with the work email and password connected to your AMG trainer account." : "Create your trainer profile and choose the password you will use to sign in. You can connect Google Calendar after signing in."}</p>
+            <p>{authMode === "login" ? "Sign in with the work email and password connected to your AMG trainer account." : "Submit your trainer profile for AMG approval and choose your sign-in password. After approval, you can connect Google Calendar and open appointment times."}</p>
             <div className="auth-mode-switch"><button type="button" className={authMode === "login" ? "active" : ""} onClick={() => { setAuthMode("login"); setAuthMessage(""); }}>Trainer login</button><button type="button" className={authMode === "register" ? "active" : ""} onClick={() => { setAuthMode("register"); setAuthMessage(""); }}>Create account</button></div>
             {authMode === "login" ? <form onSubmit={signInWithPassword}><label><span>Work email</span><input type="email" value={loginEmail} onChange={(event) => setLoginEmail(event.target.value)} autoComplete="email" required /></label><label><span>Password</span><input type="password" value={loginPassword} onChange={(event) => setLoginPassword(event.target.value)} autoComplete="current-password" required /></label><button className="confirm-button full" disabled={authBusy}>{authBusy ? "Signing in…" : "Sign in →"}</button><button className="auth-reset-button" type="button" disabled={authBusy} onClick={() => void sendPasswordReset()}>Reset password</button></form> :
               <form className="cft-registration-form" onSubmit={registerCft}>
@@ -533,14 +543,20 @@ export default function CFTWorkspace() {
                 <label><span>AMG verification password</span><input type="password" value={registration.verificationPassword} onChange={(event) => setRegistration({ ...registration, verificationPassword: event.target.value })} autoComplete="off" autoCapitalize="none" autoCorrect="off" spellCheck={false} required /><small>Enter the shared signup code from AMG. This is separate from the personal password you choose above.</small></label>
                 <label className="registration-wide"><span>Trainer description</span><textarea value={registration.bio} onChange={(event) => setRegistration({ ...registration, bio: event.target.value })} rows={4} minLength={20} maxLength={800} required /><small>Describe the clients and appointments you work with best in at least 20 characters.</small></label>
                 <button className="confirm-button full registration-wide" disabled={authBusy}>{authBusy ? "Creating secure account…" : "Create CFT account →"}</button>
-                <div className="registration-calendar-note registration-wide"><span className="google-calendar-mark" aria-hidden="true">G</span><div><strong>Google Calendar comes next</strong><small>After account creation, connect your calendar from the workspace.</small></div></div>
+                <div className="registration-calendar-note registration-wide"><span className="google-calendar-mark" aria-hidden="true">G</span><div><strong>Google Calendar comes next</strong><small>After AMG approves your account, connect your calendar from the workspace.</small></div></div>
               </form>}
             {authMessage && <div className="auth-message" role="status">{authMessage}</div>}
-            <small>{authMode === "login" ? "Only verified AMG CFT accounts can enter the workspace." : "Your account is ready immediately after registration—no phone verification required."}</small>
+            <small>{authMode === "login" ? "Only verified AMG CFT accounts can enter the workspace." : "AMG reviews new CFT accounts before workspace access and bookings are enabled."}</small>
           </article>
         </main>
       </div>
     );
+  }
+
+  if (!approvalChecked) return <div className="cft-auth-page"><div className="auth-loading">Checking your AMG account approval…</div></div>;
+
+  if (applicationStatus === "pending" || applicationStatus === "declined") {
+    return <div className="cft-auth-page"><header className="cft-auth-header"><a href="/matchups/" className="agent-match-brand">AMG Matchup</a></header><main className="cft-auth-main"><article className="cft-auth-card cft-approval-status"><h1>{applicationStatus === "pending" ? "Your application is awaiting approval." : "Your CFT application was not approved."}</h1><p>{applicationStatus === "pending" ? "AMG received your trainer profile. An administrator must approve it before you can manage availability, connect a calendar or receive bookings." : "Contact your AMG team if you have questions about this decision."}</p><p>Signed in as {accountUser?.email}</p><button className="confirm-button full" onClick={() => setApprovalRefresh(value => value + 1)}>Check approval status</button><button className="auth-reset-button" onClick={() => void supabase.auth.signOut({ scope: "local" })}>Sign out</button></article></main></div>;
   }
 
   const name = trainer?.display_name || (role === "admin" ? "AMG Administrator" : "Trainer");
@@ -550,6 +566,7 @@ export default function CFTWorkspace() {
         <div className="brand"><div className="logo-wrap"><Image src="/matchups/amg-logo.webp" alt="AMG Wealth logo" width={44} height={44} priority unoptimized /></div><div><strong>AMG</strong><span>Matchup Portal</span></div><button className="icon-button close-nav" aria-label="Close navigation" onClick={() => setMobileNav(false)}>×</button></div>
         <nav><a className="nav-item active" href="#dashboard"><Mark>⌂</Mark>Overview</a><a className="nav-item" href="#today"><Mark>◷</Mark>My schedule</a><a className="nav-item" href="#requests"><Mark>●</Mark>Match requests{requests.length > 0 && <span className="nav-count">{requests.length}</span>}</a><a className="nav-item" href="#profile"><Mark>◎</Mark>My profile</a></nav>
         <a className="role-switch" href="/matchups/"><Mark>✦</Mark>Go to Agent Matchup</a>
+        {role === "admin" && <a className="cft-review-link" href="/matchups/broker/#cft-approvals">Review CFT signups</a>}
         <AccountBadge profile={accountProfile} onSignOut={() => { void supabase.auth.signOut({ scope: "local" }); }} />
       </aside>
       {mobileNav && <button className="nav-scrim" aria-label="Close navigation" onClick={() => setMobileNav(false)} />}

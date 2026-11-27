@@ -494,10 +494,10 @@ Deno.serve(async (request) => {
         return json({ error: validationError instanceof Error ? validationError.message : "Review appointment details." }, 400, origin);
       }
       const { data: replay, error: replayError } = await supabase.from("matchup_appointments")
-        .select("id,google_calendar_status,google_meet_url").eq("booking_reference", body.bookingId).maybeSingle();
+        .select("id,status,google_calendar_status,google_meet_url").eq("booking_reference", body.bookingId).maybeSingle();
       if (replayError) throw replayError;
       // Idempotent replay: return the existing portal receipt without modifying consent.
-      if (replay) return json({ ok: true, appointmentId: replay.id, calendarStatus: replay.google_calendar_status, meetUrl: replay.google_meet_url || "", smsStatus: "unchanged" }, 200, origin);
+      if (replay) return json({ ok: true, appointmentId: replay.id, appointmentStatus: replay.status, calendarStatus: replay.google_calendar_status, meetUrl: replay.google_meet_url || "", smsStatus: "unchanged" }, 200, origin);
       try {
         const busy = await googleBusyRanges(supabase, body.trainer.id, appointmentDate);
         if (busy && !slotIsFree(appointmentDate, appointmentTime, busy)) return json({ error: "That trainer is busy at this time. Please choose another slot." }, 409, origin);
@@ -545,12 +545,12 @@ Deno.serve(async (request) => {
       const { data: queuedCalendar, error: queueError } = await supabase.rpc("queue_matchup_calendar", { p_appointment_id: savedAppointmentId });
       const calendarStatus = queueError ? "failed" : (queuedCalendar?.status || "pending");
       // The durable worker owns Google writes. A request crash cannot abandon its job.
-      const { data: calendarReceipt } = await supabase.from("matchup_appointments").select("google_meet_url").eq("id", savedAppointmentId).maybeSingle();
+      const { data: calendarReceipt } = await supabase.from("matchup_appointments").select("status,google_meet_url").eq("id", savedAppointmentId).maybeSingle();
       const meetUrl = String(calendarReceipt?.google_meet_url || "");
       const smsStatus = consent.length ? "consent_saved" : "not_requested";
       // Appointment confirmations are portal-only; no notification email is sent.
 
-      return json({ ok: true, appointmentId: savedAppointmentId, calendarStatus, meetUrl, smsStatus }, 200, origin);
+      return json({ ok: true, appointmentId: savedAppointmentId, appointmentStatus: calendarReceipt?.status || "saved", calendarStatus, meetUrl, smsStatus }, 200, origin);
     }
 
     return json({ error: "Unknown action" }, 400, origin);

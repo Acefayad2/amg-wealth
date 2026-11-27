@@ -22,7 +22,7 @@ async function bookingHandler(replay = null) {
         eq() { return query; }, ilike() { return query; }, in() { return query; }, limit() { return query; },
         async maybeSingle() {
           const data = table === 'matchup_appointments'
-            ? (columns.startsWith('id,') ? replay : { google_meet_url: '' })
+            ? (columns.startsWith('id,') ? replay : { status: 'confirmed', google_meet_url: '' })
             : table === 'cft_contacts' ? { email: 'trainer@example.invalid' } : null;
           return { data, error: null };
         },
@@ -64,6 +64,7 @@ test('a saved booking returns a portal receipt without sending email, even when 
   assert.equal(response.status, 200);
   assert.equal(receipt.appointmentId, 'test-appointment');
   assert.equal(receipt.calendarStatus, 'pending');
+  assert.equal(receipt.appointmentStatus, 'confirmed');
   assert.equal(receipt.smsStatus, 'not_requested');
   assert.equal('emailStatus' in receipt, false);
   assert.deepEqual(requests, []);
@@ -72,9 +73,10 @@ test('a saved booking returns a portal receipt without sending email, even when 
 });
 
 test('replaying a booking returns the original receipt without email or a second reservation', async () => {
-  const { response, receipt, requests, rpcs } = await bookingHandler({ id: 'original-appointment', google_calendar_status: 'synced', google_meet_url: '' });
+  const { response, receipt, requests, rpcs } = await bookingHandler({ id: 'original-appointment', status: 'pending', google_calendar_status: 'synced', google_meet_url: '' });
   assert.equal(response.status, 200);
   assert.equal(receipt.appointmentId, 'original-appointment');
+  assert.equal(receipt.appointmentStatus, 'pending');
   assert.equal('emailStatus' in receipt, false);
   assert.deepEqual(requests, []);
   assert.deepEqual(rpcs, []);

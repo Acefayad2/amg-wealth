@@ -92,7 +92,6 @@ export function AgentPortal() {
   const [bookingError, setBookingError] = useState("");
   const [matchError, setMatchError] = useState("");
   const [smsStatus, setSmsStatus] = useState<"not_requested" | "consent_saved" | "unavailable" | "unchanged">("not_requested");
-  const [emailStatus, setEmailStatus] = useState<"pending" | "sent" | "failed">("pending");
   const [step, setStep] = useState(0);
   const [editingReview, setEditingReview] = useState(false);
   const [stepError, setStepError] = useState("");
@@ -131,10 +130,10 @@ export function AgentPortal() {
 
   const questions = [
     { key: "agentName", label: "Agent name", title: "First, what’s your name?", hint: "Let’s start with your contact details.", group: "Your details", value: agentName, setValue: setAgentName, type: "text", autoComplete: "section-agent name" },
-    { key: "agentEmail", label: "Agent email", title: "Where should we email you?", hint: "Use the email address you check for appointment updates.", group: "Your details", value: agentEmail, setValue: setAgentEmail, type: "email", autoComplete: "section-agent email" },
+    { key: "agentEmail", label: "Agent email", title: "What’s your email address?", hint: "Use your contact email for this appointment.", group: "Your details", value: agentEmail, setValue: setAgentEmail, type: "email", autoComplete: "section-agent email" },
     { key: "agentPhone", label: "Agent phone", title: "What’s your phone number?", hint: "Use a number where you can be reached about this appointment.", group: "Your details", value: agentPhone, setValue: setAgentPhone, type: "tel", autoComplete: "section-agent tel" },
     { key: "clientName", label: "Client name", title: "Who is the appointment for?", hint: "Enter your client’s full name.", group: "Your client", value: clientName, setValue: setClientName, type: "text", autoComplete: "off" },
-    { key: "clientEmail", label: "Client email", title: "What’s your client’s email?", hint: "Double-check the address so appointment updates reach the right person.", group: "Your client", value: clientEmail, setValue: setClientEmail, type: "email", autoComplete: "off" },
+    { key: "clientEmail", label: "Client email", title: "What’s your client’s email?", hint: "Add the client’s contact email for the trainer.", group: "Your client", value: clientEmail, setValue: setClientEmail, type: "email", autoComplete: "off" },
     { key: "clientPhone", label: "Client phone", title: "What’s your client’s phone number?", hint: "Use the best number for appointment-related contact.", group: "Your client", value: clientPhone, setValue: setClientPhone, type: "tel", autoComplete: "off" },
     { key: "background", label: "Client background", title: "What best describes your client?", hint: "Choose the closest fit. You can add more context in a moment.", group: "Appointment needs", value: background, setValue: setBackground, options: clientBackgroundOptions },
     { key: "appointmentType", label: "Appointment focus", title: "What would they like help with?", hint: "Choose the main reason for the appointment.", group: "Appointment needs", value: appointmentType, setValue: setAppointmentType, options: appointmentFocusOptions },
@@ -261,7 +260,6 @@ export function AgentPortal() {
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "We couldn’t save the appointment.");
       if (result.ok !== true || !result.appointmentId) throw new Error("The appointment response was incomplete.");
-      setEmailStatus(result.emailStatus === "sent" ? "sent" : result.emailStatus === "failed" ? "failed" : "pending");
       setSmsStatus(result.smsStatus === "consent_saved" || result.smsStatus === "unchanged" || result.smsStatus === "unavailable" ? result.smsStatus : agentSmsConsent || clientSmsConsent ? "unavailable" : "not_requested");
       setBookingUncertain(false);
       setBooked(true);
@@ -370,7 +368,7 @@ export function AgentPortal() {
           if (event.shiftKey && (document.activeElement === first || document.activeElement === successRef.current)) { event.preventDefault(); last.focus(); }
           else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
         }
-      }}><button className="modal-close" onClick={closeBookingConfirmation} aria-label="Close"><Icon name="close" /></button><div className="success-icon"><Icon name="check" size={28} /></div><span className="eyebrow"><span />Request sent</span><h2 id="success-title">Your appointment request is saved.</h2><p>{selectedTrainer.name} received the request for <strong>{displayDate} at {selectedSlot}</strong> and can respond in the CFT workspace. The appointment is pending until the trainer confirms.</p><div className={`email-delivery-note ${emailStatus}`}><Icon name={emailStatus === "sent" ? "check" : "clock"} size={16} />{emailStatus === "sent" ? "Appointment request emails were sent." : emailStatus === "failed" ? "The request was saved, but one or more notification emails could not be delivered." : "Email delivery is pending. The request is safely stored in the CFT workspace."}</div>{smsStatus !== "not_requested" && <div className={`email-delivery-note ${smsStatus === "unavailable" ? "failed" : "pending"}`}><Icon name="clock" size={16} />{smsStatus === "consent_saved" ? "Text preferences saved. Confirmation and reminder delivery depends on AMG’s messaging setup." : smsStatus === "unchanged" ? "Existing text preferences were kept for this request. Text delivery has not been confirmed." : "Text preferences could not be confirmed. Your appointment request is saved, but text delivery is not available for this request."}</div>}<div className="modal-summary"><span className={`avatar ${selectedTrainer.color}`}>{selectedTrainer.initials}</span><div><strong>{selectedTrainer.name}</strong><small>Certified Field Trainer · Video call</small></div></div><button className="confirm-button full" onClick={closeBookingConfirmation}>Start another appointment <Icon name="check" size={16} /></button></div></div>}
+      }}><button className="modal-close" onClick={closeBookingConfirmation} aria-label="Close"><Icon name="close" /></button><div className="success-icon"><Icon name="check" size={28} /></div><span className="eyebrow"><span />Request sent</span><h2 id="success-title">Your appointment request is saved.</h2><p>{selectedTrainer.name} received the request for <strong>{displayDate} at {selectedSlot}</strong> and can respond in the CFT workspace. The appointment is pending until the trainer confirms.</p>{smsStatus !== "not_requested" && <div className={`email-delivery-note ${smsStatus === "unavailable" ? "failed" : "pending"}`}><Icon name="clock" size={16} />{smsStatus === "consent_saved" ? "Text preferences saved. Confirmation and reminder delivery depends on AMG’s messaging setup." : smsStatus === "unchanged" ? "Existing text preferences were kept for this request. Text delivery has not been confirmed." : "Text preferences could not be confirmed. Your appointment request is saved, but text delivery is not available for this request."}</div>}<div className="modal-summary"><span className={`avatar ${selectedTrainer.color}`}>{selectedTrainer.initials}</span><div><strong>{selectedTrainer.name}</strong><small>Certified Field Trainer · Video call</small></div></div><button className="confirm-button full" onClick={closeBookingConfirmation}>Start another appointment <Icon name="check" size={16} /></button></div></div>}
     </div>
   );
 }

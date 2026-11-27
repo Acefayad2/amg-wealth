@@ -71,10 +71,6 @@ function validEmail(value: unknown) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || "").trim());
 }
 
-function escapeHtml(value: unknown) {
-  return String(value || "").replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[character] || character));
-}
-
 async function sha256(value: string) {
   const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
   return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
@@ -498,10 +494,10 @@ Deno.serve(async (request) => {
         return json({ error: validationError instanceof Error ? validationError.message : "Review appointment details." }, 400, origin);
       }
       const { data: replay, error: replayError } = await supabase.from("matchup_appointments")
-        .select("id,email_status,google_calendar_status,google_meet_url").eq("booking_reference", body.bookingId).maybeSingle();
+        .select("id,google_calendar_status,google_meet_url").eq("booking_reference", body.bookingId).maybeSingle();
       if (replayError) throw replayError;
-      // Idempotent replay: return receipt without sending emails or modifying consent.
-      if (replay) return json({ ok: true, appointmentId: replay.id, emailStatus: replay.email_status, calendarStatus: replay.google_calendar_status, meetUrl: replay.google_meet_url || "", smsStatus: "unchanged" }, 200, origin);
+      // Idempotent replay: return the existing portal receipt without modifying consent.
+      if (replay) return json({ ok: true, appointmentId: replay.id, calendarStatus: replay.google_calendar_status, meetUrl: replay.google_meet_url || "", smsStatus: "unchanged" }, 200, origin);
       try {
         const busy = await googleBusyRanges(supabase, body.trainer.id, appointmentDate);
         if (busy && !slotIsFree(appointmentDate, appointmentTime, busy)) return json({ error: "That trainer is busy at this time. Please choose another slot." }, 409, origin);
@@ -552,34 +548,9 @@ Deno.serve(async (request) => {
       const { data: calendarReceipt } = await supabase.from("matchup_appointments").select("google_meet_url").eq("id", savedAppointmentId).maybeSingle();
       const meetUrl = String(calendarReceipt?.google_meet_url || "");
       const smsStatus = consent.length ? "consent_saved" : "not_requested";
-      let emailStatus: "pending" | "sent" | "failed" = "pending";
-      const resendKey = Deno.env.get("RESEND_API_KEY");
-      const fromEmail = Deno.env.get("APPOINTMENT_FROM_EMAIL");
-      const { data: trainerContact } = await supabase.from("cft_contacts").select("email").eq("trainer_id", body.trainer.id).maybeSingle();
-      const trainerEmail = String(trainerContact?.email || "");
+      // Appointment confirmations are portal-only; no notification email is sent.
 
-      if (resendKey && fromEmail && trainerEmail && !trainerEmail.endsWith("@example.com")) {
-        const appointmentLine = `${escapeHtml(body.appointment?.displayDate)} at ${escapeHtml(body.appointment?.time)} ET`;
-        const recipients = [
-          { email: body.agent?.email, greeting: body.agent?.name, role: "Agent" },
-          { email: body.client?.email, greeting: body.client?.name, role: "Client" },
-          { email: trainerEmail, greeting: body.trainer?.name, role: "Certified Field Trainer" },
-        ];
-        const deliveries = await Promise.all(recipients.map((recipient) => fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json", "Idempotency-Key": `matchup-${savedAppointmentId}-${recipient.role}` },
-          body: JSON.stringify({
-            from: fromEmail,
-            to: [recipient.email],
-            subject: `AMG Matchup request — ${body.appointment?.displayDate} at ${body.appointment?.time}`,
-            html: `<div style="font-family:Arial,sans-serif;color:#153e30;line-height:1.6"><h2>AMG Matchup appointment request</h2><p>Hello ${escapeHtml(recipient.greeting)},</p><p>A ${escapeHtml(recipient.role)} notification has been created for <strong>${appointmentLine}</strong>.</p><p><strong>Trainer:</strong> ${escapeHtml(body.trainer?.name)}<br><strong>Agent:</strong> ${escapeHtml(body.agent?.name)}<br><strong>Client:</strong> ${escapeHtml(body.client?.name)}<br><strong>Focus:</strong> ${escapeHtml(body.appointment?.focus)}<br><strong>Format:</strong> ${escapeHtml(body.appointment?.format || "Video call")}</p>${meetUrl ? `<p><a href="${escapeHtml(meetUrl)}" style="display:inline-block;padding:12px 18px;border-radius:8px;background:#173f31;color:#fff;text-decoration:none;font-weight:700">Join Google Meet</a></p>` : ""}<p>The CFT will accept or decline this request in the AMG Matchup Portal.</p></div>`,
-          }),
-        })));
-        emailStatus = deliveries.every((delivery) => delivery.ok) ? "sent" : "failed";
-        await supabase.from("matchup_appointments").update({ email_status: emailStatus }).eq("id", savedAppointmentId);
-      }
-
-      return json({ ok: true, appointmentId: savedAppointmentId, emailStatus, calendarStatus, meetUrl, smsStatus }, 200, origin);
+      return json({ ok: true, appointmentId: savedAppointmentId, calendarStatus, meetUrl, smsStatus }, 200, origin);
     }
 
     return json({ error: "Unknown action" }, 400, origin);

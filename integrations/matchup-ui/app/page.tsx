@@ -87,6 +87,7 @@ export function AgentPortal() {
   const [trainerOptionIndex, setTrainerOptionIndex] = useState(0);
   const [selectedSlot, setSelectedSlot] = useState("");
   const [booked, setBooked] = useState(false);
+  const [appointmentStatus, setAppointmentStatus] = useState<"pending" | "confirmed" | "saved">("saved");
   const [sendingBooking, setSendingBooking] = useState(false);
   const [bookingUncertain, setBookingUncertain] = useState(false);
   const [bookingError, setBookingError] = useState("");
@@ -262,6 +263,7 @@ export function AgentPortal() {
       if (result.ok !== true || !result.appointmentId) throw new Error("The appointment response was incomplete.");
       setSmsStatus(result.smsStatus === "consent_saved" || result.smsStatus === "unchanged" || result.smsStatus === "unavailable" ? result.smsStatus : agentSmsConsent || clientSmsConsent ? "unavailable" : "not_requested");
       setBookingUncertain(false);
+      setAppointmentStatus(result.appointmentStatus === "confirmed" || result.appointmentStatus === "pending" ? result.appointmentStatus : "saved");
       setBooked(true);
     } catch (error) {
       setBookingUncertain(!definitiveRejection);
@@ -368,7 +370,7 @@ export function AgentPortal() {
           if (event.shiftKey && (document.activeElement === first || document.activeElement === successRef.current)) { event.preventDefault(); last.focus(); }
           else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
         }
-      }}><button className="modal-close" onClick={closeBookingConfirmation} aria-label="Close"><Icon name="close" /></button><div className="success-icon"><Icon name="check" size={28} /></div><span className="eyebrow"><span />Request sent</span><h2 id="success-title">Your appointment request is saved.</h2><p>{selectedTrainer.name} received the request for <strong>{displayDate} at {selectedSlot}</strong> and can respond in the CFT workspace. The appointment is pending until the trainer confirms.</p>{smsStatus !== "not_requested" && <div className={`email-delivery-note ${smsStatus === "unavailable" ? "failed" : "pending"}`}><Icon name="clock" size={16} />{smsStatus === "consent_saved" ? "Text preferences saved. Confirmation and reminder delivery depends on AMG’s messaging setup." : smsStatus === "unchanged" ? "Existing text preferences were kept for this request. Text delivery has not been confirmed." : "Text preferences could not be confirmed. Your appointment request is saved, but text delivery is not available for this request."}</div>}<div className="modal-summary"><span className={`avatar ${selectedTrainer.color}`}>{selectedTrainer.initials}</span><div><strong>{selectedTrainer.name}</strong><small>Certified Field Trainer · Video call</small></div></div><button className="confirm-button full" onClick={closeBookingConfirmation}>Start another appointment <Icon name="check" size={16} /></button></div></div>}
+      }}><button className="modal-close" onClick={closeBookingConfirmation} aria-label="Close"><Icon name="close" /></button><div className="success-icon"><Icon name="check" size={28} /></div><span className="eyebrow"><span />{appointmentStatus === "confirmed" ? "Appointment booked" : "Request saved"}</span><h2 id="success-title">{appointmentStatus === "confirmed" ? "Your appointment is booked." : "Your appointment request is saved."}</h2><p>Your appointment with {selectedTrainer.name} for <strong>{displayDate} at {selectedSlot} Eastern Time</strong> is saved in the CFT workspace.{appointmentStatus === "confirmed" ? " This time is confirmed." : appointmentStatus === "pending" ? " The request is pending until the trainer confirms." : " Check the workspace for its current status."}</p>{smsStatus !== "not_requested" && <div className={`email-delivery-note ${smsStatus === "unavailable" ? "failed" : "pending"}`}><Icon name="clock" size={16} />{smsStatus === "consent_saved" ? "Text preferences saved. Confirmation and reminder delivery depends on AMG’s messaging setup." : smsStatus === "unchanged" ? "Existing text preferences were kept for this request. Text delivery has not been confirmed." : "Text preferences could not be confirmed. Your appointment request is saved, but text delivery is not available for this request."}</div>}<div className="modal-summary"><span className={`avatar ${selectedTrainer.color}`}>{selectedTrainer.initials}</span><div><strong>{selectedTrainer.name}</strong><small>Certified Field Trainer · Video call</small></div></div><button className="confirm-button full" onClick={closeBookingConfirmation}>Start another appointment <Icon name="check" size={16} /></button></div></div>}
     </div>
   );
 }
